@@ -34,6 +34,7 @@ Status abbreviations below refer to inspected code candidates, not a released fi
 | E13 | Trade is hard to perceive; keep region quiet/rural; p.8 | Compose existing production, collection and shipment scenes; no new trade simulation | Broader scene audit outstanding |
 | E14 | Skeleton defenders lose protection near walls; p.9 | Actual enclosed wall footprint plus existing 160-unit exterior distance, once | #826/#827 isolated candidates; #828/#825 duplicate implementations to reconcile |
 | E15 | More public lamps in sensible populated places; recovered message | A few role-based public light anchors, separated by genuinely dark countryside | #825 placement candidates; attempted placements are not proof of coverage |
+| E17 | Current owner addition: reuse the Dark Crown standard to reinforce authority | One existing Crown standard at the appropriated farmstead entrance; section 4a | Design addition only; native placement/visibility pending |
 | E16 | Thornfang house humongously large against other houses; use freed space for richer courtyard/associated areas; unfinished execution; explicit owner clarification in takeover | Reduce and redraw main lodge to regional domestic scale; redistribute functions around a finished useful yard | Required follow-up to merged #820 / issue #806; not completed by the previous roof patch |
 
 **Related scope:** bridge-deck generic-shadow removal is a closely related source finding, also visible on p.7; include it with E01-E04. E16 is a mandatory scale, yard and finish correction, rather than permission to discard Thornfang's wolf identity or #820's dry homestead site and Mira/patrol continuity.
@@ -125,6 +126,20 @@ Prefer rearranging existing homestead props to adding new structures. A small le
 **Engineering boundaries:** current native art is in `greenwood-landscape.js`'s `thorn-lodge` / `thorn-rest-bay` painter and existing homestead scene handler. Preserve site/prop IDs, dry parcel, saved player-built structures, already-established road access, Thornfang/Mira physical patrol and quests. Match revised solid structures to collision where applicable; avoid invisible old oversized blockers. Reconcile both fresh and old v4 homestead scenes once without resetting the region. Keep the same usable wolf opening and fixture size when reauthoring the main silhouette.
 
 **Acceptance:** in a matched native cottage comparison, the lodge reads as a generously fitted creature home rather than an outsized landmark building; the recovered yard space visibly improves circulation and distinct domestic/work uses. Day/night Canvas/Pixi show finished joins and consistent grounding. Hero/party can approach, circulate and leave; Thornfang/Mira and save restoration remain intact. Keep issue #806 as the specific homestead source and PR #828 as this integrated correction's implementation owner.
+
+### Latest owner direction - appropriated agricultural building and Crown authority
+
+Thornfang came from elsewhere; his local residence should read as **an existing farm structure he has taken possession of and adapted**, rather than a grand house built expressly for him. This direction supersedes the purpose-built scout-lodge interpretation above and in the historical original commission. It does not identify a previous owner, invent a new eviction story or change his established origin, temporary southern den, patrol or Mira's situation.
+
+**Selected design:** a modest former granary/store barn, with weathered Greenwood timber, a low fieldstone footing, practical pitched roof and broad original loading opening now used as a wolf-accessible entrance. Retain evidence of its prior agricultural purpose: shuttered ventilation, an upper storage hatch or modest loft line, repaired loading threshold and limited old storage fittings. Use an existing broad ground-level opening, not a perched silo/granary on inaccessible high stilts. It must remain comparable in scale to other regional farm/domestic structures; changing the building's label to 'barn' cannot excuse the current oversized mass.
+
+**Adaptations reveal the new occupant:** a dry bedding alcove behind the loading opening, simple weatherproofing/low porch cover, water/food service at a yard edge, existing scout equipment grouped in a sheltered work corner, and the subordinate rest bay. Keep a recognizable original building under a small number of practical additions. No giant rebuilt manor, ornate lodge facade or miniature pet kennel. Agricultural features remain visible beside the later occupation.
+
+**Courtyard:** repurpose the former loading/threshing apron as the central circulation space; retain worn earth and modest storage traces, then compose the rest, gear and service areas around it. Reuse the space gained by reducing the building; keep the approach and broad entry visibly open. Preserve neighboring farm ownership and livestock identities; no claim they all belong to Thornfang.
+
+**E17 - Dark Crown standard:** place **one** recognizable existing `crown-banner` on a planted pole beside the approach/yard entrance, visible on first arrival, clear of the usable lane and roof silhouette. Reuse the established muted purple cloth, pale central emblem and timber pole from `visuals.js::flag(true)`; preserve its actual emblem rather than inventing heraldry. This is the general Crown standard, not the specialized `royal-flight-standard`. It signals authority exercised from an occupied farmstead, not a new garrison, royal residence, permanent original home or new combat buff. Maintain recognizable scale and natural cloth outline. No perimeter of banners or new flag animation is required.
+
+**Acceptance addition:** without labels, the scene reads as an old working agricultural structure adapted for a large wolf, with a coherent reused farmyard. Compare against local cottages and agricultural assets at the same camera; preserve usable entrance/bedding dimensions while reducing the main mass. The one Crown standard is recognizable in both renderers, grounded at its pole, does not obscure the entrance or block movement, and remains identifiable by day and under restrained night illumination. Existing finished-roof, courtyard, road, save and patrol requirements remain binding.
 
 ## 5. Defensive traps: tactical pockets, safe circulation
 
@@ -220,7 +235,7 @@ This document defines intended results and a practical order. Joel requested des
 | E - material and commerce | Ground layers and restrained rural trade staging | Meadow/woodland/farm comparison, useful vignettes and relevant cold/warm performance evidence |
 | F - integrated ready-for-review | Reconcile source/docs/assets and final candidate | Smallest applicable focused checks, build/offline/PWA consistency, reviewed native output; concise unresolved limits |
 
-Do not hold a completed independent phase for speculative later polish; do not declare the assignment complete while an E01-E16 requirement lacks evidence or a justified adequate/unchanged disposition.
+Do not hold a completed independent phase for speculative later polish; do not declare the assignment complete while an E01-E17 requirement lacks evidence or a justified adequate/unchanged disposition.
 
 ### Bounded visual review
 
@@ -244,7 +259,7 @@ Final engineering handoff must map each E ID to changed source, real evidence an
 
 ## 11. Design-stage closeout
 
-**Planned/design:** E01-E16 specified, scope reconciled, native source owners and known draft failures identified.
+**Planned/design:** E01-E17 specified, scope reconciled, native source owners and known draft failures identified.
 **Implemented this stage:** this documentation and design records only.
 **Existing runtime candidates:** remain unmerged drafts, with the mixed evidence above.
 **Tested this stage:** source/document reconciliation only; no game tests or visual candidate acceptance performed.
@@ -256,7 +271,7 @@ Final engineering handoff must map each E ID to changed source, real evidence an
 
 **Method:** reread every direct user message in all ten pages of the attached export and compare its individual requests against the controlling design, rather than accepting the previous assistant's summary. Include the current explicit homestead clarification; retain the separately recovered public-lamp request with its different provenance. Pages 4 and 10 primarily record assistant implementation/status claims, not additional owner requirements. The screenshots remain defect references, not proof that the new design works.
 
-**Finding:** every stated concern has a design response and an observable acceptance target. This audit tightened four ambiguities: the homestead-adjacent palisade is an explicit scene; Goblin shelters must be proportionate to other camp assets as well as actors; shared shadow corrections are not restricted to Greenwood; and the departure road must visibly reach the edge, not merely point toward it. The closeout's stale E01-E15 range is corrected to E01-E16.
+**Finding:** every stated concern has a design response and an observable acceptance target. This audit tightened four ambiguities: the homestead-adjacent palisade is an explicit scene; Goblin shelters must be proportionate to other camp assets as well as actors; shared shadow corrections are not restricted to Greenwood; and the departure road must visibly reach the edge, not merely point toward it. The closeout's stale E01-E15 range is corrected to E01-E17.
 
 | Export source / later clarification | Requirement checked individually | Controlling design | What must demonstrate completion during engineering |
 | --- | --- | --- | --- |
@@ -284,6 +299,8 @@ Final engineering handoff must map each E ID to changed source, real evidence an
 | Current takeover clarification | Homestead looks unfinished and poorly implemented | E16; section 4a | Finished ridge/gables/roof joins, grounded supports, coherent perspective/frontage/rails and mounted lighting |
 
 **Design-coverage verdict: PASS after these clarifications.** This means the owner's concerns are accounted for in the specification; it does not mean their implementation or visual quality has passed. Exact placements, final measured proportions, the per-site lighting/trap inventory and actual native images remain engineering deliverables under the stated designs, not silently waived work. Existing numerical art targets are designer starting points, not owner-approved measurements.
+
+**Later owner addition:** E16 now specifies an appropriated granary/store barn and reused farmyard; E17 adds one existing Dark Crown standard. These are current design requirements, superseding the purpose-built lodge interpretation. The earlier page-by-page audit remains provenance for the attached export.
 
 **Current boundary:** this request authorizes the completeness audit and design corrections only. No engineering phase is started by this audit, and no runtime, test, merge, deployment or device-verification claim is made.
 

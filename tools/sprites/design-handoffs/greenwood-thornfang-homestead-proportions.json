@@ -3,12 +3,12 @@
   "templateOnly": false,
   "status": "idea",
   "designId": "greenwood-thornfang-homestead-proportions",
-  "name": "Thornfang proportionate lodge and developed courtyard",
+  "name": "Thornfang's appropriated granary homestead and Crown standard",
   "kind": "structure",
-  "nextAction": "Engineering: implement controlling section 4a / E16 in existing PR #828; keep issue #806 synchronized. Reauthor main lodge scale, retain wolf usable opening and develop freed courtyard; capture cottage comparison and finished native day/night views.",
+  "nextAction": "Engineering in #828: implement latest section 4a / E16-E17; adapt modest granary/store barn, coherent farmyard, wolf-usable broad loading opening and one existing crown-banner. Preserve scale/finish/save/patrol requirements; capture actual native views.",
   "context": {
     "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
-    "decisionSummary": "Owner explicitly clarified in the current takeover: main house excessively large compared with other houses; reconcile scale, use gained space for courtyard and associated areas, and correct unfinished/poor execution. The specific candidate remains unseen/unaccepted.",
+    "decisionSummary": "Owner's latest direction: Thornfang came from elsewhere and has appropriated an existing granary or suitable farm structure; adapt a modest granary/store barn into his local residence, develop the freed courtyard, finish the design and add one existing Dark Crown standard to reinforce authority.",
     "decisionDate": "2026-11-05",
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/828",
     "contentDocuments": [
@@ -17,14 +17,16 @@
     "locationAndLore": "Thornfang's existing dry wolf-scout homestead in Greenwood; preserve Mira/patrol, quests and established site."
   },
   "decisions": {
-    "conceptAcceptance": "Explicit owner requirement for scale, courtyard and finish correction; no acceptance of unseen revised art.",
+    "conceptAcceptance": "Owner explicitly selected appropriated agricultural structure and proposed the Dark Crown authority standard; design records adopt both. No unseen procedural/raster appearance acceptance.",
     "proceduralDesignAcceptance": "Not established; native revised procedural references pending engineering.",
     "spriteProductionAuthorization": "Not requested in this task.",
     "generatedAppearanceAcceptance": "None.",
     "pendingCorrections": [
       "Bring lodge into regional domestic proportions without shrinking wolf opening/fixture usability",
       "Use freed space for circulation, subordinate rest bay, grouped work and domestic service areas",
-      "Finish roofs, gable/fascia, posts, thresholds, rails, perspective, grounding and lantern mount"
+      "Finish roofs, gable/fascia, posts, thresholds, rails, perspective, grounding and lantern mount",
+      "Reauthor main structure as an existing granary/store barn adapted for Thornfang, not a purpose-built lodge",
+      "Place one established crown-banner beside the farmyard approach"
     ]
   },
   "reference": {
@@ -32,6 +34,10 @@
     "ownerFilesAndBranches": [
       {
         "path": "src/prototype/greenwood-landscape.js",
+        "branch": "main"
+      },
+      {
+        "path": "src/prototype/visuals.js",
         "branch": "main"
       }
     ],
@@ -42,7 +48,9 @@
     "traitsToPreserve": [
       "Large wolf-bodied occupant and usable open bedding entrance",
       "Existing dry parcel, stable IDs, road access and Thornfang/Mira continuity",
-      "Greenwood timber/stone identity and practical mounted lighting"
+      "Greenwood timber/stone identity and practical mounted lighting",
+      "Recognizable agricultural origin and practical later wolf adaptations",
+      "Existing general Crown standard design; not royal flight insignia"
     ],
     "assetSpecificDependencies": [
       "PR #828 controlling handoff; source evidence is the inspected main baseline, not implemented new art."
@@ -50,9 +58,11 @@
   },
   "scope": {
     "catalogIds": [],
-    "verifiedRuntimeKeys": [],
+    "verifiedRuntimeKeys": [
+      "crown-banner"
+    ],
     "requiredVisibleAssets": [
-      "Thornfang proportionate lodge and developed courtyard"
+      "Thornfang's appropriated granary homestead and Crown standard"
     ],
     "reusedDesignIds": [],
     "variantRequirements": [
