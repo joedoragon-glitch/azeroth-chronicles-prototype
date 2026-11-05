@@ -133,10 +133,12 @@ const server = http.createServer((req, res) => {
       // The current new-adventure menu puts Choose Hero after difficulty and
       // Succession. Clicking the first button again only reselects Normal and
       // never starts gameplay; use the labeled navigation action instead.
-      await page
-        .locator('#modal-actions')
-        .getByRole('button', { name: phone ? 'Elegir héroe' : 'Choose Hero', exact: true })
-        .click();
+      const chooseHero = page.locator('#modal-actions button.menu-primary');
+      assert(
+        (await chooseHero.textContent()).includes(phone ? 'Elegir héroe' : 'Choose Hero'),
+        'new adventure exposes its labeled primary Choose Hero action',
+      );
+      await chooseHero.click();
       await page.locator('#modal-actions').getByRole('button').first().click();
       await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
