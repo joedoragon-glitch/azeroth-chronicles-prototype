@@ -61,12 +61,34 @@
       }),
     };
   }
-  function ribbon(points, width, { roundedSource = false } = {}) {
+  function ribbon(points, width, { roundedSource = false, subdivisions = 1 } = {}) {
+    // Low-sample Catmull–Rom interpolation rounds the natural water channels
+    // without large polygon counts in the real collision solver. Engineered
+    // gates/headraces retain straight edges.
+    let path = points;
+    if (subdivisions > 1) {
+      path = [];
+      for (let i = 0; i < points.length - 1; i++) {
+        const a = points[Math.max(i - 1, 0)],
+          b = points[i],
+          c = points[i + 1],
+          d = points[Math.min(i + 2, points.length - 1)];
+        for (let j = 0; j < subdivisions; j++) {
+          const t = j / subdivisions, t2 = t * t, t3 = t2 * t;
+          const sample = (key) =>
+            0.5 * (2 * b[key] + (c[key] - a[key]) * t +
+              (2 * a[key] - 5 * b[key] + 4 * c[key] - d[key]) * t2 +
+              (-a[key] + 3 * b[key] - 3 * c[key] + d[key]) * t3);
+          path.push({ x: sample('x'), y: sample('y') });
+        }
+      }
+      path.push(points.at(-1));
+    }
     const left = [],
       right = [];
-    for (let j = 0; j < points.length; j++) {
-      const a = points[Math.max(0, j - 1)],
-        b = points[Math.min(points.length - 1, j + 1)],
+    for (let j = 0; j < path.length; j++) {
+      const a = path[Math.max(0, j - 1)],
+        b = path[Math.min(path.length - 1, j + 1)],
         d = distance(a, b) || 1;
       const dx = (-(b.y - a.y) / d) * width,
         dy = ((b.x - a.x) / d) * width;
@@ -77,7 +99,7 @@
     // not a straight-edged blue trapezoid. Its exact polygon owns collision.
     const cap = [];
     if (roundedSource) {
-      const first = points[0], next = points[1],
+      const first = path[0], next = path[1],
         d = distance(first, next) || 1,
         tx = (next.x - first.x) / d, ty = (next.y - first.y) / d,
         nx = -ty, ny = tx;
@@ -223,8 +245,8 @@
         [930, 1090],
         [950, 1160],
       ].map(q);
-    const waters = [pond, ribbon(stream, 16, { roundedSource: true }),
-      ribbon(headrace, 12), ribbon(tailrace, 20)];
+    const waters = [pond, ribbon(stream, 16, { roundedSource: true, subdivisions: 2 }),
+      ribbon(headrace, 12), ribbon(tailrace, 20, { subdivisions: 3 })];
     R.terrain[0] = [
       { kind: 'rain-pools', wetland: true, pools: waters },
       { kind: 'water', x: 2720 * scale, y: 1320 * scale, r: 140 },
