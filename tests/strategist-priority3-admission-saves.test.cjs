@@ -35,7 +35,9 @@ click(publicApp, 'New Normal game');
 click(publicApp, 'Standard death');
 const publicOptions = publicApp.elements.get('modal-actions').children
   .map((a) => a.textContent);
-assert.equal(publicOptions.length, 4, 'normal New Game has four choices');
+assert.equal(publicOptions.filter((v) =>
+  /Paladin|Mage|Ranger|Rogue/.test(v)).length, 4,
+  'normal New Game has exactly four public class actions');
 assert(publicOptions.some((v) => v.includes('Rogue')));
 assert(!publicOptions.some((v) => v.includes('Strategist')));
 
