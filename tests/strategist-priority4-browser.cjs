@@ -47,6 +47,8 @@ const intersects = (a, b) => a && b &&
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
       await page.goto(base);
+      // A fresh browser opens the mandatory bilingual first-run chooser.
+      await require('./helpers/language-browser.cjs').selectEnglish(page);
       try {
         await page.locator('#title-new').waitFor({ state: 'visible', timeout: 15000 });
       } catch (error) {
