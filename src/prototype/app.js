@@ -7177,9 +7177,30 @@
         game?.s.mode !== 'developer' || game.hero.class !== 'strategist') return false;
     const success = game.attemptStrategistReversalCommand();
     if (success) { updateHUD(); save(); }
-    else status(language === 'es'
-      ? 'Reversión: se necesita una advertencia física admisible bajo el ogro.'
-      : 'Reversal needs a supported active physical warning beneath the Ogre.');
+    else {
+      const failure = game._strategistReversalFailure || 'no-warning';
+      const feedback = {
+        'no-warning': [
+          'Reversal needs a live, readable attack warning.',
+          'Reversión requiere una advertencia de ataque visible y activa.',
+        ],
+        late: ['Reversal was too late.', 'Demasiado tarde para Reversión.'],
+        duplicate: [
+          'This warning was already countered.',
+          'Esta advertencia ya recibió una Reversión.',
+        ],
+        outside: [
+          'Enter the actual threatened area to Reverse.',
+          'Entra en la zona realmente amenazada para usar Reversión.',
+        ],
+        blocked: [
+          'The attack cannot reach you through this obstacle.',
+          'El ataque no puede alcanzarte a través de este obstáculo.',
+        ],
+      };
+      const messages = feedback[failure] || feedback['no-warning'];
+      status(messages[language === 'es' ? 1 : 0]);
+    }
     return success;
   }
   developerReversalButton.onclick = () => {
@@ -7973,6 +7994,9 @@
     developerSummonButton.hidden = !devActive;
     developerFinisherButton.hidden = !devActive;
     developerReversalButton.hidden = !(devActive && game.hero.class === 'strategist');
+    developerReversalButton.textContent = language === 'es' ? 'REVERSIÓN' : 'REVERSAL';
+    developerReversalButton.setAttribute('aria-label',
+      language === 'es' ? 'Reversión del Estratega' : 'Strategist Reversal');
     developerCombatMonitor.hidden = !devActive;
     developerCompanionMonitor.hidden = !devActive;
     if (devActive) {
