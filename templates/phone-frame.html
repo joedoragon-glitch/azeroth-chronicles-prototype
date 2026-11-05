@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#102319">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Lord’s Problem">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <title>So I Became the Dark Lord's Problem</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles/phone-frame.css">
+</head>
+<body>
+  <!-- Both the world and the rotated iframe fill the viewport; only interface
+       controls use safe insets. Keep one live same-origin game through turns. -->
+  <div id="phone-safe-probe" aria-hidden="true"></div>
+  <iframe id="phone-game-frame" title="So I Became the Dark Lord's Problem"
+    allow="autoplay; fullscreen" scrolling="no"></iframe>
+  <script>
+    const frame = document.getElementById('phone-game-frame');
+    const safeProbe = document.getElementById('phone-safe-probe');
+    const uprightPhone = window.matchMedia('(orientation: portrait)');
+
+    function syncPhoneSafeArea() {
+      // Both pages are same-origin. This only updates inherited CSS variables;
+      // it never reloads the iframe or changes game state/input coordinates.
+      const gameRoot = frame.contentDocument?.documentElement;
+      if (!gameRoot) return;
+      const box = window.getComputedStyle(safeProbe);
+      const pixels = (value) => {
+        const n = Number.parseFloat(value);
+        return Number.isFinite(n) ? Math.max(0, Math.min(160, n)) : 0;
+      };
+      const physical = {
+        top: pixels(box.paddingTop),
+        right: pixels(box.paddingRight),
+        bottom: pixels(box.paddingBottom),
+        left: pixels(box.paddingLeft),
+      };
+      // A clockwise turn maps physical top/bottom to game left/right and
+      // physical right/left to game top/bottom. When already in landscape
+      // the physical and game edges match directly.
+      const safe = uprightPhone.matches
+        ? { top: physical.right, right: physical.bottom,
+            bottom: physical.left, left: physical.top }
+        : physical;
+      for (const edge of ['top', 'right', 'bottom', 'left'])
+        gameRoot.style.setProperty('--phone-safe-' + edge, safe[edge] + 'px');
+    }
+
+    frame.addEventListener('load', syncPhoneSafeArea);
+    window.addEventListener('resize', syncPhoneSafeArea, { passive: true });
+    window.addEventListener('orientationchange', syncPhoneSafeArea, { passive: true });
+    window.visualViewport?.addEventListener('resize', syncPhoneSafeArea, { passive: true });
+    window.addEventListener('pageshow', syncPhoneSafeArea);
+    // Load once, keeping the original diagnostic parameters and fragment.
+    frame.src = './phone-game.html' + window.location.search + window.location.hash;
+  </script>
+</body>
+</html>

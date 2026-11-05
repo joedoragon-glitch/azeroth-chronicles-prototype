@@ -8,9 +8,6 @@ const scripts = [
     'greenwood-interiors',
     'data',
     'rules',
-    // Dormant until Developer-only class admission, but browser combat must
-    // have the same truthful material resolver as Node.
-    'strategist-materials',
     'world',
     'greenwood',
     'field-onboarding',
@@ -82,9 +79,11 @@ const core = [
   'index.html',
   'prototype.html',
   'phone.html',
+  'phone-game.html',
   'styles/prototype.css',
   'styles/desktop.css',
   'styles/phone.css',
+  'styles/phone-frame.css',
   ...scripts,
   'manifest.webmanifest',
   'icons/icon-192.png',

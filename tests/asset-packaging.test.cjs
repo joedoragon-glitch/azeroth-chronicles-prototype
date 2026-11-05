@@ -30,6 +30,7 @@ try {
     'index.html',
     'prototype.html',
     'phone.html',
+    'phone-game.html',
     'legacy.html',
     'rts.html',
     'manifest.webmanifest',
