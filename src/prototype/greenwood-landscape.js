@@ -92,8 +92,8 @@
         d = distance(a, b) || 1;
       const dx = (-(b.y - a.y) / d) * width,
         dy = ((b.x - a.x) / d) * width;
-      left.push({ x: points[j].x + dx, y: points[j].y + dy });
-      right.push({ x: points[j].x - dx, y: points[j].y - dy });
+      left.push({ x: path[j].x + dx, y: path[j].y + dy });
+      right.push({ x: path[j].x - dx, y: path[j].y - dy });
     }
     // An unconnected uphill stream source should end in a soft springhead,
     // not a straight-edged blue trapezoid. Its exact polygon owns collision.
