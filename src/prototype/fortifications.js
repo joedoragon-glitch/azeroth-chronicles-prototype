@@ -18,51 +18,6 @@
       }
       return inside;
     };
-    // The reconstructed Greenwood compounds have real connected wall segments,
-    // not the older ring offsets. Derive their protection from those endpoints.
-    // A convex offset makes the 160-unit leeway perpendicular to wall edges,
-    // including corners; computed only when fortAreas refreshes its zone cache.
-    const authoredWallFootprint = (walls, leeway) => {
-      const endpoints = walls.flatMap((wall) => {
-        const line = wall.greenwoodWall;
-        return line ? [[line.a.x, line.a.y], [line.b.x, line.b.y]] : [];
-      }).filter((p) => p.every(Number.isFinite));
-      if (endpoints.length < 6) return null;
-      endpoints.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-      const unique = endpoints.filter((p, i) =>
-        !i || p[0] !== endpoints[i - 1][0] || p[1] !== endpoints[i - 1][1]);
-      const cross = (o, a, b) =>
-        (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-      const lower = [], upper = [];
-      for (const p of unique) {
-        while (lower.length > 1 && cross(lower.at(-2), lower.at(-1), p) <= 0) lower.pop();
-        lower.push(p);
-      }
-      for (let i = unique.length - 1; i >= 0; i--) {
-        const p = unique[i];
-        while (upper.length > 1 && cross(upper.at(-2), upper.at(-1), p) <= 0) upper.pop();
-        upper.push(p);
-      }
-      const hull = [...lower.slice(0, -1), ...upper.slice(0, -1)];
-      if (hull.length < 3) return null;
-      const edges = hull.map((p, i) => {
-        const next = hull[(i + 1) % hull.length],
-          dx = next[0] - p[0], dy = next[1] - p[1],
-          length = Math.hypot(dx, dy) || 1,
-          nx = dy / length, ny = -dx / length;
-        return { nx, ny, distance: nx * p[0] + ny * p[1] + leeway };
-      });
-      return hull.map((p, i) => {
-        const prev = edges[(i + edges.length - 1) % edges.length],
-          next = edges[i],
-          det = prev.nx * next.ny - prev.ny * next.nx;
-        if (Math.abs(det) < 1e-6) return p;
-        return [
-          (prev.distance * next.ny - prev.ny * next.distance) / det,
-          (prev.nx * next.distance - prev.distance * next.nx) / det,
-        ];
-      });
-    };
     // Greenwood has real connected wall segments whose endpoints differ from
     // the old ten-post creature-stronghold template. Compute its actual convex
     // exterior before applying the approved 160-unit wall-relative apron.
@@ -175,13 +130,12 @@
           // Add a 160-unit radial apron to ruin/habitat vertices, following
           // any relocated wall anchor. Per-actor eligibility remains unchanged.
           const points =
-            authoredWallFootprint(walls, cfg.outdoorLeeway) ||
-            (plan.defenseStyle === 'fort'
+            plan.defenseStyle === 'fort'
               ? outdoorRectangle(center.x - 150, center.x + 150, center.y - 150, center.y + 150)
               : ring.map(([x, y]) => {
                   const scale = 1 + cfg.outdoorLeeway / Math.hypot(x, y);
                   return [center.x + x * scale, center.y + y * scale];
-                }));
+                });
           add(plan.id, points, walls);
         }
         for (const mini of z.minis || []) {
