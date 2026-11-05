@@ -9969,9 +9969,9 @@
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (appControllerReloaded) return;
       if (hadServiceWorkerController) {
-        notePlaytestLifecycle('service-worker-controller-change');
         appReloadRequested = false;
         appControllerReloaded = true;
+        notePlaytestLifecycle('service-worker-controller-change');
         if (started && writerGuard.canWrite() && !save()) {
           appControllerReloaded = false;
           status('Saving failed. Export your run before closing.');
