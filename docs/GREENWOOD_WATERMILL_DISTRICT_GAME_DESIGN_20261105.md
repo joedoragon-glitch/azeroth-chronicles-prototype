@@ -3,7 +3,7 @@
 **Game:** So I Became the Dark Lord's Problem (SIBDLP)  
 **Date:** 5 November 2026  
 **Discipline:** environment design, architecture, landscape composition, visual affordances  
-**Status:** **Design proposal prepared and source-reconciled; not a rendered design acceptance.** This document authorizes no game implementation, asset production, test run, merge, deployment, or device-certification claim.  
+**Status:** **Engineering candidate implemented on the same draft PR #814; focused validation and native visual acceptance are in progress.** The design is not yet visually accepted or published. This document does not authorize a merge, deployment or device-verification claim.  
 **Base source read:** main@2cbdd804982624d7c303f319e953d1ff901458b2. Read current main again when engineering starts.  
 **Owning defect:** [#641 — millpond/dam/wheel hydraulic coherence](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/641).  
 **Evidence:** owner's 5 November nighttime game screenshot of the western Greenwood watermill; current mill art and Greenwood water/road layout source; approved Greenwood 50-decision register; neighboring open game-design PRs.
@@ -170,7 +170,7 @@ N / NW woodland edge
             [MAIN RIVER CONFLUENCE] -> existing regional river
 ~~~
 
-**No fake exact siting:** this is a relationship diagram. Architecture and hydraulic features are not yet proven geometrically clear of today's farm lane, 16 route lines, actual saved world objects, protected enemy homes, or player buildings. The implementation must create the *shortest valid connection* while preserving existing crossings, plot access and selected local bridge.
+**Current proposed implementation coordinates** are an engineering candidate, **not yet validated on all seeds/saved games**; independent checks still have to verify visual and collision clearance of today's farm lane, 16 route lines, actual saved world objects, protected enemy homes, or player buildings. The implementation must create the *shortest valid connection* while preserving existing crossings, plot access and selected local bridge.
 
 ### Design alternatives considered
 
@@ -249,11 +249,11 @@ A future engineer should keep E1 and E2 on a coordinated feature branch so terra
 
 ## 7. Responsibility, dependencies and status ledger
 
-**Current deliverable:** a single source-reconciled environment/game-design specification and owner-reviewable creative direction. No new experimental drawings, sprite masters, scene captures, code changes or measurements have been produced by this design document. The original screenshot establishes perceptual defects, not numerical bridge widths or world coordinates. The 52–64 bridge width and 60–70% wheel proportion are design-starting ranges, not tested or locked runtime metrics.
+**Current deliverable:** one source-reconciled design specification plus an **implemented but not yet accepted** candidate on this same draft PR. The source changes now author a shallow connected northern tributary, a local service deck/culvert, a redrawn mill, practical entrance lighting, revised water-paint order and one-time additive old-save reconciliation. Focused source and rendered scene checks are required before declaring this ready for merge. The original screenshot establishes perceptual defects, not numerical bridge widths or world coordinates. The 52–64 bridge width and 60–70% wheel proportion are design-starting ranges, not tested or locked runtime metrics.
 
 **Engineering responsibility once separately commissioned:** select the final safe channel/bridge coordinates; produce real scene artwork; implement shared water/road collision; keep legacy state safe; run focused test/build and render evidence; self-correct obvious visual errors; submit a playable candidate before claiming design acceptance.
 
-**Not yet done:** implemented geometry or art, automated tests, real rendered creative acceptance, merge, deployment and device verification. All remain unclaimed. Draft design review may proceed without requiring the owner to answer a broad set of creative questions.
+**Implemented in draft PR #814 (source changes, not yet validated):** Greenwood's new shallow headwater reaches the northern map edge; the mill service lane crosses a physically passable local timber deck; the distinct eastern farm pond and two canonical river bridges remain. The watermill is rebuilt using one consistent roof, walls, material grammar, wheel hardware and mounted doorway fixture; water paint is reconciled with the main river; a one-time marker upgrades older saved scenes. Scoped source checks and a native 150% scene-capture script have been added. **Testing and perceptual acceptance:** pending exact-head evidence and inspection. **Merged / published / device-verified:** no. Independent visual review must not be represented by merely adding a screenshot-generating script. Draft design review may proceed without requiring the owner to answer a broad set of creative questions.
 
 ### Direct references
 
@@ -264,4 +264,4 @@ A future engineer should keep E1 and E2 on a coordinated feature branch so terra
 - [Original hydraulic bug report #641](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/641)
 - [Road design #807](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/807), [botany design #808](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/808), [night design #809](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/809), [lantern design #812](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812)
 
-**Design handoff disposition:** **GO for future engineering scoping after owner design review; NOT GO for implementation, merging or publication merely because this document exists.**
+**Handoff disposition:** Engineering implementation has begun with the owner's explicit go-ahead on 5 November. **HOLD merge/publication** until the engineer has reviewed actual rendered evidence, repaired relevant failed checks, and demonstrated focused route, save and Canvas/Pixi safeguards. The owner will judge final appearance personally in the *live game* after a separately controlled merge/publication, and iteration can continue from that feedback.
