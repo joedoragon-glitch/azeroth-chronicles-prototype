@@ -3,7 +3,7 @@
 **Date:** 5 November 2026  
 **Discipline:** GAME DESIGN / ENVIRONMENTAL ART DIRECTION ONLY  
 **Region:** Greenwood Vale, the first/opening region. This document is the first-region reference standard for future distinct regional design, not an order to recolor or copy Greenwood elsewhere.  
-**Status:** Complete source-grounded **design specification and proposed engineering handoff**. Appearance is **not implemented, rendered as an accepted candidate, merged, published, or device-verified** by this work.  
+**Status:** The owner authorized **engineering on the same PR #813** on 5 November 2026. The art direction below remains the design contract; the **separate engineering implementation is now a draft candidate, not merged, published or device-verified**. See Section 13 for exact implementation and validation status.  
 **Evidence:** The owner's 5 November landscape-phone river screenshots (one closer river/stockade-side view; one wider bridge/woodland view), the owner's preceding direct observations of the mill building and channel/waterway arrangement, the current main-source visual and layout routines, the approved fifty-choice Greenwood art register, and contemporary independent Greenwood design drafts. Screenshots are user-provided observations, not pixel-registered captures; do not upload them to the public GitHub repository without separate permission.
 
 ## 0. Decision and authority
@@ -340,3 +340,26 @@ This is the **design department's selected solution**. The stages below are impl
 - PR #809 — docs/GREENWOOD_DAY_NIGHT_VISUAL_DESIGN_HANDOFF_20261105.md.
 - PR #803 — mounted lantern and fixture correction.
 - Current main src/prototype/greenwood-landscape.js, greenwood.js, rules.js, visuals.js, renderer.js; inspect exact current main again when engineering begins.
+
+## 13. Engineering on the SAME PR #813 — 5 November 2026 (active candidate, not accepted)
+
+**Owner workflow direction:** Reuse the existing PR instead of creating a new pull request per correction. Engineer substantial changes and run focused verification independently. The owner can assess the final artistic result only **in the game after an authorized merge/publication**; do not pretend a mockup, documentation or headless test is the owner's visual acceptance. Deliver a high-quality candidate without routine owner homework.
+
+**Code committed on PR #813:** 
+- `src/prototype/visuals.js`: Greenwood-only graded bank ribbons and irregular planted edge groups in place of the fixed 58-unit sawtooth along the natural river. Other regions retain their existing bank painter. River glints now follow Greenwood's local channel centerline. Greenwood's composed wetland water surfaces are painted **in coherent layers** — all rims, then all connected waters — so a later headrace/pond polygon does not cover a previous water surface with an unwanted bank stripe. Existing geography/collision geometry stays authoritative.
+- `src/prototype/greenwood-landscape.js`: repaint the actual live `greenwoodFacility: 'mill'` from one coherent timber-on-stone two-storey three-quarter structure, with a single pitched roof, wall-specific windows, loading entrance, physically associated wheel and a mounted lantern. The actual live `greenwoodFacility: 'weir'` receives a revised masonry/timber gate. No changes to camp/actor IDs, production mechanics, quest rewards or save formats.
+- `src/prototype/renderer.js`, `src/prototype/visuals.js`, `tools/webgl-pilot/pixi-scene-bridge.js`: actual nighttime mill lamp source is anchored to the same physical facade position and is shared through Canvas and Pixi's existing lighting route. Coordinate any later merge with independently active mounted-fixture PR #803.
+- `tests/greenwood-mill-river-visual.test.cjs`: a focused deterministic native render, legal bank/water relation, renderer stroke-contract and gameplay-state immutability smoke.
+- `sw.js`: generated offline asset fingerprints refreshed for the affected changed sources (without a version bump or release claim).
+
+**Safety contract:** The bank shape in collision, river barriers, crossing gaps, authored pond/headrace/tailrace polygons and site identifiers are not changed in this visual pass. River water and channel functions remain tied to the existing live Greenwood world. Any later topological remapping requires measured routes and save migration, and must not be inferred from this visual update alone. The waterwheel does not introduce new craft/Acid Bottle gameplay.
+
+**Validation state:** Source files were checked with a JavaScript parser in the engineering session. Exact-head GitHub focused CI, reproducible build and narrow native visuals tests are being reconciled. An early **older-head** PR browser workflow failed only because `sw.js` source fingerprints were stale; the correction was committed on the same draft branch. That old failure is **not** retroactively a pass. Do not call the new head tested until its actual runs succeed. No direct iPhone/browser image review or performance benchmark has been performed as of this entry.
+
+**Remaining before merge-ready:**
+1. Finish the exact-head focused native and CI/build run, investigate all relevant failures and refresh affected build outputs if needed.
+2. Inspect actual-game camera-sized before/after Greenwood river and mill screenshot evidence, daylight and night, including Canvas/Pixi placement and the upstream lantern/road/botanical branch interaction. Fix obvious architectural or water continuity failures rather than sending owner an unready prototype.
+3. Check current upstream changes and all preserved movement, crossing, v4 save/restore, renderer fallback and CPU budget boundaries.
+4. Prepare one concise owner-review handoff and request separate merge/deployment authorization; only after publishing can the owner evaluate the genuine phone experience. Do not assert the owner has accepted it in advance.
+
+**Scope:** Same draft PR #813, no additional PR or issue needed for this work, no full-suite authorization, no merge and no Pages release.
