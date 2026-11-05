@@ -340,8 +340,10 @@ console.log('PASS Cindermaw failure gates: late/outside/dead/obstructed');
 {
   const { g, boss, warning } = scene('mine');
   assert(g.attemptStrategistReversal(boss.id));
-  assert(!JSON.stringify(g.s).includes('strategistReversal'),
-    'receipts belong to unsaved WeakMap rather than campaign state');
+  assert(!Object.hasOwn(warning, 'strategistReversal'),
+    'one-use receipt is not attached to a serialized attack');
+  assert(!JSON.stringify(g.s).includes('"strategistReversal":'),
+    'receipt is not saved as a campaign field (event names may be recorded)');
   const newZone = g.zoneId;
   g.enter('archive');
   assert.notEqual(g.zoneId, newZone);
@@ -374,7 +376,7 @@ console.log('PASS Cindermaw failure gates: late/outside/dead/obstructed');
   assert(g.strategistReversalCovers(a, g.hero));
   assert(g.attemptStrategistReversal(boss.id));
   const snapshot = g.snapshot();
-  assert(!JSON.stringify(snapshot).includes('strategistReversal'));
+  assert(!JSON.stringify(snapshot).includes('"strategistReversal":'));
   const restored = C.restore(JSON.parse(JSON.stringify(snapshot)), () => 0.99);
   assert.equal(restored.hero.class, 'strategist');
   for (const e of restored.zone().enemies)
