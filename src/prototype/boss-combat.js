@@ -4,6 +4,10 @@
   function install(Campaign, { R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const originalRogueMove = Campaign.prototype.tacticalResolveRogueMove;
+    // One-use Reversal receipts belong to native warning OBJECTS, not saved
+    // enemies or global immunity. Loading a campaign creates new warnings.
+    const reversalReceipts = new WeakMap();
+    let nextReversalId = 1;
     const mobility = new WeakMap(),
       returns = new WeakMap(),
       // Hybrid ranged defense never changes saved actor fields or Rogue cadence.
@@ -2130,90 +2134,207 @@
         }
         return newlyBuilt.length;
       }
-      // Isolated fifth-class proof: a reversal belongs to ONE real attack
-      // instance, never to the boss, a global ward or every future warning.
-      // The Strategist is not admitted to the playable roster by this hook.
+      // Developer-only manual counter: the warning itself is the attack-instance
+      // key. Exclusions below are NON-ATTACKS or have no readable, spatial
+      // warning (summons, self-buffs, anonymous casts, hidden mobile casts).
+      // Boss rank, movement, charge and specialist mechanics are NOT exclusions.
       strategistReversalSupported(e, a) {
-        if (!e || !a || e.hp <= 0 || e.type !== 'boss' || a.captainSkill ||
-            a.bossHeal || a.rogueMove || a.charge || a.landing ||
-            a.sabotage || a.anonymousCast)
+        if (!e || !a || e.hp <= 0 || e.returning || this.peace ||
+            a.anonymousCast || a.mobileRogueCast || a.bossHeal ||
+            a.selfDefense || a.kind === 'summon' || a.kind === 'formation' ||
+            a.kind === 'checkerboard' || a.rogueMove && a.style === 'withdraw' ||
+            !Number.isFinite(a.total) || a.total <= 0)
           return false;
-        // Two positive native cases, not a blanket cancel of summon, grab,
-        // delayed hazards, anonymous attacks or boss multi-phase mechanics.
-        return (
-          (e.family === 'mine' && a.family === 'mine' && a.index === 0 &&
-            a.kind === 'circle' && a.arenaPatches?.length === 1) ||
-          (e.family === 'archive' && a.family === 'archive' && a.index === 1 &&
-            a.kind === 'line' && a.arenaLines?.length === 2)
-        );
+        if (a.family && a.family !== e.family &&
+            !(a.cinderDelegate && a.family === 'cindermaw'))
+          return false;
+        if (a.nightSkill === 'pounce') return false; // Cast bar only; no footprint.
+        if (a.cinderMechanic === 'delegation' || a.cinderMechanic === 'protection')
+          return false; // Friendly coordination/defense, not an incoming strike.
+        if (a.kind === 'circle' || a.kind === 'cone' || a.kind === 'sector' ||
+            a.kind === 'ring' || a.kind === 'line' || a.kind === 'volley' ||
+            a.kind === 'canister' || a.kind === 'pattern-charge')
+          return true;
+        return false;
       }
       strategistReversalCovers(a, point) {
+        if (!a || !point || !Number.isFinite(point.x) || !Number.isFinite(point.y))
+          return false;
+        const geometry = R.combatGeometry;
+        const segment = (from, to, width) =>
+          Number.isFinite(from?.x) && Number.isFinite(from?.y) &&
+          Number.isFinite(to?.x) && Number.isFinite(to?.y) &&
+          Number.isFinite(width) && width > 0 &&
+          this.distanceToSegment(point, from, to) < width;
+        const from = { x: a.fromX, y: a.fromY };
+        if (a.arenaLines)
+          return a.arenaLines.some((line) =>
+            segment({ x: line.fromX, y: line.fromY }, line, line.halfWidth));
+        if (a.kind === 'pattern-charge') {
+          const path = [from, ...(a.path || [])];
+          return path.slice(1).some((to, i) =>
+            segment(path[i], to, geometry.chargeHalfWidth));
+        }
+        if (a.kind === 'canister' || a.kind === 'volley') {
+          const spread = a.kind === 'canister'
+            ? Array.from({ length: 9 }, (_, i) => (i - 4) * 0.115)
+            : a.tracking ? [0] : [-0.22, 0, 0.22];
+          const range = a.kind === 'canister' ? a.radius
+            : a.tracking ? a.shotSpeed * a.shotLife
+              : 650 * R.balance.enemySpecialReachMultiplier;
+          const width = a.kind === 'canister' ? geometry.canisterHalfWidth : 22;
+          return Number.isFinite(range) && range > 0 && spread.some((offset) => {
+            const angle = a.angle + offset;
+            return segment(from, {
+              x: from.x + Math.cos(angle) * range,
+              y: from.y + Math.sin(angle) * range,
+            }, width);
+          });
+        }
+        if (a.kind === 'line') {
+          const offsets = a.count === 2 ? [-85, 85] : [0];
+          return offsets.some((offset) => {
+            const side = a.angle + Math.PI / 2;
+            const shift = { x: Math.cos(side) * offset, y: Math.sin(side) * offset };
+            return segment(
+              { x: from.x + shift.x, y: from.y + shift.y },
+              { x: a.x + shift.x, y: a.y + shift.y },
+              a.charge
+                ? a.dreadMechanic === 'rush' ? a.radius : geometry.chargeHalfWidth
+                : a.count === 2 ? geometry.dualLineHalfWidth : geometry.lineHalfWidth,
+            );
+          });
+        }
+        if (a.kind === 'cone' || a.kind === 'sector') {
+          const angle = Math.atan2(point.y - a.y, point.x - a.x);
+          const halfAngle = a.angleDegrees
+            ? (a.angleDegrees * Math.PI) / 360
+            : a.kind === 'sector' ? 0.65 : 1.1;
+          return Number.isFinite(a.radius) && a.radius > 0 &&
+            dist(point, a) < a.radius &&
+            (a.angleDegrees === 360 ||
+              Math.cos(angle - a.angle) > Math.cos(halfAngle));
+        }
+        if (a.kind === 'ring') {
+          if (a.cinderMechanic === 'cordon') {
+            const distance = dist(point, a);
+            const start = a.initialRadius, finish = a.finalRadius;
+            const angle = Math.atan2(point.y - a.y, point.x - a.x);
+            const gap = Math.abs(Math.atan2(
+              Math.sin(angle - a.gapAngle), Math.cos(angle - a.gapAngle)));
+            return Number.isFinite(start) && Number.isFinite(finish) &&
+              distance >= Math.min(start, finish) - a.width &&
+              distance <= Math.max(start, finish) + a.width &&
+              gap >= a.gapWidth / 2;
+          }
+          const radius = a.slowOnly
+            ? a.waveSpeed * a.waveLife
+            : geometry.ringSpeed * geometry.ringLife *
+              R.bossCadence.areaRangeMultiplier;
+          return Number.isFinite(radius) && radius > 0 &&
+            dist(point, from) <= radius + geometry.ringHalfWidth;
+        }
         if (a.kind === 'circle')
           return this.attackPatches(a).some((p) =>
             Number.isFinite(p.radius) && p.radius > 0 && dist(point, p) < p.radius);
-        if (a.kind === 'line')
-          return a.arenaLines.some((line) =>
-            Number.isFinite(line.halfWidth) && line.halfWidth > 0 &&
-            this.distanceToSegment(point, { x: line.fromX, y: line.fromY }, line) <
-              line.halfWidth);
         return false;
       }
-      // Explicit input destination for a later left-hand Field Order. There is
-      // deliberately NO shared invulnerability timer or arbitrary combo cap:
-      // a player must meet every separate attack's live footprint and deadline.
+      strategistReversalReachable(e, a, h) {
+        if (this.blocked(h.x, h.y, this.zoneId, 12)) return false;
+        // Ground marks resolve across scenery; moving bodies and traveling
+        // projectiles cannot be countered from behind an impassable barrier.
+        if (a.charge || a.cinderDelegate || a.cinderMechanic === 'distraint')
+          return this.clearSegment(e, h, 12);
+        if (a.cargo || a.kind === 'volley' || a.kind === 'canister')
+          return this.line(e, h);
+        return true;
+      }
       attemptStrategistReversal(enemyId) {
         const h = this.hero;
-        if (this.s.mode !== 'developer' ||
-            h.class !== 'strategist' || h.hp <= 0 || !(h.skills?.[0] > 0) ||
-            this.peace || this.s.challenge?.pending || this.s.challenge?.gameOver ||
+        this._strategistReversalFailure = 'no-warning';
+        if (this.s.mode !== 'developer' || h.class !== 'strategist' ||
+            h.hp <= 0 || !(h.skills?.[0] > 0) || this.peace ||
+            this.s.challenge?.pending || this.s.challenge?.gameOver ||
             this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld)
           return false;
         const e = this.zone().enemies.find((unit) => unit.id === enemyId);
         const a = e?.telegraph;
-        if (!this.strategistReversalSupported(e, a) || a.strategistReversal ||
-            !Number.isFinite(a.timer) || !Number.isFinite(a.total) ||
-            a.timer <= 0 || a.timer > a.total ||
-            !this.strategistReversalCovers(a, h) ||
-            !this.line(h, e) || this.attackResetProtected(e))
+        if (!this.strategistReversalSupported(e, a) ||
+            this.attackResetProtected(e))
           return false;
-        // This only marks the CURRENT warning. The later real enemy release
-        // will atomically consume it, protecting every normal recipient.
-        a.strategistReversal = { rank: h.skills[0] };
+        if (!Number.isFinite(a.timer) || a.timer <= 0 || a.timer > a.total) {
+          this._strategistReversalFailure = 'late';
+          return false;
+        }
+        if (reversalReceipts.has(a)) {
+          this._strategistReversalFailure = 'duplicate';
+          return false;
+        }
+        if (!this.strategistReversalCovers(a, h)) {
+          this._strategistReversalFailure = 'outside';
+          return false;
+        }
+        if (!this.strategistReversalReachable(e, a, h)) {
+          this._strategistReversalFailure = 'blocked';
+          return false;
+        }
+        const receipt = {
+          id: nextReversalId++, source: e.id, zone: this.zoneId,
+          campaign: this, hero: h, rank: h.skills[0],
+        };
+        reversalReceipts.set(a, receipt);
+        this._strategistReversalFailure = null;
         this.event('strategistReversalReadied', {
           actor: 'hero', source: e.id, family: e.family, index: a.index,
-          x: h.x, y: h.y, remaining: a.timer,
+          attackInstance: receipt.id, x: h.x, y: h.y, remaining: a.timer,
         });
         return true;
       }
-      // A separate manual order, never an eighth or auto-triggered skill.
-      // Prefer a selected *eligible* warning, otherwise the nearest deadline.
+      // Source selection only orders input candidates. Every successful
+      // attempt still needs its OWN current warning and true footprint.
       attemptStrategistReversalCommand() {
-        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist') return false;
+        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist')
+          return false;
         const selected = this.selectedHeroTarget?.();
-        const warnings = this.zone().enemies.filter(e =>
-          this.strategistReversalSupported(e, e.telegraph) &&
-          e.telegraph?.timer > 0 && e.telegraph?.total >= e.telegraph.timer &&
-          !e.telegraph.strategistReversal
+        const warnings = this.zone().enemies.filter((e) =>
+          this.strategistReversalSupported(e, e.telegraph),
         ).sort((a, b) =>
           (Number(b.id === selected?.id) - Number(a.id === selected?.id)) ||
-          a.telegraph.timer - b.telegraph.timer || String(a.id).localeCompare(String(b.id)));
-        for (const enemy of warnings)
+          a.telegraph.timer - b.telegraph.timer ||
+          String(a.id).localeCompare(String(b.id)));
+        let reason = 'no-warning';
+        for (const enemy of warnings) {
           if (this.attemptStrategistReversal(enemy.id)) return true;
+          if (reason === 'no-warning')
+            reason = this._strategistReversalFailure || reason;
+        }
+        this._strategistReversalFailure = reason;
         return false;
       }
       strategistResolveReversal(e, a) {
-        if (!a?.strategistReversal || !this.strategistReversalSupported(e, a))
+        const receipt = a && reversalReceipts.get(a);
+        if (!receipt || !this.strategistReversalSupported(e, a)) return false;
+        // Unsaved identity, source, zone and hero checks also reject restores,
+        // reused enemy IDs, changed campaigns and replaced warnings.
+        reversalReceipts.delete(a);
+        if (receipt.campaign !== this || receipt.hero !== this.hero ||
+            receipt.source !== e.id || receipt.zone !== this.zoneId ||
+            this.s.mode !== 'developer' || this.hero.class !== 'strategist' ||
+            this.hero.hp <= 0 || e.telegraph !== a)
           return false;
-        const rank = a.strategistReversal.rank;
-        delete a.strategistReversal;
-        // Rank affects the enemy's own force returned to them. An accurate
-        // early counter already prevents its entire ONE warned release.
-        const incoming = this.weakenedEnemyDamage(e) * (a.coefficient || 1);
-        const reflectedDamage = Math.max(1, incoming * (0.35 + 0.10 * (rank - 1)));
-        const reflected = this.damage(e, reflectedDamage, 'hero', { area: true });
+        // Status-only or administrative marks never invent a reflected strike.
+        const statusOnly = a.sabotage || a.royalTaxation || a.slowOnly ||
+          !(Number(a.coefficient ?? 1) > 0);
+        const incoming = statusOnly ? 0 :
+          Math.max(0, this.weakenedEnemyDamage(e) * (a.coefficient ?? 1));
+        const damageAttempt = incoming *
+          (0.35 + 0.10 * (receipt.rank - 1));
+        const reflected = damageAttempt > 0
+          ? this.damage(e, damageAttempt, 'hero', { area: true }) : 0;
         this.event('strategistReversal', {
           actor: 'hero', source: e.id, family: e.family, index: a.index,
-          reflected, damageAttempt: reflectedDamage, x: a.x, y: a.y,
+          attackInstance: receipt.id, reflected, damageAttempt,
+          x: a.x, y: a.y,
         });
         return true;
       }
