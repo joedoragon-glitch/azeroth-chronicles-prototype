@@ -1629,7 +1629,11 @@
               ...project(p),
               kind,
               id: p.id,
-              ...(p.structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
+              ...(p.structure === 'roadside-lantern'
+                ? { fixture: 'post' }
+                : p.structure === 'vale-working-mill'
+                  ? { fixture: 'mill' }
+                  : {}),
             });
         }
         for (const b of z.buildings)
