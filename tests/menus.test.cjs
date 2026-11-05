@@ -133,4 +133,21 @@ assert.equal(
   'reading specialist menus cannot mutate the campaign',
 );
 console.log('PASS Smith and Alchemist transaction categories remain available and read-only until chosen');
+const engineeringBarracks = game.zone().buildings.find((b) => b.id === 'design-audit-barracks');
+if (engineeringBarracks) {
+  engineeringBarracks.full = true;
+  catalog.barracksMenu(engineeringBarracks, back);
+  assert.equal(opened.title, 'Full Barracks');
+  assert.equal(opened.view, 'barracks-hub');
+  assert.deepEqual(
+    opened.actions.slice(0, 4).map((entry) => entry.label),
+    ['Company', 'Recovery', 'Training', 'Operations'],
+    'Full Barracks must retain the same four service destinations as Basic',
+  );
+  assert(
+    !opened.actions.some((entry) => entry.label.includes('Upgrade to Full Barracks')),
+    'Full Barracks cannot offer its Basic upgrade a second time',
+  );
+}
+
 

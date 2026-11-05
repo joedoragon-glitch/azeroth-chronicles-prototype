@@ -281,10 +281,37 @@ function contrast(item) {
           assert.equal(trackCount, columns, view + ': peer choice vs reading layout');
           await frame.locator('#close-button').tap();
         }
+        // Engineering edge case: shorter landscape and a long NPC catalog.
+        // The real phone frame still owns safe-area mapping and Back handling.
+        await page.setViewportSize({ width: 740, height: 340 });
+        await frame.waitForFunction(() => innerWidth >= 700 && innerHeight <= 350);
+        await frame.evaluate(() => {
+          const items = Array.from({ length: 20 }, (_, i) => ({
+            label: 'Service ' + (i + 1),
+            detail: 'Crowns, requirements and consequences stay readable.',
+            action() {},
+          }));
+          window.Prototype.openMenu(
+            'Specialist services',
+            'Choose a service; opening the catalog never purchases anything.',
+            items,
+            window.Prototype.closeMenu,
+            { view: 'npc-service-catalog' },
+          );
+        });
+        const shortLandscapeFit = await assertDialogGeometry(frame, 'short landscape specialist');
+        assert(
+          shortLandscapeFit.content.scrollHeight > shortLandscapeFit.content.clientHeight,
+          'long service lists must scroll instead of being clipped',
+        );
+        await frame.locator('#modal-content').evaluate((node) => { node.scrollTop = node.scrollHeight; });
+        const shortLandscapeScrolled = await assertDialogGeometry(frame, 'short landscape after scroll');
+        await frame.locator('#close-button').tap();
+        await page.setViewportSize({ width: 800, height: 375 });
         assert.deepEqual(errors, []);
         fs.writeFileSync(
           path.join(output, language + '-measurements.json'),
-          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit, familyFit }, null, 2),
+          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit, familyFit, shortLandscapeFit, shortLandscapeScrolled }, null, 2),
         );
         console.log(
           'PASS ' +
