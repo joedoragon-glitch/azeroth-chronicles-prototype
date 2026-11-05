@@ -1,0 +1,150 @@
+name: Historical test reconciliation — oldest-first pilot
+
+# Dedicated, non-deploying owner-authorized audit. This is deliberately NOT the normal
+# focused CI workflow and does not launch the full-game/browser test matrix.
+on:
+  push:
+    branches: [audit/chronological-test-reconciliation-20261029]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chronological-test-reconciliation
+  cancel-in-progress: false
+
+jobs:
+  oldest-node-batch:
+    name: Oldest existing Node tests — batch 7
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    env:
+      AUDIT_LANE: node
+      AUDIT_BATCH: '7'
+      AUDIT_SIZE: '12'
+    steps:
+      - name: Checkout with full test-path history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Select Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Prepare production-equivalent pinned offline assets
+        run: node scripts/build.cjs --check
+      - name: Recheck original service-worker suite after required build preparation
+        run: node tests/service-worker.test.cjs
+        continue-on-error: true
+      - name: Inventory existing tests and execute bounded oldest-first batch
+        shell: bash
+        run: |
+          node <<'NODE'
+          'use strict';
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const { execFileSync, spawnSync } = require('node:child_process');
+          const outputDir = 'test-results/historical-reconciliation';
+          fs.mkdirSync(outputDir, { recursive: true });
+          const exec = (...args) => execFileSync('git', args, {
+            encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
+          }).trim();
+          const sha = exec('rev-parse', 'HEAD');
+          const base = exec('rev-parse', 'HEAD^');
+          const history = exec('log', '--reverse', '--no-renames', '--diff-filter=A',
+            '--format=@@%H%x09%cI', '--name-only', 'HEAD', '--', 'tests/');
+          const first = new Map();
+          let commit = null;
+          let date = null;
+          for (const rawLine of history.split(/\r?\n/)) {
+            const line = rawLine.trim();
+            const marker = /^@@([a-f0-9]{40})\s+(\S+)$/.exec(line);
+            if (marker) {
+              commit = marker[1];
+              date = marker[2];
+            } else if (commit && /^tests\/[^/]+\.test\.cjs$/.test(line) && !first.has(line)) {
+              first.set(line, { introducedAt: date, introducedCommit: commit,
+                historyOrder: first.size });
+            }
+          }
+          const entries = fs.readdirSync('tests')
+            .filter(name => name.endsWith('.test.cjs'))
+            .map(name => {
+              const file = 'tests/' + name;
+              const recorded = first.get(file);
+              return { file, lane: name.includes('browser') ? 'browser' : 'node',
+                introducedAt: recorded?.introducedAt ?? null,
+                introducedCommit: recorded?.introducedCommit ?? null,
+                historyOrder: recorded?.historyOrder ?? null };
+            })
+            .sort((a, b) => {
+              if (!a.introducedAt) return b.introducedAt ? 1 : a.file.localeCompare(b.file);
+              if (!b.introducedAt) return -1;
+              return a.introducedAt.localeCompare(b.introducedAt)
+                || a.historyOrder - b.historyOrder || a.file.localeCompare(b.file);
+            });
+          const lane = process.env.AUDIT_LANE || 'node';
+          const batch = Number(process.env.AUDIT_BATCH || 0);
+          const size = Number(process.env.AUDIT_SIZE || 12);
+          if (!['node', 'browser'].includes(lane)
+              || !Number.isInteger(batch) || batch < 0
+              || !Number.isInteger(size) || size < 1 || size > 20) {
+            throw new Error('Invalid bounded batch selection');
+          }
+          const lanes = { node: entries.filter(e => e.lane === 'node'),
+            browser: entries.filter(e => e.lane === 'browser') };
+          const selection = lanes[lane].slice(batch * size, (batch + 1) * size);
+          fs.writeFileSync(path.join(outputDir, 'inventory.json'),
+            JSON.stringify({ head: sha, historyMethod: 'first Git path addition',
+              testCount: entries.length, nodeCount: lanes.node.length,
+              browserCount: lanes.browser.length,
+              unknownHistory: entries.filter(e => !e.introducedAt).map(e => e.file),
+              entries }, null, 2));
+          console.log('Current HEAD:', sha, 'tests:', entries.length,
+            'Node:', lanes.node.length, 'browser:', lanes.browser.length);
+          console.log('Oldest-first lane:', lane, 'batch:', batch,
+            'size:', size, 'selected:', selection.length);
+          if (!selection.length) throw new Error('No tests selected: examine inventory');
+          const results = [];
+          for (const test of selection) {
+            console.log('RUN', test.file, 'introduced', test.introducedAt,
+              test.introducedCommit);
+            const began = Date.now();
+            const r = spawnSync(process.execPath, [test.file], {
+              encoding: 'utf8', timeout: 150000,
+              maxBuffer: 32 * 1024 * 1024,
+            });
+            const passed = r.status === 0 && !r.signal && !r.error;
+            const record = { ...test, passed, exitStatus: r.status,
+              signal: r.signal, error: r.error?.message || null,
+              durationMs: Date.now() - began };
+            results.push(record);
+            const logName = path.basename(test.file) + '.log';
+            const transcript = 'HEAD: ' + sha + '\nTEST: ' + test.file
+              + '\nINTRODUCED: ' + test.introducedAt + ' ' + test.introducedCommit
+              + '\nSTATUS: ' + (passed ? 'PASS' : 'FAIL') + '\n\n'
+              + (r.stdout || '') + '\n' + (r.stderr || '')
+              + '\n' + (r.error?.stack || '');
+            fs.writeFileSync(path.join(outputDir, logName), transcript);
+            console.log(passed ? 'PASS' : 'FAIL', test.file, record.durationMs + 'ms');
+            if (!passed) console.error(transcript.slice(-12000));
+          }
+          const failed = results.filter(r => !r.passed);
+          fs.writeFileSync(path.join(outputDir, 'batch-report.json'),
+            JSON.stringify({ head: sha, base, lane, batch, size,
+              selected: results.length, failed: failed.length, results }, null, 2));
+          console.log('AUDIT RESULT:', results.length - failed.length,
+            'passed,', failed.length, 'failed. Failure diagnosis is not automatic.');
+          if (failed.length) process.exitCode = 1;
+          NODE
+      - name: Preserve inventory and original test output, including failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-reconciliation-node-batch-7
+          path: test-results/historical-reconciliation/
+          if-no-files-found: warn
+          retention-days: 30
