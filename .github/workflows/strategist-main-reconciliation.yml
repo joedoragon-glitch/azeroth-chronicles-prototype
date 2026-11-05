@@ -41,6 +41,16 @@ jobs:
           node tests/persistence-safety.test.cjs
           node tests/save-recovery-checkpoints.test.cjs
           node tests/rogue-bard-live-playtest-admission.test.cjs
+      - name: Priority 4 original Campaign, menus, controls and presentation checks
+        run: |
+          node --check src/prototype/app.js
+          node --check src/prototype/combat.js
+          node --check src/prototype/renderer.js
+          node --check src/prototype/menus.js
+          node --check src/prototype/skill-reference.js
+          node tests/strategist-priority4-interaction.test.cjs
+          node tests/skill-reference.test.cjs
+          node tests/platform-runtime.test.cjs
       - name: Generate draft phone and desktop entrypoints without deployment
         run: npm run build
       - name: Published phone viewport and packaging regressions against generated draft
