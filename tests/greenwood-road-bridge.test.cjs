@@ -15,14 +15,14 @@ assert.equal(z.greenwoodRoutes[6].points.length, 5, 'south east footpath exits d
 assert.equal(z.greenwoodRoutes[7].points.length, 3, 'Treasury spur has no duplicated cart segment');
 
 const gaps = Campaign.rules.barriers[0].gaps;
-assert.deepEqual(gaps.map(([a, b]) => Math.round(b - a)), [100, 80]);
+assert.deepEqual(gaps.map(([a, b]) => Math.round(b - a)), [100, 56]);
 for (const [i, bridge] of z.bridgeApproaches.entries()) {
-  assert.equal(bridge.width, [100, 80][i], 'physical and documented deck widths agree');
+  assert.equal(bridge.width, [100, 56][i], 'physical and documented deck widths agree');
   const [lo, hi] = gaps[i];
   const mid = (lo + hi) / 2;
-  const nearestGrid = Math.round(mid / 50) * 50;
+  const nearestGrid = Math.round((mid - 25) / 50) * 50 + 25;
   assert(nearestGrid > lo + 15 && nearestGrid < hi - 15,
-    'existing 50-unit route grid retains a radius-15 crossing row');
+    'real 25+50n route grid retains a radius-15 crossing row');
   assert(g.clearSegment(bridge.west, bridge.east, 15), 'bridge centerline traversable');
   assert(g.clearSegment(bridge.east, bridge.west, 15), 'reverse bridge centerline traversable');
   assert(g.route(bridge.west, bridge.east).length, 'native solver crosses west to east');
