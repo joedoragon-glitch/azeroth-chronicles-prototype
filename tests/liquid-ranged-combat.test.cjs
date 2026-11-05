@@ -3,10 +3,14 @@
 // in-range basic ranged fire. Physical world geometry and projectiles stay native.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 function scene(zone, from, to) {
   const game = new Campaign('normal', 'ranger', () => 0.9);
   game.enter(zone);
+  // The actual Greenwood tutorial prevents unprovoked enemy aggro until the
+  // first hero kill. Complete that native gate before testing normal sentries.
+  if (zone === 'vale') completeFieldOpening(game);
   const z = game.zone();
   z.props = [];
   z.enemies = [];
