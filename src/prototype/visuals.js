@@ -179,6 +179,45 @@
   // A larger original-master export is required before an existing registered
   // sprite can use the world-size increase. Low-resolution runtime PNGs must
   // never be stretched to impersonate a high-density replacement.
+  // Lighting must address the actual glass already painted on a fixture.
+  // All coordinates below belong to existing procedural building/prop art;
+  // renderers supply only the projected world point. No save fields or
+  // nighttime-only surrogate windows are needed.
+  function lightingFixtures(e, point) {
+    if (!e || !point || e.interactionOnly) return [];
+    const structure = String(e.structure || '');
+    let sites = [];
+    let scale = 1;
+    if (structure === 'roadside-lantern') sites = [[0, -41.5, 1]];
+    else if (structure === 'grave-lamp') sites = [[0, -21.5, 1]];
+    else if (buildingContours.has(structure) || structure === 'house' || structure === 'workshop') {
+      scale = featureScale({ ...e, renderKind: 'prop' });
+      sites = /workshop|smithy|forgehouse/.test(structure)
+        ? [[-27, -12, 1], [27, -12, 1]]
+        : [[-25, -12, 1]];
+    } else if (e.kind === 'rest') {
+      scale = featureScale({ ...e, renderKind: 'npc' });
+      sites = [[-25, -12, 1]];
+    } else if (['quests', 'supplier', 'recruiter'].includes(e.kind)) {
+      sites = [[29, -20, 1]];
+    } else if (Number(e.progress) >= 4 && e.full === true && !structure) {
+      scale = featureScale({ ...e, renderKind: 'building' });
+      // The Full Barracks already paints this very small working lamp.
+      sites = [[-59, -8.4, 0.45]];
+    }
+    if (!sites.length) return [];
+    if (Number.isFinite(e.visualScale) && e.visualScale > 0 && scale > 1)
+      scale = e.visualScale;
+    return sites.map(([x, y, glassScale], i) => ({
+      x: point.x + x * scale,
+      y: point.y + y * scale,
+      kind: 'lantern',
+      fixture: 'glass',
+      scale: glassScale * scale,
+      id: String(e.id || e.kind || structure) + ':lamp-' + i,
+    }));
+  }
+
   function assetSafeScale(e, entry) {
     const target = featureScale(e);
     if (target <= 1 || !entry) return target;
@@ -8543,6 +8582,18 @@
         '#a6a28a',
       );
     }
+    // A compact iron sconce, attached to the facade rather than the roof.
+    // The same lens center is returned by lightingFixtures() for night paint.
+    function wallSconce(x, y) {
+      line([[x - 5, y - 5], [x - 5, y - 2], [x - 2, y - 2]], '#4b4e44', 1.7);
+      oval(x - 5, y - 5, 1.2, 1.2, '#b6a17b');
+      poly([[x - 5, y - 5], [x + 5, y - 5], [x + 4, y - 3], [x - 4, y - 3]], '#51594f');
+      poly([[x - 3.5, y - 3], [x + 3.5, y - 3], [x + 2.8, y + 4], [x - 2.8, y + 4]], '#887554');
+      poly([[x - 2.5, y - 2], [x + 2.5, y - 2], [x + 2, y + 3], [x - 2, y + 3]], '#a59a76');
+      line([[x, y - 3], [x, y + 3]], '#5e5948', 0.85);
+      line([[x - 3.5, y + 4], [x + 3.5, y + 4]], '#454d46', 2);
+      poly([[x - 4.5, y - 5], [x, y - 8], [x + 4.5, y - 5]], '#62685d');
+    }
     function craftedHouse(kind = 'house') {
       const r = kind.startsWith('vale')
         ? 0
@@ -8703,6 +8754,9 @@
           2,
         );
       }
+      // One entry sconce for cottages; two on workshop support posts.
+      // Windows remain as painted glass, not night-long roof floodlights.
+      for (const x of workshop ? [-27, 27] : [-25]) wallSconce(x, -12);
     }
     function craftedFence(palisade = false) {
       for (const [x, h] of [
@@ -8974,7 +9028,6 @@
             'crown-ash-house',
           ][region],
         );
-        craftAt(-27, -1, 0.5, () => lantern());
         return true;
       }
       regionalServiceFooting();
@@ -9027,6 +9080,8 @@
         }
       }
       craftedRoof(34, -31, -48, region);
+      // The service-stall lamp stays mounted on its existing right post.
+      wallSconce(29, -20);
       if (region === 4)
         poly(
           [
@@ -11366,34 +11421,15 @@
     }
     function lantern(x = 0, y = -20) {
       timber([x, y + 33], [x, y + 2], 3);
-      softRect(x - 7, y - 5, 14, 18, '#5d655b', 2);
-      softRect(x - 4, y - 2, 8, 11, '#dbbf75', 1);
-      line(
-        [
-          [x, y - 2],
-          [x, y + 9],
-        ],
-        '#777b65',
-        1,
-      );
-      poly(
-        [
-          [x - 9, y - 5],
-          [x, y - 11],
-          [x + 9, y - 5],
-        ],
-        '#7e8375',
-      );
-      line(
-        [
-          [x - 3, y - 11],
-          [x - 3, y - 16],
-          [x + 4, y - 16],
-        ],
-        '#666d61',
-        1.8,
-      );
-      fillOval(x - 1, y + 2, 2, 3, '#ffe2a0', 0.7);
+      // Recessed, tapered glass with a visible metal cage; daytime glass is
+      // unlit, while nighttime flame is painted inside this exact silhouette.
+      poly([[x - 7, y - 5], [x + 7, y - 5], [x + 6, y + 11], [x - 6, y + 11]], '#4b574e');
+      poly([[x - 4, y - 2], [x + 4, y - 2], [x + 3.5, y + 9], [x - 3.5, y + 9]], '#86785c');
+      line([[x, y - 2], [x, y + 9]], '#515749', 1);
+      line([[x - 6, y + 11], [x + 6, y + 11]], '#62685b', 2);
+      poly([[x - 9, y - 5], [x, y - 11], [x + 9, y - 5]], '#7e8375');
+      line([[x - 3, y - 11], [x - 3, y - 16], [x + 4, y - 16]], '#666d61', 1.8);
+      line([[x - 2.2, y - 1], [x - 1.2, y + 4]], '#b0a084', 0.6);
     }
     function pool(wet = true) {
       shaped(wet ? '#6c8378' : '#85765a', () => {
@@ -20455,49 +20491,30 @@
   }
 
   function drawLightFixtures(ctx, renderedLights) {
+    // Only illuminate authored, physically mounted glass. Drawing a second
+    // square/window/fixture here created the former rooftop and streetlamp
+    // stickers. This tiny inner flame retains the existing iron frame.
     for (const p of renderedLights) {
-      if (p.kind === 'window') {
-        ctx.fillStyle = '#483d31';
-        ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
-        ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
-        ctx.fillStyle = '#f2cb81';
-        ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
-        ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
-        ctx.strokeStyle = '#8d6543';
-        ctx.lineWidth = 1.3;
-        ctx.beginPath();
-        for (const x of [p.x - 9, p.x + 12]) {
-          ctx.moveTo(x, p.y - 42);
-          ctx.lineTo(x, p.y - 32);
-        }
-        ctx.stroke();
-      } else if (p.kind === 'lantern' && p.fixture === 'post') {
-        // Illuminate the glass already painted on the actual post. Do not
-        // manufacture a second floating service lantern beside it.
-        ctx.fillStyle = '#f4c57e';
-        ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
-      } else if (p.kind === 'lantern') {
-        // A modest iron hook and glazed hanging lamp by the service stand.
-        const x = p.x + 19,
-          y = p.y - 22;
-        ctx.strokeStyle = '#817c69';
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.moveTo(x - 7, y + 17);
-        ctx.lineTo(x - 7, y - 14);
-        ctx.lineTo(x + 1, y - 14);
-        ctx.lineTo(x + 1, y - 9);
-        ctx.stroke();
-        ctx.fillStyle = '#574b40';
-        ctx.fillRect(x - 6, y - 9, 14, 4);
-        ctx.fillStyle = '#f4c57e';
-        ctx.fillRect(x - 5, y - 5, 12, 12);
-        ctx.strokeStyle = '#635a4b';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x - 5, y - 5, 12, 12);
-        ctx.fillStyle = '#7a6450';
-        ctx.fillRect(x - 6, y + 7, 14, 3);
-      }
+      if (p.kind !== 'lantern' || p.fixture !== 'glass') continue;
+      const scale = Math.max(0.2, Math.min(2.5, Number(p.scale) || 1));
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.scale(scale, scale);
+      ctx.fillStyle = 'rgba(244,174,89,.28)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 3.3, 4.1, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#eeba6b';
+      ctx.beginPath();
+      ctx.moveTo(0, -3.8);
+      ctx.bezierCurveTo(-3.1, -0.8, -2, 3, 0, 3.2);
+      ctx.bezierCurveTo(2.2, 2.4, 3, -0.8, 0, -3.8);
+      ctx.fill();
+      ctx.fillStyle = '#fff0b5';
+      ctx.beginPath();
+      ctx.ellipse(0, 0.6, 1.2, 2.1, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
   }
   function atmosphere(ctx, canvas, region = 0, opts = {}) {
@@ -20558,7 +20575,7 @@
           window = p.kind === 'window',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
           radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
-          y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
+          y = carried || p.fixture === 'glass' ? p.y : p.y - (window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
         glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
@@ -20684,6 +20701,7 @@
     bridges,
     atmosphere,
     drawLightFixtures,
+    lightingFixtures,
     atmosphereMotes,
     allyBodyKind,
     enemyBodyKind,
