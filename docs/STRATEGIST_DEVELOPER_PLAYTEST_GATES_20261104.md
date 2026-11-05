@@ -1,5 +1,7 @@
 # Strategist Developer Playtest — coordinated seven-gate integration ledger
 
+**Latest owner ruling and new-chat execution handoff:** [STRATEGIST_REVERSAL_LOCKDOWN_HANDOFF_20261104.md](STRATEGIST_REVERSAL_LOCKDOWN_HANDOFF_20261104.md). This newer ruling supersedes any suggestion that Cindermaw's Distraint bypasses Dodge or other ordinary Strategist defenses: **Distraint alone is Reversal-ineligible; all other mechanics operate normally.** Start with Reversal lockdown, then focused combat validation, then developer-only saves/isolation.
+
 **Game:** So I Became the Dark Lord's Problem (SIBDLP). **Status:** draft engineering only, **4 November 2026**. This ledger is the coordinated integration draft for developer-only Stage 1A, not a declaration that the class is playable, accepted or released. Original v3.2 skill design in PR #697 / `docs/STRATEGIST_STAGE1_GAME_DESIGN_20261102.md` remains the gameplay specification. The existing `?developer=1` toggle is a **link toggle, not authentication**.
 
 ## Independent new-chat resume — authoritative current checkpoint (4 November 2026)
