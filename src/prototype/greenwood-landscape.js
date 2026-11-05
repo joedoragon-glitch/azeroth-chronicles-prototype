@@ -180,9 +180,11 @@
       }
     const b = R.barriers[0];
     b.bounds = [1500 * scale, 1800 * scale, 0, size];
+    // The actual v2 authored river gaps ARE the walkable bridge widths.
+    // Deck painting and pathfinding share this table: no invisible water floor.
     b.gaps = [
-      [a.north.y - 90, a.north.y + 90],
-      [a.south.y - 65, a.south.y + 65],
+      [a.north.y - 50, a.north.y + 50],
+      [a.south.y - 28, a.south.y + 28],
     ];
     const pond = ellipse(a.pond.x, a.pond.y, 140, 120),
       headrace = [
