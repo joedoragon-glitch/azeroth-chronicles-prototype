@@ -129,7 +129,7 @@ for (const language of ['en', 'es']) {
     'save slots precede backup actions, which precede recovery/storage controls',
   );
   const recoveryAction = save.find((entry) =>
-    entry.textContent.startsWith(es ? 'Intentar recuperación' : 'Try recovery'),
+    entry.textContent.startsWith(es ? 'Intentar recuperar' : 'Try recovery'),
   );
   assert(recoveryAction?.className?.includes('menu-wide'), 'recovery is not a peer save slot');
 
