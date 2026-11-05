@@ -4148,6 +4148,7 @@
       'Saved Games & Backups',
       '',
       [
+        menuControls.section(es ? 'Tus partidas' : 'Your adventures'),
         ...modes.map((mode) => {
           const candidate = persistence.load(mode);
           return action(
@@ -4162,6 +4163,7 @@
             !candidate,
           );
         }),
+        menuControls.section(es ? 'Copias y recuperación' : 'Backups & recovery'),
         action(
           'Try recovery',
           () => {
@@ -4224,72 +4226,215 @@
   }
   function titleHelpMenu() {
     const es = language === 'es';
-    const choice = (en, spanish) => es ? spanish : en;
-    const topic = (nameEn, nameEs, bodyEn, bodyEs) =>
-      openMenu(choice(nameEn, nameEs), choice(bodyEn, bodyEs), [],
-        titleHelpMenu, { view: 'title-help-reading' });
-    const item = (nameEn, nameEs, onChoose, detailEn, detailEs) =>
-      action(choice(nameEn, nameEs), onChoose, choice(detailEn, detailEs));
+    const say = (english, spanish) => (es ? spanish : english);
+    const read = (enTitle, esTitle, enBody, esBody, back = titleHelpMenu) =>
+      openMenu(say(enTitle, esTitle), say(enBody, esBody), [], back, {
+        view: 'title-help-reading',
+      });
+    const link = (en, spanish, onChoose, enDetail = '', esDetail = '') =>
+      action(say(en, spanish), onChoose, say(enDetail, esDetail));
+
+    const advancedDiagnostics = () =>
+      openMenu(
+        say('Advanced diagnostics', 'Diagnósticos avanzados'),
+        say(
+          'Only needed when investigating a problem.',
+          'Solo se necesitan para investigar un problema.',
+        ),
+        [
+          link(
+            'Renderer profiling',
+            'Medir el renderizado',
+            () =>
+              read(
+                'Renderer profiling',
+                'Medir el renderizado',
+                'To investigate a slowdown, open Settings → Screen and performance → Show performance details → Start renderer profiling. Return to the game, reproduce the slowdown, then stop profiling and choose Export playtest report. The measurements indicate CPU work and slow frames; they do not measure actual displayed FPS. Keep profiling off during normal play.',
+                'Para investigar una pausa, abre Ajustes → Pantalla y rendimiento → Mostrar detalles de rendimiento → Iniciar medición del renderizado. Vuelve al juego, reproduce la pausa y luego detén la medición y exporta el informe. Los datos indican trabajo de CPU y fotogramas lentos; no miden directamente los fotogramas mostrados. Deja la medición desactivada al jugar normalmente.',
+                advancedDiagnostics,
+              ),
+            'Record slow frames when requested.',
+            'Registra fotogramas lentos cuando haga falta.',
+          ),
+          link(
+            'Navigation profiling',
+            'Medir la navegación',
+            () =>
+              read(
+                'Navigation profiling',
+                'Medir la navegación',
+                'Navigation profiling records selected movement and route-finding work. Find it under Settings → Screen and performance → Show performance details. Stop the recording after the problem, then export a playtest report. It is not needed for normal gameplay.',
+                'La medición de navegación registra parte del trabajo de movimiento y búsqueda de rutas. Está en Ajustes → Pantalla y rendimiento → Mostrar detalles de rendimiento. Detén la medición tras el problema y exporta un informe. No se necesita para jugar normalmente.',
+                advancedDiagnostics,
+              ),
+          ),
+        ],
+        troubleshooting,
+        { view: 'title-help' },
+      );
+
+    const troubleshooting = () =>
+      openMenu(
+        say('Troubleshooting & reports', 'Problemas e informes'),
+        say(
+          'Simple steps first. Technical tools are optional.',
+          'Primero los pasos sencillos. Las herramientas técnicas son opcionales.',
+        ),
+        [
+          link(
+            'Report a problem',
+            'Informar de un problema',
+            () =>
+              read(
+                'Report a problem',
+                'Informar de un problema',
+                'Describe what you were doing, the region, your hero class and what happened. A screenshot can be enough to begin. You can export a local JSON playtest report from Settings → Screen and performance. Reports are not sent automatically: review them before sharing, because they can include game and device details. Never post private save backups publicly unless you intend to share your campaign.',
+                'Explica qué hacías, la región, la clase y qué ocurrió. Una captura puede bastar para empezar. Puedes exportar un informe JSON desde Ajustes → Pantalla y rendimiento. Los informes no se envían automáticamente: revísalos antes de compartirlos, porque pueden incluir datos del juego y del dispositivo. No publiques copias privadas de tus partidas sin querer compartirlas.',
+                troubleshooting,
+              ),
+            'Screenshots and playtest reports.',
+            'Capturas e informes de prueba.',
+          ),
+          link(
+            'Graphics troubleshooting',
+            'Resolver problemas gráficos',
+            () =>
+              read(
+                'Graphics troubleshooting',
+                'Resolver problemas gráficos',
+                'PixiJS WebGL2 normally draws the world with your graphics processor. Canvas 2D is a compatible backup; both use the same saves. If play is sluggish, try Auto optimization or Canvas 2D in Settings → Screen and performance. Rendering resolution is another available choice, but lowering it is optional and reduces sharpness. Change one setting at a time to judge the result; performance cannot be guaranteed on every device.',
+                'PixiJS WebGL2 suele dibujar el mundo con el procesador gráfico. Canvas 2D es la alternativa compatible; ambos usan las mismas partidas. Si el juego va lento, prueba Optimización automática o Canvas 2D en Ajustes → Pantalla y rendimiento. También puedes cambiar la resolución, aunque reducirla es opcional y pierde nitidez. Cambia una opción cada vez; no se garantiza la fluidez en todos los dispositivos.',
+                troubleshooting,
+              ),
+          ),
+          link(
+            'Advanced diagnostics',
+            'Diagnósticos avanzados',
+            advancedDiagnostics,
+            'Optional performance recording tools.',
+            'Herramientas opcionales de medición.',
+          ),
+        ],
+        titleHelpMenu,
+        { view: 'title-help' },
+      );
+
+    const about = () =>
+      openMenu(
+        say('About, version & credits', 'Acerca de, versión y créditos'),
+        '',
+        [
+          link(
+            'Installed version',
+            'Versión instalada',
+            () =>
+              read(
+                'Version and development',
+                'Versión y desarrollo',
+                'Installed build: ' +
+                  PrototypeBuild.version +
+                  '\\n\\nVersion 0.9.2 is the current functional-completion goal, not a promise that future features are already installed or that publication has a fixed date.',
+                'Versión instalada: ' +
+                  PrototypeBuild.version +
+                  '\\n\\nLa versión 0.9.2 es el objetivo actual de completar funciones esenciales; no significa que otras funciones ya estén instaladas ni que exista una fecha de publicación prometida.',
+                about,
+              ),
+          ),
+          link(
+            'Credits and contact',
+            'Créditos y contacto',
+            () =>
+              openMenu(
+                say('Credits and contact', 'Créditos y contacto'),
+                say(
+                  'Created by Joel (Nomura). Contact the creator at joedoragon@gmail.com or through the Nomura profile on Foros Cuba.',
+                  'Creado por Joel (Nomura). Contacta al creador en joedoragon@gmail.com o mediante el perfil de Nomura en Foros Cuba.',
+                ),
+                [
+                  link(
+                    'Email the creator',
+                    'Escribir al creador',
+                    () => {
+                      window.location.href = 'mailto:joedoragon@gmail.com';
+                    },
+                    'joedoragon@gmail.com',
+                    'joedoragon@gmail.com',
+                  ),
+                  link(
+                    'Visit Nomura on Foros Cuba',
+                    'Visitar a Nomura en Foros Cuba',
+                    () =>
+                      window.open('https://fcuba.net/members/282-nomura', '_blank', 'noopener,noreferrer'),
+                    'Open the public creator profile.',
+                    'Abrir el perfil público del creador.',
+                  ),
+                ],
+                about,
+                { view: 'title-credits' },
+              ),
+          ),
+        ],
+        titleHelpMenu,
+        { view: 'title-help' },
+      );
+
     openMenu(
       'Help & Credits',
       '',
       [
-        item('How to play', 'Cómo jugar', () => topic(
-          'How to play', 'Cómo jugar',
-          'Choose a Paladin, Mage, Ranger or Rogue and explore Greenwood Vale. Follow your Quest journal, travel through marked routes, rescue specialists and grow your companion party.\n\nOn a phone, use the joystick or tap reachable ground. Tap a skill for its normal form; hold to prepare its charged form. Use Target and Recall to manage fights and companions. Your Skill journal explains each learned ability.\n\nFor layout, touch, movement and keyboard changes, go to Settings → Controls. Help explains how to play; controls are customized in Settings.',
-          'Elige Paladín, Mago, Explorador o Pícara y explora Greenwood Vale. Sigue el Diario de misiones, recorre las rutas señaladas, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca o toca terreno accesible. Toca una habilidad para usarla normalmente; mantén pulsado para preparar la versión cargada. Usa Objetivo y Reagrupar para dirigir los combates. El Diario de habilidades explica cada técnica.\n\nPara ajustar los controles táctiles, el movimiento o el teclado, entra en Ajustes → Controles.',
-        ), 'Movement, skills, quests and companions.',
-          'Movimiento, habilidades, misiones y compañeros.'),
-        item('Reporting problems', 'Informar de problemas', () => topic(
-          'Reporting problems', 'Informar de problemas',
-          'If something behaves unexpectedly, describe what you were doing, the region, your class, the device and what happened. A screenshot is often enough to begin investigating.\n\nIn Screen and performance → Diagnostics, choose Export playtest report. The downloaded JSON file records game and performance diagnostics that can help identify failures. It is not sent automatically: you decide when and whom to share it with. Review it first because it can contain gameplay and device details.\n\nContact the creator through Foros Cuba. Do not post private save backups publicly unless you intend to share your campaign.',
-          'Si algo falla, explica qué hacías, la región, tu clase, el dispositivo y qué ocurrió. Una captura de pantalla suele bastar para iniciar la investigación.\n\nEn Pantalla y rendimiento → Diagnósticos, elige Exportar informe de prueba. El archivo JSON descargado contiene datos del juego y de rendimiento que ayudan a encontrar fallos. No se envía automáticamente: tú decides cuándo y con quién compartirlo. Revísalo porque puede contener datos de la partida y del dispositivo.\n\nPuedes contactar al creador en Foros Cuba. No publiques copias privadas de partidas sin querer compartirlas.',
-        ), 'Screenshots, bug details and playtest reports.',
-          'Capturas, fallos e informes de prueba.'),
-        item('Renderer profiling', 'Medir el renderizado', () => topic(
-          'Renderer profiling', 'Medir el renderizado',
-          'To investigate a slowdown, open Settings → Screen and performance → Show performance details → Start renderer profiling. Close the menu, play through the problem, then return to Stop renderer profiling and Export playtest report.\n\nProfiling records bounded timing and graphics activity, including slow frames. These measurements help developers identify which stage may be expensive. They are not a direct measurement of GPU completion or the actual frames shown by your phone.\n\nNavigation profiling is a separate option for investigating crowded movement and pathfinding. Leave profiling off during ordinary play unless you are diagnosing a problem.',
-          'Para investigar una pausa, abre Ajustes → Pantalla y rendimiento → Mostrar detalles de rendimiento → Iniciar medición del renderizado. Cierra el menú, reproduce el problema y vuelve para detener la medición y exportar el informe de prueba.\n\nLa medición guarda tiempos y actividad gráfica limitados, incluidos fotogramas lentos. Ayuda a identificar qué parte consume recursos, pero no mide directamente cuándo termina la GPU ni los fotogramas reales de la pantalla.\n\nLa medición de navegación sirve para investigar el movimiento y las rutas con muchos personajes. Déjala desactivada durante el juego normal.',
-        ), 'When to record slow frames and export diagnostics.',
-          'Cómo registrar pausas y exportar diagnósticos.'),
-        item('Graphics and performance', 'Gráficos y rendimiento', () => topic(
-          'Graphics and performance', 'Gráficos y rendimiento',
-          'PixiJS WebGL2 is the main graphics renderer: it draws the world using the graphics processor where supported. Canvas 2D remains a backup for compatibility, troubleshooting and recovery if WebGL2 fails. Both share the same gameplay and saves.\n\nThe game uses prepared artwork, graphics caching, adaptive frame skipping, automatic resolution choices and emergency protection to reduce interruptions. These mechanisms can lower work during busy scenes; they cannot guarantee smooth performance on every device.\n\nIf play becomes sluggish, try Auto optimization, a lower rendering resolution, or Canvas 2D. Keep the phone cool and avoid other demanding apps. Change one setting at a time to see whether it helps.',
-          'PixiJS WebGL2 es el renderizador principal: dibuja el mundo con el procesador gráfico cuando está disponible. Canvas 2D sigue como respaldo por compatibilidad y para recuperarse de fallos de WebGL2. Ambos usan el mismo juego y las mismas partidas.\n\nEl juego prepara dibujos, reutiliza gráficos, omite algunos fotogramas cuando hace falta, ajusta la resolución y dispone de protección de emergencia. Estas medidas reducen trabajo en escenas complejas, pero no garantizan fluidez en todos los dispositivos.\n\nSi el juego va lento, prueba Optimización automática, una resolución menor o Canvas 2D. Evita que el teléfono se caliente demasiado y cierra otras aplicaciones exigentes. Cambia una opción cada vez.',
-        ), 'Why PixiJS and Canvas coexist; practical tips.',
-          'Por qué conviven PixiJS y Canvas; consejos útiles.'),
-        item('Updates and saved games', 'Actualizaciones y partidas', () => topic(
-          'Updates and saved games', 'Actualizaciones y partidas',
-          'The game checks for updates when it starts, before the main menu. A fully downloaded update can be applied during startup; an offline launch uses the installed game. If an update becomes available during play, an Install update prompt can appear so gameplay is not silently interrupted.\n\nCampaigns are saved on this device in your browser. Normal and Nightmare use separate slots. To export, import or recover a campaign, return to the Main Menu and open Saved Games & Backups. An exported JSON backup kept outside the browser is important: clearing browser data, reinstalling or losing the device can remove local saves.\n\nYour language and display preferences are separate from campaign save files.',
-          'El juego busca actualizaciones al iniciar, antes del menú principal. Puede aplicar una actualización descargada; sin conexión utiliza la versión instalada. Si aparece una actualización durante la partida, verás una opción para instalarla sin interrumpir el juego silenciosamente.\n\nLas partidas se guardan en este dispositivo, dentro del navegador. Normal y Nightmare tienen espacios distintos. Para exportar, importar o recuperar una partida, vuelve al Menú principal y abre Partidas y copias de seguridad. Conserva una copia JSON fuera del navegador: borrar datos, reinstalar o perder el dispositivo puede eliminar partidas locales.\n\nEl idioma y las preferencias de pantalla se guardan por separado de las partidas.',
-        ), 'Automatic updates, local saves and safe backups.',
-          'Actualizaciones automáticas y copias seguras.'),
-        item('Version and development', 'Versión y desarrollo', () => topic(
-          'Version and development', 'Versión y desarrollo',
-          'Installed game build: ' + PrototypeBuild.version + '\n\nThe current development goal is version 0.9.2: functional completion of essential gameplay and reliability before further polish. Work on additional systems may continue separately; being under development does not mean a feature is already in this installed build.\n\nArtwork, sound, balance and optional improvements continue over time. There is no promised date for the next publication. Your playtest observations help decide which issues matter first.',
-          'Versión instalada: ' + PrototypeBuild.version + '\n\nEl objetivo actual es la versión 0.9.2: completar la funcionalidad esencial y la fiabilidad antes de seguir puliendo. Otros sistemas pueden desarrollarse aparte; eso no significa que ya estén en esta versión instalada.\n\nEl arte, el sonido, el equilibrio y las mejoras opcionales avanzan con el tiempo. No hay una fecha de publicación prometida. Tus observaciones ayudan a decidir qué problemas atender primero.',
-        ), 'Your installed build and the next milestone.',
-          'Tu versión instalada y el próximo objetivo.'),
-        item('Credits and contact', 'Créditos y contacto', () => {
-          openMenu(
-            choice('Credits and contact', 'Créditos y contacto'),
-            choice(
-              "Created by Joel (Nomura).\n\nI don't use social media. The best way to reach me is by email or directly through Foros Cuba. My public email is joedoragon@gmail.com. You can also contact me directly through my Foros Cuba profile.\n\nForos Cuba: https://fcuba.net\nProfile: https://fcuba.net/members/282-nomura",
-              'Creado por Joel (Nomura).\n\nNo uso redes sociales. La mejor manera de contactarme es por correo electrónico o directamente en Foros Cuba. Mi correo público es joedoragon@gmail.com. También puedes escribirme directamente mediante mi perfil de Foros Cuba.\n\nForos Cuba: https://fcuba.net\nPerfil: https://fcuba.net/members/282-nomura',
+        link(
+          'Quick Start',
+          'Primeros pasos',
+          () =>
+            read(
+              'Quick Start',
+              'Primeros pasos',
+              'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\\n\\nOn a phone, move with the joystick or tap reachable ground. Visit the Adventure menu for the map and quests. You can change touch and keyboard controls in Settings.',
+              'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un héroe y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\\n\\nEn el teléfono, usa la palanca o toca terreno accesible. El menú Aventura ofrece el mapa y las misiones. Puedes ajustar los controles táctiles y las teclas en Ajustes.',
             ),
-            [
-              item('Email the creator', 'Escribir al creador',
-                () => { window.location.href = 'mailto:joedoragon@gmail.com'; },
-                'joedoragon@gmail.com', 'joedoragon@gmail.com'),
-              item('Visit Nomura on Foros Cuba', 'Visitar a Nomura en Foros Cuba',
-                () => window.open('https://fcuba.net/members/282-nomura', '_blank', 'noopener,noreferrer'),
-                'Open the creator’s public forum profile.', 'Abrir el perfil público del creador.'),
-            ],
-            titleHelpMenu,
-            { view: 'title-credits' },
-          );
-        }, 'Creator, forum and contact details.',
-          'Creador, foro y formas de contacto.'),
+          'Your goal and first steps.',
+          'Tu objetivo y tus primeros pasos.',
+        ),
+        link(
+          'Combat & companions',
+          'Combate y compañeros',
+          () =>
+            read(
+              'Combat & companions',
+              'Combate y compañeros',
+              'Tap a skill for its normal form; hold and release to use its charged form. Target changes or locks an enemy. Recall brings companions back. Basic attacks can happen automatically, separately from the other skill buttons.\\n\\nThe Skill journal explains learned abilities and the Adventure menu opens your quests, map and character.',
+              'Toca una habilidad para usarla normalmente; mantén y suelta para usar la versión cargada. Objetivo cambia o fija un enemigo. Reagrupar hace volver a los compañeros. Los ataques básicos pueden ejecutarse automáticamente, aparte de los otros botones.\\n\\nEl Diario de habilidades explica las técnicas aprendidas, y el menú Aventura permite abrir misiones, mapa y personaje.',
+            ),
+          'Movement, skills, targeting and party.',
+          'Movimiento, habilidades, objetivo y grupo.',
+        ),
+        link(
+          'Saved games & updates',
+          'Partidas y actualizaciones',
+          () =>
+            read(
+              'Saved games & updates',
+              'Partidas y actualizaciones',
+              'Normal and Nightmare have separate saves stored in this browser. Saved Games & Backups on the Main Menu lets you export, import or recover them. Keep an exported backup outside the browser: clearing site data, reinstalling or losing the device can remove local saves.\\n\\nThe game checks for updates when it starts and can run offline from its installed cache. Ready updates can be offered during play instead of interrupting it.',
+              'Normal y Pesadilla guardan partidas distintas en este navegador. Partidas y copias de seguridad, en el menú principal, permite exportarlas, importarlas o recuperarlas. Conserva una copia fuera del navegador: borrar los datos, reinstalar o perder el dispositivo puede eliminar las partidas.\\n\\nEl juego busca actualizaciones al iniciar y puede ejecutarse sin conexión desde la copia instalada. Las actualizaciones listas pueden ofrecerse durante el juego sin interrumpirlo.',
+            ),
+          'Local saves, backups and offline play.',
+          'Partidas locales, copias y juego sin conexión.',
+        ),
+        link(
+          'Troubleshooting & reports',
+          'Problemas e informes',
+          troubleshooting,
+          'Get help or report a problem.',
+          'Obtén ayuda o informa de un fallo.',
+        ),
+        link(
+          'About, version & credits',
+          'Acerca de, versión y créditos',
+          about,
+          'Installed build and creator contact.',
+          'Versión instalada y contacto del creador.',
+        ),
       ],
       showTitleScreen,
       { view: 'title-help' },
@@ -5274,7 +5419,9 @@
     }
     openMenu(
       'Screen and performance',
-      'Adjust everything here without leaving this screen.',
+      language === 'es'
+        ? 'Elige cómo se ve y funciona el juego. Los diagnósticos son opcionales.'
+        : 'Choose how the game looks and runs. Advanced diagnostics are optional.',
       items,
       back,
     );
@@ -5282,7 +5429,7 @@
   function systemMenu() {
     openMenu(
       'Game and settings',
-      '',
+      language === 'es' ? 'Opciones de juego y dispositivo.' : 'Game and device options.',
       [
         ...(!runningAsApp() && platform.mode === 'phone'
           ? [action('Install on phone', installApp, 'Add the game to the home screen')]
