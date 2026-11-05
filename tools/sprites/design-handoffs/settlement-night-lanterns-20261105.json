@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "status": "integrated",
+  "designId": "settlement-night-lanterns-20261105",
+  "name": "Greenwood settlement lanterns and night lighting",
+  "kind": "decoration / building-attached light",
+  "nextAction": "Owner reviews lantern design live on the published game and sends any aesthetic adjustments; engineering iterates on concrete observations without new setup or pre-release image approvals.",
+  "context": {
+    "originConversation": "5 November 2026 SIBDLP chat; conversation URL unavailable; owner supplied 3 in-game nighttime screenshots and explicitly requested independent game-designer audit before engineering.",
+    "decisionSummary": "Owner rejects roof-mounted glowing rectangles and overlaid rectangular post glass, wants believable, attractive entrance and street lanterns; wants the refuge lit after dark, without houses/workshops appearing fully active all night. Independent audit identified additional risks from draft PR #803 and specified corrected artistic choices. Later owner authorization explicitly makes in-game postmerge live viewing the artistic acceptance; a standalone sprite/mockup approval round is not required.",
+    "decisionDate": "2026-11-05",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/821",
+    "contentDocuments": [
+      "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md",
+      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812"
+    ],
+    "locationAndLore": "Millhaven Refuge, adjacent Millhaven cottages/workshops, streetlight posts and Orchard Hamlet in the first region; preserve existing service identities, path/door access and accepted other-region scenes."
+  },
+  "decisions": {
+    "conceptAcceptance": "Original lamp defect and roles were explicitly approved for autonomous engineering improvement; final illustrated appearance intentionally remains subject to post-publication live review.",
+    "proceduralDesignAcceptance": "Engineering candidate #821 follows the documented art direction. Final creative approval is explicitly reserved for the owner's post-release live gameplay review.",
+    "spriteProductionAuthorization": "None in this design-only stage; do not generate/replace raster sprites.",
+    "generatedAppearanceAcceptance": "None. No new generated images.",
+    "pendingCorrections": [
+      "Owner will judge actual in-game lighting aesthetic after published merge; further changes follow normal visual iteration.",
+      "Keep regional distinctions, quiet cottage windows, single nighttime workshop security lamp, actual service fixtures and true glass alignment protected."
+    ]
+  },
+  "reference": {
+    "sourceCommit": "14a14134556d094e42434aa6ae5c3638aeb067f0",
+    "ownerFilesAndBranches": [
+      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/821",
+      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/803",
+      "src/prototype/visuals.js::craftedHouse / wallSconce / lantern / drawLightFixtures",
+      "src/prototype/renderer.js::nightLightKind / nightSources",
+      "src/prototype/pixi-experimental.js::syncAtmosphere",
+      "tools/webgl-pilot/pixi-scene-bridge.js::syncLightFixtures"
+    ],
+    "exactEntityState": null,
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md"
+    ],
+    "traitsToPreserve": [
+      "Previously owner-approved roadside-lantern silhouette, glass panes, metal rim, hook, weathered timber grain, original count and glow footprint.",
+      "One meaningful refuge entrance light visibly on at night, remaining dark cottage/windows and closed-workshop work areas, coherent door/facade orientation.",
+      "Night climate and local warm/cool contrast, Canvas/Pixi parity, no runtime state or save changes.",
+      "Distinct Roadside Lantern, Refuge Entrance, Cottage Entry, Workshop Exterior and genuine working-service fixtures; no pasted rectangles."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "tools/sprites/design-handoffs/approved-art-decoration-roadside-lantern.json",
+        "role": "Previously approved protected post identity and finished look; preserve rather than regenerate blindly"
+      },
+      {
+        "path": "docs/DESIGN_TO_SPRITE_WORKFLOW.md",
+        "role": "Procedural-to-sprite handoff and true appearance approval"
+      },
+      {
+        "path": "docs/GREENWOOD_VALE_PIEDMONT_REGIONAL_IDENTITY_DESIGN_BRIEF_20261028.md",
+        "role": "Existing Greenwood land-use and service hierarchy"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "structure:roadside-lantern",
+      "structure:vale-cottage",
+      "structure:vale-workshop",
+      "npc:rest (Millhaven Refuge)",
+      "actual night-use service fixtures"
+    ],
+    "reusedDesignIds": [
+      "approved-art-decoration-roadside-lantern"
+    ],
+    "variantRequirements": [
+      "street post",
+      "refuge front lantern",
+      "Greenwood cottage doorway sconce",
+      "closed workshop access light",
+      "other regions protected pending site-specific review"
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Canonical physical fixture geometry and glass"
+      },
+      {
+        "owner": "src/prototype/renderer.js",
+        "reason": "Canvas scene light sources must match real visible fixtures"
+      },
+      {
+        "owner": "src/prototype/pixi-experimental.js / tools/webgl-pilot/pixi-scene-bridge.js",
+        "reason": "Pixi compositing parity and true glass anchors after zoom/occlusion"
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "No new animation clips or perpetual flicker proposed; existing daylight progression determines glow strength.",
+    "gameplayStates": [
+      "day unlit glass",
+      "dusk emerging warm core",
+      "night lit service/street; quiet homes",
+      "closed-workshop off-duty light",
+      "dawn fade"
+    ],
+    "directions": [],
+    "pivotContract": "Keep world entity anchor and visible fixture glass center consistent across Canvas/Pixi zoom; no world/saved offsets.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": "58a34e441208f3d83992adda9daf19ff81a3d111",
+    "releaseEvidence": "PR #821 merged; main hosted GitHub Pages workflow #41997921617 SUCCESS for exact merge commit 58a34e441208f3d83992adda9daf19ff81a3d111. Focused PR-head native fixture test, Canvas/Pixi regression and PWA checks passed. Physical iPhone and owner artistic acceptance not yet claimed; paired CPU run #41997077296 was in progress at this writing. Paired CPU #41997077296 subsequently completed SUCCESS with GO on measured cases and zero reported problems/warnings."
+  }
+}
