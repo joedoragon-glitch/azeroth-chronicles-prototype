@@ -1269,108 +1269,298 @@
       ctx.stroke();
     };
     if (e.greenwoodFacility === 'mill') {
+      // One timber-on-stone industrial building with a single coherent
+      // three-quarter projection. The old overlapping roof/wall rectangles
+      // looked like multiple unrelated houses sharing a wheel.
+      ctx.fillStyle = '#17291e66';
+      ctx.beginPath();
+      ctx.ellipse(2, 16, 86, 20, -0.08, 0, Math.PI * 2);
+      ctx.fill();
+      // Two masonry foundation faces meet at the same front corner.
       poly(
         [
-          [-62, 7],
-          [-64, -88],
-          [8, -111],
-          [69, -87],
-          [69, -4],
-          [0, 18],
+          [-68, -32],
+          [0, -9],
+          [0, 20],
+          [-68, -3],
         ],
-        '#725940',
+        '#a5a18b',
       );
       poly(
         [
-          [-64, -88],
-          [0, -66],
-          [69, -87],
-          [7, -112],
+          [0, -9],
+          [69, -32],
+          [69, -3],
+          [0, 20],
         ],
-        '#a98b5d',
+        '#7a8275',
+      );
+      for (let row = 0; row < 3; row++) {
+        const rise = row * 8;
+        line([-67, -27 + rise], [-1, -5 + rise], '#626e64', 1.2);
+        line([1, -5 + rise], [68, -27 + rise], '#515d56', 1.1);
+        for (let j = 0; j < 4; j++) {
+          const f = (j + (row % 2) * 0.5) / 4;
+          line(
+            [-67 + 66 * f, -27 + rise + 22 * f],
+            [-67 + 66 * f, -20 + rise + 22 * f],
+            '#6e7769',
+            0.7,
+          );
+        }
+      }
+      // Timber walls have different sun/shade values but identical construction.
+      poly(
+        [
+          [-65, -98],
+          [0, -76],
+          [0, -9],
+          [-65, -31],
+        ],
+        '#b79b6b',
       );
       poly(
         [
-          [-78, -86],
-          [-5, -143],
-          [82, -104],
-          [5, -56],
+          [0, -76],
+          [67, -98],
+          [67, -31],
+          [0, -9],
         ],
-        '#624332',
+        '#927651',
+      );
+      // Vertical planking follows each wall plane, not world-aligned decals.
+      for (let j = 1; j < 9; j++) {
+        const f = j / 9,
+          x = -65 + 65 * f,
+          top = -98 + 22 * f,
+          foot = -31 + 22 * f;
+        line([x, top + 3], [x, foot - 2], j % 3 ? '#927b55' : '#c9b082', 0.9);
+      }
+      for (let j = 1; j < 8; j++) {
+        const f = j / 8,
+          x = 67 * f,
+          top = -76 - 22 * f,
+          foot = -9 - 22 * f;
+        line([x, top + 3], [x, foot - 2], j % 3 ? '#725a3d' : '#af8f63', 0.8);
+      }
+      // Shared corner posts and two level courses prove load continuity.
+      for (const [a, b] of [
+        [[-64, -99], [-64, -31]],
+        [[0, -77], [0, -9]],
+        [[67, -99], [67, -31]],
+        [[-32, -88], [-32, -20]],
+        [[34, -87], [34, -20]],
+      ])
+        line(a, b, '#624b32', 5);
+      for (const [a, b] of [
+        [[-65, -62], [0, -40]],
+        [[0, -40], [67, -62]],
+        [[-65, -32], [0, -10]],
+        [[0, -10], [67, -32]],
+      ])
+        line(a, b, '#664e34', 4);
+      line([-62, -96], [-1, -75], '#e0c797', 1.5);
+      line([2, -76], [65, -97], '#b5986a', 1.2);
+      // Dry-side loading door is recessed into the left wall plane.
+      poly(
+        [
+          [-42, -66],
+          [-19, -58],
+          [-19, -16],
+          [-42, -24],
+        ],
+        '#4c4233',
       );
       poly(
         [
-          [-78, -86],
-          [-5, -143],
-          [6, -56],
+          [-39, -63],
+          [-22, -57],
+          [-22, -19],
+          [-39, -25],
         ],
-        '#a46e45',
+        '#786143',
       );
+      line([-31, -60], [-31, -22], '#3e382f', 1.1);
+      line([-41, -65], [-18, -57], '#d2b386', 2);
+      line([-42, -67], [-42, -23], '#5a4935', 2);
+      line([-19, -57], [-19, -15], '#5a4935', 2);
+      ctx.fillStyle = '#d4bc86';
+      ctx.beginPath();
+      ctx.arc(-27, -35, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+      // Windows are projected in the orientation of their actual walls.
       poly(
         [
-          [6, -56],
-          [82, -104],
-          [82, -96],
-          [6, -48],
+          [-57, -82],
+          [-44, -78],
+          [-44, -64],
+          [-57, -68],
         ],
-        '#443a2c',
+        '#304239',
       );
-      for (let j = 0; j < 7; j++) line([-62, -76 + j * 11], [3, -54 + j * 10], '#ba9b67', 2);
-      for (const x of [-56, -7, 58]) line([x, -67], [x, 5], '#463c2b', 5);
-      poly(
-        [
-          [-4, -31],
-          [18, -37],
-          [18, 10],
-          [-4, 16],
-        ],
-        '#282f26',
-      );
+      line([-57, -82], [-44, -78], '#e2c18a', 2);
+      line([-57, -69], [-44, -65], '#6b5035', 2);
+      line([-50, -80], [-50, -66], '#ae9469', 1.5);
       for (const [x, y] of [
-        [-38, -56],
-        [32, -64],
+        [18, -77],
+        [47, -86],
       ]) {
         poly(
           [
             [x, y],
-            [x + 15, y - 5],
-            [x + 15, y + 15],
-            [x, y + 20],
+            [x + 14, y - 5],
+            [x + 14, y + 13],
+            [x, y + 18],
           ],
-          '#293f35',
+          '#2d4037',
         );
-        line([x + 7, y - 2], [x + 7, y + 17], '#b3a578', 2);
+        line([x, y], [x + 14, y - 5], '#cead79', 2);
+        line([x + 7, y - 2], [x + 7, y + 15], '#b59c71', 1.3);
+        line([x, y + 17], [x + 14, y + 12], '#634f39', 2);
       }
-      // Wheel root matches the shared world-space head/tailrace junction:
-      // (-90,+15) world = (-79.8,-20.25) screen relative to this body.
-      const wx = -79.8,
-        wy = -56.25;
-      ctx.strokeStyle = '#453c2d';
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.ellipse(wx, wy, 23, 36, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.strokeStyle = '#ba9c66';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      for (let j = 0; j < 12; j++) {
-        const a = (j * Math.PI) / 6;
-        line([wx, wy], [wx + Math.cos(a) * 23, wy + Math.sin(a) * 36], '#b49a68', 3);
-      }
-      for (const dy of [-14, 0, 14]) line([wx - 25, wy + dy], [wx - 19, wy + dy + 8], '#d4bc83', 4);
-      line([wx, wy], [0, -16], '#51412d', 6);
+      // Two roof planes share *one* ridge and one connected eave perimeter.
+      // The near slope is brighter; far slope is a shaded weathered timber roof.
       poly(
         [
-          [-62, 7],
-          [0, 26],
-          [72, 4],
-          [70, -4],
-          [0, 17],
-          [-62, 0],
+          [-72, -107],
+          [-38, -146],
+          [36, -121],
+          [4, -84],
         ],
-        '#8a8970',
+        '#9b7449',
       );
-      line([-58, 10], [2, 28], '#b0ac89', 3);
+      poly(
+        [
+          [-38, -146],
+          [-3, -131],
+          [74, -108],
+          [36, -121],
+        ],
+        '#644b38',
+      );
+      poly(
+        [
+          [-3, -131],
+          [74, -108],
+          [74, -100],
+          [-3, -123],
+        ],
+        '#493b30',
+      );
+      for (let j = 1; j <= 4; j++) {
+        const t = j / 5;
+        line(
+          [-72 + 34 * t, -107 - 39 * t],
+          [4 + 32 * t, -84 - 37 * t],
+          j % 2 ? '#b18a57' : '#785a3c',
+          1.4,
+        );
+      }
+      line([-38, -146], [36, -121], '#d0ac73', 3);
+      line([-72, -107], [4, -84], '#513e2c', 4);
+      line([-3, -131], [74, -108], '#49372a', 3);
+      // Bank-side wheel and its real wood axle; the authored channel meets
+      // the wheel near the shared headrace/tailrace coordinate.
+      const wx = -79.8,
+        wy = -56.25;
+      line([-62, -56], [wx + 4, wy], '#4b4130', 7);
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = '#513b2c';
+      ctx.beginPath();
+      ctx.ellipse(wx, wy, 25, 36, -0.13, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = '#b59a69';
+      ctx.stroke();
+      for (let j = 0; j < 12; j++) {
+        const a = (j * Math.PI) / 6,
+          sx = wx + Math.cos(a) * 24,
+          sy = wy + Math.sin(a) * 35;
+        line([wx, wy], [sx, sy], j % 2 ? '#bfa576' : '#92734b', 2.6);
+        line(
+          [sx - Math.sin(a) * 6, sy + Math.cos(a) * 6],
+          [sx + Math.sin(a) * 6, sy - Math.cos(a) * 6],
+          '#c2a77a',
+          3.2,
+        );
+      }
+      ctx.fillStyle = '#d1bc8c';
+      ctx.beginPath();
+      ctx.arc(wx, wy, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#574a36';
+      ctx.beginPath();
+      ctx.arc(wx, wy, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      // Understated functional lantern on the dry-side door post, not the roof.
+      line([-15, -58], [-8, -63], '#544b3b', 2.8);
+      line([-8, -63], [-8, -58], '#544b3b', 2);
+      poly(
+        [
+          [-12, -58],
+          [-4, -58],
+          [-5, -54],
+          [-11, -54],
+        ],
+        '#393b32',
+      );
+      poly(
+        [
+          [-11, -54],
+          [-5, -54],
+          [-6, -42],
+          [-10, -42],
+        ],
+        '#d5ae66',
+      );
+      line([-12, -42], [-4, -42], '#514d3b', 2);
+      // A few purposeful dry loading boards instead of decorative clutter.
+      poly(
+        [
+          [-54, 5],
+          [-17, 17],
+          [7, 10],
+          [-30, -2],
+        ],
+        '#987d57',
+      );
+      for (let j = 0; j < 3; j++)
+        line([-50 + j * 12, 6 + j * 4], [-26 + j * 12, 1 + j * 4], '#604b36', 1.1);
+    } else if (e.greenwoodFacility === 'weir') {
+      // A working timber gate and retaining bank *at the real channel mouth*.
+      poly(
+        [
+          [-36, 7],
+          [-33, -5],
+          [33, -22],
+          [39, -9],
+          [7, 16],
+        ],
+        '#858b75',
+      );
+      poly(
+        [
+          [-29, -6],
+          [33, -22],
+          [32, -14],
+          [-29, 2],
+        ],
+        '#5d665a',
+      );
+      for (const [x, y] of [
+        [-22, -10],
+        [26, -24],
+      ]) {
+        line([x, y + 9], [x, y - 26], '#5c4934', 6);
+        line([x + 1, y - 23], [x + 1, y + 6], '#a48b61', 1.2);
+      }
+      for (let j = 0; j < 6; j++) {
+        const x = -19 + j * 9;
+        line([x, -13 - j * 2.1], [x, 2 - j * 2.1], '#aa8b5e', 6);
+      }
+      line([-29, -32], [35, -48], '#765839', 4);
+      line([-2, -40], [-2, -26], '#4c5048', 2.5);
+      line([-8, -39], [4, -42], '#adab91', 2);
     } else if (e.greenwoodFacility === 'new-planting') {
       for (const [x, y] of [
         [-26, 4],
