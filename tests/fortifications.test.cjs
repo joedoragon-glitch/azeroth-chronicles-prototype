@@ -136,7 +136,25 @@ function fixture() {
       assert(area, plan.id + ': native defended footprint is registered');
       assert(zone.props.some((p) => p.stronghold === plan.id && !p.decorative && p.r > 0),
         plan.id + ': a real wall is still required');
-      if (plan.defenseStyle === 'fort') {
+      const actualWalls = region === 'vale'
+        ? zone.props.filter((p) => p.stronghold === plan.id && p.greenwoodWall)
+        : [];
+      if (actualWalls.length >= 4) {
+        const endpoints = actualWalls.flatMap((p) => [p.greenwoodWall.a, p.greenwoodWall.b]);
+        const minX = Math.min(...endpoints.map((p) => p.x)),
+          maxX = Math.max(...endpoints.map((p) => p.x)),
+          minY = Math.min(...endpoints.map((p) => p.y)),
+          maxY = Math.max(...endpoints.map((p) => p.y));
+        const outerX = Math.max(...area.points.map((p) => p[0])),
+          outerY = Math.max(...area.points.map((p) => p[1]));
+        assert(outerX >= maxX + apron - 0.01,
+          plan.id + ': protection reaches at least 160 beyond the eastmost real pickets');
+        assert(outerY >= maxY + apron - 0.01,
+          plan.id + ': protection reaches at least 160 beyond the southmost real pickets');
+        assert(Math.min(...area.points.map((p) => p[0])) <= minX - apron + 0.01);
+        assert(Math.min(...area.points.map((p) => p[1])) <= minY - apron + 0.01);
+        assert(area.points.length >= 4, 'authored perimeter cannot use the obsolete ten-post ring');
+      } else if (plan.defenseStyle === 'fort') {
         assert.equal(area.points[1][0] - area.points[0][0], 2 * (150 + apron),
           plan.id + ': square fort horizontal margin');
         assert.equal(area.points[2][1] - area.points[1][1], 2 * (150 + apron),
@@ -202,11 +220,17 @@ function fixture() {
   );
   assert(watch && defender, 'real Skeleton Watch guard and live walls are present');
   const oldPosition = { x: defender.x, y: defender.y };
-  const [eastX, eastY] = watch.points[4];
-  const originalWallX = eastX - cfg.outdoorLeeway * 155 / Math.hypot(155, 20);
+  const actualSegments = g.zone().props.filter((p) =>
+    p.stronghold === 'skeleton-watch' && p.greenwoodWall);
+  assert(actualSegments.length >= 4, 'actual connected watch walls define protection');
+  const endpoints = actualSegments.flatMap((p) => [p.greenwoodWall.a, p.greenwoodWall.b]);
+  const originalWallX = Math.max(...endpoints.map((p) => p.x)),
+    eastX = originalWallX + cfg.outdoorLeeway,
+    eastY = (Math.min(...endpoints.map((p) => p.y)) +
+      Math.max(...endpoints.map((p) => p.y))) / 2;
   defender.x = eastX - 60;
   defender.y = eastY;
-  assert(defender.x > originalWallX, 'pursuer has stepped outside the original wall ring');
+  assert(defender.x > originalWallX, 'pursuer has stepped beyond the visible masonry');
   assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch', 'protection persists in the apron');
   assert.equal(g.enemyRangedRange(defender), 416, 'position grants the fortified ranged basic value');
   // The natural Skeleton Watch guard in this fixture is melee. Its awareness
