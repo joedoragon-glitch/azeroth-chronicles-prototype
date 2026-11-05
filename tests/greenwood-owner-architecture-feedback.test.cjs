@@ -72,9 +72,11 @@ for (const seed of [0x47564101, 0x47564103]) {
   const sc = C.rules.greenwoodLayout.scale;
   const canvas = createCanvas(852, 393), ctx = canvas.getContext('2d');
   const drawnText = [];
+  const labelPositions = [];
   const paintText = ctx.fillText.bind(ctx);
   ctx.fillText = (text, ...args) => {
     drawnText.push(String(text));
+    if (text === "Thornfang's Homestead") labelPositions.push({ x: args[0], y: args[1] });
     return paintText(text, ...args);
   };
   const renderer = Renderer.create({
@@ -91,14 +93,27 @@ for (const seed of [0x47564101, 0x47564103]) {
     isPaused: () => false,
   });
   const visual = { ...lodge, renderKind: 'prop' };
-  g.hero.x = lodge.x + 100 * sc;
-  g.hero.y = lodge.y;
+  // Approach from the accessible southwest side. The roof and label must be
+  // inside the actual 852×393 landscape viewport at 150% camera scale.
+  g.hero.x = lodge.x - 145 * sc;
+  g.hero.y = lodge.y - 65 * sc;
   assert.equal(renderer.labelVisible(visual), true, 'homestead gets nearby world label');
-  renderer.draw();
-  assert(drawnText.includes("Thornfang's Homestead"),
-    'native yellow world label paints above the actual homestead');
+  for (const layer of ['full', 'overlay']) {
+    renderer.setRenderLayer(layer);
+    drawnText.length = 0;
+    labelPositions.length = 0;
+    renderer.draw();
+    assert.equal(labelPositions.length, 1,
+      layer + ': exactly one yellow in-world homestead nameplate');
+    assert(labelPositions[0].y > 18 && labelPositions[0].y < canvas.height / 1.5 - 8,
+      layer + ': nameplate fits the 150% camera frame above the homestead roof');
+  }
   g.hero.x = lodge.x + 300 * sc;
   assert.equal(renderer.labelVisible(visual), false, 'no distant homestead nameplate');
+  drawnText.length = 0;
+  labelPositions.length = 0;
+  renderer.draw();
+  assert.equal(labelPositions.length, 0, 'distant homestead has no nameplate');
   assert(!g.notices.some((n) => /Thornfang's Homestead/.test(n.text)),
     'approaching never creates a narrative popup');
 
