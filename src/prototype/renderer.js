@@ -3490,17 +3490,25 @@
         : [
             ...z.props.flatMap((prop) => {
               const structure = String(prop.structure || '');
-              const kind = nightLightKind(structure);
-              return kind
-                ? [
-                    {
-                      ...screen(prop),
-                      kind,
-                      id: prop.id,
-                      ...(structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
-                    },
-                  ]
-                : [];
+              // One existing Greenwood mill receives a real mounted lamp.
+              // Source is anchored to the precise art point, not to a guessed
+              // generic roof window or a newly spawned prop.
+              const kind =
+                game.zoneId === 'vale' && prop.greenwoodFacility === 'mill'
+                  ? 'mill-sconce'
+                  : nightLightKind(structure);
+              if (!kind) return [];
+              const pos = screen(prop);
+              return [
+                {
+                  ...pos,
+                  x: kind === 'mill-sconce' ? pos.x - 8 : pos.x,
+                  y: kind === 'mill-sconce' ? pos.y - 48 : pos.y,
+                  kind,
+                  id: prop.id,
+                  ...(structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
+                },
+              ];
             }),
             ...z.buildings
               .filter((b) => b.progress >= 4)
