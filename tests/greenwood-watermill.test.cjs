@@ -43,7 +43,7 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
     Math.hypot(point.x-cfg.millServiceLane[0].x,point.y-cfg.millServiceLane[0].y)<0.01)),
     'the mill farm spur branches from an EXISTING road, not isolated terrain');
   assert.deepEqual(cfg.millDoorFootpath[0],cfg.millServiceLane.at(-1),
-    'narrow path begins exactly where the service road meets the bridge exit');
+    'pedestrian path starts exactly at the dry farm-track terminus');
   assert.deepEqual(cfg.millDoorFootpath.at(-1),cfg.millEntrance,
     'footpath reaches the actual mill entrance landing');
   assert.equal(z.props.filter((p) => p.id === 'greenwood-working-mill').length,1);
@@ -74,10 +74,9 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
     'the visible mill loading entrance has a dry player-sized approach');
   assert(g.route(cfg.millServiceLane[0],cfg.millEntrance).length>0,
     'the mill doorway landing can be reached from the connected farm road');
-  assert(g.clearSegment(cfg.millDoorFootpath[0],cfg.millDoorFootpath[1],12,true),
-    'first mill door path leg stays above real land');
-  assert(g.clearSegment(cfg.millDoorFootpath[1],cfg.millEntrance,12,true),
-    'final approach remains dry and walkable');
+  for (let i=1;i<cfg.millDoorFootpath.length;i++)
+    assert(g.clearSegment(cfg.millDoorFootpath[i-1],cfg.millDoorFootpath[i],12,true),
+      'every footpath leg physically follows dry ground or the real timber deck: '+i);
 
   const culvert = cfg.creekCulvert;
   const streamPoint = crossMid(culvert);
