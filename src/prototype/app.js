@@ -4848,38 +4848,40 @@
   function classGrowthLine(heroClass) {
     const p = Campaign.rules.balance.classPassives;
     const es = language === 'es';
+    // The class picker needs a *cue*, not a full progression reference.
+    // Keep the actual numbers sourced from the combat balance registry.
     if (heroClass === 'rogue')
       return es
-        ? 'Travesura · Cada nivel: +2 puntos porcentuales de probabilidad crítica de la Pícara.'
-        : 'Mischief · Each level: +2 percentage points Rogue critical chance.';
+        ? 'Travesura · +2 puntos de prob. crítica por nivel'
+        : 'Mischief · +2 percentage points crit/level';
     if (heroClass === 'paladin')
       return es
-        ? 'Fortaleza · Cada nivel: +' +
+        ? 'Fortaleza · +' +
             p.paladin.hpPerLevel +
-            ' PV máximos y +' +
+            ' PV y +' +
             p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
-            ' de daño bloqueado por punto de armadura.'
-        : 'Fortitude · Each level: +' +
+            ' bloqueo/armadura por nivel'
+        : 'Fortitude · +' +
             p.paladin.hpPerLevel +
-            ' max HP and +' +
+            ' HP; +' +
             p.paladin.armorEffectivenessPerLevel.toFixed(2) +
-            ' damage blocked per Armor point.';
+            ' block/Armor per level';
     if (heroClass === 'ranger')
       return es
-        ? 'Agilidad · Cada nivel: +' +
+        ? 'Agilidad · +' +
             p.ranger.speedPerLevel +
-            ' de velocidad y +' +
+            ' velocidad; -' +
             Math.round(p.ranger.cooldownReductionPerLevel * 100) +
-            '% de reducción de recuperación.'
-        : 'Agility · Each level: +' +
+            '% recarga/nivel'
+        : 'Agility · +' +
             p.ranger.speedPerLevel +
-            ' speed and +' +
+            ' speed; -' +
             Math.round(p.ranger.cooldownReductionPerLevel * 100) +
-            '% cooldown reduction.';
+            '% cooldown/level';
     if (heroClass === 'mage')
       return es
-        ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
-        : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
+        ? 'Poder arcano · +' + p.mage.powerPerLevel + ' poder/nivel'
+        : 'Arcane Power · +' + p.mage.powerPerLevel + ' Power/level';
     // Unknown classes never inherit an invented Mage growth description.
     return '';
   }
