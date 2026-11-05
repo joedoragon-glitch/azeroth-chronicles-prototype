@@ -9706,10 +9706,12 @@
           carvedGateway('citadel');
           break;
         case 'goblin-camp':
-          craftAt(-20, 6, 0.65, () => tent());
-          craftAt(22, 4, 0.6, () => tent());
-          craftAt(1, 10, 0.4, () => craftedDecoration('cookfire'));
-          sack(-30, 10, 0.4);
+          // Two actual shelter-sized tents with a legible shared hearth.
+          // Retain the authored site and gate; avoid duplicate tiny tent art.
+          craftAt(-32, 6, 0.94, () => tent());
+          craftAt(30, 6, 0.9, () => tent());
+          craftAt(0, 21, 0.47, () => craftedDecoration('cookfire'));
+          sack(-46, 14, 0.42);
           break;
         case 'mire-nests':
           pool();
