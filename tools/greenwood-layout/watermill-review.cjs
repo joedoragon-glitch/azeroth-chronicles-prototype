@@ -93,6 +93,26 @@ for (const [name, target, clock] of views) {
   const changedFields = snapshotUnchanged ? [] :
     Object.keys(afterState).filter((key) =>
       JSON.stringify(beforeState[key]) !== JSON.stringify(afterState[key]));
+  // A failure only reported "zones", leaving the owning mutation unknown.
+  // Drill into that part of the SAVE without mutating it or relaxing the gate.
+  const changedZoneFields = snapshotUnchanged ? [] :
+    Object.keys(afterState.zones || {}).flatMap((id) =>
+      Object.keys(afterState.zones[id] || {})
+        .filter((key) => JSON.stringify(beforeState.zones?.[id]?.[key]) !==
+          JSON.stringify(afterState.zones[id][key]))
+        .map((key) => {
+          const beforeVal = beforeState.zones?.[id]?.[key],
+            afterVal = afterState.zones[id][key],
+            changedObjects = Array.isArray(afterVal) && Array.isArray(beforeVal)
+              ? afterVal.reduce((found, item, i) => {
+                  if (found.length < 8 && JSON.stringify(item) !== JSON.stringify(beforeVal[i]))
+                    found.push(item?.id || String(i));
+                  return found;
+                }, []) : [];
+          return { zone:id, field:key, changedObjects,
+            beforeLength:Array.isArray(beforeVal)?beforeVal.length:null,
+            afterLength:Array.isArray(afterVal)?afterVal.length:null };
+        }));
   const metrics = centerLuma(ctx),
     bytes = canvas.toBuffer('image/png');
   if (bytes.length < 1024 || metrics.variations < 15)
@@ -107,7 +127,7 @@ for (const [name, target, clock] of views) {
     sha256:crypto.createHash('sha256').update(bytes).digest('hex'),
     sourceSha:process.env.GITHUB_SHA || null,
     rendering:'native software Canvas with procedural fallback; not Pixi/real-device acceptance',
-    snapshotUnchanged, changedFields,
+    snapshotUnchanged, changedFields, changedZoneFields,
   });
   Object.assign(g.hero, originalHero);
   g.s.clock = originalClock;
@@ -149,7 +169,7 @@ fs.writeFileSync(path.join(out,'receipt.json'),JSON.stringify(report,null,2)+'\n
   const changed = receipts.filter((view) => !view.snapshotUnchanged);
   if (changed.length)
     throw Error('Render changed saved campaign in '+JSON.stringify(changed.map((v)=>({
-      name:v.name,changedFields:v.changedFields,
+      name:v.name,changedFields:v.changedFields,changedZoneFields:v.changedZoneFields,
     }))));
   console.log('PASS 7 focused Greenwood watermill 150% native frames; paired day/night contrast and immutable saves. Human scene review pending.');
 })().catch(e => { console.error(e); process.exitCode=1; });
