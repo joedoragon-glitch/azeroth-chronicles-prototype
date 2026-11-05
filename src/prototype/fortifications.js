@@ -18,6 +18,57 @@
       }
       return inside;
     };
+    // Greenwood's rebuilt compounds use linked wall segments, not the older
+    // indexed rings. Read the same real endpoints used by collision and art.
+    // Include both ends of an open gate as the closing edge of the enclosure.
+    // Calculated only on a fort-area cache miss, never per actor or per frame.
+    const perimeterFromWalls = (walls, margin) => {
+      const parts = walls.filter((p) => p.greenwoodWall?.a && p.greenwoodWall?.b);
+      if (parts.length < 3 || parts.length !== walls.length) return null;
+      if (parts.some((p) => !/-wall-\d+$/.test(String(p.id)))) return null;
+      parts.sort((a, b) =>
+        Number(String(a.id).match(/-wall-(\d+)$/)[1]) -
+        Number(String(b.id).match(/-wall-(\d+)$/)[1]));
+      const path = [];
+      const push = (p) => {
+        if (![p.x, p.y].every(Number.isFinite)) return false;
+        const previous = path[path.length - 1];
+        if (!previous || Math.hypot(previous[0] - p.x, previous[1] - p.y) > 0.001)
+          path.push([p.x, p.y]);
+        return true;
+      };
+      for (const part of parts)
+        if (!push(part.greenwoodWall.a) || !push(part.greenwoodWall.b)) return null;
+      if (Math.hypot(path[0][0] - path.at(-1)[0], path[0][1] - path.at(-1)[1]) < 0.001)
+        path.pop();
+      if (path.length < 3) return null;
+      let signed = 0;
+      for (let i = 0; i < path.length; i++) {
+        const a = path[i], b = path[(i + 1) % path.length];
+        signed += a[0] * b[1] - b[0] * a[1];
+      }
+      if (Math.abs(signed) < 1) return null;
+      const directions = path.map((a, i) => {
+        const b = path[(i + 1) % path.length], dx = b[0] - a[0], dy = b[1] - a[1];
+        const length = Math.hypot(dx, dy);
+        if (length < 0.001) return null;
+        const ux = dx / length, uy = dy / length;
+        return { ux, uy, nx: signed > 0 ? uy : -uy, ny: signed > 0 ? -ux : ux };
+      });
+      if (directions.includes(null)) return null;
+      // Intersect adjacent outward-shifted wall lines. Unlike scaling a
+      // guessed ring from its center, this gives each real wall edge the
+      // configured perpendicular leeway, including the irregular Goblin fort.
+      return path.map((v, i) => {
+        const prev = directions[(i + path.length - 1) % path.length], next = directions[i];
+        const px = v[0] + prev.nx * margin, py = v[1] + prev.ny * margin;
+        const qx = v[0] + next.nx * margin, qy = v[1] + next.ny * margin;
+        const cross = prev.ux * next.uy - prev.uy * next.ux;
+        if (Math.abs(cross) < 1e-6) return [qx, qy];
+        const along = ((qx - px) * next.uy - (qy - py) * next.ux) / cross;
+        return [px + prev.ux * along, py + prev.uy * along];
+      });
+    };
     class Fortifications {
       fortAreas() {
         const z = this.s.zones[this.zoneId] || this.zone();
@@ -43,6 +94,11 @@
         for (const plan of R.creatureStrongholds.filter((p) => p.region === z.id)) {
           const walls = z.props.filter((p) => p.stronghold === plan.id && !p.decorative && p.r > 0);
           if (!walls.length) continue;
+          const authored = perimeterFromWalls(walls, cfg.outdoorLeeway);
+          if (authored) {
+            add(plan.id, authored, walls);
+            continue;
+          }
           const ring =
             plan.defenseStyle === 'fort'
               ? [
