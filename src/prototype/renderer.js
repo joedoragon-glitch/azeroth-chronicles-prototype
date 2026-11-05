@@ -1178,11 +1178,11 @@
       }
       brush.restore();
     }
-    function healthPlate(e, p) {
+    function healthPlate(e, p, renderKind = e.renderKind) {
       const y = p.y - spriteHeight(e),
         w = e.type === 'boss' ? 54 : e.captain || e.roomCaptain ? 50 : 42,
         left = p.x - w / 2;
-      if (e.renderKind === 'hero') {
+      if (renderKind === 'hero') {
         const cast = chargePresentation();
         if (cast) {
           const cy = y - 9;
@@ -1200,7 +1200,7 @@
             ctx.strokeRect(left - 0.5, cy - 0.5, w + 1, 4);
           }
         }
-      } else if (e.renderKind === 'ally') {
+      } else if (renderKind === 'ally') {
         const preparing = game._companionCharges?.get(e.id);
         if (preparing) {
           if (e.type === 'pet') {
@@ -1255,7 +1255,7 @@
           ctx.fillRect(left, cy, w * fraction, 1);
         }
       }
-      if (e.renderKind === 'enemy' && game.enemyFort(e)) {
+      if (renderKind === 'enemy' && game.enemyFort(e)) {
         ctx.save();
         ctx.translate(left - 10, y + 1);
         ctx.fillStyle = '#9dbfcb';
@@ -1276,7 +1276,7 @@
       ctx.fillRect(left - 2, y - 2, w + 4, 8);
       ctx.fillStyle = '#5a645b';
       ctx.fillRect(left, y, w, 4);
-      ctx.fillStyle = e.renderKind === 'enemy' ? '#e87966' : '#91d59c';
+      ctx.fillStyle = renderKind === 'enemy' ? '#e87966' : '#91d59c';
       ctx.fillRect(left, y, w * Math.max(0, Math.min(1, e.hp / e.maxHp)), 4);
       ctx.fillStyle = '#ffffff77';
       ctx.fillRect(left, y, w * Math.max(0, Math.min(1, e.hp / e.maxHp)), 1);
@@ -3085,16 +3085,25 @@
           warningFrameShapes,
         );
         PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
-        for (const e of [
-          ...z.enemies.filter((u) => u.hp > 0),
-          ...game.activeLivingParty(),
-          game.hero,
-        ]) {
+        // The Pixi cue layer receives raw Campaign actors, unlike Canvas's
+        // presented entities. Pass the actor kind explicitly so hostile bars
+        // and the position-derived fortress shield use the shared drawing path.
+        const enemies = z.enemies.filter((u) => u.hp > 0);
+        const allies = game.activeLivingParty();
+        const actors = [...enemies, ...allies, game.hero];
+        for (let index = 0; index < actors.length; index++) {
+          const e = actors[index];
           if (e !== game.hero && e.hp <= 0) continue;
           if (e !== game.hero && e.neutral) continue;
           const p = screen(e);
+          const renderKind =
+            index < enemies.length
+              ? 'enemy'
+              : index < enemies.length + allies.length
+                ? 'ally'
+                : 'hero';
           if (p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120)
-            healthPlate(e, p);
+            healthPlate(e, p, renderKind);
         }
         drawPixiNameplates();
         // Reuse the bounded alpha-mask painter: no GPU readback or new texture.
