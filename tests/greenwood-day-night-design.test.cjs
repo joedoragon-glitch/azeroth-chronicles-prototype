@@ -175,18 +175,30 @@ if (process.env.CI_BASE_SHA) {
     assert.equal(JSON.stringify(game.s), state, 'painting must not change game state');
     return canvas.toBuffer('image/png');
   };
-  for (const [spot, coord] of spots) {
-    assert(coord && coord.length === 2);
-    game.hero.x = coord[0]; game.hero.y = coord[1];
-    for (const [phase, clock] of clocks) {
-      game.s.clock = clock;
-      const previous = render(oldVisuals, ...coord);
-      const proposed = render(Visuals, ...coord);
-      const filename = spot + '-' + phase;
-      fs.writeFileSync(path.join(output, filename + '-before.png'), previous);
-      fs.writeFileSync(path.join(output, filename + '-candidate.png'), proposed);
-      frames.push({ spot, phase, identical: previous.equals(proposed) });
+  // Native Canvas terrain and atmospheric motion normally consult the real
+  // wall clock. Freeze it for paired visual evidence, without changing gameplay.
+  const performanceDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'performance');
+  Object.defineProperty(globalThis, 'performance', {
+    configurable: true, writable: true, value: { now: () => 16000 },
+  });
+  try {
+    for (const [spot, coord] of spots) {
+      assert(coord && coord.length === 2);
+      game.hero.x = coord[0]; game.hero.y = coord[1];
+      for (const [phase, clock] of clocks) {
+        game.s.clock = clock;
+        const previous = render(oldVisuals, ...coord);
+        const proposed = render(Visuals, ...coord);
+        const filename = spot + '-' + phase;
+        fs.writeFileSync(path.join(output, filename + '-before.png'), previous);
+        fs.writeFileSync(path.join(output, filename + '-candidate.png'), proposed);
+        frames.push({ spot, phase, identical: previous.equals(proposed) });
+      }
     }
+  } finally {
+    if (performanceDescriptor)
+      Object.defineProperty(globalThis, 'performance', performanceDescriptor);
+    else delete globalThis.performance;
   }
   assert(frames.every((f) => f.phase !== 'day' || f.identical),
     'daylight screenshots must remain pixel-identical');
