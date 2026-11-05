@@ -182,7 +182,7 @@ assert.equal(
 );
 const glowing = probe(true, true, [carried]);
 assert.equal(glowing.radial, 3, 'night has hero visibility plus carried pool and bright glass');
-assert.equal(glowing.lanternFrames, 0, 'no second lantern fixture is invented');
+assert.equal(glowing.innerFlames, 0, 'carried Wraith art has no second fixture painted');
 console.log(
   'PASS carried Wraith glass/ground illumination: day/night, moving/facing/scaled hand, Optimization Mode, death exclusion and save-pure rendering',
 );
