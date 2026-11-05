@@ -770,7 +770,8 @@
         // spawn. Allow damage near the retreat corridor/anchor; otherwise a
         // regrouper beyond its original home leash would become invulnerable.
         const inCombatArea = this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory);
-        if (!this.line(origin, e) || !inCombatArea) return false;
+        if (!(options?.rangedImpact ? this.rangedLine(origin, e) : this.line(origin, e)) ||
+            !inCombatArea) return false;
         if (this.awaitsHeroAttack(e)) {
           if (source !== 'hero') {
             this.openingCompanionHit(e);
@@ -1410,6 +1411,7 @@
                     p.encountersAtStart || p.area || p.piercing || p.automaticBasic ||
                     skillShape || p.criticalExecution
                       ? {
+                          rangedImpact: true,
                           ...(p.encountersAtStart
                             ? { encountersAtStart: p.encountersAtStart }
                             : {}),
@@ -1420,7 +1422,7 @@
                           ...(p.criticalExecution
                             ? { criticalExecution: p.criticalExecution } : {}),
                         }
-                      : null,
+                      : { rangedImpact: true },
                   );
             if (this.s.mode === 'developer')
               this._developerCompanionProjectileInFlight = null;
