@@ -70,7 +70,8 @@ for(const [name,fromLeg,toLeg] of [
   const speed=name==='thorn-patrol'?Campaign.rules.thornPatrol.speed:
     Campaign.rules.thornPatrol.captiveSpeed;
   assert(maxMotion<=speed*.05+.5,name+' physical movement never teleports');
-  assert(peak<2000,name+' no 10k+ sync route in a full game update');
+  assert(peak<2000,name+' no 10k+ sync route in a full game update ' +
+    JSON.stringify({peak,moved,totalProbes:probes,actor:actor.id,thornLeg:thorn.thornLeg}));
   console.log('VALE_SCRIPTED_MOVEMENT '+JSON.stringify({
     name,moved:+moved.toFixed(1),maxMotion:+maxMotion.toFixed(2),
     peakWholeTickProbes:peak,totalProbes:probes}));
