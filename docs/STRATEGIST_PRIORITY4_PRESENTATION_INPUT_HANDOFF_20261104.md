@@ -4,7 +4,7 @@
 
 ## Authority and intended boundary
 
-- Authoritative v3.2 [sixteen-form design](STRATEGIST_STAGE1_GAME_DESIGN_20261102.md), [seven-gate ledger](STRATEGIST_DEVELOPER_PLAYTEST_GATES_20261104.md), and completed [Priority 3 admission/save handoff](STRATEGIST_PRIORITY3_ADMISSION_SAVES_HANDOFF_20261104.md). This pass does **not** implement pending Neri slots 4–8, Lab materials, worker economy, or other parallel branches.
+- Authoritative v3.2 [v3.2 sixteen-form design in draft PR #697](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/697/files), [seven-gate ledger](STRATEGIST_DEVELOPER_PLAYTEST_GATES_20261104.md), and completed [Priority 3 admission/save handoff](STRATEGIST_PRIORITY3_ADMISSION_SAVES_HANDOFF_20261104.md). This pass does **not** implement pending Neri slots 4–8, Lab materials, worker economy, or other parallel branches.
 - Guarded fifth-class admission remains `?developer=1` **and** Developer mode, not authentication and not a fifth public class. The Ogre starts with Soldier + Archer and learns only its three source-backed starter slots. Its ordinary same-target landed dagger cadence spends one genuine shared Acid Bottle, when stocked, on the third landed basic. Finite inventory and legal save-v4 ownership remain untouched.
 - The Ogre's visual character art and pair of short daggers still await the owner's **Gate 0 artistic approval**. Rendering an additional Mineral skill effect does not imply that approval.
 
@@ -20,7 +20,7 @@
 
 | Evidence | Actual scope | Result |
 | --- | --- | --- |
-| [Original Campaign and native integration CI #41967457836](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41967457836) | Existing Priority 1–3 and public save/admission/persistence regressions; `tests/strategist-priority4-interaction.test.cjs` against Campaign + production app/menu shell; public `skill-reference` and runtime checks; Node syntax; draft build; dev.255 phone geometry and asset packaging. | **Passed** at gameplay/test commit `7b2a120e1`. A later class-label correction was included in the next targeted run. |
+| [Original Campaign and native integration CI #41967457836](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41967457836) | Existing Priority 1–3 and public save/admission/persistence regressions; `tests/strategist-priority4-interaction.test.cjs` against Campaign + production app/menu shell; public `skill-reference` and runtime checks; Node syntax; draft build; dev.255 phone geometry and asset packaging. | **Passed** at gameplay/test commit `7b2a120e1`. A later class-label correction was included in the [next focused source/build CI #41967567072](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41967567072), which also **passed**. |
 | [Focused real Chromium CI #41967675159](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41967675159) | `tests/strategist-priority4-browser.cjs`: 1280×800 desktop and 800×375 landscape mobile-emulated viewport; actual Developer new game, journal, skill buttons, Reversal button and native handler, desktop unbound and re-bound T, falling Archer, touch-target bounds; screenshots uploaded. | **Passed** at `e82ebd924`, with no observed browser exceptions. **Not real iPhone or WebKit.** |
 | Original Stage 1A source Gate 0 artwork capture workflow | Existing independent procedural Ogre scene screenshots at original and enlarged scale | Prior Canvas capture only; **owner approval remains pending**. No new approval claimed. |
 
