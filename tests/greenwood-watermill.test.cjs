@@ -45,7 +45,7 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
   const center = crossMid(bridge);
   assert.equal(g.blocked(center.x,center.y,'vale',12,true),false,
     'timber deck genuinely passes the deep tailrace');
-  assert.equal(g.blocked(cfg.tailrace.at(-2).x,cfg.tailrace.at(-2).y,'vale',0,true),true,
+  assert.equal(g.blocked(cfg.tailrace[1].x,cfg.tailrace[1].y,'vale',0,true),true,
     'tailrace beyond deck remains impassable');
   assert.equal(g.blocked(cfg.upperCreek[2].x,cfg.upperCreek[2].y,'vale',0,true),false,
     'upper source is deliberately shallow, not an unmarked new strategic barrier');
