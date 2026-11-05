@@ -714,7 +714,16 @@
     // as real named locations, without changing save data or spawning a marker.
     const thornHomesteadName = "Thornfang's Homestead";
     function thornHomestead(e) {
-      return e.renderKind === 'prop' && e.greenwoodFacility === 'thorn-lodge';
+      return e.renderKind === 'prop' &&
+        e.id === 'greenwood-thorn-homestead-lodge' &&
+        e.greenwoodFacility === 'thorn-lodge' &&
+        e.structure === 'thorn-homestead-lodge';
+    }
+    // The authored roof rises ~118 drawing units above its foot. Its older
+    // generic 180-unit occlusion height would put a nameplate off the phone
+    // viewport, so anchor this one site label just above the actual ridge.
+    function worldLabelHeight(e) {
+      return thornHomestead(e) ? 124 : spriteHeight(e);
     }
     function worldLabelVisible(e) {
       if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
@@ -2953,9 +2962,12 @@
       add(game.visibleNPCs(), 'npc');
       // Reuse the shared yellow NPC nameplate painter for the one authored
       // homestead prop. No notice queue, discovery event or extra entity.
-      const homestead = zone.props.find(
-        (p) => p.greenwoodFacility === 'thorn-lodge',
-      );
+      const homestead =
+        game.zoneId === 'vale' &&
+        zone.props.find((p) =>
+          p.id === 'greenwood-thorn-homestead-lodge' &&
+          p.greenwoodFacility === 'thorn-lodge' &&
+          p.structure === 'thorn-homestead-lodge');
       if (homestead) add([homestead], 'prop');
       add(game.visibleResourceNodes(), 'node');
       add(zone.buildings, 'building');
@@ -2980,7 +2992,7 @@
       ctx.textAlign = 'center';
       for (const { e, kind, p, name } of records.sort((a, b) => priority(a) - priority(b))) {
         const width = worldLabelWidth(name, e);
-        const baseY = kind === 'node' ? p.y - 25 : p.y - spriteHeight(e) - 5;
+        const baseY = kind === 'node' ? p.y - 25 : p.y - worldLabelHeight(e) - 5;
         let slot = null;
         if (name && charmedCompanion(e)) {
           // The nickname follows its creature exactly. Never search alternate
@@ -3352,8 +3364,8 @@
                       : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
-          !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) &&
-            !thornHomestead(e) ||
+          (!['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) &&
+            !thornHomestead(e)) ||
           e.presentation === 'scout-tracks' ||
           !worldLabelVisible(e)
         )
@@ -3370,7 +3382,7 @@
           continue;
         const w = worldLabelWidth(name, e);
         const h = namedCompanion(e) ? 20 : 17;
-        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - spriteHeight(e) - 5;
+        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - worldLabelHeight(e) - 5;
         let slot = null;
         if (charmedCompanion(e)) {
           // A Charmed nickname stays above the actor, even in a crowd.
