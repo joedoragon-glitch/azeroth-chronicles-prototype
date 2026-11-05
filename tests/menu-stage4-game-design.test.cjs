@@ -133,7 +133,7 @@ for (const language of ['en', 'es']) {
   const recoveryAction = save.find((entry) =>
     entry.textContent.startsWith(es ? 'Intentar recuperar' : 'Try recovery'),
   );
-  assert(recoveryAction?.className?.includes('menu-wide'), 'recovery is not a peer save slot');
+  assert(recoveryAction?.classList.contains('menu-wide'), 'recovery is not a peer save slot');
 
   elements.get('close-button').click();
   elements.get('title-help').click();
