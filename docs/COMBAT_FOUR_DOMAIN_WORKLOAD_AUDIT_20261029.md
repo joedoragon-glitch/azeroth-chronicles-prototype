@@ -4,6 +4,8 @@
 
 **Reproduction:** `tests/combat-four-domain-workload-audit.test.cjs`, run on [PR #612](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/612), uses real `Campaign.tick(0.05)` collision/projectiles, fixed enemy fixtures and opt-in test-only method wrappers. Existing `blocked()`, `follow()`, `route()`, `tacticalRogueOutnumbered()`, projectile-hit authority and renderer are not mocked or rewritten. `blocked()` counts are native probes, **not hardware frames per second (FPS)**. Method timings are inclusive and overlap, so cannot be summed as independent CPU time.
 
+**Current release disposition — 4 November 2026:** [PR #717](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/717) was merged and published in dev.253 at main `985a2584` after [focused and GitHub Pages checks #41769596032](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41769596032) succeeded, and remains in published dev.256. The 31 October draft wording and native probe counts below remain **historical measurements**, not an unmerged current performance obligation. The independent boss/captain roster study #725 remains deferred. Real hardware FPS is not established.
+
 ## Integration reconciliation — dev.228 (29 October 2026)
 
 **Baseline status:** All measurements in sections A–D below are **historical dev.224 source measurements** and are preserved verbatim. Re-running the included diagnostic against later `main` will measure newer implementations; it must not be presented as the original dev.224 result. This PR contains only the historical audit, its native diagnostic test and documentation-index entry; it changes no gameplay, rendering, saves, release version or deployed assets.

@@ -1,12 +1,12 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 3 November 2026 · **459 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Release/UI routing updated 4 November 2026. The original 3 November census indexed 459 Markdown documents; this scoped update does **not** claim a new full-repository census.
 
-Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
+Indexed Markdown documents are grouped below by subject with short descriptions. Newer draft-only handoffs or newly created documents may await the next exhaustive census. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
 **Read first:** [Development state](DEVELOPMENT_STATE.md) owns verified public-build and acceptance information; [Architecture](ARCHITECTURE.md) maps source owners; [Decisions](DECISIONS.md) gives design rules and supersessions; [AGENTS.md](../AGENTS.md) governs authorization; [Engineering workflow](MECHANIC_DEVELOPMENT.md) describes verification; [Brand identity](BRAND_IDENTITY.md) gives the official title and legacy exceptions.
 
-**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the exact published build and outstanding device acceptance. The [65-song soundtrack](AUDIO_PHASE9_FIRST_LISTEN.md) is **integrated and published**; its independent [environmental redesign #727](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727) remains separate. Greenwood and other releases must not be treated as installed or owner-accepted merely because code or documentation has merged.
+**Current release routing:** [Development state](DEVELOPMENT_STATE.md) records the **latest verified published build**, [v0.9.2 release notes](V09_RELEASE_NOTES.md) distinguish the **unpublished v0.9.2 release candidate** and excluded future work, and [Stage 4 menus](MENU_STAGE4_ICON_LED_GAME_DESIGN_20261104.md) distinguish **merged/published #800** from **pending iPhone acceptance #790**. Greenwood owner playtesting is planned before release; other region reviews and Dark Crown overhaul are not automatic prerequisites. An owner-directed development hiatus is planned after v0.9.2.
 
 **Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that every historical body was independently audited. Labels such as *Dated record* describe source context, not a present work order.
 
@@ -20,7 +20,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
 - [Rendering, optimization, performance and WebGL](#rendering-optimization-performance-and-webgl) (47)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
-- [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (13)
+- [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (14)
 - [Save data, backup and recovery](#save-data-backup-and-recovery) (6)
 - [Documentation governance and reference records](#documentation-governance-and-reference-records) (16)
 - [Historical releases, reviews and integration handoffs](#historical-releases-reviews-and-integration-handoffs) (37)
@@ -462,6 +462,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Instructor Menus DEV158](INSTRUCTOR_MENUS_DEV158.md) — *Dated record.* Explains instructor menus player interaction or interface readability choices.
 - **[Keyboard Ergonomics Audit](KEYBOARD_ERGONOMICS_AUDIT.md)** — **Reference.** Examines keyboard ergonomics for source or design inconsistencies, recording dated findings and limits.
 - [Menu Foundation Step1 20261023](MENU_FOUNDATION_STEP1_20261023.md) — *Dated record.* Describes a particular development stage of menu and its recorded work status.
+- **[Menu Stage4 Icon Led Game Design 20261104](MENU_STAGE4_ICON_LED_GAME_DESIGN_20261104.md)** — **Maintained UI contract.** Stage 4 #800's published icon-led bilingual menus/New Adventure, remaining real-iPhone submenu acceptance and safe-area constraints.
 - **[Menu Overhaul Steps3 7](MENU_OVERHAUL_STEPS3_7.md)** — **Reference.** Describes a particular development stage of menu overhaul steps3 7 and its recorded work status.
 - [Menu Step7 Audit 20261023](MENU_STEP7_AUDIT_20261023.md) — *Dated record.* Examines menu for source or design inconsistencies, recording dated findings and limits.
 - [Millhaven Onboarding DEV160](MILLHAVEN_ONBOARDING_DEV160.md) — *Dated record.* Describes millhaven onboarding decisions, constraints or engineering observations from its original development checkpoint.
@@ -530,7 +531,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Snapshot Monster Stronghold Case Audit 20261014](SNAPSHOT_MONSTER_STRONGHOLD_CASE_AUDIT_20261014.md) — *Dated record.* Examines snapshot monster stronghold case for source or design inconsistencies, recording dated findings and limits.
 - [Snapshot Precert Implementation Quality Audit 20261014](SNAPSHOT_PRECERT_IMPLEMENTATION_QUALITY_AUDIT_20261014.md) — *Dated record.* Examines snapshot precert for source or design inconsistencies, recording dated findings and limits.
 - [Update Notice 20261020](UPDATE_NOTICE_20261020.md) — *Dated record.* Describes update notice decisions, constraints or engineering observations from its original development checkpoint.
-- **[V09 Release Notes](V09_RELEASE_NOTES.md)** — **Reference.** October Community Snapshot release record, not an up-to-date release ledger.
+- **[V09 Release Notes](V09_RELEASE_NOTES.md)** — **Current release draft and historical record.** Proposed, unmerged v0.9.2 scope and deferrals, published Stage 4 menu baseline, planned playtests, Dark Crown/post-release boundary and preserved October snapshot; [Development state](DEVELOPMENT_STATE.md) remains the publication authority.
 - [Work Mode PR313 Handoff Verification 20261016](WORK_MODE_PR313_HANDOFF_VERIFICATION_20261016.md) — *Dated record.* Records tests or acceptance criteria for work mode at its original checkpoint.
 - [Work Mode Single Pr Handoff 20261016](WORK_MODE_SINGLE_PR_HANDOFF_20261016.md) — *Dated record.* Preserves work mode single pr context, known work and next-stage questions from a dated handoff.
 - [Work Mode Source Handoff Audit 20261016](WORK_MODE_SOURCE_HANDOFF_AUDIT_20261016.md) — *Dated record.* Examines work mode source for source or design inconsistencies, recording dated findings and limits.
