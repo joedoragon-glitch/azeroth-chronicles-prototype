@@ -201,7 +201,12 @@
       sites = [{ x: 0, y: -42, role: 'street', radius: 80, alpha: 0.25 }];
     else if (structure === 'grave-lamp')
       sites = [{ x: 0, y: -22, role: 'grave', radius: 66, alpha: 0.17 }];
-    else if (kind === 'rest') {
+    else if (e.treasury && e.treasuryBoss === 'thorn') {
+      // This is the physical security lantern on Scornfang's actual new
+      // Greenwood storehouse facade, not a free-floating Treasury light.
+      visualScale = featureScale({ ...e, renderKind: 'npc' });
+      sites = [{ x: 43, y: -12, role: 'treasury', radius: 70, alpha: 0.19 }];
+    } else if (kind === 'rest') {
       visualScale = featureScale({ ...e, renderKind: 'npc' });
       sites = region === 0
         ? [{ x: -25, y: -12, role: 'refuge', radius: 84, alpha: 0.27 }]
@@ -9456,7 +9461,59 @@
           );
       return true;
     }
+    // Scornfang occupies a reinforced woodland counting-house and storehouse,
+    // not the local family's cottage with a large door pasted over its roof.
+    // It keeps the existing entrance anchor, interact reach and saved identity.
+    function scornfangTreasuryStorehouse() {
+      blockwork(-54, 3, 108, 15, '#888c78', 7);
+      // Deeply seated stone piers and stout oak sidewall.
+      blockwork(-52, -32, 14, 39, '#8c9481', 8);
+      blockwork(38, -32, 14, 39, '#858e7d', 8);
+      boards(-42, -36, 84, 43, '#b5a482', false);
+      for (const x of [-39, -20, 20, 39])
+        timber([x, -34], [x, 7], 4.5, '#745b41');
+      timber([-49, -35], [49, -35], 5, '#68533c');
+      timber([-48, 2], [48, 2], 5, '#70563d');
+      // A high, broad clay-tile roof establishes its independent volume.
+      softPoly([[-57, -37], [-4, -70], [7, -70], [58, -37], [53, -32],
+        [0, -64], [-52, -32]], '#a27351', 1.5);
+      line([[-56, -36], [0, -70], [57, -36]], '#d0a17b', 2.1);
+      for (const y of [-42, -49, -56])
+        line([[-44 + (Math.abs(y + 36) * 0.85), y],
+          [44 - (Math.abs(y + 36) * 0.85), y]], '#816049', 0.85);
+      // Reinforced entry has real inset depth and an iron lintel.
+      softRect(-22, -23, 44, 36, '#575e54', 2);
+      recessedDoor(0, -20, 29, 32, true, 0);
+      timber([-25, -25], [25, -25], 5, '#645340');
+      for (const x of [-22, 22]) blockwork(x - 4, -14, 8, 27, '#92947e', 7);
+      // Two narrow, shuttered inventory windows: valuable stores, not a home.
+      for (const x of [-35, 35]) {
+        softRect(x - 7, -25, 14, 16, '#424d40', 1.5);
+        boards(x - 6, -25, 12, 14, '#7a654a', true);
+        timber([x, -27], [x, -8], 1.6, '#b4a17e');
+        line([[x - 6, -18], [x + 6, -18]], '#4b5045', 1.4);
+      }
+      for (const x of [-46, 46]) {
+        oval(x, 7, 3.8, 2.3, '#565b4b');
+        oval(x, 0, 1.2, 1.4, '#d3bc8f');
+      }
+      // Goblin field repairs, copper clasp and restrained woodland heraldry.
+      softPoly([[-9, -43], [0, -49], [9, -43], [8, -35], [-8, -35]],
+        '#526c58', 1.5);
+      line([[-5, -41], [0, -37], [5, -41]], '#c7aa7d', 1.4);
+      for (const x of [-27, 27]) {
+        line([[x - 2, -33], [x - 1, -18]], '#baa481', 1);
+        oval(x - 1, -19, 1.4, 1.4, '#6c6753');
+      }
+      mountedSconce(43, -12, 'workshop');
+      // A low, legible stone threshold that does not claim collision.
+      blockwork(-26, 13, 52, 5, '#9b9b85', 5);
+    }
     function craftedResidence(boss) {
+      if (boss === 'thorn') {
+        scornfangTreasuryStorehouse();
+        return true;
+      }
       if (boss === 'crown') return false; // The unconfirmed fallback remains protected.
       if (boss === 'cindermaw') {
         craftedDecoration('cindermaw-ash-den');
@@ -9671,10 +9728,13 @@
           carvedGateway('citadel');
           break;
         case 'goblin-camp':
-          craftAt(-20, 6, 0.65, () => tent());
-          craftAt(22, 4, 0.6, () => tent());
-          craftAt(1, 10, 0.4, () => craftedDecoration('cookfire'));
-          sack(-30, 10, 0.4);
+          // Two usable-looking canvas shelters rather than miniatures.
+          // Their offset keeps the shared yard and its working fire readable.
+          craftAt(-46, 3, 0.95, () => tent());
+          craftAt(46, 4, 0.90, () => tent());
+          craftAt(0, 15, 0.72, () => craftedDecoration('cookfire'));
+          craftAt(-19, 16, 0.58, () => craftedDecoration('sleep-roll'));
+          sack(36, 16, 0.52);
           break;
         case 'mire-nests':
           pool();
