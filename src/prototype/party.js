@@ -3712,7 +3712,7 @@
             e.aggro &&
             (dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540) ||
               rangedAllies.some(
-                (u) => dist(e, u) <= this.companionCombatReach(u) && this.line(u, e),
+                (u) => dist(e, u) <= this.companionCombatReach(u) && this.rangedLine(u, e),
               )),
         );
       }
@@ -3992,7 +3992,7 @@
         }
         if (u.type === 'archer') {
           const d = dist(u, e),
-            visible = this.line(u, e),
+            visible = this.rangedLine(u, e),
             anchor = this.partyFollowPoint(u, living);
           if (d < (monster?.retreat ?? 150)) {
             // A Charmed ranged creature can release its close-range native or
@@ -4032,7 +4032,7 @@
           if (
             dist(u, anchor) > 70 &&
             dist(anchor, e) <= this.companionCombatReach(u) &&
-            this.line(anchor, e)
+            this.rangedLine(anchor, e)
           ) {
             this.follow(
               u,
