@@ -2326,24 +2326,6 @@
     });
     ctx.closePath();
   }
-  function appendRoadShape(ctx, screen, a, b, width) {
-    const length = distance(a, b);
-    if (length <= 0.001) return;
-    const nx = -((b.y - a.y) / length) * width;
-    const ny = ((b.x - a.x) / length) * width;
-    const points = [
-      { x: a.x + nx, y: a.y + ny },
-      { x: b.x + nx, y: b.y + ny },
-      { x: b.x - nx, y: b.y - ny },
-      { x: a.x - nx, y: a.y - ny },
-    ];
-    points.forEach((p, k) => {
-      const q = screen(p);
-      if (k) ctx.lineTo(q.x, q.y);
-      else ctx.moveTo(q.x, q.y);
-    });
-    ctx.closePath();
-  }
   function appendRoadCap(ctx, screen, point, width) {
     // Match the clockwise winding of each quad. Opposite winding would
     // cancel in Canvas's nonzero fill and punch holes at bend/junction caps.
