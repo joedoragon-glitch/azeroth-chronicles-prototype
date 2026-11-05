@@ -26,7 +26,7 @@
       if (walls.length < 3 || !walls.every((p) => p.greenwoodWall?.a && p.greenwoodWall?.b))
         return null;
       const segments = walls.slice().sort((a, b) => {
-        const index = (p) => Number(String(p.id).match(/-wall-(\\d+)$/)?.[1] ?? -1);
+        const index = (p) => Number(String(p.id).match(/-wall-(\d+)$/)?.[1] ?? -1);
         return index(a) - index(b);
       });
       if (segments.some((p, i) => !String(p.id).endsWith('-wall-' + i))) return null;
