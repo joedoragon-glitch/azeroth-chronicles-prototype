@@ -4,12 +4,12 @@
   "designId": "settlement-night-lanterns-20261105",
   "name": "Greenwood settlement lanterns and night lighting",
   "kind": "decoration / building-attached light",
-  "nextAction": "Use the design audit's A–H actual scene storyboard to develop and review visual candidates; then revise draft engineering PR #803 only after verifying the accepted style and per-site behavior. No merge or deployment.",
+  "nextAction": "Finish PR #821's exact-head focused, offline-build, Canvas/Pixi and performance checks; resolve failures before merging; after verified publication, let owner judge native game aesthetics and iterate without extra premerge approval chores.",
   "context": {
     "originConversation": "5 November 2026 SIBDLP chat; conversation URL unavailable; owner supplied 3 in-game nighttime screenshots and explicitly requested independent game-designer audit before engineering.",
-    "decisionSummary": "Owner rejects roof-mounted glowing rectangles and overlaid rectangular post glass, wants believable, attractive entrance and street lanterns; wants the refuge lit after dark, without houses/workshops appearing fully active all night. Independent audit identified additional risks from draft PR #803 and specified corrected artistic choices.",
+    "decisionSummary": "Owner rejects roof-mounted glowing rectangles and overlaid rectangular post glass, wants believable, attractive entrance and street lanterns; wants the refuge lit after dark, without houses/workshops appearing fully active all night. Independent audit identified additional risks from draft PR #803 and specified corrected artistic choices. Later owner authorization explicitly makes in-game postmerge live viewing the artistic acceptance; a standalone sprite/mockup approval round is not required.",
     "decisionDate": "2026-11-05",
-    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/821",
     "contentDocuments": [
       "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md",
       "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812"
@@ -17,18 +17,19 @@
     "locationAndLore": "Millhaven Refuge, adjacent Millhaven cottages/workshops, streetlight posts and Orchard Hamlet in the first region; preserve existing service identities, path/door access and accepted other-region scenes."
   },
   "decisions": {
-    "conceptAcceptance": "Owner requested thorough design review and corrections; the problem statement and existing approved roadside-post direction are authoritative. No approval of a new rendered candidate is implied.",
-    "proceduralDesignAcceptance": "NOT YET: corrected design brief authored and issues dispositioned; actual candidate screenshots at native in-game scale have not been presented or accepted.",
+    "conceptAcceptance": "Original lamp defect and roles were explicitly approved for autonomous engineering improvement; final illustrated appearance intentionally remains subject to post-publication live review.",
+    "proceduralDesignAcceptance": "Engineering candidate #821 follows the documented art direction. Final creative approval is explicitly reserved for the owner's post-release live gameplay review.",
     "spriteProductionAuthorization": "None in this design-only stage; do not generate/replace raster sprites.",
     "generatedAppearanceAcceptance": "None. No new generated images.",
     "pendingCorrections": [
-      "Draft #803 must not merge unchanged: identical sconces across regions, two continuously lit closed-workshop sconces, unreviewed lost service lights, and insufficient facade/material/occlusion evidence.",
-      "Capture actual day, dusk, night, dawn design candidates on the same Millhaven and Orchard scenes in both Canvas and Pixi at game zoom; record visual acceptance before engineering release."
+      "Wait for exact-head engineering/performance checks and hosted publication before claiming release readiness; owner will judge aesthetics in the actual game, after which any further changes are iterative.",
+      "Keep streetlamp approved silhouette, per-region distinction, service site fixture coverage, closed workshop behavior, camera-scale alignment and no phantom overlay protected in future iterations."
     ]
   },
   "reference": {
     "sourceCommit": "14a14134556d094e42434aa6ae5c3638aeb067f0",
     "ownerFilesAndBranches": [
+      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/821",
       "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/803",
       "src/prototype/visuals.js::craftedHouse / wallSconce / lantern / drawLightFixtures",
       "src/prototype/renderer.js::nightLightKind / nightSources",
@@ -118,6 +119,6 @@
     "expectedReplacementRevision": null,
     "rollbackRevision": null,
     "releaseCommit": null,
-    "releaseEvidence": "Design-only draft with no gameplay or artwork implementation; original engineering PR #803 remains unmerged and unpublished."
+    "releaseEvidence": "Implementation candidate on new current-main branch in PR #821, including in-game facade/post art, source/glass contracts, regression tests and PWA fingerprints. Until checks/merge/hosted delivery are verified, no release or device-verification claim."
   }
 }
