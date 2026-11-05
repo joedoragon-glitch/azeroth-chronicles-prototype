@@ -53,6 +53,16 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
     assert(!g.blocked(bridge.x, bridge.y, 'vale', 0, true),
       key + ' bridge midpoint is legally traversable');
   }
+  // Use the real native pathfinder across the two *new physical* openings.
+  // A visually narrower deck is never sufficient if an actor gets stranded.
+  for (const crossing of z.bridgeApproaches || []) {
+    const west = crossing.west, east = crossing.east;
+    for (const [from, to] of [[west, east], [east, west]]) {
+      const walked = g.route(from, to);
+      assert(walked.length > 0 && dist(walked.at(-1), to) < 50,
+        'physical two-way bridge traversal stays intact');
+    }
+  }
   assert.equal(z.enemies.filter((e) => e.type === 'mob' && !e.summon).length, 32);
   assert.equal(z.nodes.reduce((sum, n) => sum + n.amount, 0), 640);
   assert.equal(new Set(ids(z)).size, z.props.length, 'no duplicate authored prop IDs');
