@@ -552,6 +552,12 @@
       companionUnitsMs: round(row.companionUnitsMs),
       companionBookkeepingMs: round(row.companionBookkeepingMs),
       enemyAIMs: round(row.enemyAIMs), renderMs: round(row.renderMs),
+      // Already-measured surface costs belong in rare incident snapshots,
+      // not only rolling averages. Null means the surface was not drawn.
+      // These are synchronous JS timings, never GPU-presented frame time.
+      pixiMs: row.pixiAttempted ? round(row.pixiMs) : null,
+      canvasOverlayMs: row.canvasOverlayDrawn ? round(row.canvasOverlayMs) : null,
+      canvasWorldMs: row.canvasWorldDrawn ? round(row.canvasWorldMs) : null,
       audioUpdateMs: round(row.audioUpdateMs), eventDispatchMs: round(row.eventDispatchMs),
       otherJsMs: round(row.otherJsMs), drawn: row.drawn,
       eventKinds: row.recentEventKinds || [],

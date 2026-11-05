@@ -4,7 +4,7 @@
   "designId": "settlement-night-lanterns-20261105",
   "name": "Greenwood settlement lanterns and night lighting",
   "kind": "decoration / building-attached light",
-  "nextAction": "Owner evaluates lantern appearance in the released game; record visual feedback and iterate on observed defects without repeating engineering setup or requiring pre-release mockup approvals. Recheck paired CPU acceptance #41997077296 if completed.",
+  "nextAction": "Wait for the owner's live Greenwood/Millhaven visual feedback, implement scoped refinements and record actual aesthetic acceptance; only after the owner personally transitions to another region, repeat its own design audit and release iteration. Reuse the workflow and engineering safeguards, never blanket-copy Greenwood's visual fixtures.",
   "context": {
     "originConversation": "5 November 2026 SIBDLP chat; conversation URL unavailable; owner supplied 3 in-game nighttime screenshots and explicitly requested independent game-designer audit before engineering.",
     "decisionSummary": "Owner rejects roof-mounted glowing rectangles and overlaid rectangular post glass, wants believable, attractive entrance and street lanterns; wants the refuge lit after dark, without houses/workshops appearing fully active all night. Independent audit identified additional risks from draft PR #803 and specified corrected artistic choices. Later owner authorization explicitly makes in-game postmerge live viewing the artistic acceptance; a standalone sprite/mockup approval round is not required.",
@@ -12,7 +12,8 @@
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/821",
     "contentDocuments": [
       "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md",
-      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812"
+      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812",
+      "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md#10-cross-region-precedent--owner-direction-5-november-2026"
     ],
     "locationAndLore": "Millhaven Refuge, adjacent Millhaven cottages/workshops, streetlight posts and Orchard Hamlet in the first region; preserve existing service identities, path/door access and accepted other-region scenes."
   },
@@ -24,7 +25,7 @@
     "pendingCorrections": [
       "Owner will judge actual in-game lighting aesthetic after published merge; further changes follow normal visual iteration.",
       "Keep regional distinctions, quiet cottage windows, single nighttime workshop security lamp, actual service fixtures and true glass alignment protected.",
-      "Review the result of paired CPU comparison #41997077296 when available; do not invent a passed result."
+      "Owner personally reviews regions in sequence; Greenwood lighting work establishes the reusable design/engineering/test/release workflow, not automatic visual approval or a cross-region lighting redesign."
     ]
   },
   "reference": {
@@ -120,6 +121,6 @@
     "expectedReplacementRevision": null,
     "rollbackRevision": null,
     "releaseCommit": "58a34e441208f3d83992adda9daf19ff81a3d111",
-    "releaseEvidence": "PR #821 merged; main hosted GitHub Pages workflow #41997921617 SUCCESS for exact merge commit 58a34e441208f3d83992adda9daf19ff81a3d111. Focused PR-head native fixture test, Canvas/Pixi regression and PWA checks passed. Physical iPhone and owner artistic acceptance not yet claimed; paired CPU run #41997077296 was in progress at this writing."
+    "releaseEvidence": "PR #821 merged; main hosted GitHub Pages workflow #41997921617 SUCCESS for exact merge commit 58a34e441208f3d83992adda9daf19ff81a3d111. Focused PR-head native fixture test, Canvas/Pixi regression and PWA checks passed. Physical iPhone and owner artistic acceptance not yet claimed; paired CPU run #41997077296 was in progress at this writing. Paired CPU #41997077296 subsequently completed SUCCESS with GO on measured cases and zero reported problems/warnings."
   }
 }

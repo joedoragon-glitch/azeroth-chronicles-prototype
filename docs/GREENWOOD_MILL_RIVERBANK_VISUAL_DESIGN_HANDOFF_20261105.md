@@ -369,3 +369,33 @@ This is the **design department's selected solution**. The stages below are impl
 The newly merged settlement-night-lighting work superseded the interim `mill-sconce` path described in Section 13. The integration adopts the **single shared `PrototypeVisuals.lightingFixtures()` catalog** with one physically attached mill glass location `(-8,-48)` and `kind:'lantern', fixture:'glass'` Canvas/Pixi contract. Previously drafted custom `renderer.js` and Pixi light-path changes are intentionally discarded to preserve all newer upstream fixes. The Greenwood-only shoreline, connected-water and mill architectural art remain the scope of this candidate.
 
 This is an integration of main source at `82d9e7cdb267ad0cceed805f5690643d2095f213`; it is not a live gameplay release. Exact-head focused tests and actual camera-scale visual review are required before merge readiness. Owner aesthetic acceptance comes only after a separately authorized public release.
+
+## 15. Transferable waterfront design precedent for future regions (owner instruction, 5 November 2026)
+
+**Purpose:** This is the *first-region environmental quality precedent*, not a universal river palette or a demand to retrofit all other regions now. GitHub **PR #813** is the historical engineering record. Revisit its actual source diff, native review captures and focused evidence when designing any other place where water and ground meet. Treat approved future-region design decisions and current game art as independent authorities. Maintain a single coherent PR per future regional correction rather than one PR per visual symptom.
+
+### Reuse the method, not Greenwood's assets
+
+| Transferable rule established in Greenwood | What must be redesigned per region |
+| --- | --- |
+| Start with a continuous physical **watercourse geometry** that agrees with character collision, save/route rules and bridges. | River width/speed, marsh pond edges, rock-strewn torrents, engineered channels and accessible banks. |
+| Draw intentional **shoreline contours**, not periodic sawteeth or uniform border strokes. Use land-to-water material bands that break organically. | Exposed ground, mud/stone/clay material, erosion style, impoundment and sediment for each region. |
+| Trace genuine **hydraulic joins**: main water, tributaries, outlets, controlled works, wheel, drainage. Paint connected water coherently; never cover it with overlapping shore rims. | Whether water is wild, frozen, marshy, polluted, dammed, working, or merely decorative. Do not invent gameplay mechanics. |
+| Place **vegetation by bank ecology and adjacent human use**; distinguish cut/mown crossings from dense secluded reaches, with negative space and asymmetric opposite banks. | Species silhouettes, color, density and wetland character: Flooded Marches is not Greenwood with more reeds. |
+| Compose any riverside **architecture** with one correct perspective, materials, foundations, door/road access and structural integration. | Rural working mill versus port, mountain bridge, industrial canal, fortified quay or marsh construction. |
+| Physically mount functional **night fixtures** in the shared renderer lighting catalog; make water reflections local and restrained. | Regional nighttime palette, fixture availability, human occupation and light sources. |
+| Use **one first-person screen-scale acceptance pack**: native day/night, actual game viewport, phone readability, Canvas/Pixi parity, routes, combat clarity, saves, CPU budget and offline versioning. | Benchmark camera scenes and movement routes for the new geography. Owner's final taste judgment is made in the playable published game. |
+
+**Region adaptation prompts, not implementations:** Flooded Marches may demand soft floodwater margins, rooted wetland ecology and crossings on raised ground; Ironroot may require rocky narrow snowmelt streams; Ashen Frontier may call for eroded exposed shores with sparse growth; Dark Crown may use sharply engineered industrial canal edges and hard retaining walls. These are *questions to resolve in their own design audits*, not preapproved new art, game lore, hydrology or collision changes.
+
+### Future implementation recipe
+
+1. **Audit the real scene** at the user's gameplay camera and time of day; separate source-art faults from overlay/collision/asset faults.
+2. **Write the local design** (silhouette, material bands, vegetation, structure, light and points where engineered and natural banks meet); preserve biome identity, story and accessibility.
+3. **Implement the shared visual/collision topology**, minimize new draw calls and avoid per-frame random scenery. Validate river–road–bridge–worksite access and old v4 campaigns.
+4. **Review actual native day/night capture and focused tests** before merge; record changed source fingerprints and offline/PWA acceptance. Never infer device FPS from desktop success or claim an owner's visual acceptance before they see the released build.
+5. **Keep the historical result**: document intent, source diffs, important fixes, known limits and playtest feedback in one relevant regional handoff and PR. The future owner iteration can surpass Greenwood, rather than duplicating its particular shapes.
+
+**Evidence provenance at integration:** [PR #813](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/813), focused CI [run 42005885620](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42005885620), Chromium PWA [run 42005885407](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42005885407), and optional [native daylight/night artifact](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42005885620/artifacts/13404628457) (GitHub artifacts expire, but the design/source tests and PR remain). Both prior workflows passed for the reviewed source head. The newest integration onto concurrent main source must retain a clean merge and fresh focused evidence before deployment claims.
+
+**Development status at the time of writing:** Greenwood code and design committed, PR engineering-ready pending last integration and merge authorization now granted. No future-region correction was implemented here; no owner/device artistic approval is claimed.
