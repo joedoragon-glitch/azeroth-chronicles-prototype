@@ -4,7 +4,8 @@ const { shell } = require('./helpers/production-shell.cjs');
 
 (async () => {
   for (const language of ['en', 'es']) {
-    const app = shell(language);
+    let clock = 0;
+    const app = shell(language, 'paladin', { now: () => clock });
     const { scope, elements } = app;
     let exported = null;
     scope.URL.createObjectURL = (blob) => { exported = blob; return 'blob:diagnostic-test'; };
@@ -44,10 +45,11 @@ const { shell } = require('./helpers/production-shell.cjs');
     // return are nonterminal boundaries for the playtest evidence.
     scope.document.hidden = true;
     for (const fn of app.documentEvents.visibilitychange || []) fn();
-    assert.equal(scope.Prototype.started, false);
-    assert.equal(elements.get('title-screen').hidden, false);
+    assert.equal(scope.Prototype.started, true, 'short hidden interval freezes play without title');
+    assert.equal(elements.get('title-screen').hidden, true);
     assert.equal(JSON.parse(app.storage.get('sibdlp-playtest-diagnostics-v1')).active, true,
       'background interruption checkpoints the live renderer capture');
+    clock = 3200;
     scope.document.hidden = false;
     for (const fn of app.documentEvents.visibilitychange || []) fn();
     elements.get('title-continue').click();
@@ -82,7 +84,12 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert.equal(capture.state, 'stopped');
     const continuity = report.performance.diagnosticContinuity;
     assert(continuity.events.some((row) =>
-      row.kind === 'return-to-title' && row.reason === 'document-hidden'));
+      row.kind === 'return-to-title' && row.reason === 'document-hidden-sustained'));
+    assert(continuity.events.some((row) =>
+      row.kind === 'background-return-classified' && row.decision === 'guarded-continue'));
+    assert.equal(typeof continuity.documentId, 'string');
+    assert(continuity.events.some((row) =>
+      row.kind === 'document-start' && row.documentId === continuity.documentId));
     assert(continuity.events.some((row) =>
       row.kind === 'return-to-title' && row.reason === 'manual-menu'));
     assert(continuity.priorFrameProfiles.some((entry) => entry.runtimeWindow &&
@@ -172,6 +179,8 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert(restoredExport);
     const restoredReport = JSON.parse(await restoredExport.text());
     assert.equal(restoredReport.performance.rendererDiagnostics.state, 'recording');
+    assert.notEqual(restoredReport.performance.diagnosticContinuity.documentId,
+      continuity.documentId, 'a new JavaScript document has a new event identity');
     const restoredContinuity = restoredReport.performance.diagnosticContinuity;
     assert(restoredContinuity.priorRendererSegments.length > 0,
       'interrupted profiling survives as a separately clocked segment');
