@@ -107,8 +107,7 @@ assert.equal(JSON.stringify(game.snapshot()), before, 'render sources never alte
 console.log('PASS wall-mounted cottage/workshop/refuge, street glass, day/night, GPU parity and save purity');
 
 // Carried sources follow the real renderer's facing and bobbed foot anchor.
-const { createCanvas } = require('@napi-rs/canvas'),
-  Renderer = require('../src/prototype/renderer');
+const { createCanvas } = require('@napi-rs/canvas');
 for (const night of [false, true])
   for (const side of [-1, 1])
     for (const captain of [false, true]) {
