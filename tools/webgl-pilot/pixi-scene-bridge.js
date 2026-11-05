@@ -10,9 +10,9 @@
   };
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const hex = (rgb) => (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
-  // Original PrototypeVisuals.atmosphere palettes, unmodified.
+  // Mirror PrototypeVisuals.atmosphere palettes exactly; Greenwood-only grading stays isolated to index 0.
   const NIGHT = [
-    [11, 25, 42, 0.48],
+    [39, 47, 67, 0.64],
     [12, 32, 44, 0.48],
     [19, 29, 42, 0.5],
     [32, 20, 35, 0.52],
@@ -61,8 +61,10 @@
           {
             offset: 1,
             color: rgba(
-              [9 + 13 * peace, 17 + 14 * peace, 30 + 19 * peace],
-              (0.58 - 0.28 * peace) * night,
+              (i === 0
+                ? [31 - 9 * peace, 40 - 9 * peace, 60 - 11 * peace]
+                : [9 + 13 * peace, 17 + 14 * peace, 30 + 19 * peace]),
+              (i === 0 ? 0.64 - 0.34 * peace : 0.58 - 0.28 * peace) * night,
             ),
           },
         ],
@@ -95,7 +97,10 @@
     }
     if (warmth > 0) {
       const sunset = phase === 'sunset',
-        strength = clamp(warmth, 0, 1) * (phase === 'victory-sunrise' ? 1.25 : 1);
+        strength =
+          clamp(warmth, 0, 1) *
+          (phase === 'victory-sunrise' ? 1.25 : 1) *
+          (i === 0 && sunset ? 0.76 : 1);
       layers.push({
         type: 'warmth',
         style: 'linear',
