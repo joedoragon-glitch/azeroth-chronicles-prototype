@@ -470,3 +470,39 @@ function dreadScene(index) {
     'Reversal prevents creation of the moving, damaging Dreadmaw closure');
   console.log('PASS Dreadmaw native two-gap closure and zero orphan persistent ring');
 }
+
+
+{
+  // First-region playable acceptance: this is an original Greenwood boss
+  // cone, not a Mine-only late-game demonstration or artificial attack.
+  const g = new C('developer', 'strategist', () => 0.99);
+  if (g.zoneId !== 'vale') g.enter('vale');
+  g.s.mercyTime = 0;
+  let selected = null;
+  for (let x = 280; x < 1200 && !selected; x += 110)
+    for (let y = 260; y < 1100 && !selected; y += 110) {
+      const origin = { x, y };
+      const mark = { x: x + 90, y };
+      if ([origin, mark].some((p) => g.blocked(p.x, p.y, 'vale', 15)) ||
+          !g.line(origin, mark)) continue;
+      const e = g.bossEnemy(g.boss('thorn'), 'normal', origin);
+      const a = g.buildBossAttack(e, 0, mark, false).first;
+      g.prepareGroundAttack(e, a);
+      if (!g.strategistReversalCovers(a, mark)) continue;
+      selected = { e, a, mark };
+    }
+  assert(selected, 'open authentic Greenwood warning placement exists');
+  const { e, a, mark } = selected;
+  g.zone().enemies = [e];
+  Object.assign(g.hero, mark, { hp: 2000, maxHp: 2000 });
+  e.telegraph = a;
+  e.aggro = true;
+  assert(a.timer > 0 && g.strategistReversalSupported(e, a));
+  const before = { hp: g.hero.hp, enemyHp: e.hp };
+  assert(g.attemptStrategistReversalCommand());
+  a.timer = 0;
+  g.resolveAttack(e);
+  assert.equal(g.hero.hp, before.hp);
+  assert(e.hp < before.enemyHp);
+  console.log('PASS first-region Greenwood Thornfang original warned cone Reversal');
+}
