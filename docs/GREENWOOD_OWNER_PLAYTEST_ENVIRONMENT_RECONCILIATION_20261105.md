@@ -1,3 +1,263 @@
+# Greenwood Vale - environmental design and engineering handoff
+
+**So I Became the Dark Lord's Problem (SIBDLP) | 5 November 2026**
+**Controlling continuation for PR #828.** This is the completed design/reconciliation stage requested by Joel. Engineering implementation is the next stage; this document does not claim owner acceptance of unseen art, successful integration, merge, deployment or device verification.
+
+## Start here
+
+Continue on existing **#828**, branch `fix/greenwood-owner-visual-review-20261105`. Do not create another environmental PR. It already contains the original chat's first corrections and this handoff. Use #825 only as a source of selectively reviewed candidates; do not merge that whole branch into this one. Keep the isolated fort correction in #826 as the preferred engineering source, subject to comparison with #827 and final wall-distance tests. One final implementation of each shared system must survive.
+
+The intended player experience: Greenwood is a quiet, inhabited working valley. Buildings fit their occupants; defenses fit real walls and approaches; roads connect places using related earth materials; nighttime activity has physical light sources; the ground has restrained organic detail. Preserve mature-summer Piedmont identity, the working mill, original characters, quests, recovery economy, four current classes and historical v4 saves.
+
+**Evidence used:** all ten pages and embedded screenshots of Joel's attached *Goblin Camp Improvements* export; [originating conversation](https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262); live PR metadata, relevant source and existing workflow logs. Screenshot pages are visual defect references, never candidate screenshots. Exported assistant claims are not independently accepted design or test evidence.
+
+**Additional recovered direction:** Joel's 5 November 13:27:20 UTC message requested sensible public lamps in populated areas while retaining rural darkness. This is recovered conversation context; it is absent from the PDF's direct user text. **Current owner clarification in this takeover:** Thornfang's main house is excessively large relative to other game houses; reconcile its proportions while developing the courtyard and associated spaces made available, and repair the unfinished/poorly implemented design. This is now an explicit required correction (E16), superseding the earlier evidence gap.
+
+## 1. Complete feedback coverage
+
+Status abbreviations below refer to inspected code candidates, not a released fix. All acceptance remains open unless explicitly stated.
+
+| ID | Owner feedback and source | Design decision | Existing candidate / remaining acceptance |
+| --- | --- | --- | --- |
+| E01 | Palisade shadows unrelated to structure; pp.1-3,7 | Remove generic wall-center ovals; use restrained footing tied to actual posts/segments | #828 and #825 candidates; inspect Goblin, Treasury and Watch walls |
+| E02 | Disproportionate flower/small-plant shadows; p.3 | Ground small stems locally; no plant-sized black puddles | #828/#825 candidates; compare wildflowers, shrubs and tree roots |
+| E03 | Flat cultivated soil casts shadows; p.5 | Soil stays flush; only raised plants, stones and actual edging ground themselves | #828/#825 candidates; household plots and larger fields |
+| E04 | Day/night shadow consistency; p.5 | Separate small contact grounding from directional cast shading; attenuate cast shading with existing light cycle | #828/#825 candidates; night and both transitions unaccepted |
+| E05 | Two undersized Goblin shelters; expand fort if needed; pp.1-2 | Two credible domestic shelters around an open working courtyard; resize the enclosure as one layout | #825 incomplete/defective candidate; layout and migration required |
+| E06 | Outdoor traps nearly absent; place where defensively useful; p.2 | Small, avoidable trap pockets at defended flanks and approaches; native trap lifecycle | No completed additional-trap implementation established |
+| E07 | All enemy-occupied locations, including interiors, need sensible light; p.2 | Audit all five regions; use habitation/work/security roles and biome-appropriate fixtures | Full site inventory and corrections outstanding; not Greenwood-only |
+| E08 | Sawtooth curves; pp.5-6 | Continuous road edges and clean joins/end caps | #828 candidate over merged #824; native screenshots still need review |
+| E09 | Thin road abruptly differs from red-earth main road; p.8 | Same muted clay/earth family; distinguish use through width, wear and vegetation | #828/#825 candidates; do not recolor all wilderness or other regions |
+| E10 | Artificial, flat procedural ground; p.6 | Layer broad organic variation, sparse material detail and use-related transitions | #825 grain candidate needs source/runtime repair and art review |
+| E11 | Treasury looks like a recycled cottage; p.7 | Purpose-built rural timber/stone counting house with receiving frontage and secure storage | #825 candidate, not accepted; preserve Treasury gameplay |
+| E12 | Wagon road ends before map boundary; p.8 | Visible departure corridor continues beyond wagon toward eastern boundary | #828 render-only candidate; preserve route identity and transport interaction |
+| E13 | Trade is hard to perceive; keep region quiet/rural; p.8 | Compose existing production, collection and shipment scenes; no new trade simulation | Broader scene audit outstanding |
+| E14 | Skeleton defenders lose protection near walls; p.9 | Actual enclosed wall footprint plus existing 160-unit exterior distance, once | #826/#827 isolated candidates; #828/#825 duplicate implementations to reconcile |
+| E15 | More public lamps in sensible populated places; recovered message | A few role-based public light anchors, separated by genuinely dark countryside | #825 placement candidates; attempted placements are not proof of coverage |
+| E16 | Thornfang house humongously large against other houses; use freed space for richer courtyard/associated areas; unfinished execution; explicit owner clarification in takeover | Reduce and redraw main lodge to regional domestic scale; redistribute functions around a finished useful yard | Required follow-up to merged #820 / issue #806; not completed by the previous roof patch |
+
+**Related scope:** bridge-deck generic-shadow removal is a closely related source finding, also visible on p.7; include it with E01-E04. E16 is a mandatory scale, yard and finish correction, rather than permission to discard Thornfang's wolf identity or #820's dry homestead site and Mira/patrol continuity.
+
+## 2. GitHub reconciliation and actual evidence
+
+Repository: `joedoragon-glitch/azeroth-chronicles-prototype`. Inspected main: `e25ad8e800f385a8c5591a8373edb04c2f85a1b8` (#824 merged). The main development ledger still describes #824 as a candidate; live merged metadata overrides that stale status. Publication of that merge was not independently verified in this design pass.
+
+| Record | Inspected head / state | Disposition |
+| --- | --- | --- |
+| #828 original-chat corrective PR | `a4b5a8f46f2794bd0a715c7c05ca06a6940df5b4`; open draft | Main continuation and single environmental handoff. This design commit follows that code head |
+| #825 broader environment PR | `9271bfbbda3b97e0c1e698199fe8ea9e8593296b`; open draft | Donor only: inspect Treasury art, terrain and public lighting individually. Shelter migration is defective. No blanket merge |
+| #826 isolated actual-wall fix | `5911577b8860bb31a9a56324fa556eb3292000e4`; open draft | Preferred narrow source for fort correction, since its reported native/PWA checks are verified green |
+| #827 second actual-wall fix | `5f2eecdf996be721ed1c1f500b0acbad326670f2`; open draft | Alternative source; its focused and PWA runs also green. Compare rather than stacking either implementation |
+| #819 old +40 proposal | `0e5f0e01e094f8f342959c8857d77f79966b1fad`; open draft | Preserve history; do not import its obsolete 40-only rule or add another margin |
+| #824 roads/bridges; #820 homestead; #821 fixtures | Merged, verified by live PR metadata | Baseline to preserve. Earlier provisional visual reviews do not cancel newer owner feedback |
+| #814 watermill continuation | Independent active draft | Coordinate shared landscape/visuals files; preserve its appended-route strategy and merged mill system |
+| #545 / #806 | Existing regional epic / homestead issue | Existing navigation records, not newly created tickets for this exported chat |
+
+Targeted searches found no dedicated issue for this full environmental feedback set. #825/#828 themselves already track it; do not manufacture a new issue per defect. Preserve all branches and PR history until integrated coverage is proved; no closure is performed in this design stage.
+
+### Inspected checks, not inferred success
+
+- **#828:** [focused run 42040222688](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42040222688) failed `tests/sprite-scope.test.cjs`: source-only evidence drift for `renderer.js`. Scope enumeration still matched. Engineering must review the art/code diff before refreshing current evidence, retaining historical receipts.
+- **#828:** [paired draw-cost run 42040222768](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42040222768) returned HOLD because the **eight-actor baseline p95 dispersion was too large to certify**. One-actor baseline tail also warned. This is not proof of a candidate regression or phone FPS.
+- **#828:** PWA [42040222713](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42040222713), retained contour [42040223193](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42040223193), and targeted road/bridge capture [42040222818](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42040222818) succeeded. Their generated scene artifacts were not downloaded/visually accepted in this design pass.
+- **#825:** [focused run 42042517160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42042517160) failed five checks: environment-quality, sprites and terrain-effects report `ReferenceError: R is not defined`; runtime-workload fails an assertion; town-street-audit reports **vale road crosses collision geometry**. Performance, PWA and targeted road/bridge runs also failed at that inspected head. Their individual causes beyond these inspected focused logs remain unclassified.
+- **#825 source defect:** `greenwoodEnvironmentFinish()` has two consecutive guards on `greenwoodGoblinShelterVersion !== 1`. The first scales walls 1.14 and sets version 1; consequently the second block, which replaces/flags the two shelters and proposes another wall scale, cannot execute. Treat the shelter-completion claim as contradicted by source, not as a delivered design.
+- **#826:** focused [42039549377](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42039549377) and PWA [42039549885](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42039549885) succeeded.
+- **#827:** focused [42039647991](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42039647991) and PWA [42039648248](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42039648248) succeeded.
+
+These are workflow results associated with the inspected source heads. Some workflows execute GitHub's synthetic merge candidate; #828's timing log identifies `194d76fe3dbd2c6fe2eb9879359abce4f015c4f2`. Preserve tested SHA/base/harness relationships. Later source integration requires new applicable evidence, not relabeling these runs.
+
+## 3. Shadows: physical grounding with restrained cost
+
+Use one shared eligibility/strength policy across Canvas fallback and Pixi primary renderer.
+
+| Surface/object | Intended treatment | Reject |
+| --- | --- | --- |
+| Bare soil, cultivated bed, road, flush bridge marker | No detached cast/contact oval | Soil or deck appears to float |
+| Flower stems, groundcover | At most a very faint local root contact | Dark disk wider than the entire clump |
+| Bush, tree, upright prop | Contact follows occupied base; existing art can supply broader canopy/body shading | Double-painted raster/procedural grounding |
+| Palisade/stone segment | Narrow irregular foot contact along actual base/posts | Repeated center ellipses or upward black fins |
+| Shelter/roof | Grounding under posts, eaves and footprint consistent with existing art | Generic bubble displaced through a wall or doorway |
+
+Contact grounding is local darkening where things meet; cast shadow implies a light direction and an obstructing object. Keep this distinction at night. Directional daylight shading fades with the existing cycle; small contact grounding may remain for depth. Moonlight uses the existing approved cool nighttime palette. Nearby lanterns add local light without requiring moving per-object shadow simulation. Do not reverse all shading to fake a new sun path or turn on ambient black ovals at dusk.
+
+Engineering first removes false shadows, then adds only geometry-supported footing that materially improves the scene. Check post bases and plant roots in daylight, full night, dawn and dusk; compare at the same camera/time. Do not introduce a new lighting engine.
+
+## 4. Goblin Road Fort: two shelters and a usable compound
+
+**Visual brief:** an improvised but maintained timber stockade inhabited by working goblins. Two weathered canvas/timber shelters, each big enough for the adjacent goblin to use; low bedding, a shared cookfire, limited storage and a clear central work/social space. No human cottage substitutions or tiny tent icons beneath giant roofs.
+
+At the existing 150% camera, compare against an ordinary goblin's body excluding weapon, ears and nameplate. Initial art targets: shelter opening at least 1.2 body heights and 1.3 body widths; each shelter roughly 2.5-3.5 body widths across, with enough visible depth for bedding. These are designer starting ratios, not new collision dimensions or a claim current art meets them. Roofs remain below nearby mature-tree canopies. Use distinct wear/bed arrangements to avoid identical stamped shelters.
+
+**Composition:** keep the east entrance and approach recognizable. Put the shelters along the rear/north side with openings toward the courtyard. Place cookfire off the circulation line, provisions beside the sheltered wall, game/work table at a courtyard edge. Keep the tribute interaction clearly visible and reachable. The center must remain readable during a fight, not fill with barrels.
+
+**Layout sequence:** measure actual rendered shelter footprints, place the two roofs with breathing room, reserve the gate-to-yard-to-tribute route, then fit the joined irregular palisade around this layout. Start expansion to north/west and modestly south where clear; protect nearby roads, map edge and ecology. Existing anchor is approximately (350,2820) on the 3200 layout, so uniform scaling is not a design solution. Keep shared wall endpoints, stable wall IDs and the east gate gap. Engineering may adjust individual corners to fit, recording final coordinates.
+
+Reserve a clear route at least the current approach's usable width and sufficient inflated clearance for the actual hero/party collision radii. Roof overhangs cannot hide the gate, hazards or tribute prompt. Decide solid post/body collision from visible structure; do not make all larger shelters walk-through merely to pass route tests.
+
+Update wall collision, enemy homes/return positions, any site props and cached fort boundaries together. For saved campaigns, apply one additive versioned migration once; preserve defeated enemies, depleted tribute, hero/party state and player-built parcels. Handle partial prior candidate migrations explicitly, including a version-1 wall update without shelters. Repeated restore must not expand the walls again.
+
+**Acceptance:** both shelters read as usable next to their residents; connected walls and gate remain coherent; hero plus party can enter, reach tribute, circulate and exit; enemy returns do not lodge inside new art/collision. Test fresh and restored worlds, not just counts of two props.
+
+## 4a. Thornfang homestead: proportional lodge, richer courtyard (E16)
+
+**Owner requirement:** the house itself is ridiculously oversized compared with other houses in the game. Being a large dog does not justify its current monumental scale. Reconcile the main house, make effective use of the freed space in the courtyard and associated areas, and finish the design properly. This explicit clarification supersedes the initial handoff's optional/inherited classification.
+
+**Design:** a comfortable, substantial wolf-scout home within the same domestic scale as Greenwood cottages. Retain an open wolf-usable mouth, dry bedding, timber/stone regional materials, practical porch light and an identifiable personal work yard. Reduce the dominant main-roof mass; distribute supporting functions into lower, visually subordinate elements. The whole parcel stays spacious; the main house stops consuming it.
+
+**Scale study:** capture a Millhaven cottage, an Orchard cottage and Thornfang's body/lodge at the same 150% camera and projection. Compare roof span, ridge height, wall mass and usable opening, excluding shadows/nameplates. Start the redrawn lodge around 1.15-1.35 times the median cottage's visible roof span, with ridge height close to cottage scale. These are proposed design targets, not owner-approved numerical limits. Fit Thornfang's actual body, turning/resting allowance and clear opening; if that needs extra room, add modest horizontal depth rather than a towering roof or simply reverting to the oversized mass. Record final measured ratios and a native comparison. Do not blindly shrink the current entire drawable: that also shrinks the entrance, bedding, beams and lantern into unusable miniatures.
+
+**Use the space gained:**
+
+| Area | Purpose and treatment |
+| --- | --- |
+| Main lodge frontage | Clear entry and low dry threshold; direct path from the approach to open bedding space |
+| Open central courtyard | Actual breathing and turning space, with room for the large body and visitors/party; preserve an uninterrupted circulation route |
+| Lower rest bay | Reuse/refine the existing secondary sheltered rest area; lower ridge than main lodge, visible bedding, no second giant house |
+| Scout/work edge | Group existing gear rack, training posts and modest covered equipment storage beside the yard, not across it |
+| Domestic service edge | Water vessel, food preparation and a small wood/store grouping where appropriate; visible practical use rather than dense filler |
+| Boundary and landscape | Selective low rails, ground wear and retained vegetation frame the private yard without sealing it off or recreating the retired pond |
+
+Prefer rearranging existing homestead props to adding new structures. A small lean-to is justified only where a real uncovered function remains; the courtyard is not a mandate to fill every recovered square with decoration.
+
+**Finish standard:** roof slopes meet a coherent ridge and closed gable/fascia; beams visibly support roofs; posts end on the ground; doorway/porch/bedding share a consistent perspective; no green seam, floating annex, disconnected rail or isolated prop. Tie the smaller building, rest bay, entrance and work/service areas together with restrained worn ground and coherent frontage. Mount the existing lantern on actual hardware and put its night pool at that fixture. Review all joins at gameplay scale, not merely a zoomed construction diagram. The previous sealed-gable patch in #820 does not by itself satisfy this broader correction.
+
+**Engineering boundaries:** current native art is in `greenwood-landscape.js`'s `thorn-lodge` / `thorn-rest-bay` painter and existing homestead scene handler. Preserve site/prop IDs, dry parcel, saved player-built structures, already-established road access, Thornfang/Mira physical patrol and quests. Match revised solid structures to collision where applicable; avoid invisible old oversized blockers. Reconcile both fresh and old v4 homestead scenes once without resetting the region. Keep the same usable wolf opening and fixture size when reauthoring the main silhouette.
+
+**Acceptance:** in a matched native cottage comparison, the lodge reads as a generously fitted creature home rather than an outsized landmark building; the recovered yard space visibly improves circulation and distinct domestic/work uses. Day/night Canvas/Pixi show finished joins and consistent grounding. Hero/party can approach, circulate and leave; Thornfang/Mira and save restoration remain intact. Keep issue #806 as the specific homestead source and PR #828 as this integrated correction's implementation owner.
+
+## 5. Defensive traps: tactical pockets, safe circulation
+
+Inventory persistent native traps first. The PDF's 'one trap' is an observation, not an established global census. For each defended outdoor site record ID, faction/role, existing actual trap IDs/types, approach, readable warning, safe bypass and current lifecycle owner.
+
+**Goblin pilot:** target two useful pockets: one on a flank of the gate approach, one beside a tempting lateral shortcut toward guarded stores. Keep the main gate lane and tribute interaction approach avoidable and legible. Place single traps rather than a continuous minefield; reuse existing region-appropriate trap kinds and existing damage/trigger behavior. Exact coordinates come after the enlarged layout and inflated-hazard route check.
+
+Audit Watch and other hostile strongholds/field compounds across all five regions for the same defensive logic. Do not impose an equal trap quota on every species, wilderness animal home or public road. Preserve existing designed interiors and high-density set pieces.
+
+Traps must use real telegraph, trigger, damage and reset/disarm semantics supported by the native system. Do not invent a universal disarm interaction. Do not reuse field-mini ownership for a creature fort if that would attach unrelated clear/reward state. If needed, extend the existing trap owner with stable site IDs rather than a parallel hazard engine. Verify trigger once, warning before impact, death/reset, pause, zone reentry, defeat/clear and save/reload against the owning site's current rules; do not resurrect consumed traps on every load. Added hazards must have a bypass for hero and companions in Normal and Nightmare.
+
+## 6. Practical lighting: global audit, local identity
+
+Enemy allegiance is not a lighting rule. Use occupation, task, material and time.
+
+| Site role | Fixture and composition | Darkness to retain |
+| --- | --- | --- |
+| Goblin residential fort | One shared hearth plus one modest gate/work lantern where necessary | Behind shelters and outside defended approaches |
+| Skeleton Watch / undead post | Existing grave lamps or appropriate sentry brazier at watch/entry points | Unused ruin corners; no mandatory human kitchen |
+| Treasury / freight | Mounted receiving/security lamp; task light at actual indoor records/storage work | Closed secondary fronts and unused yard edges |
+| Inhabited rooms, cellar, crypt work areas | Existing torch/brazier/lantern types at occupied work, living and circulation nodes | Unused chambers and mystery outside needed routes |
+| Beast/creature habitat | Existing canon-supported light only where inhabitants use/maintain it | Do not equip every wild animal den with human lamps |
+| Village public space | Recognizable existing iron/glass posts at meaningful pedestrian anchors | Gaps between settlements, fields and woodland |
+
+Start with a complete **source-generated list** of enemy-populated overworld sites, Treasury rooms, side dungeons and main dungeon occupied areas across all five regions. Engineering fills a compact audit table in this same record: `region / zone+site ID / occupied role / existing physical source / nighttime output / needed correction or justified adequate / evidence`. Unknown remains unaudited. This is a required completion record, not a claim this design pass has inspected every room. Batch inspection by region; do not make a new ticket per lamp.
+
+At each occupied site, light entry/security and principal inhabited/work areas as appropriate. Fixture hardware is visible by day, flame originates inside the glass/brazier, and the pool centers on that source. Small sources do not flood the whole compound. Keep props/actors legible and telegraphs stronger than decorative pools; check depth/occlusion and avoid apparent light through sealed walls with existing rendering capabilities. Reuse #821's shared fixture/light contract and regional variants. Existing fires may continue through temporary depopulation under current site rules; killing the last guard must not inexplicably black out all permanent lamps. No new staffing or fuel simulation.
+
+**Greenwood public anchors:** Millhaven refuge/square, market frontage, inhabited southern village junction, Orchard Hamlet's central approach, and northern freight-bridge approach if not already adequately lit. Count existing coverage first; co-located anchors can share one lamp. Aim for 4-6 meaningful covered anchors total, not 4-6 mandatory additional props. Add an outer freight/departure light only if its existing wagon/work lamp fails the role. Preserve actual dark intervals. Resolve placement rejection with a nearby safe alternative or documented equivalent coverage; 'attempted seven placements' cannot satisfy the design.
+
+## 7. Treasury architecture: a recognizable rural institution
+
+**Purpose:** Scornfang's guarded reclamation/counting operation. Greenwood timber framing, weathered shingles, fieldstone base, restrained iron reinforcement; no grand urban bank and no wolf-household symbols borrowed from Thornfang.
+
+Replace the cottage body silhouette with a broader, lower secure work building: a central receiving/counting frontage under a short supported canopy; narrow high windows rather than domestic picture windows; reinforced entrance aligned to the existing interaction; a subordinate locked store wing. The store wing may be part of the same drawable structure - it does not create a second enterable Treasury.
+
+Use three readable cues at phone scale: loading apron/canopy, visibly secure threshold, and organized goods/weights/records. A porch brace or lock detail must not depend on tiny text. Keep guard positions visually useful and a cart beside the receiving route, with goods against the storage side. Keep the yard airy enough to approach and fight.
+
+Preserve `supply-vale`, Scornfang ownership/name, the existing interior, two cache identities, captain/recovery gates, enemies, rewards and saved entry state. The old internal `boss === 'thorn'` rendering key does not authorize renaming the site or confusing Scornfang with Thornfang. Current main literally dispatches that key to `vale-cottage`; #825's replacement is a candidate to review, not design completion.
+
+**Acceptance:** with labels hidden, a village cottage and Treasury are distinguishable by massing/function; doorway and route are unobstructed; Canvas/Pixi show the same silhouette, day/night fixtures and footprint; entering/recovering crowns still works on a historical save.
+
+## 8. Roads, ground and quiet rural trade
+
+### Roads and departure
+
+Preserve #824's established route identities/order, bridge geometry and usable cart/farm/path hierarchy. The continuous paint correction is for sawtooth outlines, joins, end caps and abrupt color seams. Maintained narrow connectors use the same muted reddish earth family as the main road; less traffic means less compaction, narrower wear and encroaching grass. Unmaintained forest paths can remain softer without an abrupt yellow seam at a maintained junction.
+
+At bridges, earthen approaches meet abutments; do not paint road over the deck. Keep two canonical main-river crossings and the separate mill service crossing work. No decorative width increase can imply traversable room that collision denies.
+
+The wagon remains the region-transition interaction. Extend the **visible** road from it toward the eastern boundary with matching bearing/width and restrained wheel wear. A render-only extension is sufficient because the user requests connectivity/readability, not a walkable map exit. If any actual route extension is necessary, engineering must justify and migrate it separately; do not silently append/reorder saved routes or advertise walking into another region.
+
+### Procedural ground
+
+Choose three layers using existing native/cached rendering:
+
+1. Broad, low-contrast vegetation/soil variation across several ground cells, anchored in world coordinates rather than an obvious tile checkerboard.
+2. Sparse broken grass strokes, leaf litter and tiny stones related to place: leafier under trees, shorter/worn near traffic, cultivated texture within beds.
+3. Feathered transitions between grass, clay shoulders, yards and worked earth. Red clay stays local to disturbed ground.
+
+Keep the strongest contrast for actors, hazards, paths and useful objects. No metallic highlight strips, dark blotches masquerading as shadows, repeated symbols or animated grass per tile. Compare a meadow, woodland edge and farm/road junction; adding random dots uniformly is insufficient.
+
+Source already offers `visuals.js::floor/groundDetail`, Canvas ground caching and Pixi terrain preparation. Main outdoor floor forces a uniform base; some `groundDetail` work is gated by material availability. Engineering must confirm the chosen layer actually executes in both renderers, then prepare deterministic bounded detail through their existing cache paths. Do not restore costly projected-image terrain, add a new texture framework or change terrain collision. Review retained geometry/texture count, cold preparation and warm draw cost; don't trade a quiet flat ground for phone stalls.
+
+### Trade composition
+
+Audit the existing chain: fields/orchard -> working mill and village market -> freight/depot/Treasury -> outbound merchant. This describes visual relationships, not newly simulated cargo routes.
+
+Use one clear working vignette at each relevant place: sacks by the mill's dry loading side; produce in the market's usable frontage; sorted salvage/records and a cart at the freight/Treasury work area; a small ready load beside the merchant. Reposition/reuse props before adding any. Orient carts toward accessible lanes; suggest wear between loading space and road. No pile may obstruct a door, bridge, party route, tribute node or Treasury approach. Keep ordinary countryside between activity nodes; no new stalls everywhere, crowd spawning or economy system.
+
+Audit outcome can be 'adequate, retain' where existing composition already communicates use. The owner explicitly allowed that rural trade may already be appropriate; do not force an overhaul to satisfy a checklist.
+
+## 9. Fortification protection: distance from actual walls
+
+The protected set is the actual enclosed wall footprint **plus points within 160 world units of it**, including a closed boundary across the intentional gate for territory classification only. Gate collision remains open. Preserve actual concavities if present; do not blindly take a convex hull that grants distant empty wedges. Sampling buffers or radial scaling must not create materially different leeway on angled edges/corners.
+
+Use one authoritative boundary for damage reduction, ranged/reach/projectile rules and the Canvas/Pixi shield. Compute/cache geometry when wall layout changes, not per enemy per frame. Expanded camp migration must invalidate/rebuild this cache. Preserve approved 40% damage reduction and existing 320/416 basic ranged values and projectile policies; no AI leash, timed buff or new balance margin.
+
+Check both forts: interior, gate, every wall face, angled segments, corner distances and just outside the allowance. At unambiguous wall-face samples, +145 must protect and +180 must not; add near-160 precision/boundary tests rather than treating those two samples as a full proof. Keep all other-region and interior contracts. A missing shield screenshot alone does not prove a damage error; verify both actual effect and indicator on the same eligible defender.
+
+Prefer #826's narrow candidate as engineering input. Compare #827's equivalent coverage and #828/#825 alternatives; keep one implementation and the strongest independently justified tests. Do not merge all four fort algorithms.
+
+## 10. Ordered engineering work and completion gates
+
+This document defines intended results and a practical order. Joel requested design first and reserved implementation for engineering; no runtime edits, new test execution, PR closures, merge or deployment occur in this design stage.
+
+| Phase | Work | Exit evidence |
+| --- | --- | --- |
+| A - establish one candidate | Refresh main/#828/#825/#826/#827/#814; resolve duplicate algorithms and known failures | Recorded branch/base/head, explicit donor decisions, relevant existing failures triaged |
+| B - physical correctness | Reconcile fort boundary, false shadows and road paint; preserve canonical routes | Native boundary/route/save checks; paired scene review; evidence drift repaired only after review |
+| C - authored compounds | Implement Goblin layout, Thornfang lodge/yard correction and Treasury massing together with clearance/save handling | Real phone-scale day/night images, hero/party/tribute/entry routes, repeat-restore proof |
+| D - habitation and defense | Complete global occupied-light inventory, targeted corrections, public anchors and native trap placement | Site-by-site dispositions; fixture/source parity; real trap warnings/trigger/bypass/lifecycle evidence |
+| E - material and commerce | Ground layers and restrained rural trade staging | Meadow/woodland/farm comparison, useful vignettes and relevant cold/warm performance evidence |
+| F - integrated ready-for-review | Reconcile source/docs/assets and final candidate | Smallest applicable focused checks, build/offline/PWA consistency, reviewed native output; concise unresolved limits |
+
+Do not hold a completed independent phase for speculative later polish; do not declare the assignment complete while an E01-E16 requirement lacks evidence or a justified adequate/unchanged disposition.
+
+### Bounded visual review
+
+Review actual normal-game output at 150% on phone landscape, in Canvas and Pixi, with an overview where needed. Prioritize: Goblin compound, wildflower/palisade pair, cultivated plots, Millhaven curved junction, thin-to-main junction/southern bridge, Treasury/northern bridge, merchant departure, Skeleton wall boundary and Thornfang lodge/courtyard with a same-camera cottage comparison. Add the three ground contexts and one representative corrected site per regional lighting style; other occupied sites receive the recorded audit. Reuse overlapping frames rather than expanding a full-game screenshot matrix.
+
+Use day/night pairs for changed compounds/lighting/shadows. Spot-check dawn/dusk for shadow transitions and 100%/175% only where scale/density raises a real concern. Label real captures with source/merge SHA, save/seed, site, time, renderer, camera and viewport. Owner screenshots, source assertions, conceptual diagrams and a successful capture workflow cannot substitute for examining the final native frames.
+
+### Engineering responsibility
+
+Run the smallest relevant original suites selected for actual changed owners: fortifications/projectile behavior, Greenwood environment/native layout, town-street/bridge clearance, relevant save/migration and affected renderer/lighting/terrain/scope tests. Do not default to comprehensive game/browser certification. Resolve actual failures before readiness; do not weaken assertions to accept bad geometry or blindly regenerate historical hashes.
+
+Use paired existing draw-cost tooling for material rendering changes. #828's baseline-dispersion HOLD is uncertain measurement, so investigate/repeat only that relevant comparison on the final candidate; don't claim a performance fix or iPhone FPS. Review static cache growth/preparation as well as warm cost.
+
+Update existing feature documents, relevant design-to-sprite handoffs and generated outputs when source changes. No new raster production is needed for this procedural design stage. Preserve immutable original art and all v4 identities. Reference handoffs:
+- `tools/sprites/design-handoffs/greenwood-goblin-fort-shelters.json`
+- `tools/sprites/design-handoffs/greenwood-thornfang-homestead-proportions.json`
+- `tools/sprites/design-handoffs/greenwood-scornfang-counting-house.json`
+- `tools/sprites/design-handoffs/greenwood-organic-ground.json`
+
+Final engineering handoff must map each E ID to changed source, real evidence and remaining limits; include tested head/base, donor dispositions, relevant check links, screenshots and rollback. It can be **ready for merge review** after these gates. Actual merge/deployment requires the owner's applicable authorization; physical-device acceptance is distinct and must never be inferred from desktop emulation.
+
+## 11. Design-stage closeout
+
+**Planned/design:** E01-E15 specified, scope reconciled, native source owners and known draft failures identified.
+**Implemented this stage:** this documentation and design records only.
+**Existing runtime candidates:** remain unmerged drafts, with the mixed evidence above.
+**Tested this stage:** source/document reconciliation only; no game tests or visual candidate acceptance performed.
+**Merged / deployed / device-verified this stage:** none.
+
+**Next action for engineering:** start Phase A in #828, keeping this record as the one acceptance contract. No further chat reconstruction or owner-managed technical checklist is necessary.
+
+---
+
+## Historical initial handoff - retained provenance
+
+The following earlier record is superseded by sections 1-11 above wherever it conflicts. E16 and section 4a incorporate the owner's explicit current homestead clarification. Earlier draft-status and test statements describe the original checkpoint only.
+
 # Greenwood Vale — owner live-playtest environment reconciliation
 
 **5 November 2026 — SIBDLP / So I Became the Dark Lord's Problem.**

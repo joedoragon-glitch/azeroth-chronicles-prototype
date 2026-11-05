@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "idea",
+  "designId": "greenwood-scornfang-counting-house",
+  "name": "Scornfang's rural counting house",
+  "kind": "structure",
+  "nextAction": "Engineering: implement section 7 of docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md in existing PR #828, record real procedural references and final-candidate checks. No sprite generation or creative acceptance claimed.",
+  "context": {
+    "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
+    "decisionSummary": "Owner requested design-first takeover. This is a proposed implementation specification grounded in owner feedback; not acceptance of unseen implementation or generated artwork.",
+    "decisionDate": "2026-11-05",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/828",
+    "contentDocuments": [
+      "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
+    ],
+    "locationAndLore": "Scornfang's rural counting house in Greenwood Vale; preserve existing canon."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner authorized design/reconciliation work; the specific implementation has not been visually accepted.",
+    "proceduralDesignAcceptance": "Not established; native revised procedural references pending engineering.",
+    "spriteProductionAuthorization": "Not requested in this task.",
+    "generatedAppearanceAcceptance": "None.",
+    "pendingCorrections": [
+      "Purpose-built broad low timber/stone work frontage, secure threshold, subordinate locked storage",
+      "Greenwood weathered shingles and fieldstone, visible receiving canopy",
+      "Preserve supply-vale interior/cache identities and Scornfang/Thornfang distinction"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "e25ad8e800f385a8c5591a8373edb04c2f85a1b8",
+    "ownerFilesAndBranches": [
+      {
+        "path": "src/prototype/visuals.js",
+        "branch": "main"
+      },
+      {
+        "path": "src/prototype/greenwood-landscape.js",
+        "branch": "main"
+      },
+      {
+        "path": "src/prototype/greenwood-interiors.js",
+        "branch": "main"
+      }
+    ],
+    "exactEntityState": "Design specification only; no revised native capture yet.",
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Purpose-built broad low timber/stone work frontage, secure threshold, subordinate locked storage",
+      "Greenwood weathered shingles and fieldstone, visible receiving canopy",
+      "Preserve supply-vale interior/cache identities and Scornfang/Thornfang distinction"
+    ],
+    "assetSpecificDependencies": [
+      "PR #828 controlling handoff; source evidence is the inspected main baseline, not implemented new art."
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Scornfang's rural counting house"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Day/night, Canvas/Pixi and fresh/restored v4 worlds as applicable."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "path": "src/prototype/visuals.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      },
+      {
+        "path": "src/prototype/greenwood-landscape.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      },
+      {
+        "path": "src/prototype/greenwood-interiors.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "no new animation requested",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
