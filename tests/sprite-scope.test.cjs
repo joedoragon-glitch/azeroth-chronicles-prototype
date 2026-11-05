@@ -26,7 +26,8 @@ function assertReviewedSpriteEvidence(actual, reviewed) {
     changedSources.length,
     0,
     'Source-only sprite evidence fingerprint drift: ' +
-      changedSources.join(', ') +
+      changedSources.map((file) => file + ' actual=' + actualSources[file] +
+        ' reviewed=' + reviewedSources[file]).join(', ') +
       '. Enumerated scope still matches. Review the exact code/art diff before refreshing ' +
       'only the current scope evidence; preserve approved sprite canon and historical receipts.',
   );
