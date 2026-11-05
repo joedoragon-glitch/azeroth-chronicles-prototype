@@ -1166,12 +1166,12 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "fffbdb9df981754bb596c8b5894d92ef50aa7de544481cbbfd7b8f9fbf4a9967",
-    "src/prototype/world.js": "897b8162ceae1aee1936ded336b88c0a00e8abc1e3d4ec76641e5652b48a8974",
+    "src/prototype/visuals.js": "3061700cdfa42ee9658396fdc8cfddc5562a11d78000066c20f76e60051e1467",
+    "src/prototype/world.js": "3d9a8cee7e2745bb145a2b64cc9b348332eca87b4d70018128e0b54faba04225",
     "src/prototype/rules.js": "e69e36b44e6d0983b4ae44156210efa2146e75a62e7abfcd75f4cd2a116f7fa9",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "a49f3db912824770e7b546177745d3d428194b99459b095e6b659a838de43e43",
-    "src/prototype/renderer.js": "dcd4145421a8b2495ab9b897296f79f72f98e70ad5c5c1a7ae07da7deae02e49"
+    "src/prototype/renderer.js": "28407d33c01a6b253eee3f0d4f516ac3dbec84187c7cc30f2fd21ceb094d87ab"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }
