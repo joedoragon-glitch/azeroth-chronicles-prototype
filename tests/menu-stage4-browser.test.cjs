@@ -219,10 +219,41 @@ function contrast(item) {
           await frame.locator('#modal-title').textContent(),
           language === 'es' ? 'Ayuda y créditos' : 'Help & Credits',
         );
+        // The screenshots show title submenus, but the owner's acceptance
+        // scope also includes gameplay menus. Exercise the same shared
+        // surface after entering a real, non-diagnostic Paladin campaign.
+        await frame.locator('#close-button').tap();
+        await frame.locator('#title-new').tap();
+        await frame.getByRole('button', {
+          name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/,
+        }).tap();
+        await frame.getByRole('button', { name: /Palad/i }).tap();
+        await frame.waitForFunction(
+          () => !!window.Prototype?.started &&
+            document.querySelector('#title-screen')?.hidden &&
+            document.querySelector('#scene-loading')?.hidden !== false,
+          null,
+          { timeout: 90000 },
+        );
+        await frame.locator('#menu-button').tap();
+        const adventureFit = await assertDialogGeometry(frame, 'In-game Adventure index');
+        await frame.getByRole('button', { name: language === 'es' ? /Personaje/ : /^Character$/ }).tap();
+        const characterFit = await assertDialogGeometry(frame, 'In-game Character');
+        await frame.locator('#close-button').tap();
+        await frame.getByRole('button', {
+          name: language === 'es' ? /Juego y ajustes|Configuración|Ajustes/i : /Game and settings/,
+        }).tap();
+        const gameSettingsFit = await assertDialogGeometry(frame, 'In-game Settings', { noScroll: true });
+        await frame.locator('#close-button').tap();
+        await frame.getByRole('button', {
+          name: language === 'es' ? /Mapa|rutas/i : /Map and travel routes/,
+        }).tap();
+        const mapFit = await assertDialogGeometry(frame, 'In-game map');
+        await frame.locator('#close-button').tap();
         assert.deepEqual(errors, []);
         fs.writeFileSync(
           path.join(output, language + '-measurements.json'),
-          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit }, null, 2),
+          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit }, null, 2),
         );
         console.log(
           'PASS ' +
