@@ -21,7 +21,9 @@
     cellars: [1080, 2510],
     den: [920, 2880],
     treasury: [2120, 1250],
-    cache: [2420, 1690],
+    // Scornfang's construction-freight depot: sheltered beside the Crypt approach,
+    // not sitting on the eastern trunk road or mistaken for collectible tribute.
+    cache: [2600, 2610],
     watch: [2670, 2220],
     crypt: [2830, 2850],
     wagon: [2880, 280],
@@ -184,6 +186,7 @@
       s[2] = p.x;
       s[3] = p.y;
       if (s[0] === 'orchard') s[1] = 'Orchard expansion';
+      if (s[0] === 'cache') s[1] = "Scornfang's Supply Depot";
     }
     const camps = R.creatureStrongholds.filter((h) => h.region === 'vale');
     for (const h of camps) if (h.id === 'skeleton-watch') h.center = [a.watch.x, a.watch.y];
@@ -721,6 +724,8 @@
               ],
             ],
             ['path', [[650, 2640], [550, 2820], plan.goblin]],
+            // Short off-road freight apron from the existing Crypt approach.
+            ['path', [[2500, 2660], plan.cache]],
             [
               'path',
               [
@@ -942,9 +947,10 @@
               ['crate', 3030, 290],
             ],
             cache: [
-              ['cart', 2540, 1980],
-              ['supply-stack', 2490, 1830],
-              ['scribe-desk', 2560, 1700],
+              ['cart', 2515, 2570],
+              ['supply-stack', 2670, 2570],
+              ['scribe-desk', 2600, 2500],
+              ['stacked-lumber', 2690, 2660],
             ],
             estate: [
               ['estate-scaffold', 2970, 2760],

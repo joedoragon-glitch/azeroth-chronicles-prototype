@@ -2,6 +2,8 @@
 
 # Territorial Monster Forts — integrated placement audit
 
+> **5 November 2026 author-directed exception (draft, not published):** The Greenwood Vale Goblin roadside fort is to shelter one **existing** visible 180-crown Dark Lord Tribute source. This supersedes the 9 October rule against placing tribute inside monster forts **for this one source only**. It does not create fort-clear rewards, a fifth chest, new monsters, respawn changes or extra currency, while the separate former Woodland supply cache landmark is relocated and renamed Scornfang's Supply Depot beside the Forest Crypt approach; that depot is not a tribute source. The stable `tribute-vale-woodland-cache` saved ID is intentionally retained while its physical source moves to the Goblin camp. Existing saves migrate this source without restoring previously gathered crowns. The historic design and verification below remain provenance, not present-day acceptance evidence.
+
 ## Decision and boundary · 9 October 2026
 
 Monster Forts are **territorial homes**, not conquest or capture encounters. Preserve the `creatureStrongholds` system and existing species identities. Forts signal where ordinary monsters live, feed, train, store possessions, and defend their territory. Clearing residents follows **normal ordinary-enemy death/respawn and XP/crown rules**; no fort ownership, loot multiplier, capture flag, resource/tribute cache, quest gate, guardian, extra captain, or scripted boss is introduced.
