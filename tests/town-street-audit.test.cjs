@@ -207,22 +207,17 @@ for (const region of regions) {
       }
     });
   }
-  // The cache has one intentional off-road freight apron, not a second
-  // public town road. Keep the other sixteen routes genuinely connected.
-  const disconnected = network
-    .map((road, j) => ({ road, j }))
-    .filter(({ j }) => !connected.has(j));
+  // With the southern pedestrian route repaired, all 17 Greenwood routes
+  // connect to town, including the additional short freight-depot apron.
+  assert.equal(connected.size, network.length,
+    region.id + ' every authored road/footpath joins the town-connected network');
   if (authoredVale) {
     const cfg = Campaign.rules.greenwoodLayout;
-    assert.equal(disconnected.length, 1, 'only the authored depot apron may be off-network');
-    const apron = disconnected[0].road;
-    assert.equal(apron.length, 2, 'off-road depot apron remains a short spur');
-    assert(distance(apron[0], { x: 2500 * cfg.scale, y: 2660 * cfg.scale }) < 1,
-      'only the known freight-apron entrance is exempt from street connectivity');
-    assert(distance(apron.at(-1), cfg.anchors.cache) < 1,
-      'exempt path terminates at the real freight depot, not an arbitrary road');
-  } else {
-    assert.equal(disconnected.length, 0, region.id + ' every road belongs to the town-connected network');
+    const apron = network.find((road) => road.length === 2 &&
+      distance(road[0], { x: 2500 * cfg.scale, y: 2660 * cfg.scale }) < 1 &&
+      distance(road.at(-1), cfg.anchors.cache) < 1);
+    assert(apron, 'retain the real short freight-depot apron');
+    assert(connected.has(network.indexOf(apron)), 'freight apron joins the town road network');
   }
   for (const road of network) {
     assert(road.length > 1, region.id + ' has no empty streets');
