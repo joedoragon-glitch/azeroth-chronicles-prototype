@@ -19,6 +19,11 @@ const root = path.resolve(__dirname, '../..'),
   cfg = C.rules.greenwoodLayout,
   receipts = [];
 fs.mkdirSync(out, { recursive: true });
+// Finish existing Greenwood's lazy v4 label migration before taking a render
+// baseline. Renderer.draw() calls zone(), which may legitimately apply this
+// one-time migration; it must not be mistaken for a paint-side save mutation.
+// Keep the per-frame before/after snapshot assertion strict.
+g.zone();
 // The bridge camera follows the actual configured crossing after geometry
 // adjustments; historical hard-coded coordinates would miss later repairs.
 const bridge = {
