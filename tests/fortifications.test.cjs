@@ -141,6 +141,54 @@ function fixture() {
           plan.id + ': square fort horizontal margin');
         assert.equal(area.points[2][1] - area.points[1][1], 2 * (150 + apron),
           plan.id + ': square fort vertical margin');
+      } else if (region === 'vale') {
+        // The authored Greenwood rebuild replaced its old ten-point generic
+        // ruins with physical Goblin/Skeleton line-wall segments. The 160-unit
+        // extension must start at those actual segments, including the gate.
+        const walls = zone.props.filter((p) =>
+          p.stronghold === plan.id && p.greenwoodWall);
+        const sorted = walls.slice().sort((a, b) =>
+          Number(a.id.match(/-wall-(\d+)$/)[1]) - Number(b.id.match(/-wall-(\d+)$/)[1]));
+        const realOutline = [];
+        const append = (p) => {
+          const last = realOutline.at(-1);
+          if (!last || Math.hypot(p.x - last.x, p.y - last.y) > 0.01)
+            realOutline.push({ x: p.x, y: p.y });
+        };
+        for (const w of sorted) {
+          append(w.greenwoodWall.a);
+          append(w.greenwoodWall.b);
+        }
+        if (Math.hypot(realOutline[0].x - realOutline.at(-1).x,
+          realOutline[0].y - realOutline.at(-1).y) < 0.01) realOutline.pop();
+        assert.equal(area.points.length, realOutline.length,
+          plan.id + ': defense follows exact authored perimeter segments, not old ten-point ring');
+        const signedArea = realOutline.reduce((sum, p, i) => {
+          const next = realOutline[(i + 1) % realOutline.length];
+          return sum + p.x * next.y - next.x * p.y;
+        }, 0);
+        const orientation = Math.sign(signedArea);
+        const guard = zone.enemies.find((e) => e.stronghold === plan.id && e.hp > 0);
+        assert(guard, plan.id + ': actual living defender available for margin test');
+        const original = { x: guard.x, y: guard.y };
+        let inspected = 0;
+        for (const wall of sorted) {
+          const a = wall.greenwoodWall.a, b = wall.greenwoodWall.b,
+            dx = b.x - a.x, dy = b.y - a.y,
+            length = Math.hypot(dx, dy);
+          if (length < 90) continue;
+          const normal = { x: orientation * dy / length, y: -orientation * dx / length },
+            center = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+          Object.assign(guard, { x: center.x + normal.x * 145, y: center.y + normal.y * 145 });
+          assert.equal(g.enemyFort(guard)?.id, plan.id,
+            plan.id + ': protection reaches 145 units outward from wall ' + wall.id);
+          Object.assign(guard, { x: center.x + normal.x * 180, y: center.y + normal.y * 180 });
+          assert.equal(g.enemyFort(guard), null,
+            plan.id + ': protection ends beyond 160 units of wall ' + wall.id);
+          inspected++;
+        }
+        Object.assign(guard, original);
+        assert(inspected >= 4, plan.id + ': several actual wall faces tested independently');
       } else {
         assert.equal(area.points.length, ring.length);
         // The midpoint of symmetrical outer vertices yields the current
