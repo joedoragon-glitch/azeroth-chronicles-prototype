@@ -812,6 +812,40 @@
           z.greenwoodGoblinShelterAudit = { resizedWallSegments: moved };
           z.greenwoodGoblinShelterVersion = 1;
         }
+        if (z.greenwoodGoblinShelterVersion !== 1) {
+          const origin = { x: plan.goblin[0] * scale, y: plan.goblin[1] * scale };
+          const goblinWalls = z.props.filter((p) =>
+            p.stronghold === 'goblin-road-fort' && p.greenwoodWall);
+          // Expand the actual joined palisade together: independent segment
+          // movement would create gaps and invalidate collision and fort buffs.
+          if (goblinWalls.length >= 6) {
+            const grown = (p) => ({
+              x: origin.x + (p.x - origin.x) * 1.15,
+              y: origin.y + (p.y - origin.y) * 1.15,
+            });
+            for (const wall of goblinWalls) {
+              wall.greenwoodWall = {
+                ...wall.greenwoodWall,
+                a: grown(wall.greenwoodWall.a),
+                b: grown(wall.greenwoodWall.b),
+              };
+              wall.x = (wall.greenwoodWall.a.x + wall.greenwoodWall.b.x) / 2;
+              wall.y = (wall.greenwoodWall.a.y + wall.greenwoodWall.b.y) / 2;
+            }
+            for (const [index, dx, dy] of [[0, -95, -92], [1, 95, -92]]) {
+              const hut = z.props.find((p) =>
+                p.id === 'stronghold-goblin-road-fort-prop-' + index);
+              if (!hut) continue;
+              Object.assign(hut, {
+                x: origin.x + dx * scale, y: origin.y + dy * scale,
+                structure: 'goblin-long-shelter',
+                r: 0, decorative: true,
+                greenwoodGoblinShelter: true,
+              });
+            }
+          }
+          z.greenwoodGoblinShelterVersion = 1;
+        }
         if (z.greenwoodPublicLightingVersion === 1) return;
         const roadDistance = (point) => {
           let best = Infinity;
