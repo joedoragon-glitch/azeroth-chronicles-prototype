@@ -1744,6 +1744,70 @@
         ctx.fill();
       }
     }
+    // Seeded meadow flowers and white dandelion clocks are part of the
+    // static Greenwood ground, not new saved props or per-frame AI.
+    // Irregular sunlit pockets keep the countryside open between clusters.
+    const meadows = [
+      [460, 970, 115, 85], [805, 910, 150, 110],
+      [345, 1390, 130, 100], [450, 1880, 135, 125],
+      [735, 2440, 125, 115], [1060, 2550, 135, 140],
+      [1140, 1010, 135, 95], [2250, 740, 190, 135],
+      [2610, 1050, 190, 100], [2420, 2040, 135, 100],
+      [2930, 1740, 110, 120], [500, 2750, 145, 110],
+    ];
+    for (const [index, [cx, cy, rx, ry]] of meadows.entries()) {
+      for (let j = 0; j < 13; j++) {
+        const h = hash('greenwood-meadow-' + index + '-' + j);
+        const a = j * 2.3999632297 + (h % 23) * 0.017;
+        const r = Math.sqrt(((h >>> 8) % 997) / 997);
+        const p = screen({
+          x: (cx + Math.cos(a) * rx * r) * s,
+          y: (cy + Math.sin(a) * ry * r) * s,
+        });
+        if (p.x < -18 || p.x > bounds.width + 18 || p.y < -26 || p.y > bounds.height + 18)
+          continue;
+        const dandelion = j % 4 === 0;
+        const stem = dandelion ? 13 + (h % 4) : 8 + (h % 5);
+        const lean = ((h >>> 5) % 7) - 3;
+        ctx.strokeStyle = '#87a267cc';
+        ctx.lineWidth = dandelion ? 1 : 1.2;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y + 4);
+        ctx.quadraticCurveTo(p.x + lean * 0.2, p.y - stem * 0.4, p.x + lean, p.y - stem);
+        ctx.stroke();
+        const fx = p.x + lean, fy = p.y - stem;
+        if (dandelion) {
+          ctx.fillStyle = '#f1eadc33';
+          ctx.beginPath();
+          ctx.arc(fx, fy, 4.6, 0, Math.PI * 2);
+          ctx.fill();
+          for (let k = 0; k < 12; k++) {
+            const theta = (Math.PI * 2 * k) / 12;
+            const dx = Math.cos(theta) * (4.5 + (h % 3) * 0.2);
+            const dy = Math.sin(theta) * (4.5 + (h % 3) * 0.2);
+            ctx.strokeStyle = '#eee9d4be';
+            ctx.lineWidth = 0.65;
+            ctx.beginPath();
+            ctx.moveTo(fx, fy);
+            ctx.lineTo(fx + dx, fy + dy);
+            ctx.stroke();
+          }
+        } else {
+          const petals = ['#d4be9b', '#c8b0b4', '#b7bdd0', '#e1cc94'];
+          ctx.fillStyle = petals[(h >>> 3) % petals.length];
+          for (let k = 0; k < 5; k++) {
+            const theta = (Math.PI * 2 * k) / 5;
+            ctx.beginPath();
+            ctx.arc(fx + Math.cos(theta) * 2.2, fy + Math.sin(theta) * 2, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#9f9866';
+          ctx.beginPath();
+          ctx.arc(fx, fy, 1.05, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
     ctx.restore();
   }
   const api = {
