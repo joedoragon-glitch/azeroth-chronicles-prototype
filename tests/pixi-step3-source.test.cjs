@@ -8,8 +8,12 @@ const { scripts, core } = require('../scripts/site-assets.cjs');
 const scriptOrder = (page) =>
   [...read(page).matchAll(/<script src="\.\/([^"]+)"/g)].map((match) => match[1]);
 
-for (const page of ['templates/game.html', 'index.html', 'prototype.html', 'phone.html'])
+// Stage 3 phone orientation now uses a persistent wrapper; gameplay scripts
+// live in phone-game.html, never in the parent phone.html shell.
+for (const page of ['templates/game.html', 'index.html', 'prototype.html', 'phone-game.html'])
   assert.deepEqual(scriptOrder(page), scripts, page + ' must follow script inventory');
+assert.equal(scriptOrder('phone.html').length, 0, 'phone wrapper must not mount a second game');
+assert.match(read('phone.html'), /phone-game\\.html/, 'wrapper loads the canonical game frame');
 
 const sw = read('sw.js');
 const manifest = /const APP_FILES = (\[[^\n]*\])/.exec(sw);
