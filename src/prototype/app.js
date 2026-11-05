@@ -51,7 +51,9 @@
       storage.setItem(optimizationKey, 'auto');
       storage.setItem(optimizationAutoUpgradeKey, 'applied');
       return true;
-    } catch (_) { return false; }
+    } catch (_) {
+      return false;
+    }
   }
   const optimizationAutoUpgraded = upgradeOptimizationAuto(localStorage);
   let optimizationPreference = 'auto';
@@ -65,8 +67,11 @@
   // Presentation-only community localization; campaign IDs and names never change.
   const languageKey = 'azeroth-display-language-v1';
   let language = 'en';
+  let firstLanguageChoice = true;
   try {
-    language = localStorage.getItem(languageKey) === 'es' ? 'es' : 'en';
+    const savedLanguage = localStorage.getItem(languageKey);
+    firstLanguageChoice = savedLanguage !== 'en' && savedLanguage !== 'es';
+    language = savedLanguage === 'es' ? 'es' : 'en';
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
@@ -335,7 +340,8 @@
     'Heal queued for the hero.': 'Curación en cola para el héroe.',
     'Command Heal': 'Ordenar Curar',
     'No active companion can use Heal.': 'Ningún compañero activo puede usar Curar.',
-    'Healer cannot use Heal while silenced.': 'El sanador no puede usar Curar mientras esté silenciado.',
+    'Healer cannot use Heal while silenced.':
+      'El sanador no puede usar Curar mientras esté silenciado.',
     'Already up to date.': 'Ya tienes la versión más reciente.',
     'Update unavailable. Your saved run is safe.':
       'No se pudo actualizar. Tu partida está a salvo.',
@@ -355,8 +361,10 @@
     'Regional transport': 'Transporte regional',
     'Mira · ask the Western road observer': 'Mira · pregunta al observador del camino occidental',
     'Western road observer': 'Observador del camino occidental',
-    'Scout tracks / Western road observer': 'Huellas del explorador / observador del camino occidental',
-    'Mira is free. Find her teaching in Millhaven.': 'Mira está libre. Búscala enseñando en Millhaven.',
+    'Scout tracks / Western road observer':
+      'Huellas del explorador / observador del camino occidental',
+    'Mira is free. Find her teaching in Millhaven.':
+      'Mira está libre. Búscala enseñando en Millhaven.',
     'temporary den': 'guarida temporal',
     'Forest Crypt perimeter': 'Perímetro de la Cripta del Bosque',
     'Southern crossing, west bank': 'Paso del sur, orilla occidental',
@@ -677,15 +685,24 @@
       'El héroe y los compañeros vivos heridos recuperaron toda su salud.',
     'No requested party member is still wounded.':
       'Ningún miembro del grupo solicitado sigue herido.',
-    "Rogue · Free slots when Charmed allies fall": "Pícara · Liberar espacios al caer compañeros encantados",
-    "Rogue · Keep fallen Charmed allies in party slots": "Pícara · Conservar espacios para compañeros encantados caídos",
-    "Rogue · Free slots when Charmed allies fall · SELECTED": "Pícara · Liberar espacios al caer compañeros encantados · SELECCIONADO",
-    "Rogue · Keep fallen Charmed allies in party slots · SELECTED": "Pícara · Conservar espacios para compañeros encantados caídos · SELECCIONADO",
-    "Default: fallen Charmed allies go to reserve. You can still recover them for 40 crowns; their field slot is free for a new Charm.": "Predeterminado: los encantados caídos pasan a reserva. Puedes recuperarlos por 40 coronas; su espacio queda libre para otro encantamiento.",
-    "Fallen Charmed allies keep their occupied slot like other classes until recovered or manually rested. New Charms cannot take that slot.": "Los encantados caídos conservan su espacio como en las demás clases hasta recuperarlos o pasarlos manualmente a reserva. Otros encantamientos no pueden usarlo.",
-    "Rogue only: Choose how FUTURE fallen Charmed allies occupy party slots. The default frees the slot by moving the fallen ally to reserve. Keeping the slot instead lets you recover that same ally into your active group later. Both modes preserve ownership and require paid recovery. Switching modes never moves existing fallen companions.": "Solo Pícara: elige qué ocurre con los espacios de los compañeros encantados que caigan EN EL FUTURO. De forma predeterminada pasan a reserva y liberan su espacio. Si lo conservas, podrás recuperar al mismo compañero dentro del grupo activo. Ambas opciones mantienen la propiedad y requieren pagar la recuperación. Cambiar de opción no mueve a los compañeros que ya hayan caído.",
-    "Fallen Charmed allies will move to reserve, freeing their party slots.": "Los encantados caídos pasarán a reserva y liberarán su espacio del grupo.",
-    "Fallen Charmed allies will keep their party slots until recovered or rested.": "Los encantados caídos conservarán su espacio hasta recuperarlos o pasarlos a reserva.",
+    'Rogue · Free slots when Charmed allies fall':
+      'Pícara · Liberar espacios al caer compañeros encantados',
+    'Rogue · Keep fallen Charmed allies in party slots':
+      'Pícara · Conservar espacios para compañeros encantados caídos',
+    'Rogue · Free slots when Charmed allies fall · SELECTED':
+      'Pícara · Liberar espacios al caer compañeros encantados · SELECCIONADO',
+    'Rogue · Keep fallen Charmed allies in party slots · SELECTED':
+      'Pícara · Conservar espacios para compañeros encantados caídos · SELECCIONADO',
+    'Default: fallen Charmed allies go to reserve. You can still recover them for 40 crowns; their field slot is free for a new Charm.':
+      'Predeterminado: los encantados caídos pasan a reserva. Puedes recuperarlos por 40 coronas; su espacio queda libre para otro encantamiento.',
+    'Fallen Charmed allies keep their occupied slot like other classes until recovered or manually rested. New Charms cannot take that slot.':
+      'Los encantados caídos conservan su espacio como en las demás clases hasta recuperarlos o pasarlos manualmente a reserva. Otros encantamientos no pueden usarlo.',
+    'Rogue only: Choose how FUTURE fallen Charmed allies occupy party slots. The default frees the slot by moving the fallen ally to reserve. Keeping the slot instead lets you recover that same ally into your active group later. Both modes preserve ownership and require paid recovery. Switching modes never moves existing fallen companions.':
+      'Solo Pícara: elige qué ocurre con los espacios de los compañeros encantados que caigan EN EL FUTURO. De forma predeterminada pasan a reserva y liberan su espacio. Si lo conservas, podrás recuperar al mismo compañero dentro del grupo activo. Ambas opciones mantienen la propiedad y requieren pagar la recuperación. Cambiar de opción no mueve a los compañeros que ya hayan caído.',
+    'Fallen Charmed allies will move to reserve, freeing their party slots.':
+      'Los encantados caídos pasarán a reserva y liberarán su espacio del grupo.',
+    'Fallen Charmed allies will keep their party slots until recovered or rested.':
+      'Los encantados caídos conservarán su espacio hasta recuperarlos o pasarlos a reserva.',
     'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain can treat party wounds for 30 crowns or recover fallen companions.':
       'Las Pícaras no contratan Soldados ni Rangers. Encantan monstruos elegibles en combate. El capitán puede curar al grupo por 30 coronas o recuperar compañeros caídos.',
     'Safe conditions required.': 'Requiere condiciones seguras.',
@@ -717,11 +734,16 @@
   Object.assign(spanishText, {
     'Squad Recall cancelled.': 'Reagrupación cancelada.',
     'Squad Recall ended after five seconds.': 'La reagrupación terminó después de cinco segundos.',
-    'Recall OFF · companions resume normal orders.': 'Reagrupar OFF · los compañeros retoman sus órdenes normales.',
-    'Recall expired · companions resume normal orders.': 'Reagrupar terminó · los compañeros retoman sus órdenes normales.',
-    'Recall active. Tap Recall again or wait for the five-second hold before assigning work.': 'Reagrupar está activo. Pulsa Reagrupar otra vez o espera a que pasen los cinco segundos antes de asignar tareas.',
-    'Squad Recall ON for five seconds. Press Recall again to cancel.': 'Reagrupar ON durante cinco segundos. Pulsa Reagrupar otra vez para cancelar.',
-    'Recall ON · 5s defensive hold · tap again to cancel.': 'Reagrupar ON · defensa durante 5 s · pulsa otra vez para cancelar.',
+    'Recall OFF · companions resume normal orders.':
+      'Reagrupar OFF · los compañeros retoman sus órdenes normales.',
+    'Recall expired · companions resume normal orders.':
+      'Reagrupar terminó · los compañeros retoman sus órdenes normales.',
+    'Recall active. Tap Recall again or wait for the five-second hold before assigning work.':
+      'Reagrupar está activo. Pulsa Reagrupar otra vez o espera a que pasen los cinco segundos antes de asignar tareas.',
+    'Squad Recall ON for five seconds. Press Recall again to cancel.':
+      'Reagrupar ON durante cinco segundos. Pulsa Reagrupar otra vez para cancelar.',
+    'Recall ON · 5s defensive hold · tap again to cancel.':
+      'Reagrupar ON · defensa durante 5 s · pulsa otra vez para cancelar.',
   });
   Object.assign(spanishText, {
     'Restore living wounded companions to full health.':
@@ -844,8 +866,7 @@
       'Recupera ahora por 40 coronas o añade a la cola existente.',
     'Companion recovery queued. Select the same companion to cancel.':
       'Recuperación en cola. Elige al mismo compañero para cancelarla.',
-    'The Captain already has a recovery queued.':
-      'El capitán ya tiene una recuperación en cola.',
+    'The Captain already has a recovery queued.': 'El capitán ya tiene una recuperación en cola.',
     'Basic Barracks recovery queue is full (3). Upgrade to Full Barracks for unlimited recovery requests.':
       'La cola del cuartel básico está llena (3). Mejora a cuartel completo para eliminar el límite de solicitudes.',
     'No fallen companions': 'No hay compañeros caídos',
@@ -853,7 +874,7 @@
       'En cola · toca para cancelar. No has gastado coronas.',
     'Short on crowns? Tap to queue.': '¿Te faltan coronas? Toca para dejarlo en cola.',
     'No fallen companions.': 'No hay compañeros caídos.',
-        'Queue payment order: recovery → treatment → recruitment.':
+    'Queue payment order: recovery → treatment → recruitment.':
       'Orden de pago de la cola: recuperación → tratamiento → reclutamiento.',
     'Automatic when eligible.': 'Automático al cumplir los requisitos.',
     'Automatic when eligible; full group → reserve.':
@@ -1401,16 +1422,31 @@
         return book.nameEs + ' ya se ha estudiado.';
       const prefix = 'Learned ' + book.name + ' · ';
       if (piece.startsWith(prefix))
-        return 'Aprendido ' + book.nameEs + ' · ' +
-          piece.slice(prefix.length).replace('Codices of the Unforeseen', 'Códices de lo Imprevisto');
+        return (
+          'Aprendido ' +
+          book.nameEs +
+          ' · ' +
+          piece
+            .slice(prefix.length)
+            .replace('Codices of the Unforeseen', 'Códices de lo Imprevisto')
+        );
     }
     // Level-up learning cues are dynamic; translate their current numeric value,
     // without changing the Campaign's authored event or milestone mechanics.
-    const levelGrowth = /^Level (\d+)! (Fortitude|Agility|Arcane Power) improved\. Training point available — press C or use Discipline Training\.$/.exec(piece);
+    const levelGrowth =
+      /^Level (\d+)! (Fortitude|Agility|Arcane Power) improved\. Training point available — press C or use Discipline Training\.$/.exec(
+        piece,
+      );
     if (levelGrowth)
-      return '¡Nivel ' + levelGrowth[1] + '! ' +
-        { Fortitude: 'Fortaleza', Agility: 'Agilidad', 'Arcane Power': 'Poder arcano' }[levelGrowth[2]] +
-        ' mejorado. Punto de entrenamiento disponible: pulsa C o entra en Entrenamiento de disciplinas.';
+      return (
+        '¡Nivel ' +
+        levelGrowth[1] +
+        '! ' +
+        { Fortitude: 'Fortaleza', Agility: 'Agilidad', 'Arcane Power': 'Poder arcano' }[
+          levelGrowth[2]
+        ] +
+        ' mejorado. Punto de entrenamiento disponible: pulsa C o entra en Entrenamiento de disciplinas.'
+      );
     if (/^LEVEL \d+$/.test(piece)) return piece.replace('LEVEL ', 'NIVEL ');
     if (piece === 'Training point available') return 'Punto de entrenamiento disponible';
     if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
@@ -1465,16 +1501,27 @@
     if (/^Inspired by /.test(piece)) return piece.replace('Inspired by ', 'Inspirado en ');
 
     if (Object.prototype.hasOwnProperty.call(spanishText, piece)) return spanishText[piece];
-    const thornLore = 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
-    if (piece.startsWith('Fresh pawprints mark this nearby path. Follow their direction. ') &&
-        piece.endsWith(thornLore))
-      return spanishText['Fresh pawprints mark this nearby path. Follow their direction.'] +
-        ' ' + spanishText[thornLore];
-    const miraWaiting = /^Thornfang was defeated\. Mira waits near (.+)\. Your journal can guide you to her last known waiting place\.$/.exec(piece);
+    const thornLore =
+      'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
+    if (
+      piece.startsWith('Fresh pawprints mark this nearby path. Follow their direction. ') &&
+      piece.endsWith(thornLore)
+    )
+      return (
+        spanishText['Fresh pawprints mark this nearby path. Follow their direction.'] +
+        ' ' +
+        spanishText[thornLore]
+      );
+    const miraWaiting =
+      /^Thornfang was defeated\. Mira waits near (.+)\. Your journal can guide you to her last known waiting place\.$/.exec(
+        piece,
+      );
     if (miraWaiting)
-      return 'Thornfang ha sido derrotado. Mira espera cerca de ' +
+      return (
+        'Thornfang ha sido derrotado. Mira espera cerca de ' +
         (spanishText[miraWaiting[1]] || miraWaiting[1]) +
-        '. Tu diario te guiará a su última ubicación conocida.';
+        '. Tu diario te guiará a su última ubicación conocida.'
+      );
     if (/^One available companion goes away for /.test(piece))
       return piece
         .replace(
@@ -1518,9 +1565,7 @@
         .replace('Soldier', 'Soldado')
         .replace('crowns', 'coronas');
     if (/^Treat wounds/.test(piece))
-      return piece
-        .replace('Treat wounds', 'Curar heridas')
-        .replace('crowns', 'coronas');
+      return piece.replace('Treat wounds', 'Curar heridas').replace('crowns', 'coronas');
     if (/^Recover (?!fallen companion|Dark Lord)/.test(piece))
       return piece.replace('Recover ', 'Recuperar ');
     if (/^Recover fallen companion/.test(piece))
@@ -1581,13 +1626,16 @@
       .map((line) => line.split(' · ').map(translateSegment).join(' · '))
       .join('\n');
   }
-  function setLanguage(value) {
+  function setLanguage(value, persist = true) {
     language = value === 'es' ? 'es' : 'en';
     if (game) game.rogueNicknameLanguage = language;
     document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
-    try {
-      localStorage.setItem(languageKey, language);
-    } catch (_) {}
+    if (persist) {
+      firstLanguageChoice = false;
+      try {
+        localStorage.setItem(languageKey, language);
+      } catch (_) {}
+    }
     $('menu-button').firstChild.textContent = language === 'es' ? '☰ Menú ' : '☰ Menu ';
     refreshUpdateNotice();
     $('talent-button').firstChild.textContent =
@@ -1621,6 +1669,7 @@
     },
     game,
     titleScreen = null,
+    languageWelcome = null,
     titleLoading = false,
     titleImportNotice = false,
     titleEpoch = 0,
@@ -1668,10 +1717,22 @@
   function updateTitleSoundtrack() {
     // This selects music only: opening the title must never advance the game.
     // A completed gesture or a manual Return can run before the next frame.
-    if (started || titleLoading || sceneTransition || startupUpdatePending ||
-        !focused || document.hidden || !game || audio.ctx?.state !== 'running') return;
+    if (
+      started ||
+      titleLoading ||
+      sceneTransition ||
+      startupUpdatePending ||
+      !focused ||
+      document.hidden ||
+      !game ||
+      audio.ctx?.state !== 'running'
+    )
+      return;
     audio.update(game, false, {
-      started: false, menu: !!menu, paused: false, backgrounded: false,
+      started: false,
+      menu: !!menu,
+      paused: false,
+      backgrounded: false,
     });
   }
   function unlockSoundtrackOnGesture(event) {
@@ -1804,15 +1865,16 @@
   function refreshStartupUpdateNotice() {
     const notice = $('startup-update-notice');
     notice.hidden = !startupUpdateNotice;
-    notice.textContent = startupUpdateNotice === 'offline'
-      ? (language === 'es'
-        ? 'Sin conexión. No se pudieron buscar actualizaciones; jugarás con la última versión instalada.'
-        : 'You are offline. Could not check for updates; playing the last installed version.')
-      : startupUpdateNotice === 'unavailable'
-        ? (language === 'es'
-          ? 'No se pudieron buscar actualizaciones. Puedes jugar con la última versión instalada.'
-          : 'Could not check for updates. You can play the last installed version.')
-        : '';
+    notice.textContent =
+      startupUpdateNotice === 'offline'
+        ? language === 'es'
+          ? 'Sin conexión. No se pudieron buscar actualizaciones; jugarás con la última versión instalada.'
+          : 'You are offline. Could not check for updates; playing the last installed version.'
+        : startupUpdateNotice === 'unavailable'
+          ? language === 'es'
+            ? 'No se pudieron buscar actualizaciones. Puedes jugar con la última versión instalada.'
+            : 'Could not check for updates. You can play the last installed version.'
+          : '';
   }
   function startupUpdateText(english, spanish) {
     $('startup-update-text').textContent = language === 'es' ? spanish : english;
@@ -1821,8 +1883,14 @@
     return new Promise((resolve) => {
       const timer = setTimeout(() => resolve(false), milliseconds);
       Promise.resolve(promise).then(
-        (value) => { clearTimeout(timer); resolve(value); },
-        () => { clearTimeout(timer); resolve(false); },
+        (value) => {
+          clearTimeout(timer);
+          resolve(value);
+        },
+        () => {
+          clearTimeout(timer);
+          resolve(false);
+        },
       );
     });
   }
@@ -1835,11 +1903,17 @@
     try {
       return !!(await startupBound(
         fetch(new URL('./sw.js?network-probe=' + Date.now(), location.href), {
-          method: 'HEAD', cache: 'no-store',
-        }).then(() => true, () => false),
+          method: 'HEAD',
+          cache: 'no-store',
+        }).then(
+          () => true,
+          () => false,
+        ),
         4000,
       ));
-    } catch (_) { return false; }
+    } catch (_) {
+      return false;
+    }
   }
   function waitForWorkerInstall(worker) {
     if (!worker || ['installed', 'activated', 'redundant'].includes(worker.state))
@@ -1862,9 +1936,11 @@
     showTitleScreen();
   }
   async function initializeStartupUpdate() {
-    const supported = 'serviceWorker' in navigator &&
-      (location.protocol === 'https:' || location.hostname === 'localhost' ||
-       location.hostname === '127.0.0.1');
+    const supported =
+      'serviceWorker' in navigator &&
+      (location.protocol === 'https:' ||
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1');
     if (!supported) {
       startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
       return finishStartupUpdate();
@@ -1873,9 +1949,9 @@
     try {
       startupUpdateText('Checking for updates…', 'Buscando actualizaciones…');
       const reg = await startupBound(
-        serviceWorker.getRegistration('./').then(
-          (existing) => existing || serviceWorker.register('./sw.js'),
-        ),
+        serviceWorker
+          .getRegistration('./')
+          .then((existing) => existing || serviceWorker.register('./sw.js')),
         12000,
       );
       if (!reg) {
@@ -1893,12 +1969,17 @@
       // A fully downloaded waiting update also works offline. Otherwise do
       // one explicit freshness check, before any menu or game-scene preparation.
       if (!reg.waiting && serviceWorker.controller) {
-        if (!await startupNetworkAvailable()) startupUpdateNotice = 'offline';
+        if (!(await startupNetworkAvailable())) startupUpdateNotice = 'offline';
         else {
           // A rejected or timed-out check is not an update: keep the complete
           // installed version playable and explain what could not be verified.
           const checked = await startupBound(
-            checkAppUpdate(true).then(() => true, () => false), 12000);
+            checkAppUpdate(true).then(
+              () => true,
+              () => false,
+            ),
+            12000,
+          );
           if (!checked)
             startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
           if (reg.installing) {
@@ -1929,8 +2010,7 @@
       // Ongoing checks may discover an update while playing, but must never
       // automatically replace the code of an active campaign.
       setInterval(() => {
-        if (!document.hidden && navigator.onLine !== false)
-          checkAppUpdate().catch(() => {});
+        if (!document.hidden && navigator.onLine !== false) checkAppUpdate().catch(() => {});
       }, 300000);
     } catch (_) {
       // Network, registration and storage failures preserve the old game.
@@ -1982,22 +2062,31 @@
   // emergency combat pauses must remain legible and screen-reader immediate.
   function statusTier(text) {
     if (
-      /critical slowdown|saving failed|storage unavailable|saved run unavailable|recovery failed|returned to (your )?(refuge|recovery point)|emergency reset/i.test(text)
-    ) return 'critical';
+      /critical slowdown|saving failed|storage unavailable|saved run unavailable|recovery failed|returned to (your )?(refuge|recovery point)|emergency reset/i.test(
+        text,
+      )
+    )
+      return 'critical';
     if (/legacy save|invalid import|imported successfully|recovery checkpoint/i.test(text))
       return 'important';
     return 'routine';
   }
   function status(text) {
     if (text === 'Saved locally · export for a backup') return;
-    const tier = statusTier(text), host = $('status');
+    const tier = statusTier(text),
+      host = $('status');
     host.dataset.noticeTier = tier;
     host.setAttribute('role', tier === 'critical' ? 'alert' : 'status');
     host.textContent = tr(text);
-    statusUntil = performance.now() + (tier === 'critical' || tier === 'important'
-      ? 6000 : text === 'Performance recovered: combat resumed.' ? 1750 : 2600);
-    statusContext = tier === 'routine'
-      ? { game, zone: game?.zoneId, visit: game?.noticeVisit } : null;
+    statusUntil =
+      performance.now() +
+      (tier === 'critical' || tier === 'important'
+        ? 6000
+        : text === 'Performance recovered: combat resumed.'
+          ? 1750
+          : 2600);
+    statusContext =
+      tier === 'routine' ? { game, zone: game?.zoneId, visit: game?.noticeVisit } : null;
   }
   function manaStatus(text) {
     // Dormant MP remains recoverable: the restoration flag brings this back.
@@ -2023,8 +2112,11 @@
     if (candidate._criticalPartyNative?.enabled && candidate._criticalWorldNative?.enabled)
       return candidate;
     PrototypeCriticalPartyNative.attachCampaign(
-      candidate, PrototypeCriticalExecutions, PrototypeCriticalLevels,
-      PrototypeCriticalWorldNative, { enabled: true },
+      candidate,
+      PrototypeCriticalExecutions,
+      PrototypeCriticalLevels,
+      PrototypeCriticalWorldNative,
+      { enabled: true },
     );
     return candidate;
   }
@@ -2062,8 +2154,12 @@
     // A completed saved campaign unlocks Nightmare even while the title is
     // inactive. This is a profile entitlement, not a gameplay tick or autosave.
     if (!loaded || !writerGuard.canWrite()) return;
-    if (game?.peace && game.s.mode !== 'arena' && game.s.finalRestCompleted &&
-        !profile.nightmareUnlocked) {
+    if (
+      game?.peace &&
+      game.s.mode !== 'arena' &&
+      game.s.finalRestCompleted &&
+      !profile.nightmareUnlocked
+    ) {
       profile.nightmareUnlocked = true;
       persistProfile();
     }
@@ -2154,7 +2250,7 @@
     PrototypeSprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites,
     PrototypeMaterials: typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials,
     // Read the current presentation language at paint time, not at event receipt.
-    getBlockLabel: () => language === 'es' ? '¡Bloqueado!' : 'Blocked!',
+    getBlockLabel: () => (language === 'es' ? '¡Bloqueado!' : 'Blocked!'),
   };
   const renderer = PrototypeRenderer.create({ ...rendererSetup, canvas: viewport, ctx });
   renderer.setOptimizationMode(optimizationMode);
@@ -2162,19 +2258,27 @@
     worldLabelVisible = renderer.labelVisible;
   const runtime = PrototypeRuntime.create();
   const frameProfile = PrototypeRuntime.createFrameProfile();
+  // #783: disabled outside explicit renderer capture; ordinary draws remain untimed.
+  let rendererDiagnosticActive = false;
   const fps = PrototypeRuntime.createFrameRate(localStorage);
   const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
   const autoOptimization = PrototypeRuntime.createAutoOptimization();
-  function setOptimizationActive(enabled) {
+  function setOptimizationActive(enabled, reason = 'unspecified') {
     const next = !!enabled;
     if (optimizationMode === next) return false;
+    if (rendererDiagnosticActive)
+      recordRendererTransition('optimization-change', {
+        reason,
+        from: optimizationMode,
+        to: next,
+        emergency: frameSkip.emergency,
+      });
     optimizationMode = next;
-    if (typeof PrototypeMaterials !== 'undefined')
-      PrototypeMaterials.setOptimizationMode(next);
+    if (typeof PrototypeMaterials !== 'undefined') PrototypeMaterials.setOptimizationMode(next);
     audio.setOptimizationMode(next);
     renderer.setOptimizationMode(next);
-    resize();
+    resize(reason === 'emergency' ? 'emergency-optimization' : 'optimization-mode');
     runtime.reset();
     frameProfile.reset();
     fps.suspend();
@@ -2243,12 +2347,14 @@
           canvasRenderer: renderer,
           getRendererOptions: () => rendererSetup,
           getOptimizationMode: () => optimizationMode,
+          getDiagnosticRecording: () => rendererDiagnosticActive,
           onPreparationProgress: ({ prepared, total }) => {
             // One loading surface throughout decode, terrain tiles and GPU
             // uploads; the count shows actual completed terrain tiles.
-            const message = language === 'es'
-              ? 'Preparando terreno ' + prepared + '/' + total + '…'
-              : 'Preparing terrain ' + prepared + '/' + total + '…';
+            const message =
+              language === 'es'
+                ? 'Preparando terreno ' + prepared + '/' + total + '…'
+                : 'Preparing terrain ' + prepared + '/' + total + '…';
             if (titleLoading && $('title-loading')) $('title-loading').textContent = message;
             else if (sceneTransition && $('scene-loading-text'))
               $('scene-loading-text').textContent = message;
@@ -2256,9 +2362,11 @@
           onFailure: (failure) => {
             graphicsController?.webglFailed(failure);
             const recovery = graphicsController?.status();
-            status(recovery?.recoveryPending
-              ? 'PixiJS issue: Canvas backup active; WebGL2 will retry when safe.'
-              : 'WebGL2 returned to Canvas: ' + failure.message);
+            status(
+              recovery?.recoveryPending
+                ? 'PixiJS issue: Canvas backup active; WebGL2 will retry when safe.'
+                : 'WebGL2 returned to Canvas: ' + failure.message,
+            );
           },
         });
   // Fan out presentation events without editing the protected simulation loop.
@@ -2282,17 +2390,14 @@
     if (!trial) {
       // Announce actual transitions rather than silently dismissing the
       // panel. The HUD's role=status announces this to assistive technology.
-      if (snapshot.reason === 'user-confirmed' ||
-          snapshot.reason === 'confirmed-this-session-only')
+      if (snapshot.reason === 'user-confirmed' || snapshot.reason === 'confirmed-this-session-only')
         status('PixiJS WebGL2 ready and selected.');
-      else if (snapshot.reason === 'user-chose-canvas')
-        status('Canvas 2D ready and selected.');
+      else if (snapshot.reason === 'user-chose-canvas') status('Canvas 2D ready and selected.');
       else if (snapshot.reason === 'webgl-recovery-pending')
         status('WebGL2 interrupted. Canvas is active; retry when safe.');
       else if (snapshot.reason === 'webgl-recovery-attempt')
         status('Canvas is active. Trying to restore WebGL2…');
-      else if (snapshot.reason === 'confirmed-webgl-restored')
-        status('PixiJS WebGL2 restored.');
+      else if (snapshot.reason === 'confirmed-webgl-restored') status('PixiJS WebGL2 restored.');
       else if (snapshot.reason === 'webgl-recovery-paused')
         status('Canvas backup active. WebGL2 recovery paused after repeated failures.');
       return;
@@ -2326,12 +2431,27 @@
         // could immediately engage. A recovery happens when the scene is
         // visible, idle and outside nearby danger.
         canRecover: () => {
-          if (!started || paused || menu || !focused || document.hidden ||
-              frameSkip.emergency || joy.x || joy.y || game.hero.order ||
-              game.hero.path?.length || game.s.projectiles?.length ||
-              keys.left || keys.right || keys.up || keys.down) return false;
-          return (game.zone()?.enemies || []).every((enemy) =>
-            enemy.hp <= 0 || Math.hypot(enemy.x - game.hero.x, enemy.y - game.hero.y) > 420
+          if (
+            !started ||
+            paused ||
+            menu ||
+            !focused ||
+            document.hidden ||
+            frameSkip.emergency ||
+            joy.x ||
+            joy.y ||
+            game.hero.order ||
+            game.hero.path?.length ||
+            game.s.projectiles?.length ||
+            keys.left ||
+            keys.right ||
+            keys.up ||
+            keys.down
+          )
+            return false;
+          return (game.zone()?.enemies || []).every(
+            (enemy) =>
+              enemy.hp <= 0 || Math.hypot(enemy.x - game.hero.x, enemy.y - game.hero.y) > 420,
           );
         },
         showWebGL: () => {
@@ -2374,7 +2494,8 @@
       const startedAt = performance.now();
       timing.pixiAttempted = true;
       try {
-        pixiGame.draw();
+        if (rendererDiagnosticActive) timing.pixiDraw = pixiGame.draw();
+        else pixiGame.draw();
       } catch (error) {
         // Pixi normally reports an exact failure first; preserve it.
         // This catches only otherwise unhandled wrapper exceptions.
@@ -2406,6 +2527,7 @@
       stageTimes[key] += timing[key];
     for (const key of ['pixiAttempted', 'canvasOverlayDrawn', 'canvasWorldDrawn'])
       stageTimes[key] ||= timing[key];
+    if (stageTimes.pixiDraws && timing.pixiDraw) stageTimes.pixiDraws.push(timing.pixiDraw);
   }
 
   const {
@@ -2437,7 +2559,7 @@
     showMap,
     finaleMenu,
     storyNavigate,
-    chooseNewRun: (mode) => chooseLanguage(mode),
+    chooseNewRun: (mode) => chooseClass(mode),
     status,
     requestName,
     sceneTransitionTo,
@@ -2521,7 +2643,17 @@
     avoidedResets: 0,
     lastReset: null,
   };
-  function resize() {
+  function resize(reason = 'external-or-settings') {
+    const diagnosticBefore = rendererDiagnosticActive
+      ? {
+          width: canvas.width,
+          height: canvas.height,
+          viewportWidth: viewport.width,
+          viewportHeight: viewport.height,
+          ratio: +(canvas.width / Math.max(1, viewport.width)).toFixed(3),
+        }
+      : null;
+    const resizeStarted = diagnosticBefore ? performance.now() : 0;
     // Keep the 15-second *unconfirmed* trial conservative: resizing during
     // the trial still safely reverts. A confirmed selection instead rebuilds
     // viewport-sized Pixi scene layers on the next draw. This allows a
@@ -2567,7 +2699,8 @@
         );
     renderResolution.configure(maximumRatio);
     // Arena only: hard-cap world pixels without saving a preference.
-    const ratio = game?.s?.mode === 'arena' ? Math.min(renderResolution.ratio, 0.5) : renderResolution.ratio;
+    const ratio =
+      game?.s?.mode === 'arena' ? Math.min(renderResolution.ratio, 0.5) : renderResolution.ratio;
     const backingWidth = Math.round(innerWidth * ratio),
       backingHeight = Math.round(innerHeight * ratio),
       widthChanged = canvas.width !== backingWidth,
@@ -2586,6 +2719,22 @@
     } else canvasBackingDiagnostics.avoidedResets++;
     // Restore presentation scale even when the existing bitmap is retained.
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    if (diagnosticBefore)
+      recordRendererTransition('canvas-backing-resize', {
+        reason,
+        reset: widthChanged || heightChanged,
+        before: diagnosticBefore,
+        after: {
+          width: canvas.width,
+          height: canvas.height,
+          viewportWidth: viewport.width,
+          viewportHeight: viewport.height,
+          ratio: +(canvas.width / Math.max(1, viewport.width)).toFixed(3),
+        },
+        optimizationMode,
+        emergency: frameSkip.emergency,
+        durationMs: +(performance.now() - resizeStarted).toFixed(2),
+      });
   }
   resize();
   if (game.s.mode === 'arena') {
@@ -2612,59 +2761,25 @@
       !game.s.challenge.gameOver
     );
   }
+  // Settings owns remapping. How-to-play guidance lives under title Help & Credits.
   function help(back = closeMenu) {
-    const returnHere = () => help(back);
     openMenu(
       'Controls',
-      'Choose a topic or adjust your inputs.',
+      '',
       [
-        action('Customize keyboard', () => keyboardMenu(back)),
-        action('Touch and mouse options', () => pointerMenu(back)),
-        action('Movement and menus', () => {
-          const keys = ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/');
-          openMenu(
-            'Movement and menus',
-            language === 'es'
-              ? 'Moverse: ' +
-                  keys +
-                  ' o palanca táctil. Interactuar: ' +
-                  input.key('confirm') +
-                  '. Mapa: ' +
-                  mapKeyHint() +
-                  '.\nMenú: Esc. Flechas para elegir, ' +
-                  input.key('confirm') +
-                  '/Enter para confirmar y Esc para volver.'
-              : 'Move: ' +
-                  keys +
-                  ' or joystick. Interact: ' +
-                  input.key('confirm') +
-                  '. Map: ' +
-                  mapKeyHint() +
-                  '.\nMenu: Esc. Arrows select, ' +
-                  input.key('confirm') +
-                  '/Enter confirms, Esc returns.',
-            [],
-            returnHere,
-          );
-        }),
-        action('Skills and targeting', () => combatHelp(returnHere)),
-        action('Companion commands', () =>
-          openMenu(
-            'Companion commands',
-            language === 'es'
-              ? 'Reagrupar: ' +
-                  input.key('recall') +
-                  '. Tus compañeros vuelven contigo.\nCuración Ranger: ' +
-                  input.key('heal') +
-                  '. En recuperación, toca para poner tu curación en cola.\nRecupera a los caídos con un capitán o cuartel.'
-              : 'Recall: ' +
-                  input.key('recall') +
-                  '. Companions return to you.\nCompanion Heal: ' +
-                  input.key('heal') +
-                  '. During cooldown, tap to queue hero healing.\nRecover fallen companions at a Captain or Barracks.',
-            [],
-            returnHere,
-          ),
+        action(
+          'Customize keyboard',
+          () => keyboardMenu(back),
+          language === 'es'
+            ? 'Movimiento, interacción, menú, habilidades y otras teclas.'
+            : 'Movement, interaction, menu, skills and other keys.',
+        ),
+        action(
+          'Touch and mouse options',
+          () => pointerMenu(back),
+          language === 'es'
+            ? 'Ajusta la palanca, el diseño táctil y el ratón.'
+            : 'Adjust joystick, touch layout and mouse input.',
         ),
       ],
       back,
@@ -2736,7 +2851,7 @@
     {
       id: 'movement',
       title: 'Movement and menu keys',
-      ids: ['up', 'down', 'left', 'right', 'confirm'],
+      ids: ['up', 'down', 'left', 'right', 'confirm', 'menu'],
     },
     {
       id: 'combat',
@@ -2910,7 +3025,8 @@
     document.body.classList.remove('floating-joystick-active');
   }
   function syncJoystickPresentation() {
-    const invisible = platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
+    const invisible =
+      platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
     const control = $('joystick');
     control.tabIndex = invisible ? -1 : 0;
     control.setAttribute('aria-hidden', invisible ? 'true' : 'false');
@@ -3007,7 +3123,14 @@
     menuHistory.push(previous);
     return null;
   }
-  function action(label, fn, detail = '', disabled = false, tutorialHighlight = false, classId = null) {
+  function action(
+    label,
+    fn,
+    detail = '',
+    disabled = false,
+    tutorialHighlight = false,
+    classId = null,
+  ) {
     return {
       label,
       action: (...args) => {
@@ -3251,7 +3374,8 @@
         }
         continue;
       }
-      let b, fileRow = null;
+      let b,
+        fileRow = null;
       if (a.kind === 'file') {
         // Keep the native input in the visible clickable row. An invisible
         // off-menu input activated by a programmatic click can fail to show
@@ -3264,6 +3388,10 @@
         fileRow = document.createElement('label');
         fileRow.className = 'menu-import-picker';
         fileRow.textContent = tr(a.label);
+        if (a.detail) {
+          fileRow.classList.add('has-detail');
+          details(fileRow, a);
+        }
         fileRow.append(b);
       } else if (a.kind === 'toggle') {
         b = document.createElement('button');
@@ -3325,6 +3453,7 @@
       } else {
         b = document.createElement('button');
         b.textContent = translateMenu(a.label);
+        if (a.uiPrimary) b.classList.add('menu-primary');
         if (a.classId === 'rogue') {
           const symbol = document.createElement('span');
           symbol.setAttribute('aria-hidden', 'true');
@@ -3361,7 +3490,14 @@
     }
     const back = $('close-button');
     back.hidden = false;
-    back.innerHTML = tr('Back') + ' <small>' + input.key('confirm') + ' / Esc</small>';
+    back.innerHTML =
+      tr('Back') +
+      ' <small>' +
+      input.key('confirm') +
+      ' / ' +
+      input.key('menu') +
+      (input.key('menu') === 'Esc' ? '' : ' / Esc') +
+      '</small>';
     buttons.push(back);
     menuKeys.push('__back__');
     highlight();
@@ -3398,15 +3534,20 @@
     const label = document.createElement('label'),
       field = document.createElement('input');
     label.className = 'character-name-field';
-    label.textContent = language === 'es' ? 'Nombre opcional · hasta 24 caracteres' : 'Optional name · up to 24 characters';
+    label.textContent =
+      language === 'es'
+        ? 'Nombre opcional · hasta 24 caracteres'
+        : 'Optional name · up to 24 characters';
     field.id = 'character-name';
     field.type = 'text';
     field.maxLength = 24;
     field.autocomplete = 'off';
     field.value = initialValue;
-    field.placeholder = language === 'es' ? 'Déjalo vacío para decidir después' : 'Leave blank to decide later';
+    field.placeholder =
+      language === 'es' ? 'Déjalo vacío para decidir después' : 'Leave blank to decide later';
     label.append(field);
-    $('modal-actions').prepend(label);
+    if (menu?.view === 'class-select') $('modal-actions').append(label);
+    else $('modal-actions').prepend(label);
     return field;
   }
   function requestName({
@@ -3580,8 +3721,12 @@
   if (typeof storageApi?.persisted === 'function') {
     try {
       Promise.resolve(storageApi.persisted()).then(
-        (granted) => { storageProtectionState = granted ? 'granted' : 'best-effort'; },
-        () => { storageProtectionState = 'unknown'; },
+        (granted) => {
+          storageProtectionState = granted ? 'granted' : 'best-effort';
+        },
+        () => {
+          storageProtectionState = 'unknown';
+        },
       );
     } catch (_) {}
   } else storageProtectionState = 'unsupported';
@@ -3601,17 +3746,20 @@
     }
     // Keep the request inside the user's click gesture; never at startup.
     let request;
-    try { request = storageApi.persist(); }
-    catch (_) {
+    try {
+      request = storageApi.persist();
+    } catch (_) {
       status('Persistent storage request unavailable. Export backups regularly.');
       return;
     }
     Promise.resolve(request).then(
       (granted) => {
         storageProtectionState = granted ? 'granted' : 'best-effort';
-        status(granted
-          ? 'Browser storage persistence granted. External backups are still necessary.'
-          : 'Persistent storage was not granted. Local saves still work; export backups.');
+        status(
+          granted
+            ? 'Browser storage persistence granted. External backups are still necessary.'
+            : 'Persistent storage was not granted. Local saves still work; export backups.',
+        );
         reopen();
       },
       () => {
@@ -3656,7 +3804,6 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-
   // Stage 5: destination preparation observes only an ALREADY CONSTRUCTED zone
   // in the saved campaign. Never call zone(), enter(), tick() or gameplay RNG
   // to predict an unvisited destination. Decoded art is optional, bounded work.
@@ -3669,36 +3816,43 @@
     // not just the first few visible actors. A save already records the hero,
     // companions, living enemies and known encounter locations.
     const hero = game.hero;
-    const companions = typeof game.activeParty === 'function'
-      ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
-      : [];
+    const companions =
+      typeof game.activeParty === 'function'
+        ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
+        : [];
     const distance = (e) => Math.hypot(e.x - hero.x, e.y - hero.y);
-    const leaders = (e) => e.type === 'boss' || e.fieldCaptain ||
-      e.roomCaptain || e.captain;
-    const enemies = known && destination === game.zoneId
-      ? (known.enemies || []).filter((e) => e.hp > 0 &&
-          Number.isFinite(e.x) && Number.isFinite(e.y))
-          .sort((a, b) => Number(leaders(b)) - Number(leaders(a)) ||
-            distance(a) - distance(b))
-          .map((e) => ({ ...e, renderKind: 'enemy' }))
-      : [];
+    const leaders = (e) => e.type === 'boss' || e.fieldCaptain || e.roomCaptain || e.captain;
+    const enemies =
+      known && destination === game.zoneId
+        ? (known.enemies || [])
+            .filter((e) => e.hp > 0 && Number.isFinite(e.x) && Number.isFinite(e.y))
+            .sort((a, b) => Number(leaders(b)) - Number(leaders(a)) || distance(a) - distance(b))
+            .map((e) => ({ ...e, renderKind: 'enemy' }))
+        : [];
     // Only native entry or a restored save makes encounter placement real.
     // Whole dungeon interiors and all already-spawned outdoor enemy classes
     // are eligible; field bosses are never left for combat-time decoding.
-    const imminent = combatFirst ? enemies.filter(
-      (e) => leaders(e) || distance(e) <= 850) : [];
+    const imminent = combatFirst ? enemies.filter((e) => leaders(e) || distance(e) <= 850) : [];
     const fringe = enemies;
-    const neighbors = known && destination === game.zoneId
-      ? [...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
-        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' })),
-        ...(known.buildings || []).map((e) => ({ ...e, renderKind: 'building' })),
-        ...(known.nodes || []).map((e) => ({ ...e, renderKind: 'node' }))]
-          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
-          .sort((a, b) => distance(a) - distance(b))
-      : [];
+    const neighbors =
+      known && destination === game.zoneId
+        ? [
+            ...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
+            ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' })),
+            ...(known.buildings || []).map((e) => ({ ...e, renderKind: 'building' })),
+            ...(known.nodes || []).map((e) => ({ ...e, renderKind: 'node' })),
+          ]
+            .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
+            .sort((a, b) => distance(a) - distance(b))
+        : [];
     const keys = new Set();
-    for (const actor of [...imminent, { ...hero, renderKind: 'hero' },
-      ...companions, ...fringe, ...neighbors]) {
+    for (const actor of [
+      ...imminent,
+      { ...hero, renderKind: 'hero' },
+      ...companions,
+      ...fringe,
+      ...neighbors,
+    ]) {
       // Appearance lookup never calls Campaign.zone()/enter() or consumes RNG.
       const match = sprites.definitionFor(actor, region, !!game.s.rescued?.[actor.family]);
       if (match?.key) keys.add(match.key);
@@ -3710,9 +3864,11 @@
     // within engagement range of spawn. Their first *visible* encounter frame
     // takes priority over all optional asset warming, even on a revisited zone.
     // All three definitions are read-only catalog lookups, not zone creation.
-    return Campaign.dungeonIds.includes(destination) ||
+    return (
+      Campaign.dungeonIds.includes(destination) ||
       !!game.sideDungeon?.(destination) ||
-      !!game.supplyRoom?.(destination);
+      !!game.supplyRoom?.(destination)
+    );
   }
   function warmScene(destination, combatFirst = false) {
     const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
@@ -3722,15 +3878,18 @@
     // Loading is readiness-driven: a slow decode is not a failed decode.
     // Missing or broken images settle independently in the sprite cache.
     // This never changes campaign state, game randomness or simulation time.
-    return Promise.resolve().then(() => sprites.warm(keys,
-      combatFirst ? { variants: true, clips: true } : {})).catch(() => null);
+    return Promise.resolve()
+      .then(() => sprites.warm(keys, combatFirst ? { variants: true, clips: true } : {}))
+      .catch(() => null);
   }
   function prepareGpuForArrival() {
-    if (graphicsController.status().mode !== 'webgl2' ||
-        typeof pixiGame.warmArrival !== 'function') return null;
+    if (graphicsController.status().mode !== 'webgl2' || typeof pixiGame.warmArrival !== 'function')
+      return null;
     // Await real GPU readiness rather than treating slow hardware as a failure.
     // Actual Pixi errors/context cancellation still return false for Canvas recovery.
-    return Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false);
+    return Promise.resolve()
+      .then(() => pixiGame.warmArrival())
+      .catch(() => false);
   }
   function drawReadyScene() {
     try {
@@ -3751,9 +3910,12 @@
   function transitionLoadingText(label, step) {
     const host = $('scene-loading-text');
     const es = language === 'es';
-    host.textContent = step === 'paint'
-      ? (es ? 'Preparando la vista de llegada…' : 'Drawing arrival scene…')
-      : (es ? 'Preparando viaje · ' : 'Preparing travel · ') + label;
+    host.textContent =
+      step === 'paint'
+        ? es
+          ? 'Preparando la vista de llegada…'
+          : 'Drawing arrival scene…'
+        : (es ? 'Preparando viaje · ' : 'Preparing travel · ') + label;
   }
   function cancelSceneTransition() {
     const previous = sceneTransition;
@@ -3781,8 +3943,7 @@
       const gpuWarmup = ticket.skipped ? null : prepareGpuForArrival();
       if (gpuWarmup) {
         ticket.gpuPreparing = true;
-        void Promise.race([gpuWarmup, ticket.skipPromise.then(() => false)])
-          .then((ready) => {
+        void Promise.race([gpuWarmup, ticket.skipPromise.then(() => false)]).then((ready) => {
           if (sceneTransition?.token !== token) return;
           if (!ready) graphicsController.revert();
           ticket.gpuPreparing = false;
@@ -3796,11 +3957,12 @@
       // Preserve committed progress. Leave a clear retryable interruption state
       // rather than showing a partially rendered world.
       transitionLoadingText('', 'paint');
-      $('scene-loading-text').textContent = language === 'es'
-        ? 'No se pudo dibujar la llegada. Intenta de nuevo con Canvas.'
-        : 'Arrival could not be drawn. Retry with Canvas.';
-      $('scene-loading-retry').textContent = language === 'es'
-        ? 'Reintentar con Canvas' : 'Retry with Canvas';
+      $('scene-loading-text').textContent =
+        language === 'es'
+          ? 'No se pudo dibujar la llegada. Intenta de nuevo con Canvas.'
+          : 'Arrival could not be drawn. Retry with Canvas.';
+      $('scene-loading-retry').textContent =
+        language === 'es' ? 'Reintentar con Canvas' : 'Retry with Canvas';
       ticket.drawFailed = true;
       $('scene-loading-retry').hidden = false;
       $('scene-loading-retry').focus?.({ preventScroll: true });
@@ -3817,26 +3979,46 @@
     $('menu-button').focus?.({ preventScroll: true });
   }
   function sceneTransitionTo(destination, label, commit) {
-    if (!started || sceneTransition || document.hidden || !focused ||
-        !writerGuard.canWrite() || persistence.conflicted(game.s.mode))
+    if (
+      !started ||
+      sceneTransition ||
+      document.hidden ||
+      !focused ||
+      !writerGuard.canWrite() ||
+      persistence.conflicted(game.s.mode)
+    )
       return false;
     const token = ++sceneTransitionEpoch;
     const campaign = game;
     rendererEvent('arrival-start', destination);
     let resolveSkip;
-    const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
-    sceneTransition = { token, campaign, destination, committed: false,
-      skipped: false, skipPromise, resolveSkip };
+    const skipPromise = new Promise((resolve) => {
+      resolveSkip = resolve;
+    });
+    sceneTransition = {
+      token,
+      campaign,
+      destination,
+      committed: false,
+      skipped: false,
+      skipPromise,
+      resolveSkip,
+    };
     $('scene-loading').hidden = false;
     $('scene-loading-retry').hidden = false;
-    $('scene-loading-retry').textContent = language === 'es'
-      ? 'Continuar con Canvas' : 'Continue with Canvas';
+    $('scene-loading-retry').textContent =
+      language === 'es' ? 'Continuar con Canvas' : 'Continue with Canvas';
     transitionLoadingText(label || destination, 'warm');
     clearInput();
     audio.setPaused(true);
     const proceed = () => {
-      if (sceneTransition?.token !== token || document.hidden || !focused ||
-          !writerGuard.canWrite() || game !== campaign) {
+      if (
+        sceneTransition?.token !== token ||
+        document.hidden ||
+        !focused ||
+        !writerGuard.canWrite() ||
+        game !== campaign
+      ) {
         if (sceneTransition?.token === token) cancelSceneTransition();
         return;
       }
@@ -3861,14 +4043,12 @@
       // nearby enemies. Warm the close-range encounter artwork *after* that
       // authoritative step while the clock is stopped and the screen covered.
       // Never spend an unbounded period trying to complete optional atlas art.
-      const encounterWarmup = sceneTransition.skipped
-        ? null : warmScene(destination, true);
+      const encounterWarmup = sceneTransition.skipped ? null : warmScene(destination, true);
       const reveal = () => {
         if (sceneTransition?.token !== token) return;
         requestAnimationFrame(() => revealSceneTransition(token));
       };
-      if (encounterWarmup)
-        void Promise.race([encounterWarmup, skipPromise]).then(reveal, reveal);
+      if (encounterWarmup) void Promise.race([encounterWarmup, skipPromise]).then(reveal, reveal);
       else reveal();
     };
     // Dungeon entries are combat-critical: do not wait on an optional atlas,
@@ -3886,42 +4066,57 @@
   function refreshTitleScreen() {
     if (!titleScreen) return;
     const es = language === 'es';
-    const t = (en, spanish) => es ? spanish : en;
+    const t = (en, spanish) => (es ? spanish : en);
     $('title-heading').textContent = "So I Became the Dark Lord's Problem";
-    titleScreen.querySelector?.('nav')?.setAttribute?.(
-      'aria-label', es ? 'Menú principal' : 'Main menu',
-    );
+    titleScreen
+      .querySelector?.('nav')
+      ?.setAttribute?.('aria-label', es ? 'Menú principal' : 'Main menu');
     $('title-tagline').textContent = t(
       "He conquered the world. He wasn't expecting you.",
-      "Conquistó el mundo. No contaba contigo.",
+      'Conquistó el mundo. No contaba contigo.',
     );
     const valid = loaded && !!game?.s && !persistence.loadFailed(game.s.mode);
     const place = valid
       ? D.regions.find((region) => region.id === game.zoneId)?.name ||
-        D.bosses.find((boss) => boss.id === game.zoneId)?.place || game.zoneId
+        D.bosses.find((boss) => boss.id === game.zoneId)?.place ||
+        game.zoneId
       : '';
     // Remind on the paused title, not in combat and not as a modal.
-    if (valid && !titleLoading && !startupUpdatePending && !titleScreen.hidden &&
-        !titleBackupNotice && backupAdvisor.due(game.s.mode, game.hero.level)) {
+    if (
+      valid &&
+      !titleLoading &&
+      !startupUpdatePending &&
+      !titleScreen.hidden &&
+      !titleBackupNotice &&
+      backupAdvisor.due(game.s.mode, game.hero.level)
+    ) {
       titleBackupNotice = { mode: game.s.mode };
       backupAdvisor.shown(game.s.mode, game.hero.level);
     }
-    const titleReminder = valid && !titleLoading &&
-      titleBackupNotice?.mode === game.s.mode
-      ? t(' · Consider an external backup', ' · Conviene exportar una copia externa')
-      : '';
+    const titleReminder =
+      valid && !titleLoading && titleBackupNotice?.mode === game.s.mode
+        ? t(' · Consider an external backup', ' · Conviene exportar una copia externa')
+        : '';
     $('title-preview').textContent = valid
-      ? t('Saved adventure', 'Aventura guardada') + ' · ' +
-        (game.hero.name || game.hero.class) + ' · ' +
-        t('Level ', 'Nivel ') + game.hero.level + ' · ' + place + titleReminder
+      ? t('Saved adventure', 'Aventura guardada') +
+        ' · ' +
+        (game.hero.name || game.hero.class) +
+        ' · ' +
+        t('Level ', 'Nivel ') +
+        game.hero.level +
+        ' · ' +
+        place +
+        titleReminder
       : persistence.loadFailed(profile.activeMode)
         ? t('Saved adventure needs recovery', 'La partida requiere recuperación')
         : t('Your adventure awaits', 'Tu aventura te espera');
     const importFeedback = $('title-import-feedback');
     importFeedback.hidden = !titleImportNotice || titleLoading;
     importFeedback.textContent = titleImportNotice
-      ? t('Import successful. Select Continue Adventure to play.',
-          'Importación completada. Selecciona Continuar aventura para jugar.')
+      ? t(
+          'Import successful. Select Continue Adventure to play.',
+          'Importación completada. Selecciona Continuar aventura para jugar.',
+        )
       : '';
     $('title-continue').textContent = t('Continue Adventure', 'Continuar aventura');
     $('title-new').textContent = t('New Game', 'Nueva partida');
@@ -3929,14 +4124,18 @@
     $('title-settings').textContent = t('Settings', 'Ajustes');
     $('title-help').textContent = t('Help & Credits', 'Ayuda y créditos');
     refreshStartupUpdateNotice();
-    $('title-continue').disabled = startupUpdatePending || titleLoading || !valid ||
-      !writerGuard.canWrite() || persistence.conflicted(game.s.mode) ||
+    $('title-continue').disabled =
+      startupUpdatePending ||
+      titleLoading ||
+      !valid ||
+      !writerGuard.canWrite() ||
+      persistence.conflicted(game.s.mode) ||
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
       $(id).disabled = startupUpdatePending || titleLoading;
     titleCanvasContinue.hidden = !titleLoading || !!titleSkipGraphics?.skipped;
-    titleCanvasContinue.textContent = language === 'es'
-      ? 'Continuar con Canvas' : 'Continue with Canvas';
+    titleCanvasContinue.textContent =
+      language === 'es' ? 'Continuar con Canvas' : 'Continue with Canvas';
     if (!titleLoading) {
       $('title-loading').hidden = true;
       $('title-loading').textContent = '';
@@ -3962,22 +4161,29 @@
       $('modal').hidden = true;
       document.body.classList.remove('menu-open');
     }
-    titleScreen.hidden = startupUpdatePending;
+    const showWelcome = !startupUpdatePending && firstLanguageChoice;
+    titleScreen.hidden = startupUpdatePending || showWelcome;
+    if (languageWelcome) languageWelcome.hidden = !showWelcome;
     $('startup-update').hidden = !startupUpdatePending;
     document.body.classList.add('title-active');
     // No sprite, material or GPU warmup until Continue/New Game is chosen.
     titleWarmup = null;
     refreshTitleScreen();
     if (!startupUpdatePending) {
-      const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
-      primary.focus?.({ preventScroll: true });
-      // Returning from gameplay must change the score in this same
-      // transition, even when the next requestAnimationFrame is delayed.
-      updateTitleSoundtrack();
+      if (showWelcome) {
+        languageWelcome?.querySelector('button')?.focus?.({ preventScroll: true });
+      } else {
+        const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
+        primary.focus?.({ preventScroll: true });
+        // Returning from gameplay must change the score in this same
+        // transition, even when the next requestAnimationFrame is delayed.
+        updateTitleSoundtrack();
+      }
     }
   }
   function enterPreparedScene() {
-    if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite()) return;
+    if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite())
+      return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
     // Continue is already a browser gesture. Unlock before asynchronous warmup.
     const entryUnlock = audio.unlock();
@@ -3988,21 +4194,21 @@
     if (typeof PrototypeMaterials !== 'undefined') void PrototypeMaterials.load();
     titleWarmup = warmScene(game.zoneId, true);
     let resolveSkip;
-    const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
+    const skipPromise = new Promise((resolve) => {
+      resolveSkip = resolve;
+    });
     titleSkipGraphics = { skipped: false, resolve: resolveSkip };
-    const waitOrSkip = (pending, onSettled) => pending
-      ? void Promise.race([pending, skipPromise]).then(onSettled, onSettled)
-      : onSettled();
+    const waitOrSkip = (pending, onSettled) =>
+      pending ? void Promise.race([pending, skipPromise]).then(onSettled, onSettled) : onSettled();
     $('title-loading').hidden = false;
-    $('title-loading').textContent = language === 'es'
-      ? 'Preparando la primera escena…' : 'Preparing first scene…';
+    $('title-loading').textContent =
+      language === 'es' ? 'Preparando la primera escena…' : 'Preparing first scene…';
     refreshTitleScreen();
     clearInput();
     let campaign = game;
     let entryAudioAttempted = false;
     const reveal = () => {
-      if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
-          campaign !== game) {
+      if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() || campaign !== game) {
         titleLoading = false;
         refreshTitleScreen();
         return;
@@ -4014,10 +4220,15 @@
       // not silently abandon the title in its disabled loading state.
       campaign = game;
       if (menu) closeMenu();
-      $('title-loading').textContent = language === 'es'
-        ? 'Preparando la primera escena…' : 'Drawing first scene…';
+      $('title-loading').textContent =
+        language === 'es' ? 'Preparando la primera escena…' : 'Drawing first scene…';
       const finish = () => {
-        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() || campaign !== game) {
+        if (
+          epoch !== titleEpoch ||
+          document.hidden ||
+          !writerGuard.canWrite() ||
+          campaign !== game
+        ) {
           titleLoading = false;
           refreshTitleScreen();
           return;
@@ -4026,20 +4237,33 @@
         // A missing audio device must never defer campaign activation.
         if (!entryAudioAttempted && audio.ctx) {
           entryAudioAttempted = true;
-          $('title-loading').textContent = language === 'es'
-            ? 'Preparando la música…' : 'Preparing soundtrack…';
+          $('title-loading').textContent =
+            language === 'es' ? 'Preparando la música…' : 'Preparing soundtrack…';
           // Start the destination score before movement is enabled. Missing
           // audio must not trap the player behind a permanent loading screen.
-          const ready = Promise.resolve(entryUnlock).then((unlocked) => {
-            if (!unlocked || epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
-                campaign !== game || !titleLoading) return false;
-            audio.update(game, false, {
-              started: true, menu: false, paused: false, backgrounded: false,
-            });
-            return audio.productionPending || true;
-          }).catch(() => false);
-          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))])
-            .then(() => requestAnimationFrame(finish));
+          const ready = Promise.resolve(entryUnlock)
+            .then((unlocked) => {
+              if (
+                !unlocked ||
+                epoch !== titleEpoch ||
+                document.hidden ||
+                !writerGuard.canWrite() ||
+                campaign !== game ||
+                !titleLoading
+              )
+                return false;
+              audio.update(game, false, {
+                started: true,
+                menu: false,
+                paused: false,
+                backgrounded: false,
+              });
+              return audio.productionPending || true;
+            })
+            .catch(() => false);
+          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))]).then(() =>
+            requestAnimationFrame(finish),
+          );
           return;
         }
         titleLoading = false;
@@ -4066,8 +4290,13 @@
           return;
         }
         const showReadyFrame = () => {
-          if (epoch !== titleEpoch || document.hidden ||
-              campaign !== game || !writerGuard.canWrite()) return;
+          if (
+            epoch !== titleEpoch ||
+            document.hidden ||
+            campaign !== game ||
+            !writerGuard.canWrite()
+          )
+            return;
           if (!drawReadyScene()) {
             titleLoading = false;
             status('Unable to prepare the game scene. Canvas backup is available.');
@@ -4075,8 +4304,8 @@
             return;
           }
           const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
-          if (gpuWarmup) void Promise.race([gpuWarmup, skipPromise.then(() => false)])
-            .then((ready) => {
+          if (gpuWarmup)
+            void Promise.race([gpuWarmup, skipPromise.then(() => false)]).then((ready) => {
               if (epoch !== titleEpoch) return;
               if (!ready) graphicsController.revert();
               requestAnimationFrame(finish);
@@ -4087,17 +4316,17 @@
         // and that scene's sprite warmup do we initialize confirmed Pixi,
         // all behind the SAME title loading surface. New Game shares this path.
         const gpuState = graphicsController.status();
-        const shouldRestorePixi = !titleSkipGraphics?.skipped &&
+        const shouldRestorePixi =
+          !titleSkipGraphics?.skipped &&
           (previousRendererChoice.renderer === 'webgl2' || gpuState.recoveryPending) &&
           !gpuState.recoveryPaused &&
           gpuState.phase === 'canvas' &&
           gpuState.preferredRenderer === 'webgl2';
         if (!shouldRestorePixi) return showReadyFrame();
-        $('title-loading').textContent = language === 'es'
-          ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
+        $('title-loading').textContent =
+          language === 'es' ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
         const restoration = graphicsController.resumeConfirmedWebGL();
-        void Promise.race([restoration, skipPromise]).then(
-          showReadyFrame, showReadyFrame);
+        void Promise.race([restoration, skipPromise]).then(showReadyFrame, showReadyFrame);
       };
       // Recovering an unclean save can change the spawn after title warmup.
       const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
@@ -4134,58 +4363,112 @@
     showTitleScreen();
   }
   function titleSaveMenu() {
-    const modes = ['normal', 'nightmare',
+    const modes = [
+      'normal',
+      'nightmare',
       ...(developerEnabled ? ['developer'] : []),
-      ...(combatDiagnosticsEnabled ? ['arena'] : [])];
+      ...(combatDiagnosticsEnabled ? ['arena'] : []),
+    ];
     const reminder = loaded ? backupReminder(game.s.mode, game.hero.level) : '';
+    const es = language === 'es';
+    const detail = (en, spanish) => (es ? spanish : en);
     openMenu(
       'Saved Games & Backups',
-      (language === 'es'
-        ? 'Elige una partida, recupera una copia o exporta tus datos antes de reemplazarlos.'
-        : 'Choose a campaign, recover a checkpoint, or export a backup.') +
-        '\n' + storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
+      '',
       [
+        menuControls.section(es ? 'Tus partidas' : 'Your adventures'),
         ...modes.map((mode) => {
           const candidate = persistence.load(mode);
           return action(
-            mode === 'normal' ? 'Normal' : mode === 'nightmare' ? 'Nightmare' :
-              mode === 'developer' ? 'Developer' : 'Combat Diagnostics',
+            mode === 'normal'
+              ? 'Normal'
+              : mode === 'nightmare'
+                ? 'Nightmare'
+                : mode === 'developer'
+                  ? 'Developer'
+                  : 'Combat Diagnostics',
             () => selectSavedMode(mode),
-            candidate ? (candidate.hero.name || candidate.hero.class) +
-              ' · ' + candidate.hero.level : (language === 'es' ? 'Sin partida válida' : 'No valid save'),
+            candidate
+              ? (candidate.hero.name || candidate.hero.class) +
+                  ' · ' +
+                  (es ? 'Nivel ' : 'Level ') +
+                  candidate.hero.level +
+                  ' · ' +
+                  detail('Select to continue this campaign.', 'Elige esta partida para continuar.')
+              : detail('No usable save found.', 'No hay ninguna partida válida.'),
             !candidate,
           );
         }),
-        action('Try recovery', () => {
-          if (loaded) profile.activeMode = game.s.mode;
-          savedRunRecoveryMenu();
-        }),
-        ...modes.filter((mode) => persistence.loadFailed(mode)).map((mode) =>
-          action(
-            (language === 'es' ? 'Recuperar ' : 'Recover ') + mode,
-            () => {
-              profile.activeMode = mode;
-              savedRunRecoveryMenu();
-            },
+        menuControls.section(es ? 'Copias y recuperación' : 'Backups & recovery'),
+        action(
+          'Try recovery',
+          () => {
+            if (loaded) profile.activeMode = game.s.mode;
+            savedRunRecoveryMenu();
+          },
+          detail(
+            'Restore a local checkpoint if a campaign cannot open.',
+            'Recupera un punto local si una partida no se puede abrir.',
           ),
         ),
-        ...modes.filter((mode) => persistence.exists(mode)).map((mode) => ({
-          label: (language === 'es' ? 'Exportar ' : 'Export ') + mode,
-          action: () => {
-            try {
-              const candidate = persistence.load(mode);
-              if (!candidate) throw Error('Invalid primary');
-              exportCampaign(candidate);
-            } catch (_) {
-              status('Export failed. No backup file was created.');
-            }
-          },
-        })),
-        { kind: 'file', label: 'Import save' },
-        ...(typeof storageApi?.persist === 'function' &&
-           storageProtectionState !== 'granted'
-          ? [action('Request persistent storage',
-              () => requestStorageProtection(titleSaveMenu))]
+        ...modes
+          .filter((mode) => persistence.loadFailed(mode))
+          .map((mode) =>
+            action(
+              (es ? 'Recuperar ' : 'Recover ') + mode,
+              () => {
+                profile.activeMode = mode;
+                savedRunRecoveryMenu();
+              },
+              detail(
+                'Review recovery options before replacing anything.',
+                'Revisa las opciones antes de reemplazar una partida.',
+              ),
+            ),
+          ),
+        ...modes
+          .filter((mode) => persistence.exists(mode))
+          .map((mode) => ({
+            label: (es ? 'Exportar ' : 'Export ') + mode,
+            detail: detail(
+              'Download a JSON backup outside this browser. ' +
+                (reminder
+                  ? 'An external backup is recommended now.'
+                  : 'Clearing site data can erase local saves.'),
+              'Descarga una copia JSON fuera del navegador. ' +
+                (reminder
+                  ? 'Conviene hacer una copia externa ahora.'
+                  : 'Borrar datos del sitio puede eliminar las partidas.'),
+            ),
+            action: () => {
+              try {
+                const candidate = persistence.load(mode);
+                if (!candidate) throw Error('Invalid primary');
+                exportCampaign(candidate);
+              } catch (_) {
+                status('Export failed. No backup file was created.');
+              }
+            },
+          })),
+        {
+          kind: 'file',
+          label: 'Import save',
+          detail: detail(
+            'Choose a JSON backup. You will review it before replacing a run.',
+            'Elige una copia JSON. Podrás revisarla antes de reemplazar una partida.',
+          ),
+        },
+        ...(typeof storageApi?.persist === 'function' && storageProtectionState !== 'granted'
+          ? [
+              action(
+                'Request persistent storage',
+                () => requestStorageProtection(titleSaveMenu),
+                detail(
+                  'Ask the browser to protect local saves. External backups are still needed.',
+                  'Pide al navegador que proteja las partidas. Conserva también copias externas.',
+                ),
+              ),
+            ]
           : []),
       ],
       showTitleScreen,
@@ -4193,12 +4476,212 @@
     );
   }
   function titleHelpMenu() {
-    openMenu('Help & Credits',
-      language === 'es'
-        ? "So I Became the Dark Lord's Problem. Una aventura de fantasía original. Consulta Controles para aprender a jugar."
-        : "So I Became the Dark Lord's Problem. An original fantasy adventure. Open Controls to review movement, skills and input options.",
-      [action('Controls', () => help(titleHelpMenu))],
-      showTitleScreen);
+    const es = language === 'es';
+    const say = (english, spanish) => (es ? spanish : english);
+    const read = (enTitle, esTitle, enBody, esBody, back = titleHelpMenu) =>
+      openMenu(say(enTitle, esTitle), say(enBody, esBody), [], back, {
+        view: 'title-help-reading',
+      });
+    const link = (en, spanish, onChoose, enDetail = '', esDetail = '') =>
+      action(say(en, spanish), onChoose, say(enDetail, esDetail));
+
+    const advancedDiagnostics = () =>
+      openMenu(
+        say('Advanced diagnostics', 'Diagnósticos avanzados'),
+        say(
+          'Only needed when investigating a problem.',
+          'Solo se necesitan para investigar un problema.',
+        ),
+        [
+          link(
+            'Renderer profiling',
+            'Medir el renderizado',
+            () =>
+              read(
+                'Renderer profiling',
+                'Medir el renderizado',
+                'To investigate a slowdown, open Settings → Screen and performance → Show performance details → Start renderer profiling. Return to the game, reproduce the slowdown, then stop profiling and choose Export playtest report. The measurements indicate CPU work and slow frames; they do not measure actual displayed FPS. Keep profiling off during normal play.',
+                'Para investigar una pausa, abre Ajustes → Pantalla y rendimiento → Mostrar detalles de rendimiento → Iniciar medición del renderizado. Vuelve al juego, reproduce la pausa y luego detén la medición y exporta el informe. Los datos indican trabajo de CPU y fotogramas lentos; no miden directamente los fotogramas mostrados. Deja la medición desactivada al jugar normalmente.',
+                advancedDiagnostics,
+              ),
+            'Record slow frames when requested.',
+            'Registra fotogramas lentos cuando haga falta.',
+          ),
+          link('Navigation profiling', 'Medir la navegación', () =>
+            read(
+              'Navigation profiling',
+              'Medir la navegación',
+              'Navigation profiling records selected movement and route-finding work. Find it under Settings → Screen and performance → Show performance details. Stop the recording after the problem, then export a playtest report. It is not needed for normal gameplay.',
+              'La medición de navegación registra parte del trabajo de movimiento y búsqueda de rutas. Está en Ajustes → Pantalla y rendimiento → Mostrar detalles de rendimiento. Detén la medición tras el problema y exporta un informe. No se necesita para jugar normalmente.',
+              advancedDiagnostics,
+            ),
+          ),
+        ],
+        troubleshooting,
+        { view: 'title-help' },
+      );
+
+    const troubleshooting = () =>
+      openMenu(
+        say('Troubleshooting & reports', 'Problemas e informes'),
+        say(
+          'Simple steps first. Technical tools are optional.',
+          'Primero los pasos sencillos. Las herramientas técnicas son opcionales.',
+        ),
+        [
+          link(
+            'Report a problem',
+            'Informar de un problema',
+            () =>
+              read(
+                'Report a problem',
+                'Informar de un problema',
+                'Describe what you were doing, the region, your hero class and what happened. A screenshot can be enough to begin. You can export a local JSON playtest report from Settings → Screen and performance. Reports are not sent automatically: review them before sharing, because they can include game and device details. Never post private save backups publicly unless you intend to share your campaign.',
+                'Explica qué hacías, la región, la clase y qué ocurrió. Una captura puede bastar para empezar. Puedes exportar un informe JSON desde Ajustes → Pantalla y rendimiento. Los informes no se envían automáticamente: revísalos antes de compartirlos, porque pueden incluir datos del juego y del dispositivo. No publiques copias privadas de tus partidas sin querer compartirlas.',
+                troubleshooting,
+              ),
+            'Screenshots and playtest reports.',
+            'Capturas e informes de prueba.',
+          ),
+          link('Graphics troubleshooting', 'Resolver problemas gráficos', () =>
+            read(
+              'Graphics troubleshooting',
+              'Resolver problemas gráficos',
+              'PixiJS WebGL2 normally draws the world with your graphics processor. Canvas 2D is a compatible backup; both use the same saves. If play is sluggish, try Auto optimization or Canvas 2D in Settings → Screen and performance. Rendering resolution is another available choice, but lowering it is optional and reduces sharpness. Change one setting at a time to judge the result; performance cannot be guaranteed on every device.',
+              'PixiJS WebGL2 suele dibujar el mundo con el procesador gráfico. Canvas 2D es la alternativa compatible; ambos usan las mismas partidas. Si el juego va lento, prueba Optimización automática o Canvas 2D en Ajustes → Pantalla y rendimiento. También puedes cambiar la resolución, aunque reducirla es opcional y pierde nitidez. Cambia una opción cada vez; no se garantiza la fluidez en todos los dispositivos.',
+              troubleshooting,
+            ),
+          ),
+          link(
+            'Advanced diagnostics',
+            'Diagnósticos avanzados',
+            advancedDiagnostics,
+            'Optional performance recording tools.',
+            'Herramientas opcionales de medición.',
+          ),
+        ],
+        titleHelpMenu,
+        { view: 'title-help' },
+      );
+
+    const about = () =>
+      openMenu(
+        say('About, version & credits', 'Acerca de, versión y créditos'),
+        '',
+        [
+          link('Installed version', 'Versión instalada', () =>
+            read(
+              'Version and development',
+              'Versión y desarrollo',
+              'Installed build: ' +
+                PrototypeBuild.version +
+                '\n\nVersion 0.9.2 is the current functional-completion goal, not a promise that future features are already installed or that publication has a fixed date.',
+              'Versión instalada: ' +
+                PrototypeBuild.version +
+                '\n\nLa versión 0.9.2 es el objetivo actual de completar funciones esenciales; no significa que otras funciones ya estén instaladas ni que exista una fecha de publicación prometida.',
+              about,
+            ),
+          ),
+          link('Credits and contact', 'Créditos y contacto', () =>
+            openMenu(
+              say('Credits and contact', 'Créditos y contacto'),
+              say(
+                'Created by Joel (Nomura). Email joedoragon@gmail.com or visit https://fcuba.net/members/282-nomura on Foros Cuba.',
+                'Creado por Joel (Nomura). Escribe a joedoragon@gmail.com o visita https://fcuba.net/members/282-nomura en Foros Cuba.',
+              ),
+              [
+                link(
+                  'Email the creator',
+                  'Escribir al creador',
+                  () => {
+                    window.location.href = 'mailto:joedoragon@gmail.com';
+                  },
+                  'joedoragon@gmail.com',
+                  'joedoragon@gmail.com',
+                ),
+                link(
+                  'Visit Nomura on Foros Cuba',
+                  'Visitar a Nomura en Foros Cuba',
+                  () =>
+                    window.open(
+                      'https://fcuba.net/members/282-nomura',
+                      '_blank',
+                      'noopener,noreferrer',
+                    ),
+                  'Open the public creator profile.',
+                  'Abrir el perfil público del creador.',
+                ),
+              ],
+              about,
+              { view: 'title-credits' },
+            ),
+          ),
+        ],
+        titleHelpMenu,
+        { view: 'title-help' },
+      );
+
+    openMenu(
+      'Help & Credits',
+      '',
+      [
+        link(
+          'Quick Start',
+          'Primeros pasos',
+          () =>
+            read(
+              'Quick Start',
+              'Primeros pasos',
+              'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\n\nOn a phone, move with the joystick or tap reachable ground. Visit the Adventure menu for the map and quests. You can change touch and keyboard controls in Settings.',
+              'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un héroe y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca o toca terreno accesible. El menú Aventura ofrece el mapa y las misiones. Puedes ajustar los controles táctiles y las teclas en Ajustes.',
+            ),
+          'Your goal and first steps.',
+          'Tu objetivo y tus primeros pasos.',
+        ),
+        link(
+          'Combat & companions',
+          'Combate y compañeros',
+          () =>
+            read(
+              'Combat & companions',
+              'Combate y compañeros',
+              'Tap a skill for its normal form; hold and release to use its charged form. Target changes or locks an enemy. Recall brings companions back. Basic attacks can happen automatically, separately from the other skill buttons.\n\nThe Skill journal explains learned abilities and the Adventure menu opens your quests, map and character.',
+              'Toca una habilidad para usarla normalmente; mantén y suelta para usar la versión cargada. Objetivo cambia o fija un enemigo. Reagrupar hace volver a los compañeros. Los ataques básicos pueden ejecutarse automáticamente, aparte de los otros botones.\n\nEl Diario de habilidades explica las técnicas aprendidas, y el menú Aventura permite abrir misiones, mapa y personaje.',
+            ),
+          'Movement, skills, targeting and party.',
+          'Movimiento, habilidades, objetivo y grupo.',
+        ),
+        link(
+          'Saved games & updates',
+          'Partidas y actualizaciones',
+          () =>
+            read(
+              'Saved games & updates',
+              'Partidas y actualizaciones',
+              'Normal and Nightmare have separate saves stored in this browser. Saved Games & Backups on the Main Menu lets you export, import or recover them. Keep an exported backup outside the browser: clearing site data, reinstalling or losing the device can remove local saves.\n\nThe game checks for updates when it starts and can run offline from its installed cache. Ready updates can be offered during play instead of interrupting it.',
+              'Normal y Pesadilla guardan partidas distintas en este navegador. Partidas y copias de seguridad, en el menú principal, permite exportarlas, importarlas o recuperarlas. Conserva una copia fuera del navegador: borrar los datos, reinstalar o perder el dispositivo puede eliminar las partidas.\n\nEl juego busca actualizaciones al iniciar y puede ejecutarse sin conexión desde la copia instalada. Las actualizaciones listas pueden ofrecerse durante el juego sin interrumpirlo.',
+            ),
+          'Local saves, backups and offline play.',
+          'Partidas locales, copias y juego sin conexión.',
+        ),
+        link(
+          'Troubleshooting & reports',
+          'Problemas e informes',
+          troubleshooting,
+          'Get help or report a problem.',
+          'Obtén ayuda o informa de un fallo.',
+        ),
+        link(
+          'About, version & credits',
+          'Acerca de, versión y créditos',
+          about,
+          'Installed build and creator contact.',
+          'Versión instalada y contacto del creador.',
+        ),
+      ],
+      showTitleScreen,
+      { view: 'title-help' },
+    );
   }
   function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
@@ -4229,24 +4712,6 @@
     showTitleScreen();
     enterPreparedScene();
   }
-  function chooseLanguage(mode) {
-    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
-    openMenu(
-      'Choose your language',
-      'English / Español',
-      [
-        action('English' + (language === 'en' ? ' ✓' : ''), () => {
-          setLanguage('en');
-          chooseClass(mode);
-        }),
-        action('Español' + (language === 'es' ? ' ✓' : ''), () => {
-          setLanguage('es');
-          chooseClass(mode);
-        }),
-      ],
-      () => (started ? openMain() : newGameMenu()),
-    );
-  }
   function savedRunRecoveryMenu() {
     openMenu(
       'Saved run could not be opened',
@@ -4266,7 +4731,7 @@
           !persistence.original(profile.activeMode),
         ),
         { kind: 'file', label: 'Import save' },
-        action('Start a new Normal run', () => chooseLanguage('normal')),
+        action('Start a new Normal run', () => chooseClass('normal')),
       ],
       started ? savedRunRecoveryMenu : showTitleScreen,
       { view: 'save-recovery' },
@@ -4383,28 +4848,38 @@
   function classGrowthLine(heroClass) {
     const p = Campaign.rules.balance.classPassives;
     const es = language === 'es';
-    if (heroClass === 'rogue') return es
-      ? 'Travesura · Cada nivel: +2 puntos porcentuales de probabilidad crítica de la Pícara.'
-      : 'Mischief · Each level: +2 percentage points Rogue critical chance.';
+    if (heroClass === 'rogue')
+      return es
+        ? 'Travesura · Cada nivel: +2 puntos porcentuales de probabilidad crítica de la Pícara.'
+        : 'Mischief · Each level: +2 percentage points Rogue critical chance.';
     if (heroClass === 'paladin')
       return es
-        ? 'Fortaleza · Cada nivel: +' + p.paladin.hpPerLevel +
-            ' PV máximos y +' + p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
+        ? 'Fortaleza · Cada nivel: +' +
+            p.paladin.hpPerLevel +
+            ' PV máximos y +' +
+            p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
             ' de daño bloqueado por punto de armadura.'
-        : 'Fortitude · Each level: +' + p.paladin.hpPerLevel +
-            ' max HP and +' + p.paladin.armorEffectivenessPerLevel.toFixed(2) +
+        : 'Fortitude · Each level: +' +
+            p.paladin.hpPerLevel +
+            ' max HP and +' +
+            p.paladin.armorEffectivenessPerLevel.toFixed(2) +
             ' damage blocked per Armor point.';
     if (heroClass === 'ranger')
       return es
-        ? 'Agilidad · Cada nivel: +' + p.ranger.speedPerLevel +
-            ' de velocidad y +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
+        ? 'Agilidad · Cada nivel: +' +
+            p.ranger.speedPerLevel +
+            ' de velocidad y +' +
+            Math.round(p.ranger.cooldownReductionPerLevel * 100) +
             '% de reducción de recuperación.'
-        : 'Agility · Each level: +' + p.ranger.speedPerLevel +
-            ' speed and +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
+        : 'Agility · Each level: +' +
+            p.ranger.speedPerLevel +
+            ' speed and +' +
+            Math.round(p.ranger.cooldownReductionPerLevel * 100) +
             '% cooldown reduction.';
-    if (heroClass === 'mage') return es
-      ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
-      : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
+    if (heroClass === 'mage')
+      return es
+        ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
+        : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
     // Unknown classes never inherit an invented Mage growth description.
     return '';
   }
@@ -4425,27 +4900,38 @@
   // which buttons exist; a future class gets its own description, never Ranger's.
   const heroClassPresentation = Object.freeze({
     paladin: {
-      en: 'Paladin', es: 'Paladín',
-      detail: 'Melee, healing and brief immunity', detailEs: 'Combate cercano, curación e inmunidad breve',
+      en: 'Paladin',
+      es: 'Paladín',
+      detail: 'Melee, healing and brief immunity',
+      detailEs: 'Combate cercano, curación e inmunidad breve',
     },
     mage: {
-      en: 'Mage', es: 'Mago',
-      detail: 'Ranged magic, frost control and protective barriers', detailEs: 'Magia a distancia, hielo y barreras protectoras',
+      en: 'Mage',
+      es: 'Mago',
+      detail: 'Ranged magic, frost control and protective barriers',
+      detailEs: 'Magia a distancia, hielo y barreras protectoras',
     },
     ranger: {
-      en: 'Ranger', es: 'Explorador',
-      detail: 'Ranged bow, healing and mobility', detailEs: 'Arco a distancia, curación y movilidad',
+      en: 'Ranger',
+      es: 'Explorador',
+      detail: 'Ranged bow, healing and mobility',
+      detailEs: 'Arco a distancia, curación y movilidad',
     },
     rogue: {
-      en: 'Rogue', es: 'Pícara',
-      detail: 'Charmed companions, musical disruption and survival tricks. Start alone; automatic basic hits may Charm surviving eligible monsters, who can then build Barracks.', detailEs: 'Compañeros encantados, música disruptiva y trucos de supervivencia. Empiezas sola; los ataques básicos automáticos pueden encantar a monstruos aptos que sobreviven, y luego ellos pueden construir cuarteles.',
+      en: 'Rogue',
+      es: 'Pícara',
+      detail: 'Charm surviving monsters, disrupt with music and survive',
+      detailEs: 'Encanta monstruos supervivientes, usa música y resiste',
     },
   });
   function heroClassLabel(id, localized = language === 'es') {
     return (heroClassPresentation[id] || {})[localized ? 'es' : 'en'] || id;
   }
   function heroClassDetail(id) {
-    return heroClassPresentation[id]?.[language === 'es' ? 'detailEs' : 'detail'] || 'Class skills require authored rules';
+    return (
+      heroClassPresentation[id]?.[language === 'es' ? 'detailEs' : 'detail'] ||
+      'Class skills require authored rules'
+    );
   }
   function playableClassCountWord() {
     const count = Object.keys(Campaign.classes).length;
@@ -4456,22 +4942,19 @@
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'developer' || mode === 'arena') succession = false;
     if (succession === undefined) {
-      openMenu(
-        'Challenge condition',
-        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after ' +
-          playableClassCountWord() +
-          ' class deaths the run ends.',
-        [
-          action('Standard death and refuge recovery', () => chooseClass(mode, false)),
-          action('Succession challenge', () => chooseClass(mode, true)),
-        ],
-      );
+      newGameMenu(mode);
       return;
     }
+    newAdventureMode = mode;
+    newAdventureSuccession = !!succession;
     openMenu(
-      'New ' +
-        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : mode === 'arena' ? 'Combat Diagnostics' : 'Normal') +
-        ' adventure',
+      mode === 'arena'
+        ? 'New Combat Diagnostics adventure'
+        : mode === 'developer'
+          ? 'New Developer adventure'
+          : language === 'es'
+            ? 'Elegir héroe'
+            : 'Choose Hero',
       mode === 'arena'
         ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
         : language === 'es'
@@ -4502,10 +4985,12 @@
             start(mode, id, succession, heroName);
           },
           heroClassDetail(id) + (classGrowthLine(id) ? '\n' + classGrowthLine(id) : ''),
-          false, false, id,
+          false,
+          false,
+          id,
         ),
       ),
-      () => started ? chooseClass(mode) : newGameMenu(),
+      () => newGameMenu(mode, true),
       { view: 'class-select' },
     );
     appendNameField();
@@ -4584,8 +5069,11 @@
     if (h.class === 'paladin')
       stats.push({
         label: es ? 'Bloqueo por punto de armadura' : 'Blocked per Armor point',
-        value: game.armorEffectivenessFor(h).toFixed(2).replace('.', es ? ',' : '.') +
-          (es ? ' daño' : ' damage'),
+        value:
+          game
+            .armorEffectivenessFor(h)
+            .toFixed(2)
+            .replace('.', es ? ',' : '.') + (es ? ' daño' : ' damage'),
       });
     openMenu(
       'Character',
@@ -4595,7 +5083,10 @@
           className +
           (es ? ' · Nivel ' : ' · Level ') +
           h.level +
-          '\nXP ' + Math.floor(h.xp) + ' / ' + game.xpRequired(h.level),
+          '\nXP ' +
+          Math.floor(h.xp) +
+          ' / ' +
+          game.xpRequired(h.level),
         sections: [
           {
             title: es ? 'Crecimiento de clase' : 'Class growth',
@@ -4632,16 +5123,31 @@
   // Opt-in, device-local, bounded samples. Never writes into campaign saves.
   let rendererRecording = null;
   let lastRendererRecording = null;
+  let rendererRecordingFrameId = null;
+  let rendererRecordingFrameEvents = null;
   const rendererDiagnosticCounters = [
-    'proceduralBakes', 'proceduralCacheHits', 'sharedProceduralHits',
-    'proceduralEvictions', 'proceduralCacheEvictions', 'backgroundRepaints',
-    'terrainTilesPrepared', 'terrainTileReuses',
-    'backgroundLookaheadPaints', 'backgroundLookaheadPromotions',
-    'backgroundLookaheadMisses', 'backgroundLookaheadFailures',
-    'backgroundLookaheadPaintMs', 'backgroundLookaheadPromoteMs',
-    'neighborhoodPrepared', 'neighborhoodWarmupMs', 'syncProceduralBakeMs',
-    'syncBackgroundPaintMs', 'approvedGpuPrepared', 'proceduralGpuPrepared',
-    'gpuPreparationMs', 'gpuPreparationBatches',
+    'proceduralBakes',
+    'proceduralCacheHits',
+    'sharedProceduralHits',
+    'proceduralEvictions',
+    'proceduralCacheEvictions',
+    'backgroundRepaints',
+    'terrainTilesPrepared',
+    'terrainTileReuses',
+    'backgroundLookaheadPaints',
+    'backgroundLookaheadPromotions',
+    'backgroundLookaheadMisses',
+    'backgroundLookaheadFailures',
+    'backgroundLookaheadPaintMs',
+    'backgroundLookaheadPromoteMs',
+    'neighborhoodPrepared',
+    'neighborhoodWarmupMs',
+    'syncProceduralBakeMs',
+    'syncBackgroundPaintMs',
+    'approvedGpuPrepared',
+    'proceduralGpuPrepared',
+    'gpuPreparationMs',
+    'gpuPreparationBatches',
   ];
   // Constant-memory distributions cover the entire opt-in capture, unlike the
   // short rolling frame profiler. Quantiles are bucket ceilings, not exact FPS.
@@ -4665,27 +5171,68 @@
   }
   function rendererDiagnosticSnapshot() {
     const pixi = pixiGame.status();
-    const counters = Object.fromEntries(rendererDiagnosticCounters.map((key) =>
-      [key, Number.isFinite(pixi[key]) ? pixi[key] : 0]));
+    const counters = Object.fromEntries(
+      rendererDiagnosticCounters.map((key) => [key, Number.isFinite(pixi[key]) ? pixi[key] : 0]),
+    );
     for (const [key, value] of Object.entries(pixi.backgroundLookaheadSkips || {}))
       counters['lookaheadSkip_' + key] = value;
-    return { counters, renderer: graphicsController.status().mode,
-      zone: game.zoneId, proceduralBytes: pixi.proceduralBytes || 0 };
+    return {
+      counters,
+      renderer: graphicsController.status().mode,
+      zone: game.zoneId,
+      proceduralBytes: pixi.proceduralBytes || 0,
+      backingRatio: +(canvas.width / Math.max(1, viewport.width)).toFixed(3),
+      optimizationMode,
+      emergency: frameSkip.emergency,
+      resolution: renderResolution.status(),
+    };
   }
   function beginRendererRecording() {
     rendererRecording = {
-      version: 1, startedAt: new Date().toISOString(),
-      startedClockMs: performance.now(), baseline: rendererDiagnosticSnapshot(),
-      frames: 0, draws: 0, slowFrames: 0, worstFrames: [], events: [],
+      version: 2,
+      startedAt: new Date().toISOString(),
+      startedClockMs: performance.now(),
+      baseline: rendererDiagnosticSnapshot(),
+      frames: 0,
+      draws: 0,
+      slowFrames: 0,
+      worstFrames: [],
+      events: [],
+      frameSequence: 0,
+      graphicsTransitions: [],
+      droppedGraphicsTransitions: 0,
       frameWorkHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
       callbackIntervalHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
     };
     lastRendererRecording = null;
+    rendererDiagnosticActive = true;
+  }
+  // Recent graphics-policy timeline, separate from the original arrival log.
+  // Retain at most 48 events and eight same-callback actions, never a save.
+  function recordRendererTransition(type, details = {}) {
+    const capture = rendererRecording;
+    if (!capture) return;
+    const event = {
+      type,
+      elapsedMs: Math.round(performance.now() - capture.startedClockMs),
+      frameId: rendererRecordingFrameId,
+      ...details,
+    };
+    if (capture.graphicsTransitions.length >= 48) {
+      capture.graphicsTransitions.shift();
+      capture.droppedGraphicsTransitions++;
+    }
+    capture.graphicsTransitions.push(event);
+    if (rendererRecordingFrameEvents && rendererRecordingFrameEvents.length < 8)
+      rendererRecordingFrameEvents.push(event);
   }
   function rendererEvent(type, destination) {
     if (rendererRecording && rendererRecording.events.length < 16)
-      rendererRecording.events.push({ type, destination, elapsedMs: Math.round(
-        performance.now() - rendererRecording.startedClockMs) });
+      rendererRecording.events.push({
+        type,
+        destination,
+        elapsedMs: Math.round(performance.now() - rendererRecording.startedClockMs),
+      });
   }
   function noteRendererRecordingFrame(stages, workMs, intervalMs, drawn, recovering, skipped) {
     const capture = rendererRecording;
@@ -4696,7 +5243,8 @@
     rendererHistogramAdd(capture.callbackIntervalHistogram, intervalMs);
     if (workMs < 34 && intervalMs < 50) return;
     capture.slowFrames++;
-    const point = { elapsedMs: Math.round(performance.now() - capture.startedClockMs),
+    const point = {
+      elapsedMs: Math.round(performance.now() - capture.startedClockMs),
       workMs: Math.round(workMs * 10) / 10,
       intervalMs: Math.round(intervalMs * 10) / 10,
       renderMs: Math.round(stages.renderMs * 10) / 10,
@@ -4704,8 +5252,28 @@
       pixiMs: Math.round(stages.pixiMs * 10) / 10,
       canvasOverlayMs: Math.round(stages.canvasOverlayMs * 10) / 10,
       canvasWorldMs: Math.round(stages.canvasWorldMs * 10) / 10,
-      drawn: !!drawn, recovering: !!recovering, adaptiveSkipped: !!skipped,
-      zone: game.zoneId, renderer: graphicsController.status().mode };
+      drawn: !!drawn,
+      recovering: !!recovering,
+      adaptiveSkipped: !!skipped,
+      frameId: rendererRecordingFrameId,
+      graphicsTransitions: rendererRecordingFrameEvents?.slice() || [],
+      pixiDraws: (stages.pixiDraws || []).slice(0, 2).map((trace) => ({
+        elapsedStartMs: +(trace.startedAtMs - capture.startedClockMs).toFixed(2),
+        totalMs: +trace.totalMs.toFixed(2),
+        phaseMs: Object.fromEntries(
+          Object.entries(trace.phaseMs || {}).map(([key, value]) => [key, +value.toFixed(2)]),
+        ),
+        ratioBefore: trace.ratioBefore,
+        ratioAfter: trace.ratioAfter,
+        viewportChanged: trace.viewportChanged,
+        resolutionChanged: trace.resolutionChanged,
+        bakesDuringDraw: trace.bakesDuringDraw,
+        proceduralBytesDelta: trace.proceduralBytesDelta,
+        backgroundRepaintsDuringDraw: trace.backgroundRepaintsDuringDraw,
+      })),
+      zone: game.zoneId,
+      renderer: graphicsController.status().mode,
+    };
     // Keep only the 32 highest-severity incidents, not an unbounded frame log.
     const severity = (p) => Math.max(p.workMs, p.intervalMs);
     if (capture.worstFrames.length < 32) capture.worstFrames.push(point);
@@ -4721,10 +5289,13 @@
   function rendererRecordingReport(capture = rendererRecording || lastRendererRecording) {
     if (!capture) return { state: 'not-recorded', note: 'Optional recording is off.' };
     const finish = capture.finished || rendererDiagnosticSnapshot();
-    const keys = new Set([...Object.keys(capture.baseline.counters),
-      ...Object.keys(finish.counters)]);
-    const counterResetKeys = [...keys].filter((key) =>
-      (finish.counters[key] || 0) < (capture.baseline.counters[key] || 0));
+    const keys = new Set([
+      ...Object.keys(capture.baseline.counters),
+      ...Object.keys(finish.counters),
+    ]);
+    const counterResetKeys = [...keys].filter(
+      (key) => (finish.counters[key] || 0) < (capture.baseline.counters[key] || 0),
+    );
     const counterResetSet = new Set(counterResetKeys);
     const percentile = (histogram) => ({
       p50UpperMs: rendererHistogramQuantile(histogram, 0.5),
@@ -4734,11 +5305,31 @@
     return {
       state: capture === rendererRecording ? 'recording' : 'stopped',
       startedAt: capture.startedAt,
-      durationMs: Math.max(0, Math.round((capture.finishedClockMs ||
-        performance.now()) - capture.startedClockMs)),
-      initialRenderer: capture.baseline.renderer, finalRenderer: finish.renderer,
-      initialZone: capture.baseline.zone, finalZone: finish.zone,
-      frames: capture.frames, draws: capture.draws, slowFrames: capture.slowFrames,
+      durationMs: Math.max(
+        0,
+        Math.round((capture.finishedClockMs || performance.now()) - capture.startedClockMs),
+      ),
+      initialRenderer: capture.baseline.renderer,
+      finalRenderer: finish.renderer,
+      initialZone: capture.baseline.zone,
+      finalZone: finish.zone,
+      initialGraphics: {
+        backingRatio: capture.baseline.backingRatio,
+        optimizationMode: capture.baseline.optimizationMode,
+        emergency: capture.baseline.emergency,
+        resolution: capture.baseline.resolution,
+      },
+      finalGraphics: {
+        backingRatio: finish.backingRatio,
+        optimizationMode: finish.optimizationMode,
+        emergency: finish.emergency,
+        resolution: finish.resolution,
+      },
+      graphicsTransitions: capture.graphicsTransitions,
+      droppedGraphicsTransitions: capture.droppedGraphicsTransitions,
+      frames: capture.frames,
+      draws: capture.draws,
+      slowFrames: capture.slowFrames,
       slowThresholds: { workMs: 34, intervalMs: 50 },
       histograms: {
         boundsMs: rendererHistogramBoundsMs,
@@ -4752,13 +5343,18 @@
       },
       worstFrames: [...capture.worstFrames].sort((a, b) => a.elapsedMs - b.elapsedMs),
       events: capture.events,
-      counterDeltas: Object.fromEntries([...keys].map((key) =>
-        [key, counterResetSet.has(key) ? null :
-          (finish.counters[key] || 0) - (capture.baseline.counters[key] || 0)])),
+      counterDeltas: Object.fromEntries(
+        [...keys].map((key) => [
+          key,
+          counterResetSet.has(key)
+            ? null
+            : (finish.counters[key] || 0) - (capture.baseline.counters[key] || 0),
+        ]),
+      ),
       counterResetKeys,
       initialProceduralBytes: capture.baseline.proceduralBytes,
       finalProceduralBytes: finish.proceduralBytes,
-      note: 'Bounded synchronous CPU samples, not GPU completion or displayed frames.',
+      note: 'Opt-in Pixi JavaScript stages and graphics-policy sequence, not GPU completion or display FPS. All timestamps are relative to capture start. Callback work excludes post-observe policy actions; backing resize duration is separately recorded.',
     };
   }
   function stopRendererRecording() {
@@ -4767,161 +5363,161 @@
     rendererRecording.finishedClockMs = performance.now();
     lastRendererRecording = rendererRecording;
     rendererRecording = null;
+    rendererDiagnosticActive = false;
+    rendererRecordingFrameId = null;
+    rendererRecordingFrameEvents = null;
   }
   function exportPlaytestReport() {
     exportJSON(
+      {
+        version: PrototypeBuild.version,
+        performance: {
+          ...runtime.report(
             {
-              version: PrototypeBuild.version,
-              performance: {
-                ...runtime.report(
-                  {
-                    ...renderer.metrics(),
-                    // In WebGL mode these counters belong to the transparent
-                    // Canvas cues, NOT the Pixi world.
-                    measuredLayer:
-                      graphicsController.status().mode === 'webgl2'
-                        ? 'canvas-combat-overlay'
-                        : 'canvas-full-world',
-                  },
-                  platform.mode,
-                ),
-                // Report the active surface, not just the saved preference.
-                graphicsRenderer: {
-                  activeRenderer:
-                    graphicsController.status().mode === 'webgl2' && pixiGame.status().active
-                      ? 'pixijs-webgl2'
-                      : 'canvas2d',
-                  ...graphicsController.status(),
-                  ...pixiGame.status(),
-                },
-                frameProfile: frameProfile.report(),
-                rendererDiagnostics: rendererRecordingReport(),
-                environment: {
-                  userAgent: String(navigator.userAgent || '').slice(0, 300),
-                  hardwareConcurrency: Number.isFinite(navigator.hardwareConcurrency)
-                    ? navigator.hardwareConcurrency : null,
-                  deviceMemoryGiB: Number.isFinite(navigator.deviceMemory)
-                    ? navigator.deviceMemory : null,
-                  viewportWidth: viewport.width,
-                  viewportHeight: viewport.height,
-                },
-                crowdDiagnostics: game.crowdDiagnosticsReport(),
-                ...(developerEnabled && game.s.mode === 'developer'
-                  ? { effectDiagnostics: renderer.effectDiagnosticsReport() }
-                  : {}),
-                frameRatePreference: fps.preference,
-                frameRateTarget: fps.target,
-                frameSkip: frameSkip.status(),
-                renderResolution: renderResolution.status(),
-                optimizationMode: optimizationMode ? 'on' : 'off',
-                optimizationPreference,
-                emergencyGraphicsOverride: optimizationMode &&
-                  optimizationPreference === 'off',
-                devicePixelRatio: window.devicePixelRatio || 1,
-                backingPixelRatio: canvas.width / Math.max(1, viewport.width),
-                backingWidth: canvas.width,
-                backingHeight: canvas.height,
-                canvasBacking: { ...canvasBackingDiagnostics },
-              },
-              audio: audio.status(),
-              sprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites.status(),
-              materials:
-                typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials.status(),
-              currency: 'crowns',
-              mode: game.s.mode,
-              phase: game.s.phase,
-              hero: game.hero,
-              partyDiagnostics: game.partyDiagnosticsReport(),
-              statistics: game.s.statistics,
+              ...renderer.metrics(),
+              // In WebGL mode these counters belong to the transparent
+              // Canvas cues, NOT the Pixi world.
+              measuredLayer:
+                graphicsController.status().mode === 'webgl2'
+                  ? 'canvas-combat-overlay'
+                  : 'canvas-full-world',
             },
-            'Azeroth_Playtest_Report.json',
-          )
-  }
-  function saveMenu() {
-    openMenu(
-      'Save and game management',
-      'Save, back up, or choose another run.',
-      [
-        action('Save run', () => {
-          save();
-          closeMenu();
-        }),
-        action('Save backups', saveBackupMenu),
-        action('New game', newGameMenu),
-        ...(combatDiagnosticsEnabled
-          ? [
-              action(
-                'Load Combat Diagnostics run',
-                () => {
-                  if (load('arena')) {
-                    graphicsController.revert();
-                    setOptimizationActive(true);
-                    resize();
-                    save();
-                    closeMenu();
-                    updateHUD();
-                  }
-                },
-                'Continue your separate low-spec combat-testing save.',
-                !persistence.exists('arena'),
-              ),
-            ]
-          : []),
-        action('Load other mode run', () => {
-          const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
-          if (load(mode)) {
-            save();
-            closeMenu();
-          } else game.say('No saved ' + mode + ' run yet.');
-        }),
-      ],
-      systemMenu,
+            platform.mode,
+          ),
+          // Report the active surface, not just the saved preference.
+          graphicsRenderer: {
+            activeRenderer:
+              graphicsController.status().mode === 'webgl2' && pixiGame.status().active
+                ? 'pixijs-webgl2'
+                : 'canvas2d',
+            ...graphicsController.status(),
+            ...pixiGame.status(),
+          },
+          frameProfile: frameProfile.report(),
+          rendererDiagnostics: rendererRecordingReport(),
+          environment: {
+            userAgent: String(navigator.userAgent || '').slice(0, 300),
+            hardwareConcurrency: Number.isFinite(navigator.hardwareConcurrency)
+              ? navigator.hardwareConcurrency
+              : null,
+            deviceMemoryGiB: Number.isFinite(navigator.deviceMemory)
+              ? navigator.deviceMemory
+              : null,
+            viewportWidth: viewport.width,
+            viewportHeight: viewport.height,
+          },
+          crowdDiagnostics: game.crowdDiagnosticsReport(),
+          ...(developerEnabled && game.s.mode === 'developer'
+            ? { effectDiagnostics: renderer.effectDiagnosticsReport() }
+            : {}),
+          frameRatePreference: fps.preference,
+          frameRateTarget: fps.target,
+          frameSkip: frameSkip.status(),
+          renderResolution: renderResolution.status(),
+          optimizationMode: optimizationMode ? 'on' : 'off',
+          optimizationPreference,
+          emergencyGraphicsOverride: optimizationMode && optimizationPreference === 'off',
+          devicePixelRatio: window.devicePixelRatio || 1,
+          backingPixelRatio: canvas.width / Math.max(1, viewport.width),
+          backingWidth: canvas.width,
+          backingHeight: canvas.height,
+          canvasBacking: { ...canvasBackingDiagnostics },
+        },
+        audio: audio.status(),
+        sprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites.status(),
+        materials: typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials.status(),
+        currency: 'crowns',
+        mode: game.s.mode,
+        phase: game.s.phase,
+        hero: game.hero,
+        partyDiagnostics: game.partyDiagnosticsReport(),
+        statistics: game.s.statistics,
+      },
+      'Azeroth_Playtest_Report.json',
     );
   }
-  function saveBackupMenu() {
-    const reminder = backupReminder(game.s.mode, game.hero.level);
-    openMenu(
-      'Save backups',
-      'Export a backup before replacing a run.\n' +
-        storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
-      [
-        action('Export save', () => exportCampaign(game)),
-        { kind: 'file', label: 'Import save' },
-        ...(typeof storageApi?.persist === 'function' &&
-           storageProtectionState !== 'granted'
-          ? [action('Request persistent storage',
-              () => requestStorageProtection(saveBackupMenu))]
-          : []),
-      ],
-      saveMenu,
-    );
+  let newAdventureMode = 'normal';
+  let newAdventureSuccession = false;
+  function newAdventureBack() {
+    if (started) openMain();
+    else showTitleScreen();
   }
-  function newGameMenu() {
+  function newGameMenu(preferredMode = 'normal', preserveChoice = false) {
+    const es = language === 'es';
+    if (!preserveChoice) {
+      newAdventureMode =
+        preferredMode === 'nightmare' && profile.nightmareUnlocked ? 'nightmare' : 'normal';
+      newAdventureSuccession = false;
+    }
+    const selected = (mode) => newAdventureMode === mode;
+    const refresh = () => newGameMenu(newAdventureMode, true);
+    const primary = action(
+      es ? 'Elegir héroe' : 'Choose Hero',
+      () => chooseClass(newAdventureMode, newAdventureSuccession),
+      es
+        ? 'Continúa con la clase y un nombre opcional.'
+        : 'Continue to your class and optional name.',
+    );
+    primary.uiPrimary = true;
     openMenu(
-      'New game',
-      'Choose a mode. Export a backup to keep your current run.',
+      es ? 'Nueva aventura' : 'New Adventure',
+      es
+        ? 'Elige la dificultad y el desafío opcional. La recuperación estándar conserva sus penalizaciones.'
+        : 'Choose difficulty and an optional challenge. Standard recovery keeps its usual penalties.',
       [
-        action('New Normal game', () => chooseLanguage('normal')),
+        primary,
+        menuControls.section(es ? 'Dificultad' : 'Difficulty'),
+        action(
+          (es ? 'Normal · Recomendada' : 'Normal · Recommended') + (selected('normal') ? ' ✓' : ''),
+          () => {
+            newAdventureMode = 'normal';
+            refresh();
+          },
+          es ? 'Para tu primera aventura.' : 'For your first adventure.',
+        ),
+        action(
+          (es ? 'Pesadilla' : 'Nightmare') + (selected('nightmare') ? ' ✓' : ''),
+          () => {
+            newAdventureMode = 'nightmare';
+            refresh();
+          },
+          profile.nightmareUnlocked
+            ? es
+              ? 'Un desafío más difícil.'
+              : 'A more demanding adventure.'
+            : es
+              ? 'Se desbloquea con el final pacífico.'
+              : 'Unlock by completing the peaceful ending.',
+          !profile.nightmareUnlocked,
+        ),
+        menuControls.section(es ? 'Desafío opcional' : 'Optional challenge'),
+        action(
+          (es ? 'Sucesión' : 'Succession') +
+            ' · ' +
+            (newAdventureSuccession ? (es ? 'Activada' : 'On') : es ? 'Desactivada' : 'Off'),
+          () => {
+            newAdventureSuccession = !newAdventureSuccession;
+            refresh();
+          },
+          es
+            ? 'Cada clase caída se pierde en esta partida. Si caen las cuatro, termina.'
+            : 'A fallen class is lost for this run. Lose all four and the run ends.',
+        ),
         ...(combatDiagnosticsEnabled
           ? [
               action(
                 'New Combat Diagnostics run',
-                () => chooseLanguage('arena'),
-                'Unlisted low-spec playtest · black battlefield · authentic combat',
+                () => chooseClass('arena', false),
+                'Separate playtest mode and save.',
               ),
             ]
           : []),
         ...(developerEnabled
-          ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
+          ? [action('New Developer Mode run', () => chooseClass('developer', false))]
           : []),
-        action(
-          'New game in Nightmare Mode',
-          () => chooseLanguage('nightmare'),
-          'Unlocked by the peaceful ending',
-          !profile.nightmareUnlocked,
-        ),
       ],
-      started ? saveMenu : showTitleScreen,
+      newAdventureBack,
+      { view: 'new-adventure' },
     );
   }
   // Menu audit Step 2: one window for every display, renderer and frame option.
@@ -4992,7 +5588,9 @@
         (value) => {
           if (!['off', 'auto', 'on'].includes(value)) return;
           optimizationPreference = value;
-          try { localStorage.setItem(optimizationKey, value); } catch (_) {}
+          try {
+            localStorage.setItem(optimizationKey, value);
+          } catch (_) {}
           autoOptimization.reset();
           // Critical recovery is not an opt-out, even if Off is chosen now.
           setOptimizationActive(value === 'on' || frameSkip.emergency);
@@ -5064,17 +5662,22 @@
           : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(graphicsController.status().recoveryPaused
-        ? [action('Retry PixiJS WebGL2', () => {
-            closeMenu();
-            status('Preparing PixiJS graphics…');
-            graphicsController.requestWebGL().then((ready) => {
-              if (!ready) status('WebGL2 unavailable. Canvas backup remains active.');
-            });
-          })]
+        ? [
+            action('Retry PixiJS WebGL2', () => {
+              closeMenu();
+              status('Preparing PixiJS graphics…');
+              graphicsController.requestWebGL().then((ready) => {
+                if (!ready) status('WebGL2 unavailable. Canvas backup remains active.');
+              });
+            }),
+          ]
         : []),
       menuControls.section('Diagnostics'),
-      action('Export playtest report', exportPlaytestReport,
-        'Download a local JSON report to share yourself.'),
+      action(
+        'Export playtest report',
+        exportPlaytestReport,
+        'Download a local JSON report to share yourself.',
+      ),
       action(
         performanceDetailsExpanded ? 'Hide performance details' : 'Show performance details',
         () => {
@@ -5086,17 +5689,23 @@
     ];
     if (performanceDetailsExpanded) {
       items.push(
-        action(rendererRecording ? 'Stop renderer profiling' : 'Start renderer profiling', () => {
-          if (rendererRecording) stopRendererRecording();
-          else beginRendererRecording();
-          platformMenu(back);
-        }, 'Record bounded frame spikes and PR #518 cache activity while playing.'),
-        ...(lastRendererRecording && !rendererRecording ? [
-          action('Clear renderer profiling', () => {
-            lastRendererRecording = null;
+        action(
+          rendererRecording ? 'Stop renderer profiling' : 'Start renderer profiling',
+          () => {
+            if (rendererRecording) stopRendererRecording();
+            else beginRendererRecording();
             platformMenu(back);
-          }),
-        ] : []),
+          },
+          'Record bounded frame spikes and PR #518 cache activity while playing.',
+        ),
+        ...(lastRendererRecording && !rendererRecording
+          ? [
+              action('Clear renderer profiling', () => {
+                lastRendererRecording = null;
+                platformMenu(back);
+              }),
+            ]
+          : []),
         menuControls.section(
           'Performance details',
           runtime.describe({
@@ -5155,7 +5764,9 @@
     }
     openMenu(
       'Screen and performance',
-      'Adjust everything here without leaving this screen.',
+      language === 'es'
+        ? 'Elige cómo se ve y funciona el juego. Los diagnósticos son opcionales.'
+        : 'Choose how the game looks and runs. Advanced diagnostics are optional.',
       items,
       back,
     );
@@ -5163,23 +5774,18 @@
   function systemMenu() {
     openMenu(
       'Game and settings',
-      '',
+      language === 'es' ? 'Opciones de juego y dispositivo.' : 'Game and device options.',
       [
         ...(!runningAsApp() && platform.mode === 'phone'
           ? [action('Install on phone', installApp, 'Add the game to the home screen')]
           : []),
-        ...(appRegistration
-          ? [
-              action(
-                appUpdateReady ? 'Install available game update' : 'Check for game update',
-                updateApp,
-              ),
-            ]
+        // Automatic checks own discovery; this appears only when installation is ready.
+        ...(appRegistration && appUpdateReady
+          ? [action('Install available game update', updateApp)]
           : []),
         action('Screen and performance', () => platformMenu(systemMenu)),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
-        action('Save and game management', saveMenu),
         action('Language · ' + (language === 'es' ? 'Español' : 'English'), () =>
           languageMenu(systemMenu),
         ),
@@ -5200,7 +5806,8 @@
     openMenu(
       region.name + ' · Combat Arena',
       'Native combat with a small number of active enemies. All destinations remain open.',
-      game.arenaStages()
+      game
+        .arenaStages()
         .filter((stage) => stage.region === index && stage.kind !== 'hub')
         .map((stage) => action(stage.label, () => arenaTravel(stage.id))),
       arenaDestinations,
@@ -5214,7 +5821,11 @@
       [
         action('Safe hub · specialists', () => arenaTravel('hub')),
         ...D.regions.map((region, index) =>
-          action(region.name, () => arenaRegionMenu(index), 'Ordinary · guardians/captain · bosses'),
+          action(
+            region.name,
+            () => arenaRegionMenu(index),
+            'Ordinary · guardians/captain · bosses',
+          ),
         ),
       ],
       openMain,
@@ -5222,29 +5833,40 @@
   }
   function openMain() {
     if (game.s.mode === 'arena') {
-      openMenu('Combat Arena', 'Black floor · no scenery · all combat rules preserved. Your arena save is separate.', [
-        action('Choose an enemy encounter', arenaDestinations),
-        ...(game.s.arenaStage === 'hub'
-          ? []
-          : [
-              action('Replay current encounter', () => arenaTravel(game.s.arenaStage)),
-              action('Return to safe hub', () => arenaTravel('hub')),
-            ]),
-        action('Build free Barracks here', () => {
-          const b = game.arenaBuildBarracks();
-          if (b) { save(); barracksMenu(b, openMain); }
-        }, 'Instant, invisible structure. Existing Barracks services remain available.'),
-        action('Free recovery · heal the party', () => {
-          game.arenaRest();
-          save();
-          closeMenu();
-          updateHUD();
-        }),
-        action('Character', characterMenu),
-        action('Skill journal', () => skillBook(openMain)),
-        action('Game and settings', systemMenu),
-        action('Return to Main Menu', returnToTitleScreen),
-      ]);
+      openMenu(
+        'Combat Arena',
+        'Black floor · no scenery · all combat rules preserved. Your arena save is separate.',
+        [
+          action('Choose an enemy encounter', arenaDestinations),
+          ...(game.s.arenaStage === 'hub'
+            ? []
+            : [
+                action('Replay current encounter', () => arenaTravel(game.s.arenaStage)),
+                action('Return to safe hub', () => arenaTravel('hub')),
+              ]),
+          action(
+            'Build free Barracks here',
+            () => {
+              const b = game.arenaBuildBarracks();
+              if (b) {
+                save();
+                barracksMenu(b, openMain);
+              }
+            },
+            'Instant, invisible structure. Existing Barracks services remain available.',
+          ),
+          action('Free recovery · heal the party', () => {
+            game.arenaRest();
+            save();
+            closeMenu();
+            updateHUD();
+          }),
+          action('Character', characterMenu),
+          action('Skill journal', () => skillBook(openMain)),
+          action('Game and settings', systemMenu),
+          action('Return to Main Menu', returnToTitleScreen),
+        ],
+      );
       return;
     }
     const canBuild = !game.isDungeon() && game.availableLabor().length > 0,
@@ -5307,7 +5929,8 @@
     profile.nightmareUnlocked = true;
     persistProfile();
     const crownedClass =
-      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[game.hero.class] || 'Hero';
+      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[game.hero.class] ||
+      'Hero';
     const credits =
       'THE CROWN\n\n' +
       (game.hero.regnalName || game.hero.customName
@@ -5329,12 +5952,12 @@
       action('New game · Normal Mode', () => {
         game.s.endingAck = true;
         save();
-        chooseLanguage('normal');
+        chooseClass('normal');
       }),
       action('New game · Nightmare Mode', () => {
         game.s.endingAck = true;
         save();
-        chooseLanguage('nightmare');
+        chooseClass('nightmare');
       }),
       action('Export completed run', () =>
         exportJSON(game.snapshot(), 'Azeroth_Chronicles_Completed.json'),
@@ -5350,12 +5973,18 @@
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
-          action((id === 'rogue' ? '' : c.icon + ' ') +
-            heroClassLabel(id, false) + ' successor', () => {
-            game.successor(id);
-            save();
-            closeMenu();
-          }, '', false, false, id),
+          action(
+            (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id, false) + ' successor',
+            () => {
+              game.successor(id);
+              save();
+              closeMenu();
+            },
+            '',
+            false,
+            false,
+            id,
+          ),
         ),
     );
   }
@@ -5367,10 +5996,10 @@
         ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
         action('Export final run', () => exportCampaign(game)),
-        action('Start a new Normal run', () => chooseLanguage('normal')),
+        action('Start a new Normal run', () => chooseClass('normal')),
         action(
           'Start a new Nightmare run',
-          () => chooseLanguage('nightmare'),
+          () => chooseClass('nightmare'),
           '',
           !profile.nightmareUnlocked,
         ),
@@ -5381,58 +6010,67 @@
     const file = e.target.files?.[0];
     if (!file) return;
     // Selecting a file only opens a validated preview, never a write.
-    const back = started ? saveBackupMenu : titleSaveMenu;
+    const back = titleSaveMenu;
     try {
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
       const data = JSON.parse(await file.text());
-      const candidate = data.version === 2
-        ? Campaign.migrate(data) : Campaign.restore(data);
+      const candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
       Campaign.validate(candidate.snapshot());
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
       if (candidate.s.mode === 'arena' && !combatDiagnosticsEnabled)
         throw Error('Combat Diagnostics import requires the playtest link');
-      const summary = tr('Level') + ' ' + candidate.hero.level + ' · ' +
-        heroClassLabel(candidate.hero.class) + ' · ' + candidate.s.mode +
-        ' · ' + candidate.zoneId;
+      const summary =
+        tr('Level') +
+        ' ' +
+        candidate.hero.level +
+        ' · ' +
+        heroClassLabel(candidate.hero.class) +
+        ' · ' +
+        candidate.s.mode +
+        ' · ' +
+        candidate.zoneId;
       const existing = persistence.exists(candidate.s.mode);
       openMenu(
         language === 'es' ? 'Revisar archivo importado' : 'Review imported backup',
-        summary + '\n' + (language === 'es'
-          ? (existing
+        summary +
+          '\n' +
+          (language === 'es'
+            ? existing
               ? 'Esta acción reemplazará la partida de ese modo. El punto de recuperación local no es una copia externa. Confirma solo si quieres reemplazarla.'
-              : 'Se creará una partida en este modo. Confirma para importar el archivo.')
-          : (existing
+              : 'Se creará una partida en este modo. Confirma para importar el archivo.'
+            : existing
               ? 'This will replace the saved run in that mode. A local recovery checkpoint is not an external backup. Confirm only if you want to replace it.'
-              : 'This will create a run in this mode. Confirm to import the file.')),
+              : 'This will create a run in this mode. Confirm to import the file.'),
         [
-          action(language === 'es' ? 'Confirmar importación' : 'Confirm import',
-            () => {
-              try {
-                // Writer ownership, stale bytes and original preservation
-                // are checked again at the exact moment of replacement.
-                persistence.writeCandidate(candidate);
-                resumeSavedRun(candidate, { imported: true });
-                status('Imported successfully.');
-              } catch (_) {
-                status('Invalid import. Your current run was kept intact.');
-                back();
-                if ($('modal-description'))
-                  $('modal-description').textContent = language === 'es'
+          action(language === 'es' ? 'Confirmar importación' : 'Confirm import', () => {
+            try {
+              // Writer ownership, stale bytes and original preservation
+              // are checked again at the exact moment of replacement.
+              persistence.writeCandidate(candidate);
+              resumeSavedRun(candidate, { imported: true });
+              status('Imported successfully.');
+            } catch (_) {
+              status('Invalid import. Your current run was kept intact.');
+              back();
+              if ($('modal-description'))
+                $('modal-description').textContent =
+                  language === 'es'
                     ? 'No se pudo importar. Tu partida actual se conservó.'
                     : 'Import failed. Your current run was kept intact.';
-              }
-            }),
+            }
+          }),
         ],
         back,
         { view: 'save-import-preview' },
       );
     } catch (_) {
       status('Invalid import. Your current run was kept intact.');
-      if (menu && $('modal-description')) $('modal-description').textContent =
-        language === 'es'
-          ? 'No se pudo importar el archivo. Tu partida actual se conservó.'
-          : 'Unable to import that file. Your current run was kept intact.';
+      if (menu && $('modal-description'))
+        $('modal-description').textContent =
+          language === 'es'
+            ? 'No se pudo importar el archivo. Tu partida actual se conservó.'
+            : 'Unable to import that file. Your current run was kept intact.';
     }
     e.target.value = '';
   };
@@ -5571,8 +6209,10 @@
       return;
     }
     if (n.kind === 'exit' || (n.kind === 'dungeon' && n.sideDungeon)) {
-      const destination = n.kind === 'dungeon' ? n.family :
-        game.sideDungeon()?.region || game.supplyRoom()?.region || game.definition().id;
+      const destination =
+        n.kind === 'dungeon'
+          ? n.family
+          : game.sideDungeon()?.region || game.supplyRoom()?.region || game.definition().id;
       sceneTransitionTo(destination, n.name || destination, () => game.interact(n));
       return;
     }
@@ -5679,7 +6319,12 @@
     // Recall commands companions, not the hero's prepared skills. Retain
     // charged releases and queued actions while the squad withdraws.
     const recalled = game.recallParty();
-    if (recalled && activating && recallPractice?.owner === game && game.activeLivingParty().length) {
+    if (
+      recalled &&
+      activating &&
+      recallPractice?.owner === game &&
+      game.activeLivingParty().length
+    ) {
       const complete = recallPractice.complete;
       recallPractice = null;
       complete();
@@ -7145,7 +7790,7 @@
     const actionId = input.actionFor(code);
     if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
       e.preventDefault();
-    if (code === 'Escape') {
+    if (code === 'Escape' || actionId === 'menu') {
       if (menu) {
         audio.interfaceSound('back');
         menu.back();
@@ -7245,7 +7890,9 @@
       const r = joystick.getBoundingClientRect();
       const wasStill = joy.x === 0 && joy.y === 0;
       joy = PrototypeInput.floatingJoystickVector(
-        joystickStart, { x: e.clientX, y: e.clientY }, r.width * 0.4,
+        joystickStart,
+        { x: e.clientX, y: e.clientY },
+        r.width * 0.4,
       );
       // Merely placing a stationary thumb does not cancel a guided journey.
       if (wasStill && (joy.x || joy.y)) cancelTravel();
@@ -7259,23 +7906,49 @@
     $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
   }
   function beginFloatingJoystick(e) {
-    if (!floatingGameplay() || !activePlay() || e.pointerType !== 'touch' ||
-        pointer !== null || worldPointer !== null) return false;
+    if (
+      !floatingGameplay() ||
+      !activePlay() ||
+      e.pointerType !== 'touch' ||
+      pointer !== null ||
+      worldPointer !== null
+    )
+      return false;
     const obstacles = [
-      '#touch-interact-button', '#recall-button', '#target-button', '#squad-button',
-      '#skills', '#quick-items', '#developer-summon', '#developer-finisher', '#cancel-navigation-button',
-      '#sprint-button', '#update-button', '#menu-button', '#order-button', '#modal',
+      '#touch-interact-button',
+      '#recall-button',
+      '#target-button',
+      '#squad-button',
+      '#skills',
+      '#quick-items',
+      '#developer-summon',
+      '#developer-finisher',
+      '#cancel-navigation-button',
+      '#sprint-button',
+      '#update-button',
+      '#menu-button',
+      '#order-button',
+      '#modal',
     ].flatMap((selector) => {
       const el = document.querySelector(selector);
-      if (!el || el.hidden || getComputedStyle(el).display === 'none' ||
-          getComputedStyle(el).visibility === 'hidden') return [];
+      if (
+        !el ||
+        el.hidden ||
+        getComputedStyle(el).display === 'none' ||
+        getComputedStyle(el).visibility === 'hidden'
+      )
+        return [];
       const rect = el.getBoundingClientRect();
       return [{ x: rect.left, y: rect.top, width: rect.width, height: rect.height }];
     });
-    if (!PrototypeInput.floatingJoystickZone(
-      { x: e.clientX, y: e.clientY },
-      { width: window.innerWidth, height: window.innerHeight }, obstacles,
-    )) return false;
+    if (
+      !PrototypeInput.floatingJoystickZone(
+        { x: e.clientX, y: e.clientY },
+        { width: window.innerWidth, height: window.innerHeight },
+        obstacles,
+      )
+    )
+      return false;
     e.preventDefault();
     audio.unlock();
     pointer = e.pointerId;
@@ -7285,7 +7958,10 @@
     $('stick').style.transform = '';
     const rect = joystick.getBoundingClientRect();
     const left = Math.max(0, Math.min(window.innerWidth - rect.width, e.clientX - rect.width / 2));
-    const top = Math.max(0, Math.min(window.innerHeight - rect.height, e.clientY - rect.height / 2));
+    const top = Math.max(
+      0,
+      Math.min(window.innerHeight - rect.height, e.clientY - rect.height / 2),
+    );
     joystick.style.setProperty('--floating-joystick-left', Math.round(left) + 'px');
     joystick.style.setProperty('--floating-joystick-top', Math.round(top) + 'px');
     document.body.classList.add('floating-joystick-active');
@@ -7657,7 +8333,10 @@
             : width - Math.max(12, safeRight),
         left = shortPhone && width - hud.right > 250 ? hud.right + edge : edge,
         available = Math.max(160, right - left),
-        noticeWidth = Math.min(platform.mode === 'phone' ? (shortPhone ? 320 : 310) : 480, available);
+        noticeWidth = Math.min(
+          platform.mode === 'phone' ? (shortPhone ? 320 : 310) : 480,
+          available,
+        );
       host.style.width = noticeWidth + 'px';
       host.style.left = left + available / 2 + 'px';
       host.style.top =
@@ -7702,7 +8381,9 @@
           const displayedText =
             language === 'es' && n.textEs
               ? n.textEs
-              : n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text;
+              : n.kind === 'narration' || n.kind === 'milestone'
+                ? tr(n.text)
+                : n.text;
           const full = displayedText + (n.detail ? ' ' + n.detail : ''),
             limit = shortPhone ? 72 : platform.mode === 'phone' ? 88 : 150,
             compact = full.length > limit;
@@ -7742,9 +8423,10 @@
       const urgent = ['critical', 'important'].includes(shortStatus.dataset.noticeTier);
       const deferRoutine = state.active.length > 0 && !urgent;
       shortStatus.classList.toggle('notice-deferred', deferRoutine);
-      shortStatus.style.top = state.active.length && urgent
-        ? Math.ceil(host.getBoundingClientRect().bottom + 8) + 'px'
-        : '';
+      shortStatus.style.top =
+        state.active.length && urgent
+          ? Math.ceil(host.getBoundingClientRect().bottom + 8) + 'px'
+          : '';
     } else {
       shortStatus.classList.remove('notice-deferred');
       shortStatus.style.top = '';
@@ -7807,7 +8489,9 @@
     const result = game.developerFinisher(null, sweep);
     status(
       result.kills
-        ? 'Developer finisher · ' + result.kills + (result.kills === 1 ? ' enemy defeated.' : ' enemies defeated.')
+        ? 'Developer finisher · ' +
+            result.kills +
+            (result.kills === 1 ? ' enemy defeated.' : ' enemies defeated.')
         : 'No eligible enemy hit. Select a target or move into range and line of sight.',
     );
     if (result.kills) save();
@@ -7878,10 +8562,21 @@
       const companionRows = game.developerCompanionSnapshot() || [];
       companionMonitorToggle.textContent = 'DEV · COMPANIONS (' + companionRows.length + ')';
       const body = companionRows.length
-        ? companionRows.map((row) => row.name + ' [' + row.type + ' · ' + row.id + ']\n' +
-            'Moves: ' + (row.last.map((m) =>
-              m.name + ' ' + Math.round(m.damage)).join(' / ') || '—') +
-            '\n5s DPS: ' + row.dps.toFixed(1)).join('\n\n')
+        ? companionRows
+            .map(
+              (row) =>
+                row.name +
+                ' [' +
+                row.type +
+                ' · ' +
+                row.id +
+                ']\n' +
+                'Moves: ' +
+                (row.last.map((m) => m.name + ' ' + Math.round(m.damage)).join(' / ') || '—') +
+                '\n5s DPS: ' +
+                row.dps.toFixed(1),
+            )
+            .join('\n\n')
         : 'No active companions.';
       if (companionMonitorContent.textContent !== body) {
         const previousScroll = companionMonitorContent.scrollTop;
@@ -7893,7 +8588,8 @@
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
       mp = manaEnabled ? Math.max(0, Math.min(100, (h.mp / h.maxMp) * 100)) : 0;
     const adaptive = platform.mode === 'phone' && input.preferences.hudStyle === 'adaptive';
-    const lowHP = adaptive && PrototypeInput.adaptiveHudLowHealth(h.hp, h.maxHp, adaptiveHudState?.lowHP);
+    const lowHP =
+      adaptive && PrototypeInput.adaptiveHudLowHealth(h.hp, h.maxHp, adaptiveHudState?.lowHP);
     const talentButton = $('talent-button'),
       talentCount = $('talent-count');
     talentCount.textContent = h.talentPoints;
@@ -7932,7 +8628,9 @@
       (lowHP
         ? '<small class="hud-low-health" aria-label="' +
           (language === 'es' ? 'Salud baja' : 'Low health') +
-          '">! ' + (language === 'es' ? 'VIDA BAJA' : 'LOW HP') + '</small>'
+          '">! ' +
+          (language === 'es' ? 'VIDA BAJA' : 'LOW HP') +
+          '</small>'
         : '') +
       '</div>' +
       (manaEnabled
@@ -7966,8 +8664,11 @@
       heroMarkup +=
         '<span class="hero-ailment" role="status" aria-label="' +
         (language === 'es' ? 'Ralentizado' : 'Slowed') +
-        '">❄ ' + (language === 'es' ? 'LENTO' : 'SLOW') + ' · ' +
-        h.slow.toFixed(1) + 's</span>';
+        '">❄ ' +
+        (language === 'es' ? 'LENTO' : 'SLOW') +
+        ' · ' +
+        h.slow.toFixed(1) +
+        's</span>';
     setMarkup('hero-stats', heroMarkup);
     if (
       statusUntil &&
@@ -7992,17 +8693,23 @@
       const b = $(type + '-potion'),
         queuedHeal = type === 'health' ? game.queuedRangerHeal() : null,
         casters = type === 'health' ? healers : rangers,
-        ready = (type === 'health' ? game.availablePartyHealers() : game.availableRangers(type))
-          .filter((u) => !game.mageSilenceActive(u)).length,
+        ready = (
+          type === 'health' ? game.availablePartyHealers() : game.availableRangers(type)
+        ).filter((u) => !game.mageSilenceActive(u)).length,
         full =
           type === 'health'
             ? [h, ...game.activeLivingParty()].every((u) => u.hp >= u.maxHp)
             : h.mp >= h.maxMp,
-        next = casters.length ? Math.min(...casters.map((u) =>
-          type === 'health' ? game.companionHealCooldown(u) : u[cdKey] || 0)) : 0;
+        next = casters.length
+          ? Math.min(
+              ...casters.map((u) =>
+                type === 'health' ? game.companionHealCooldown(u) : u[cdKey] || 0,
+              ),
+            )
+          : 0;
       const recovering = type === 'mana' && game.hasSupportEffect(h, 'mana');
-      const canQueueHeal = type === 'health' &&
-        casters.some((u) => game.companionHealCooldown(u) > 0);
+      const canQueueHeal =
+        type === 'health' && casters.some((u) => game.companionHealCooldown(u) > 0);
       b.disabled =
         !casters.length ||
         (!ready && !canQueueHeal && !queuedHeal) ||
@@ -8038,7 +8745,9 @@
                 ? ready + ' ready'
                 : casters.length
                   ? next.toFixed(1) + 's'
-                  : type === 'health' ? 'Need healer' : 'Need Ranger') +
+                  : type === 'health'
+                    ? 'Need healer'
+                    : 'Need Ranger') +
           '</small>',
       );
       b.title =
@@ -8282,22 +8991,36 @@
     // On phones the default shortcut <small> is hidden. The main label
     // also says ON while active, so the state remains visible at a glance.
     recallButton.firstChild.textContent = recallActive
-      ? (language === 'es' ? 'Reagrupar ON ' : 'Recall ON ')
-      : (language === 'es' ? 'Reagrupar ' : 'Recall squad ');
+      ? language === 'es'
+        ? 'Reagrupar ON '
+        : 'Recall ON '
+      : language === 'es'
+        ? 'Reagrupar '
+        : 'Recall squad ';
     recallButton.classList.toggle('tutorial-highlight', practicingRecall);
     recallButton.classList.toggle('recall-active', recallActive);
     recallButton.setAttribute('aria-pressed', recallActive ? 'true' : 'false');
-    recallButton.setAttribute('aria-label', recallActive
-      ? (language === 'es' ? 'Reagrupar activo. Pulsa para cancelar.' : 'Recall active. Press to cancel.')
-      : tr(practicingRecall ? 'Try Recall now' : 'Recall squad'));
+    recallButton.setAttribute(
+      'aria-label',
+      recallActive
+        ? language === 'es'
+          ? 'Reagrupar activo. Pulsa para cancelar.'
+          : 'Recall active. Press to cancel.'
+        : tr(practicingRecall ? 'Try Recall now' : 'Recall squad'),
+    );
     recallButton.title = recallActive
-      ? (language === 'es' ? 'Reagrupar activo · pulsa otra vez para cancelar' : 'Recall active · press again to cancel')
-      : (language === 'es' ? 'Reagrupar durante 5 segundos' : 'Recall squad for 5 seconds');
+      ? language === 'es'
+        ? 'Reagrupar activo · pulsa otra vez para cancelar'
+        : 'Recall active · press again to cancel'
+      : language === 'es'
+        ? 'Reagrupar durante 5 segundos'
+        : 'Recall squad for 5 seconds';
     if (recallButton.querySelector('small'))
       recallButton.querySelector('small').textContent = recallActive
         ? 'ON · ' + recallRemaining + 's'
         : (practicingRecall ? tr('Try it now') + ' · ' : '') +
-          input.key('recall') + (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
+          input.key('recall') +
+          (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);
@@ -8325,22 +9048,42 @@
     if (adaptive) {
       // One bounded snapshot during the existing 150ms HUD update, never per render.
       const nearby = (entity, distance) =>
-        entity && Number.isFinite(entity.x) && Number.isFinite(entity.y) &&
-        Math.abs(entity.x - h.x) < distance && Math.abs(entity.y - h.y) < distance;
+        entity &&
+        Number.isFinite(entity.x) &&
+        Number.isFinite(entity.y) &&
+        Math.abs(entity.x - h.x) < distance &&
+        Math.abs(entity.y - h.y) < distance;
       const zone = game.zone();
-      const threat = zone.enemies.some((enemy) =>
-        enemy.hp > 0 && !enemy.neutral &&
-        (enemy.aggro || enemy.telegraph || enemy.rangedAim) && nearby(enemy, 850));
+      const threat = zone.enemies.some(
+        (enemy) =>
+          enemy.hp > 0 &&
+          !enemy.neutral &&
+          (enemy.aggro || enemy.telegraph || enemy.rangedAim) &&
+          nearby(enemy, 850),
+      );
       const projectile = game.s.projectiles.some((p) => p.source === 'enemy' && nearby(p, 850));
       const hazard = game.s.hazards.some((a) => a.source === 'enemy' && nearby(a, 650));
-      adaptiveHudState = PrototypeInput.adaptiveHudPresentation({
-        hp: h.hp, maxHp: h.maxHp, threat, projectile, hazard,
-        target: !!selected, targetLocked: !!selected && !!game.manualHeroTargetLocked,
-        charging: !!charge, queued: queuedCharges.size > 0, targetPress: !!targetPress,
-        tutorialRecall: practicingRecall, interactable: !!n, navigation: navigating,
-        moving: !!(joy.x || joy.y || keys.up || keys.down || keys.left || keys.right),
-        menu: !!menu || paused || !activePlay(),
-      }, adaptiveHudState, performance.now());
+      adaptiveHudState = PrototypeInput.adaptiveHudPresentation(
+        {
+          hp: h.hp,
+          maxHp: h.maxHp,
+          threat,
+          projectile,
+          hazard,
+          target: !!selected,
+          targetLocked: !!selected && !!game.manualHeroTargetLocked,
+          charging: !!charge,
+          queued: queuedCharges.size > 0,
+          targetPress: !!targetPress,
+          tutorialRecall: practicingRecall,
+          interactable: !!n,
+          navigation: navigating,
+          moving: !!(joy.x || joy.y || keys.up || keys.down || keys.left || keys.right),
+          menu: !!menu || paused || !activePlay(),
+        },
+        adaptiveHudState,
+        performance.now(),
+      );
       const attrs = {
         hudContext: adaptiveHudState.context,
         hudPressure: adaptiveHudState.pressure ? 'high' : 'quiet',
@@ -8421,13 +9164,18 @@
   // Sample only exceptional callbacks. No GPS, map lookups, canvas readback,
   // saved-run mutation, per-frame world scan or new player interaction.
   function slowdownLocation(events) {
-    const h = game.hero, z = game.zone(),
-      x = Math.round(h.x), y = Math.round(h.y), r2 = 420 * 420,
-      nearby = (units) => (units || []).filter((u) =>
-        Number.isFinite(u.x) && Number.isFinite(u.y) &&
-        (u.x - x) ** 2 + (u.y - y) ** 2 <= r2);
-    const enemies = nearby(z?.enemies).filter(e => e.hp > 0),
-      activeAllies = (game.s.party || []).filter(u => u.active !== false && u.hp > 0),
+    const h = game.hero,
+      z = game.zone(),
+      x = Math.round(h.x),
+      y = Math.round(h.y),
+      r2 = 420 * 420,
+      nearby = (units) =>
+        (units || []).filter(
+          (u) =>
+            Number.isFinite(u.x) && Number.isFinite(u.y) && (u.x - x) ** 2 + (u.y - y) ** 2 <= r2,
+        );
+    const enemies = nearby(z?.enemies).filter((e) => e.hp > 0),
+      activeAllies = (game.s.party || []).filter((u) => u.active !== false && u.hp > 0),
       enemyTypes = {};
     for (const e of enemies) {
       const kind = String(e.species || e.type || 'unknown').slice(0, 32);
@@ -8441,16 +9189,22 @@
         eventTypes[kind] = (eventTypes[kind] || 0) + 1;
     }
     return {
-      zone: game.zoneId, gameSeconds: Math.round(game.s.time * 10) / 10,
-      heroX: x, heroY: y, gridSize: 256,
-      gridX: Math.floor(x / 256), gridY: Math.floor(y / 256),
-      heroClass: h.class, heroMoving: !!(h.order || joy.x || joy.y ||
-        keys.left || keys.right || keys.up || keys.down),
-      engaged: !!game.s.squadEngagement, activeAllies: activeAllies.length,
-      charmedAllies: activeAllies.filter(u => !!u.charmOrigin).length,
-      activeEnemyCount: (z?.enemies || []).filter(e => e.hp > 0).length,
-      nearbyRadius: 420, nearbyEnemyCount: enemies.length,
-      nearbyEngagedEnemies: enemies.filter(e => !!e.aggro).length,
+      zone: game.zoneId,
+      gameSeconds: Math.round(game.s.time * 10) / 10,
+      heroX: x,
+      heroY: y,
+      gridSize: 256,
+      gridX: Math.floor(x / 256),
+      gridY: Math.floor(y / 256),
+      heroClass: h.class,
+      heroMoving: !!(h.order || joy.x || joy.y || keys.left || keys.right || keys.up || keys.down),
+      engaged: !!game.s.squadEngagement,
+      activeAllies: activeAllies.length,
+      charmedAllies: activeAllies.filter((u) => !!u.charmOrigin).length,
+      activeEnemyCount: (z?.enemies || []).filter((e) => e.hp > 0).length,
+      nearbyRadius: 420,
+      nearbyEnemyCount: enemies.length,
+      nearbyEngagedEnemies: enemies.filter((e) => !!e.aggro).length,
       nearbyEnemyKinds: enemyTypes,
       nearbyProps: nearby(z?.props).length,
       nearbyBuildings: nearby(z?.buildings).length,
@@ -8465,7 +9219,9 @@
       // Idle title runs its music director without simulating a campaign.
       if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)
         audio.update(game, !focused || document.hidden, {
-          started: false, menu: !!menu, backgrounded: !focused || document.hidden,
+          started: false,
+          menu: !!menu,
+          backgrounded: !focused || document.hidden,
           paused: false,
         });
       last = now;
@@ -8492,6 +9248,13 @@
     // until a safe and bounded recovery succeeds.
     void graphicsController.maybeRecover?.();
     const frameStart = performance.now();
+    if (rendererRecording) {
+      rendererRecordingFrameId = ++rendererRecording.frameSequence;
+      rendererRecordingFrameEvents = [];
+    } else {
+      rendererRecordingFrameId = null;
+      rendererRecordingFrameEvents = null;
+    }
     const intervalMs = now - last;
     const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
     last = now;
@@ -8505,10 +9268,17 @@
       document.hidden ||
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
+    const wasEmergency = frameSkip.emergency;
     const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
+    if (rendererDiagnosticActive && recovering && !wasEmergency)
+      recordRendererTransition('emergency-enter-before-draw', {
+        intervalMs: +intervalMs.toFixed(2),
+      });
     if (!frozen)
       game.partyDiagnosticsObserveEmergency(
-        recovering, intervalMs, frameSkip.status().emergencyEntries,
+        recovering,
+        intervalMs,
+        frameSkip.status().emergencyEntries,
       );
     if (recovering) {
       crashRecoveryPending = true;
@@ -8516,10 +9286,12 @@
       // reach Settings while hostile simulation is critically stalled.
       if (!optimizationMode) {
         const override = autoOptimization.observe(now, {
-          activePlay: true, emergency: true,
-          preference: optimizationPreference, optimized: optimizationMode,
+          activePlay: true,
+          emergency: true,
+          preference: optimizationPreference,
+          optimized: optimizationMode,
         });
-        if (override === true) setOptimizationActive(true);
+        if (override === true) setOptimizationActive(true, 'emergency');
       }
     }
     const simulating = !frozen && !recovering;
@@ -8564,6 +9336,7 @@
           pixiAttempted: false,
           canvasOverlayDrawn: false,
           canvasWorldDrawn: false,
+          pixiDraws: rendererDiagnosticActive ? [] : null,
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
@@ -8616,7 +9389,10 @@
       if (marks.partySetupEnd !== undefined && marks.partyUnitsEnd !== undefined)
         stageTimes.companionUnitsMs = Math.max(0, marks.partyUnitsEnd - marks.partySetupEnd);
       if (marks.partyUnitsEnd !== undefined && marks.partyBookkeepingEnd !== undefined)
-        stageTimes.companionBookkeepingMs = Math.max(0, marks.partyBookkeepingEnd - marks.partyUnitsEnd);
+        stageTimes.companionBookkeepingMs = Math.max(
+          0,
+          marks.partyBookkeepingEnd - marks.partyUnitsEnd,
+        );
       if (marks.partyEnd !== undefined && marks.enemyEnd !== undefined)
         stageTimes.enemyAIMs = Math.max(0, marks.enemyEnd - marks.partyEnd);
       if (marks.enemyExtraStart !== undefined && marks.enemyExtraEnd !== undefined)
@@ -8736,8 +9512,15 @@
         });
         stageTimes.renderMs += sample.renderMs;
         addRenderStageTimes(stageTimes, drawTiming);
+        const priorRatio = rendererDiagnosticActive ? renderResolution.ratio : null;
         if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
-          resize();
+          if (rendererDiagnosticActive)
+            recordRendererTransition('adaptive-resolution-change', {
+              fromRatio: priorRatio,
+              toRatio: renderResolution.ratio,
+              firstDrawRenderMs: +sample.renderMs.toFixed(2),
+            });
+          resize('adaptive-resolution');
           const redrawAt = performance.now();
           const redrawTiming = drawWorld();
           stageTimes.renderMs += performance.now() - redrawAt;
@@ -8762,16 +9545,27 @@
           fpsLimited: !eligibleDraw,
           adaptiveSkipped,
         });
+      const wasEmergencyDuringDraw = frameSkip.emergency;
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
+      if (rendererDiagnosticActive && wasEmergencyDuringDraw !== frameSkip.emergency)
+        recordRendererTransition(
+          frameSkip.emergency ? 'emergency-enter-after-draw' : 'emergency-exit-after-draw',
+          { frameWorkMs: +frameWorkMs.toFixed(2), renderMs: +stageTimes.renderMs.toFixed(2) },
+        );
       const optimizationDecision = autoOptimization.observe(now, {
         activePlay: simulating || recovering,
         emergency: recovering || frameSkip.emergency,
-        preference: optimizationPreference, optimized: optimizationMode,
-        intervalMs, workMs: frameWorkMs, adaptiveSkipped, target: fps.target,
+        preference: optimizationPreference,
+        optimized: optimizationMode,
+        intervalMs,
+        workMs: frameWorkMs,
+        adaptiveSkipped,
+        target: fps.target,
       });
       if (game.s.mode === 'arena') {
         if (!optimizationMode) setOptimizationActive(true);
-      } else if (optimizationDecision !== null) setOptimizationActive(optimizationDecision);
+      } else if (optimizationDecision !== null)
+        setOptimizationActive(optimizationDecision, 'auto-optimization');
       const otherSimulationMs = Math.max(
           0,
           stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs,
@@ -8785,12 +9579,14 @@
       frameProfile.record({
         ...stageTimes,
         emergencyEntered,
-        location: frameWorkMs >= 50 || intervalMs >= 120 || emergencyEntered
-          ? slowdownLocation(events) : null,
+        location:
+          frameWorkMs >= 50 || intervalMs >= 120 || emergencyEntered
+            ? slowdownLocation(events)
+            : null,
         // Only event categories, never object payloads or character names.
         // Retain the preceding callback's activity to help explain a later gap.
         recentEventKinds: events.length
-          ? events.slice(0, 12).map(e => String(e.type || 'unknown').slice(0, 32))
+          ? events.slice(0, 12).map((e) => String(e.type || 'unknown').slice(0, 32))
           : null,
         otherSimulationMs,
         frameWorkMs,
@@ -8800,8 +9596,14 @@
         adaptiveSkipped,
       });
       if (simulating || recovering)
-        noteRendererRecordingFrame(stageTimes, frameWorkMs, intervalMs,
-          draw, recovering, adaptiveSkipped);
+        noteRendererRecordingFrame(
+          stageTimes,
+          frameWorkMs,
+          intervalMs,
+          draw,
+          recovering,
+          adaptiveSkipped,
+        );
     } else {
       frameSkip.suspend();
       autoOptimization.reset();
@@ -8814,6 +9616,8 @@
     // Only a successfully completed ordinary simulation frame clears the
     // critical-recovery marker. Stale image probes alone cannot certify it.
     if (simulating) crashRecoveryPending = false;
+    rendererRecordingFrameId = null;
+    rendererRecordingFrameEvents = null;
     requestAnimationFrame(frame);
   }
   if (Sprint.enabled) {
@@ -8834,6 +9638,55 @@
     fps.suspend();
   });
   titleScreen = $('title-screen');
+  languageWelcome = document.createElement('section');
+  languageWelcome.id = 'language-welcome';
+  languageWelcome.hidden = true;
+  languageWelcome.setAttribute('aria-label', 'Choose your language / Elige tu idioma');
+  const welcomeCard = document.createElement('div');
+  welcomeCard.className = 'language-welcome-card';
+  const welcomeText = (tag, className, content) => {
+    const element = document.createElement(tag);
+    element.className = className;
+    element.textContent = content;
+    return element;
+  };
+  welcomeCard.append(
+    welcomeText('p', 'language-welcome-eyebrow', "So I Became the Dark Lord's Problem"),
+    welcomeText('h1', '', 'Welcome · Bienvenido'),
+    welcomeText('p', 'language-welcome-intro', 'Choose your language / Elige tu idioma'),
+  );
+  const welcomeChoices = document.createElement('div');
+  welcomeChoices.className = 'language-welcome-choices';
+  for (const [code, label, subtitle] of [
+    ['en', 'English', 'Continue in English'],
+    ['es', 'Español', 'Continuar en español'],
+  ]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.setAttribute('data-language', code);
+    button.lang = code;
+    const heading = document.createElement('strong');
+    heading.textContent = label;
+    const hint = document.createElement('span');
+    hint.textContent = subtitle;
+    button.append(heading, hint);
+    button.onclick = () => {
+      if (startupUpdatePending) return;
+      setLanguage(code);
+      showTitleScreen();
+    };
+    welcomeChoices.append(button);
+  }
+  welcomeCard.append(
+    welcomeChoices,
+    welcomeText(
+      'p',
+      'language-welcome-note',
+      'You can change this later in Settings. / Podrás cambiarlo después en Ajustes.',
+    ),
+  );
+  languageWelcome.append(welcomeCard);
+  document.body.append(languageWelcome);
   const titleCanvasContinue = document.createElement('button');
   titleCanvasContinue.type = 'button';
   titleCanvasContinue.hidden = true;
@@ -8865,11 +9718,10 @@
     $('scene-loading-retry').hidden = true;
     // Awaiting preflight, decoded art or GPU upload is released by skipPromise.
     // If a draw actually failed, try drawing the committed scene with Canvas.
-    if (ticket.drawFailed)
-      requestAnimationFrame(() => revealSceneTransition(ticket.token));
+    if (ticket.drawFailed) requestAnimationFrame(() => revealSceneTransition(ticket.token));
   };
   updateHUD();
-  setLanguage(language);
+  setLanguage(language, false);
   showTitleScreen();
   if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
@@ -8921,7 +9773,9 @@
             menu?.title === 'Choose your language'
           )
             closeMenu();
-        } else if (persistence.loadFailed(combatDiagnosticsEnabled ? 'arena' : profile.activeMode)) {
+        } else if (
+          persistence.loadFailed(combatDiagnosticsEnabled ? 'arena' : profile.activeMode)
+        ) {
           loaded = started = false;
           showTitleScreen();
         } else {

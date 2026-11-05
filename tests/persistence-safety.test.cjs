@@ -17,7 +17,7 @@ for (const original of ['{broken', JSON.stringify({ ...new C().snapshot(), versi
   assert.equal(app.scope.Prototype.started, false);
   assert.equal(app.elements.get('title-continue').disabled, true);
   app.elements.get('title-saves').click();
-  app.elements.get('modal-actions').children.find((x) => x.textContent === 'Try recovery').click();
+  app.elements.get('modal-actions').children.find((x) => x.textContent.startsWith('Try recovery')).click();
   assert.equal(app.elements.get('modal-title').textContent, 'Saved run could not be opened');
   app.scope.Prototype.save();
   for (const fn of app.events.blur || []) fn();
@@ -100,8 +100,8 @@ console.log(
   click('Export original save');
   assert.equal(await exported.text(), original, 'Export retains the exact unreadable bytes');
   click('Start a new Normal run');
-  click('English');
-  click('Standard death');
+  // The saved language is reused; a new campaign does not choose language again.
+  click('Choose Hero');
   app.scope.confirm = () => false;
   click('🛡');
   assert.equal(

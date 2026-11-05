@@ -20,9 +20,7 @@ for (const language of ['en', 'es']) {
   byLabel(language === 'en' ? 'Customize keyboard' : 'Personalizar teclado').click();
   const keyboardMenu = elements.get('modal-content');
   keyboardMenu.scrollTop = 110;
-  byLabel(
-    language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú',
-  ).click();
+  byLabel(language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú').click();
   assert.equal(
     elements.get('modal-title').textContent,
     language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú',
@@ -38,8 +36,9 @@ for (const language of ['en', 'es']) {
   elements.get('close-button').click();
   assert.equal(controlsMenu.scrollTop, 85, 'Back restores parent Controls scroll');
   assert(
-    byLabel(language === 'en' ? 'Customize keyboard' : 'Personalizar teclado')
-      .classList.contains('selected'),
+    byLabel(language === 'en' ? 'Customize keyboard' : 'Personalizar teclado').classList.contains(
+      'selected',
+    ),
     'Back restores the selected Controls item',
   );
   elements.get('close-button').click();
@@ -49,16 +48,25 @@ for (const language of ['en', 'es']) {
   assert(elements.get('modal').hidden, 'the root Adventure menu is fully closed');
 
   let returnedFocus = false;
-  scope.document.activeElement = { focus: () => { returnedFocus = true; } };
+  scope.document.activeElement = {
+    focus: () => {
+      returnedFocus = true;
+    },
+  };
   const controls = Prototype.menuControls;
   const changes = [];
   const entries = [
     controls.section('Display'),
     controls.toggle('Try setting', false, (v) => changes.push(['toggle', v])),
-    controls.select('Renderer choice', 'a', [
-      { value: 'a', label: 'A' },
-      { value: 'b', label: 'B' },
-    ], (v) => changes.push(['select', v])),
+    controls.select(
+      'Renderer choice',
+      'a',
+      [
+        { value: 'a', label: 'A' },
+        { value: 'b', label: 'B' },
+      ],
+      (v) => changes.push(['select', v]),
+    ),
     controls.slider('Sharpness', 50, 0, 100, 10, (v) => changes.push(['slider', v])),
   ];
   const before = JSON.stringify(Prototype.game.snapshot());
@@ -66,7 +74,10 @@ for (const language of ['en', 'es']) {
   const children = elements.get('modal-actions').children;
   assert.equal(children[0].textContent, language === 'es' ? 'Pantalla' : 'Display');
   children[1].click();
-  assert(children[1].textContent.includes(language === 'es' ? 'Activado' : 'On'), 'toggle updates its visible state');
+  assert(
+    children[1].textContent.includes(language === 'es' ? 'Activado' : 'On'),
+    'toggle updates its visible state',
+  );
   const select = children[2].children.find((element) => element.className === 'menu-setting-input');
   select.value = 'b';
   select.onchange();
@@ -78,24 +89,36 @@ for (const language of ['en', 'es']) {
     ['select', 'b'],
     ['slider', 70],
   ]);
-  assert.equal(JSON.stringify(Prototype.game.snapshot()), before, 'menu-only edits preserve campaign');
+  assert.equal(
+    JSON.stringify(Prototype.game.snapshot()),
+    before,
+    'menu-only edits preserve campaign',
+  );
   assert.equal(elements.get('modal').hidden, false);
   Prototype.closeMenu();
   assert(returnedFocus, 'closing root menu returns focus to its opener');
 
   // Tab must still be handled when a native form control currently has focus.
-  Prototype.openMenu('Form navigation', '', [
-    controls.select('Input', 'a', [{ value: 'a', label: 'A' }], () => {}),
-  ], Prototype.closeMenu);
+  Prototype.openMenu(
+    'Form navigation',
+    '',
+    [controls.select('Input', 'a', [{ value: 'a', label: 'A' }], () => {})],
+    Prototype.closeMenu,
+  );
   const event = {
     code: 'Tab',
     target: { tagName: 'SELECT' },
-    preventDefault() { this.prevented = true; },
+    preventDefault() {
+      this.prevented = true;
+    },
     repeat: false,
     shiftKey: false,
   };
-  events.keydown[0](event);
+  // Dispatch to every registered listener, including the earlier audio unlock handler.
+  events.keydown.forEach((listener) => listener(event));
   assert(event.prevented, 'Tab is trapped inside the open dialog');
   Prototype.closeMenu();
 }
-console.log('PASS bilingual shared controls, in-place adjustments, Back/selection/scroll and focus contracts');
+console.log(
+  'PASS bilingual shared controls, in-place adjustments, Back/selection/scroll and focus contracts',
+);

@@ -25,9 +25,12 @@ generated.set(
 for (const [file, entry] of [
   ['index.html', 'auto'],
   ['prototype.html', 'auto'],
-  ['phone.html', 'phone'],
+  ['phone-game.html', 'phone'],
 ])
   generated.set(file, template.replace('{{ENTRY}}', entry));
+// The public phone.html is a stable, safe-area-aware landscape frame. The
+// actual game stays in one same-origin phone-game.html document across turns.
+generated.set('phone.html', read('templates/phone-frame.html'));
 generated.set(
   'src/prototype/build-info.js',
   `/* Generated from package.json. Run npm run build after a version change. */\n(function(root){'use strict';const api=Object.freeze({version:${JSON.stringify(pkg.version)}});if(typeof module!=='undefined')module.exports=api;else root.PrototypeBuild=api;})(typeof window!=='undefined'?window:globalThis);\n`,

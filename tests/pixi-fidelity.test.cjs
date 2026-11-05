@@ -90,7 +90,8 @@ let currentActorTextures = new Set(),
   destroyedProcedural = 0,
   lastApplicationCanvas = null,
   rejectWebGLContext = false,
-  failSceneDraw = false;
+  failSceneDraw = false,
+  syntheticSceneDelayMs = 0;
 function canvas() {
   const surface = {
     width: 0,
@@ -271,6 +272,10 @@ const runtime = {
       syncLiquidMotion() {},
       setVignette() {},
       draw() {
+        if (syntheticSceneDelayMs > 0) {
+          const until = Date.now() + syntheticSceneDelayMs;
+          while (Date.now() < until) {} // Deliberate short test-only stage delay.
+        }
         if (failSceneDraw)
           throw Error(
             failSceneDraw === 'context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error',
@@ -300,8 +305,10 @@ vm.runInNewContext(
   { filename: 'pixi-experimental.js' },
 );
 const canvasSurface = { width: 1368, height: 630, parentNode: { insertBefore() {} } };
+let r783TraceActive = false;
 const gpuOptions = {
   worldCanvas: canvasSurface,
+  getDiagnosticRecording: () => r783TraceActive,
   viewport: view,
   platform,
   getGame: () => game,
@@ -682,6 +689,186 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'cold and warm visible draws must hit the prepared texture cache',
   );
   coldCrowdGpu.release();
+  // #783 R1: reproduce the reported *scene shape* at night in Greenwood.
+  // This is a Pixi/Canvas mock, not a real Safari GPU/CPU timing benchmark.
+  // The historical #481 westward crowd above remains an independent control.
+  const previousNight = game.night;
+  const previousDaylight = game.daylightPhase;
+  const previousNpcs = game.npcs;
+  game.night = () => true;
+  game.daylightPhase = () => ({ phase: 'night', darkness: 1 });
+  game.zoneId = 'vale';
+  game.hero.x = 2160;
+  game.hero.y = 2359;
+  game.props = Array.from({ length: 4 }, (_, i) => ({
+    id: 'r783-vale-prop-' + i,
+    x: 2160 + (i - 2) * 26,
+    y: 2359 + (i % 2) * 24,
+    structure: 'cart',
+    decorative: true,
+  }));
+  game.npcs = Array.from({ length: 15 }, (_, i) => ({
+    id: 'r783-vale-npc-' + i,
+    kind: 'service',
+    x: 2160 + ((i % 5) - 2) * 22,
+    y: 2359 + (Math.floor(i / 5) - 1) * 20,
+  }));
+  game.enemies = Array.from({ length: 2 }, (_, i) => ({
+    id: 'r783-vale-skeleton-' + i,
+    species: 'skeleton',
+    type: 'mob',
+    hp: 20,
+    maxHp: 20,
+    x: 2250 + i * 24,
+    y: 2360 + i * 24,
+  }));
+  view.width = 912;
+  view.height = 420;
+  canvasSurface.width = 912;
+  canvasSurface.height = 420;
+  const r783State = JSON.stringify({
+    hero: game.hero,
+    props: game.props,
+    npcs: game.npcs,
+    enemies: game.enemies,
+    state: game.s,
+  });
+  const valeNightGpu = runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await valeNightGpu.prepare(), true, 'R783 night Vale scene must prepare');
+  const r783Prepared = valeNightGpu.status();
+  assert.equal(r783Prepared.pixelRatio, 1, 'reported optimized iPhone backing ratio is 1');
+  assert.equal(r783Prepared.proceduralBakes, 4, 'all four distinct Vale props are staged');
+  assert.equal(r783Prepared.proceduralGpuPrepared, 4, 'prepared prop sources are submitted for upload');
+  assert.equal(
+    JSON.stringify({
+      hero: game.hero,
+      props: game.props,
+      npcs: game.npcs,
+      enemies: game.enemies,
+      state: game.s,
+    }),
+    r783State,
+    'night-time graphics preparation must never mutate the campaign',
+  );
+  valeNightGpu.activate();
+  r783TraceActive = true;
+  let r783FirstTrace = null;
+  for (const dx of [0, -30, -60, -30, 0]) {
+    game.hero.x = 2160 + dx;
+    const trace = valeNightGpu.draw();
+    if (!r783FirstTrace) r783FirstTrace = trace;
+  }
+  assert(r783FirstTrace, 'opt-in trace returns exact draw stages in normal mode');
+  assert.equal(r783FirstTrace.bakesDuringDraw, 0);
+  assert.equal(r783FirstTrace.ratioBefore, 1);
+  assert.equal(r783FirstTrace.ratioAfter, 1);
+  for (const stageName of [
+    'viewport', 'resolution', 'background', 'actors', 'liquid',
+    'atmosphere', 'scene', 'predictive',
+  ])
+    assert(Number.isFinite(r783FirstTrace.phaseMs[stageName]),
+      'opt-in capture measures synchronous Pixi stage: ' + stageName);
+  const r783Cold = valeNightGpu.status();
+  const r783Visible = frames.at(-1);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('npc:r783-')).length, 15);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('enemy:r783-')).length, 2);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('prop:r783-')).length, 4);
+  assert.equal(r783Cold.proceduralBakes, 4, 'camera motion at fixed quality reuses prepared art');
+  assert.ok(!r783Cold.lastFailure, 'mocked night scene has no render exception');
+  const r783BeforeRevisit = r783Cold.proceduralBakes;
+  for (const dx of [-60, 0, -60, 0]) {
+    game.hero.x = 2160 + dx;
+    valeNightGpu.draw();
+  }
+  assert.equal(
+    valeNightGpu.status().proceduralBakes,
+    r783BeforeRevisit,
+    'warm Vale revisit must not create new procedural images',
+  );
+  // Manually vary the existing Canvas backing ratio to exercise the SAME
+  // Pixi resolution-change path, without claiming to exercise app.js Auto policy.
+  canvasSurface.width = 1368;
+  canvasSurface.height = 630;
+  const r783SharperTrace = valeNightGpu.draw();
+  const r783Sharper = valeNightGpu.status();
+  assert.equal(r783SharperTrace.resolutionChanged, true);
+  assert.equal(r783SharperTrace.ratioAfter, 1.5);
+  assert.equal(r783SharperTrace.bakesDuringDraw, 4);
+  assert.equal(r783Sharper.pixelRatio, 1.5);
+  assert(
+    r783Sharper.proceduralBakes > r783BeforeRevisit,
+    'new backing density requires separate procedural revisions in native Pixi source',
+  );
+  canvasSurface.width = 912;
+  canvasSurface.height = 420;
+  const r783ReturnedTrace = valeNightGpu.draw();
+  const r783Returned = valeNightGpu.status();
+  assert.equal(r783ReturnedTrace.resolutionChanged, true);
+  assert.equal(r783ReturnedTrace.ratioAfter, 1);
+  assert.equal(r783ReturnedTrace.bakesDuringDraw, 0);
+  assert.equal(r783Returned.pixelRatio, 1);
+  assert.equal(
+    r783Returned.proceduralBakes,
+    r783Sharper.proceduralBakes,
+    'returning to retained 1x density reuses its original textures',
+  );
+  assert.equal(r783Returned.proceduralEvictions, 0);
+  assert.ok(!r783Returned.lastFailure);
+  game.hero.x = 2160;
+  assert.equal(
+    JSON.stringify({
+      hero: game.hero,
+      props: game.props,
+      npcs: game.npcs,
+      enemies: game.enemies,
+      state: game.s,
+    }),
+    r783State,
+    'cold/warm and resolution-only drawing must preserve simulation state',
+  );
+  console.log(
+    'PIXI_783_R1_JSON ' +
+      JSON.stringify({
+        scenario: 'mocked-vale-night-912x420-zoom1.5',
+        npcs: game.npcs.length,
+        skeletons: game.enemies.length,
+        props: game.props.length,
+        preparedBakes: r783Prepared.proceduralBakes,
+        coldBakes: r783Cold.proceduralBakes,
+        resolutionUpBakes: r783Sharper.proceduralBakes,
+        resolutionDownBakes: r783Returned.proceduralBakes,
+        texturesRetained: r783Returned.proceduralTextures,
+        failures: r783Returned.lastFailure,
+        measurement: 'mock-only; no real GPU or iPhone frame timing',
+      }),
+  );
+  // One new cold procedural identity proves that the measured actor substage
+  // is emitted only on-demand, and never during subsequent ordinary draws.
+  game.props.push({
+    id: 'r783-unique-unprepared',
+    x: 2160, y: 2359, structure: 'lumber-pile',
+  });
+  const newTrace = valeNightGpu.draw();
+  assert.equal(newTrace.bakesDuringDraw, 1);
+  assert(Number.isFinite(newTrace.phaseMs.proceduralRasterMs));
+  assert(Number.isFinite(newTrace.phaseMs.proceduralRegisterMs));
+  assert(Number.isFinite(newTrace.phaseMs.actorCandidatesMs));
+  assert(Number.isFinite(newTrace.phaseMs.actorSubmitMs));
+  syntheticSceneDelayMs = 18;
+  const syntheticStall = valeNightGpu.draw();
+  syntheticSceneDelayMs = 0;
+  assert(syntheticStall.phaseMs.scene >= 15,
+    'opt-in timings expose a deliberate 18ms Pixi scene submission stall');
+  assert(syntheticStall.phaseMs.scene > syntheticStall.phaseMs.actors,
+    'scene delay is not falsely classified as actor rasterization');
+  r783TraceActive = false;
+  assert.equal(valeNightGpu.draw(), undefined, 'opt-out leaves ordinary draws untimed');
+  assert.equal(valeNightGpu.status().drawCpuProfile.sampledFrames, 0,
+    'normal-mode capture must not contaminate sampled developer percentiles');
+  valeNightGpu.release();
+  game.night = previousNight;
+  game.daylightPhase = previousDaylight;
+  game.npcs = previousNpcs;
   game.hero.x = coldStart.x;
   game.hero.y = coldStart.y;
   game.enemies = [];

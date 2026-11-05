@@ -1,3 +1,5 @@
+> **Actualización de menús, PR #800 — integrada y publicada:** La nueva ruta es Nueva partida → Nueva aventura (Normal y recuperación estándar por defecto, Sucesión opcional) → Elegir héroe. Se mantienen las cuatro clases, el nombre opcional y la confirmación antes de reemplazar una partida. Ayuda agrupa primeros pasos, combate, partidas, problemas y créditos; las herramientas técnicas quedan dentro de Problemas. La integración, las pruebas automatizadas y la publicación están verificadas; la aceptación física en el iPhone Air sigue pendiente. Consulta el estado de publicación en docs/DEVELOPMENT_STATE.md.
+
 # Guía del juego en español
 
 **¡Sí, puedes jugar en español a So I Became the Dark Lord's Problem!** El juego tiene una opción de idioma español que puedes elegir antes de crear tu personaje o activar después, sin empezar otra partida.
@@ -51,7 +53,7 @@ Greenwood tiene un molino y estanque de trabajo, huertos en distintas etapas, un
 
 ## Controles básicos
 
-Los siguientes son los **atajos predeterminados** del teclado. Puedes cambiarlos desde **Juego y ajustes → Controles → Personalizar teclado**. También existen distribuciones clásicas y alternativas.
+Los siguientes son los **atajos predeterminados** del teclado. Puedes cambiar movimiento, interacción, apertura del menú, combate y otras teclas en **Ajustes → Controles → Personalizar teclado**. La tecla Esc siempre funciona como salida de emergencia de los menús. También hay distribuciones clásicas y alternativas.
 
 | Lo que quieres hacer | Computadora o Chromebook | Teléfono |
 | --- | --- | --- |
@@ -73,14 +75,14 @@ Los siguientes son los **atajos predeterminados** del teclado. Puedes cambiarlos
 
 **En el teléfono:** puedes usar la palanca o tocar el suelo para desplazarte. Los controles táctiles tienen una disposición para dos pulgares y una alternativa para zurdos. Abrir un menú o volver a manejar la palanca interrumpe el desplazamiento automático.
 
-Si necesitas ayuda mientras juegas, abre el menú de **Controles** o **Ayuda y créditos**. En las pantallas del propio juego encontrarás las descripciones más actualizadas de las habilidades.
+Para aprender a jugar, consultar informes de prueba, rendimiento, actualizaciones, versión y contacto con el creador, abre **Ayuda y créditos** en el menú principal. Para cambiar las teclas o controles táctiles, usa **Ajustes → Controles**.
 
 ## Guardar y actualizar
 
 **Las partidas se guardan en el navegador o dispositivo donde juegas.** No existe sincronización de partidas en la nube. Antes de borrar los datos del navegador o cambiar de teléfono, exporta una copia.
 
-- **Copia de la partida:** **Juego y ajustes → Partidas guardadas → Copias de seguridad → Exportar partida / Importar partida**. También puedes entrar desde **Partidas y copias de seguridad** en el menú principal. La [protección de guardados #773](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/773) incorpora exportaciones verificadas con modo/clase/nivel/fecha, una vista previa y confirmación separada antes de importar, recordatorios discretos y una solicitud opcional de almacenamiento persistente. Consulta el [estado de desarrollo](docs/DEVELOPMENT_STATE.md) y el [PR #775](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/775) para confirmar la publicación y la versión instalada. Guarda el `.json` fuera de los datos del navegador; que comience la descarga no garantiza que el archivo se conserve. Ni el punto de recuperación local ni la persistencia impiden que borres los datos o pierdas el dispositivo.
-- **Actualizaciones:** entra a **Juego y ajustes** y elige **Buscar actualización** o **Instalar actualización** cuando esté disponible. Una actualización publicada no siempre llega inmediatamente a una aplicación ya instalada.
+- **Copia de la partida:** desde el menú principal, abre **Partidas y copias de seguridad** para seleccionar, recuperar, exportar o importar partidas. Cada botón explica brevemente su función. La [protección de guardados #773](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/773) incorpora exportaciones verificadas con modo/clase/nivel/fecha, una vista previa y confirmación separada antes de importar, recordatorios discretos y una solicitud opcional de almacenamiento persistente. Consulta el [estado de desarrollo](docs/DEVELOPMENT_STATE.md) y el [PR #775](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/775) para confirmar la publicación y la versión instalada. Guarda el `.json` fuera de los datos del navegador; que comience la descarga no garantiza que el archivo se conserve. Ni el punto de recuperación local ni la persistencia impiden que borres los datos o pierdas el dispositivo.
+- **Actualizaciones:** el juego comprueba automáticamente las novedades al iniciarse. Si hay una lista para instalar durante la partida, aparece el aviso correspondiente. Ya no existe el botón manual de búsqueda en Ajustes; una aplicación instalada puede conservar temporalmente la versión anterior.
 - **Ver qué versión estás jugando:** **Juego y ajustes → Pantalla y rendimiento → Exportar informe de prueba**. Ese archivo muestra el campo `version` y datos de diagnóstico; **no es una copia de tu partida**.
 
 **Versión actual y publicación verificada:** consulta [Estado de desarrollo](docs/DEVELOPMENT_STATE.md) para distinguir la versión del código, la versión publicada en GitHub Pages y la que realmente está instalada en tu dispositivo.

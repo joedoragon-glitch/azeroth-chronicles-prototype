@@ -1,2 +1,2 @@
 /* Generated from package.json. Run npm run build after a version change. */
-(function(root){'use strict';const api=Object.freeze({version:"0.9.2+snapshot.dev.254"});if(typeof module!=='undefined')module.exports=api;else root.PrototypeBuild=api;})(typeof window!=='undefined'?window:globalThis);
+(function(root){'use strict';const api=Object.freeze({version:"0.9.2+snapshot.dev.257"});if(typeof module!=='undefined')module.exports=api;else root.PrototypeBuild=api;})(typeof window!=='undefined'?window:globalThis);

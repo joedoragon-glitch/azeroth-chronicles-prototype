@@ -17,9 +17,12 @@ const releaseFile = (relative) => {
   const file = path.resolve(root, '.' + (relative === '/' ? '/index.html' : relative));
   const source = fs.readFileSync(file, 'utf8');
   if (generation !== 'c') return source;
-  if (['/', '/index.html', '/phone.html'].includes(relative))
+  if (['/', '/index.html', '/phone-game.html'].includes(relative))
     return source.replace('<nav aria-label="Main menu">',
       '<nav aria-label="Main menu" data-menu-revision="c">');
+  if (relative === '/phone.html')
+    return source.replace('id="phone-game-frame"',
+      'data-shell-revision="c" id="phone-game-frame"');
   if (relative === '/src/prototype/app.js')
     return source + "\ndocument.body.dataset.menuRevision = 'c';\n";
   return source;
@@ -40,6 +43,7 @@ const releaseWorker = (file) => {
   for (const [asset, relative] of [
     ['./', '/index.html'], ['./index.html', '/index.html'],
     ['./phone.html', '/phone.html'],
+    ['./phone-game.html', '/phone-game.html'],
     ['./src/prototype/app.js', '/src/prototype/app.js'],
   ]) hashes[asset] = gitBlobHash(releaseFile(relative));
   worker = worker.replace(prefix + before + ';', prefix + JSON.stringify(hashes) + ';');
@@ -74,7 +78,8 @@ const server = http.createServer((req, res) => {
   });
   if (relative === '/sw.js') return res.end(releaseWorker(file));
   if (generation === 'c' &&
-      ['/', '/index.html', '/phone.html', '/src/prototype/app.js'].includes(relative))
+      ['/', '/index.html', '/phone.html', '/phone-game.html',
+        '/src/prototype/app.js'].includes(relative))
     return res.end(releaseFile(relative));
   fs.createReadStream(file).pipe(res);
 });
@@ -105,19 +110,28 @@ const server = http.createServer((req, res) => {
         String(Number(sessionStorage.getItem('pwa-browser-boot-count') || 0) + 1)));
       if (phone)
         await page.addInitScript(() => localStorage.setItem('azeroth-display-language-v1', 'es'));
-      await page.goto(url + (phone ? '/phone.html' : '/index.html'));
+      // Test the real game frame directly; the public phone.html wrapper's
+      // physical rotation and pointer mapping are covered separately by
+      // hud-option-b-visual.cjs.
+      await page.goto(url + (phone ? '/phone-game.html' : '/index.html'));
       await page.waitForFunction(() => window.Prototype && !!navigator.serviceWorker.controller);
       // The current player flow begins on the title screen, not directly in-game.
       // Create a real saved run before testing manual updates during gameplay.
       await page.waitForFunction(() =>
         document.getElementById('startup-update').hidden &&
+        (!document.getElementById('language-welcome').hidden ||
+          !document.getElementById('title-screen').hidden));
+      // A new browser chooses its language once, before the title screen.
+      // A previously configured phone bypasses this welcome entirely.
+      if (await page.locator('#language-welcome').isVisible())
+        await page.locator('#language-welcome [data-language="en"]').click();
+      await page.waitForFunction(() =>
         !document.getElementById('title-screen').hidden &&
         !document.getElementById('title-new').disabled);
       await page.locator('#title-new').click();
       await page.locator('#modal-actions').getByRole('button', { name: /Normal/i }).first().click();
-      await page.locator('#modal-actions').getByRole('button', {
-        name: phone ? /^Español/ : /^English/,
-      }).click();
+      // Standard/refuge option first, then the initial hero: no language re-prompt.
+      // Positional selection is deliberate here because the phone starts in Spanish.
       await page.locator('#modal-actions').getByRole('button').first().click();
       await page.locator('#modal-actions').getByRole('button').first().click();
       await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
@@ -246,48 +260,25 @@ const server = http.createServer((req, res) => {
       await page.waitForFunction(() => window.Prototype?.started);
       failUpdateCheck = true;
       await page.locator('#menu-button').click();
-      await page
-        .locator('#modal-actions')
-        .getByRole('button', { name: phone ? 'Juego y ajustes' : 'Game and settings', exact: true })
-        .click();
-      await page
-        .locator('#modal-actions')
-        .getByRole('button', {
-          name: phone ? 'Buscar actualización' : 'Check for game update',
-          exact: true,
-        })
-        .click();
-      await page
-        .waitForFunction(
-          () =>
-            document
-              .getElementById('status')
-              .textContent.includes(
-                document.documentElement.lang === 'es-419'
-                  ? 'No se pudo actualizar'
-                  : 'Update unavailable',
-              ),
-          null,
-          { timeout: 5000 },
-        )
-        .catch(async () => {
-          throw Error(
-            'Failed-update status: ' +
-              (await page.evaluate(() =>
-                JSON.stringify({
-                  text: document.getElementById('status').textContent,
-                  paused: Prototype.paused,
-                  ready: !document.getElementById('update-button').hidden,
-                  language: document.documentElement.lang,
-                }),
-              )),
-          );
-        });
+      await page.locator('#modal-actions').getByRole('button', {
+        name: phone ? 'Juego y ajustes' : 'Game and settings', exact: true,
+      }).click();
+      assert.equal(await page.locator('#modal-actions').getByRole('button', {
+        name: phone ? 'Buscar actualización' : 'Check for game update',
+        exact: true,
+      }).count(), 0, 'Settings no longer duplicates the automatic update check');
+      // A rejected Service Worker check does not pause the current campaign.
+      // Failure is exercised at the original browser API boundary, not through
+      // a user control which no longer exists.
+      await page.evaluate(async () => {
+        try { await (await navigator.serviceWorker.getRegistration()).update(); }
+        catch (_) {}
+      });
       await page.evaluate(() => Prototype.closeMenu());
-      assert(
-        !(await page.evaluate(() => Prototype.paused)),
-        'failed network check does not freeze play',
-      );
+      assert(!(await page.evaluate(() => Prototype.paused)),
+        'failed network check does not freeze play');
+      assert.equal(await page.evaluate(() => Prototype.game.hero.gold), 42424,
+        'automatic update check failure cannot change campaign progress');
 
       // An ordinary next launch discovers another release automatically.
       // Changed HTML and JS must both be present before unlocking its menu.
@@ -304,11 +295,16 @@ const server = http.createServer((req, res) => {
         Number(sessionStorage.getItem('pwa-browser-boot-count') || 0) >= before + 2,
         bootsBefore, { timeout: 90000 });
       await page.waitForFunction(async () => {
+        // controllerchange triggers a genuine full-document navigation. The
+        // old/new document may briefly be visible before the production game
+        // scripts initialize; that is expected, not an update failure.
+        if (!window.PrototypeBuild?.version || !window.Prototype) return false;
         const name = 'azeroth-app-v' + window.PrototypeBuild.version + '-notice-c';
         if (!(await caches.keys()).includes(name)) return false;
         const cache = await caches.open(name);
         const files = await Promise.all(['./index.html', './phone.html',
-          './src/prototype/app.js'].map((file) => cache.match(file)));
+          './phone-game.html', './src/prototype/app.js']
+          .map((file) => cache.match(file)));
         // Cache names appear at the *beginning* of installation; wait for
         // the required bytes, not merely a newly created empty cache.
         const registration = await navigator.serviceWorker.getRegistration();
@@ -331,7 +327,8 @@ const server = http.createServer((req, res) => {
         };
         return {
           index: await inspect('index.html', 'data-menu-revision="c"'),
-          phone: await inspect('phone.html', 'data-menu-revision="c"'),
+          phone: await inspect('phone.html', 'data-shell-revision="c"'),
+          phoneGame: await inspect('phone-game.html', 'data-menu-revision="c"'),
           script: await inspect('src/prototype/app.js', "dataset.menuRevision = 'c'"),
         };
       });
@@ -349,7 +346,8 @@ const server = http.createServer((req, res) => {
       console.log('Release c service worker: ' + JSON.stringify(workerStatus));
       console.log('Release c transfers and offline cache: ' +
         JSON.stringify({ phone, releaseRequests, releaseCache }));
-      for (const changed of ['/index.html', '/phone.html', '/src/prototype/app.js'])
+      for (const changed of ['/index.html', '/phone.html', '/phone-game.html',
+        '/src/prototype/app.js'])
         assert(releaseRequests.includes(changed), 'changed release bytes must download: ' + changed);
       for (const unchanged of [
         '/src/prototype/renderer.js',
