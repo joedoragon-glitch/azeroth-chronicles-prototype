@@ -21,6 +21,14 @@ assert(app.includes("renderer.setRenderLayer('full')"));
 assert(app.includes('function drawWorld()'));
 assert(canvas.includes("renderLayer === 'background'"));
 assert(canvas.includes("renderLayer === 'overlay'"));
+// Overlay health plates receive raw Campaign actors rather than Canvas's
+// presentEntity() wrappers. Explicit types preserve enemy-red bars and the
+// fortress shield under the PixiJS renderer without changing simulation.
+assert(canvas.includes('function healthPlate(e, p, renderKind = e.renderKind)'));
+assert(canvas.includes("if (renderKind === 'enemy' && game.enemyFort(e))"));
+assert(canvas.includes('healthPlate(e, p, renderKind);'));
+assert(canvas.includes("index < enemies.length"));
+assert(canvas.includes("index < enemies.length + allies.length"));
 assert(pixi.includes('getGame()'), 'GPU path must use live Campaign');
 assert(pixi.includes('scene.syncActors(records)'));
 assert(pixi.includes('syncBackground()'));
