@@ -2247,9 +2247,29 @@
       kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
       points: smoothRoad(points, kinds[i] === 'cart' || i === 0 ? 'cart' : 'farm'),
     }));
+    // The departing merchant wagon needs a visibly continuing carriage
+    // route to the eastern map edge. This is scenery only: the transport
+    // interaction remains at its established position and no saved path,
+    // region transition or collision is changed.
+    if (wide[0]?.kind === 'cart') {
+      const end = wide[0].points.at(-1);
+      if (end?.x >= 2800 && end?.y <= 400)
+        wide[0].points.push({ x: 3200, y: 80 });
+    }
     const fragments = [];
     for (const path of footpaths || []) {
       const points = smoothRoad(path, 'path');
+      // Short village/service spurs are maintained roads, not moss-colored
+      // trails. Include them in the same unioned earth paint as cart/farm
+      // roads, retaining their narrower world-space footprint.
+      const length = path.reduce((sum, point, i) =>
+        i ? sum + distance(point, path[i - 1]) : sum, 0);
+      const local = path.length === 2 && length <= 270 &&
+        path.every((p) => p.x < 1250 && p.y < 2050);
+      if (local) {
+        wide.push({ kind: 'path', points });
+        continue;
+      }
       let run = [];
       for (let i = 1; i < points.length; i++) {
         const a = points[i - 1], b = points[i];
@@ -2278,6 +2298,33 @@
       if (run.length > 1) fragments.push(run);
     }
     return { wide, fragments, widths: roadWidths };
+  }
+  function appendRoadRibbon(ctx, screen, points, width) {
+    if (points.length < 2) return;
+    const normals = [];
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i - 1], b = points[i],
+        dx = b.x - a.x, dy = b.y - a.y,
+        len = Math.hypot(dx, dy) || 1;
+      normals.push({ x: -dy / len, y: dx / len });
+    }
+    const left = [], right = [];
+    for (let i = 0; i < points.length; i++) {
+      const before = normals[Math.max(0, i - 1)],
+        after = normals[Math.min(normals.length - 1, i)];
+      const nx = before.x + after.x, ny = before.y + after.y,
+        len = Math.hypot(nx, ny) || 1;
+      const dx = nx / len, dy = ny / len,
+        denominator = Math.max(0.65, dx * after.x + dy * after.y),
+        reach = width / denominator;
+      left.push(screen({ x: points[i].x + dx * reach, y: points[i].y + dy * reach }));
+      right.push(screen({ x: points[i].x - dx * reach, y: points[i].y - dy * reach }));
+    }
+    left.concat(right.reverse()).forEach((p, i) => {
+      if (i) ctx.lineTo(p.x, p.y);
+      else ctx.moveTo(p.x, p.y);
+    });
+    ctx.closePath();
   }
   function appendRoadShape(ctx, screen, a, b, width) {
     const length = distance(a, b);
@@ -2350,9 +2397,12 @@
       } else {
         for (const road of wide) {
           const w = roadWidths[road.kind] * widthFactor;
-          for (let i = 1; i < road.points.length; i++)
-            appendRoadShape(ctx, screen, road.points[i - 1], road.points[i], w);
-          for (const point of road.points) appendRoadCap(ctx, screen, point, w);
+          // One continuous mitered ribbon replaces overlapping strips and
+          // a circular blob at every interpolation point. Only endpoints
+          // need caps; avoiding their repeated silhouette removes scallops.
+          appendRoadRibbon(ctx, screen, road.points, w);
+          appendRoadCap(ctx, screen, road.points[0], w);
+          appendRoadCap(ctx, screen, road.points.at(-1), w);
         }
       }
       ctx.fillStyle = color;
@@ -2361,9 +2411,9 @@
       ctx.fill();
     };
     ctx.save();
-    paint(1.12, '#647051');
-    paint(1, '#997d59');
-    paint(0.63, '#ac8d66');
+    paint(1.12, '#755e49');
+    paint(1, '#a27a58');
+    paint(0.63, '#b68d66');
     paint(1.2, '#66734d', true);
     paint(1, '#978561', true);
     paint(0.7, '#a69570', true);
