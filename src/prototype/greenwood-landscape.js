@@ -459,10 +459,24 @@
           route.points = points;
           return true;
         };
+        // The farm cart lane ends on solid ground just before the south
+        // crossing. A short pedestrian approach takes over from there: carts
+        // should not visually continue across this deliberately timber footbridge.
+        const farm = z.roads?.[1];
+        if (
+          farm?.length === 7 &&
+          Math.abs(farm.at(-1).x - 1740 * scale) < 0.01 &&
+          Math.abs(farm.at(-1).y - 2280 * scale) < 0.01
+        ) {
+          const adjusted = [...farm.slice(0, -1), { x: 1560 * scale, y: 2280 * scale }];
+          z.roads[1] = adjusted;
+          if (z.greenwoodRoutes?.[1]?.kind === 'farm')
+            z.greenwoodRoutes[1].points = adjusted;
+        }
         replacePoints(
           6,
           [[0, 1740, 2280], [1, 2150, 2350]],
-          [[1740, 2280], [1950, 2280], [2150, 2350], [2300, 2220], [2670, 2220]],
+          [[1560, 2280], [1740, 2280], [1950, 2280], [2150, 2350], [2300, 2220], [2670, 2220]],
         );
         replacePoints(
           7,
