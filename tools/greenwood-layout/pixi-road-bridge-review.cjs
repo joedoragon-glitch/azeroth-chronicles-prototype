@@ -12,6 +12,13 @@ const root = path.resolve(__dirname, '../..');
 const out = path.resolve(process.env.GREENWOOD_PREVIEW_OUT || 'test-artifacts/greenwood-road-bridge/pixi');
 const phone = process.argv.includes('--phone');
 const viewport = phone ? { width: 852, height: 393 } : { width: 1280, height: 800 };
+const watermillReview = process.env.GITHUB_HEAD_REF ===
+  'design/greenwood-watermill-district-20261105' || process.argv.includes('--watermill');
+const mill = watermillReview
+  ? require('../../src/prototype/engine').rules.greenwoodLayout : null;
+const mid = (deck) => ({
+  x: (deck.from.x + deck.to.x) / 2, y: (deck.from.y + deck.to.y) / 2,
+});
 const targets = [
   ['millhaven-west-junction', 650, 600],
   ['millhaven-east-junction', 810, 635],
@@ -22,6 +29,16 @@ const targets = [
   ['south-bridge-west', 1520, 2280],
   ['south-bridge', 1740, 2280],
   ['south-bridge-east', 1940, 2280],
+  // #814-only real WebGL2 + Canvas-overlay review: hero camera deliberately
+  // off the door/deck, rather than obscuring the feature being inspected.
+  ...(mill ? [
+    ['watermill-entrance-day', mill.millEntrance.x + 95, mill.millEntrance.y + 20, 120],
+    ['watermill-entrance-night', mill.millEntrance.x + 95, mill.millEntrance.y + 20, 500],
+    ['watermillrace-bridge-day', mid(mill.millBridge).x - 95, mid(mill.millBridge).y + 90, 120],
+    ['watermillrace-bridge-night', mid(mill.millBridge).x - 95, mid(mill.millBridge).y + 90, 500],
+    ['upstream-creek-culvert-day', mid(mill.creekCulvert).x + 85,
+      mid(mill.creekCulvert).y + 100, 120],
+  ] : []),
 ];
 const scripts = require('../../scripts/site-assets.cjs').scripts.filter((s) => !s.endsWith('/app.js'));
 const html =
@@ -106,11 +123,12 @@ const server = http.createServer((req, res) => {
     assert.equal(initialization.zoom, 1.5);
     assert.equal(initialization.mapVersion, 1);
     const receipts = [];
-    for (const [name, x, y] of targets) {
-      const receipt = await page.evaluate(({ x, y }) => {
+    for (const [name, x, y, clock = 120] of targets) {
+      const receipt = await page.evaluate(({ x, y, clock }) => {
         const before = JSON.stringify(g.s);
         Object.assign(g.hero, { x, y, path: [], order: null });
-        g.s.clock = 120;
+        g.s.clock = clock;
+        g.updateNight();
         const frozen = JSON.stringify(g.s);
         painter.setRenderLayer('overlay');
         gpu.activate();
@@ -118,7 +136,7 @@ const server = http.createServer((req, res) => {
         painter.draw();
         const s = gpu.status();
         return {
-          x, y,
+          x, y, clock,
           hero: { x: g.hero.x, y: g.hero.y },
           renderer: 'pixi-webgl2', zoom: platform.cameraZoom,
           gpuActive: s.active, gpuError: s.lastError || null,
@@ -127,7 +145,7 @@ const server = http.createServer((req, res) => {
           snapshotPrepared: before.length > 0,
           sceneMetrics: s.sceneMetrics || null,
         };
-      }, { x, y });
+      }, { x, y, clock });
       assert(receipt.gpuActive && !receipt.gpuError, name + ': not active WebGL2');
       assert(receipt.stateUnchanged, name + ': renderer mutated native game state');
       const file = name + '-' + viewport.width + 'x' + viewport.height + '.png';
