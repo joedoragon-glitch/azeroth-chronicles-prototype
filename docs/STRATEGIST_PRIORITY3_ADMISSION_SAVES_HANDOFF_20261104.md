@@ -1,8 +1,31 @@
 # SIBDLP Strategist — Priority 3 Developer Admission, Saves & Class Isolation handoff (4 November 2026)
 
-**Status: PLANNED / awaiting a separate new-chat execution. Not implemented or tested by this documentation handoff.** The owner has requested preparation of this next assignment, not execution of Priorities 3–5 within this chat.
+**Status: COMPLETED at the bounded native Campaign and production app-shell/persistence gate (4 November 2026).** Priority 3 was separately authorized, implemented and focused-tested on the existing unmerged [draft PR #792](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/792). The original execution instructions below are retained as historical scope, not a pending assignment. Priorities 4–5 remain unauthorized and untouched. There is no public fifth class, merge, release, real Chromium/physical-device certification or comprehensive test claim.
 
 **Game:** *So I Became the Dark Lord's Problem* (SIBDLP). The GitHub repository retains the historical technical identifier `joedoragon-glitch/azeroth-chronicles-prototype`; do not rename the game. Continue **existing open draft [PR #792](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/792)** on `feat/strategist-developer-playtest-20261104`. At handoff, last known game-source-tested commit is `c44fcd4b3c621210efe4cc0b1b38c1340aa7c60b`; later commits are documentation-only. **Read the live PR head and compare current `main` and any parallel Strategist PRs before any edits.** Never treat the recorded head as immutable.
+
+## Priority 3 completion and evidence (4 November 2026)
+
+**Decision: GO for Priority 3's limited source/native + actual production app-shell/persistence acceptance, with later browser/device and integration gates explicitly open.** The final gameplay/test/workflow commit was [`fe280031c8eb24e837a545ee2cf8329e4d224936`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/fe280031c8eb24e837a545ee2cf8329e4d224936). The **only** newly run acceptance workflow was [Priority 3 focused CI #41962986804](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41962986804), **SUCCESS**, GitHub Node 22, exact head above. It ran syntax checks and these exact focused Node commands, all successful:
+
+```sh
+node tests/strategist-priority3-admission-saves.test.cjs
+node tests/strategist-developer-admission.test.cjs
+node tests/strategist-developer-isolation.test.cjs
+node tests/strategist-e0-native.test.cjs
+node tests/beta-historical.test.cjs
+node tests/persistence-safety.test.cjs
+node tests/save-recovery-checkpoints.test.cjs
+node tests/rogue-bard-live-playtest-admission.test.cjs
+```
+
+**Confirmed defect and targeted fix:** Shared original instructor rules inadvertently let a Developer Strategist spend Crowns to learn and rank up **unimplemented advanced slots 4–8**, and save-v4 validation accepted a forged Strategist with such skills or a missing starting slot. `src/prototype/progression.js` now keeps those slots hidden/unlearnable/unupgradeable *only for Strategist*, without changing any of the four public class curricula. `src/prototype/save.js` now rejects Strategist saves with a missing slot 1–3 or a learned slot 4–8; it still accepts legal starter rank progression and original public v4 files. No migration version was changed.
+
+**Native Campaign and app/persistence evidence:** The new Priority 3 test runs original `Campaign` (not a stand-in), checks three learned starter slots, genuine Soldier+Archer identities, zero initial Acid, independent companion-training rank, appropriate starter upgrade, refusals for unimplemented skills and forged imported ranks, public Normal/Nightmare/Arena and Succession rejection, and the four-class app registration/chooser even after Developer registration. It drives production `app.js` inside the existing deterministic DOM shell with URL `?developer=1` and without it, including Developer New Game save creation, public Developer-menu suppression and Developer import refusal without the flag. It exercises real `snapshot()`, `Campaign.validate()`, `Campaign.restore()`, `PrototypePersistence.create()` save/load and `prepareExternalExport()`: bounded finite shared integer Acid survives legitimate round trips, invalid stock and cross-class stock are rejected without replacing the prior primary, skills/cooldowns/companion IDs persist, projectiles/hazards and unsaved Mineral faces do not replay after restore, zone travel or death. The preexisting original E0 native test separately proves actual landed dagger cadence, non-replayed third-hit Acid, death and travel resets. The preexisting historical test proves six unchanged, immutable v0.8.118 normal/Nightmare Paladin/Mage/Ranger exports restore and reimport; the existing persistence tests prove failed-original preservation, checkpoints, mode isolation, import confirmations, quota/stale-write protections; the Rogue admission test proves public fourth class and v4/Succession compatibility.
+
+**Limitations/risk ownership:** The production app was exercised through its existing VM/DOM test shell, **not real Chromium/WebKit or the owner's iPhone**. The `?developer=1` switch is an opt-in client preview **not authentication**, so none of this is a secure entitlement or approval for a public class. Full live UI, visual approval, charged touch/keyboard control, Canvas/Pixi parity, physical phone performance and complete Developer playthrough are **later separately authorized Priorities 4–5**; the latest Ogre procedural artwork remains awaiting owner approval. PR #792 remains a draft, 8 commits behind `main` at this comparison checkpoint; future integration must reconcile live `main` and parallel Strategist drafts without blindly merging them. No broad suite, merge, deployment, fifth-class public unlock or device signoff was performed.
+
+---
 
 ## Authority and completed work (do not reopen without a regression)
 
