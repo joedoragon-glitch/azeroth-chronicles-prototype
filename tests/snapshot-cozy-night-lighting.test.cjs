@@ -35,7 +35,7 @@ function probe(night, optimized = true, sources = []) {
   return calls;
 }
 const cottage = Visuals.lightingFixtures(
-  { id: 'home', structure: 'vale-cottage' }, { x: 120, y: 150 },
+  { id: 'home-1', structure: 'vale-cottage' }, { x: 120, y: 150 },
 );
 const workshop = Visuals.lightingFixtures(
   { id: 'workshop', structure: 'vale-workshop' }, { x: 220, y: 150 },
@@ -47,19 +47,47 @@ const roadPost = Visuals.lightingFixtures(
   { id: 'post', structure: 'roadside-lantern' }, { x: 270, y: 150 },
 );
 assert.equal(cottage.length, 1, 'a cottage has one lamp by its doorway');
-assert.equal(workshop.length, 2, 'workshops have sconces on both facade supports');
+assert.equal(workshop.length, 1, 'closed workshops have one exterior security lamp');
 assert.equal(refuge.length, 1, 'refuge light comes from its actual wall lantern');
 assert.equal(roadPost.length, 1, 'roadside post retains its own glass');
 assert(cottage[0].y > 120, 'cottage glass is below the roof, on the facade');
 assert(workshop.every((lamp) => lamp.y > 120), 'workshop fixtures are below the roof');
 assert.equal(roadPost[0].x, 270, 'post stays centered in the existing lantern frame');
-assert.equal(roadPost[0].y, 108.5, 'post glow matches existing lantern glass');
+assert.equal(roadPost[0].y, 108, 'post glow matches the recessed glass center');
 assert.equal(Visuals.lightingFixtures(
   { id: 'post', structure: 'roadside-lantern' }, { x: 270, y: 150 }, 2,
-)[0].y, 67, 'Pixi zoom keeps the luminous center attached to the scaled post');
+)[0].y, 66, 'Pixi zoom keeps the luminous center attached to the scaled post');
 assert.equal(Visuals.lightingFixtures(
   { id: 'unknown', structure: 'unlit-household' }, { x: 0, y: 0 },
 ).length, 0, 'unrelated household structures gain no invented lights');
+assert.equal(cottage[0].lit, true, 'the selected cottage provides a modest practical accent');
+assert.equal(Visuals.lightingFixtures(
+  { id: 'home', structure: 'vale-cottage' }, { x: 120, y: 150 },
+)[0].lit, false, 'other cottage lamps can stay dark while residents sleep');
+assert(cottage[0].alpha < workshop[0].alpha && workshop[0].alpha < refuge[0].alpha,
+  'cottage, closed workshop and refuge have a readable night-light hierarchy');
+assert.equal(Visuals.lightingFixtures(
+  { id: 'regional-cottage', structure: 'march-stilt-house' }, { x: 120, y: 150 }, 1, 1,
+).length, 0, 'no Greenwood-style sconce is forced onto other-region dwellings');
+const otherRefuge = Visuals.lightingFixtures(
+  { id: 'march-rest', kind: 'rest' }, { x: 120, y: 150 }, 1, 1,
+);
+assert.equal(otherRefuge.length, 1, 'existing other-region refuge lighting is preserved');
+assert.equal(otherRefuge[0].role, 'refuge');
+const wagon = Visuals.lightingFixtures(
+  { id: 'supply-wagon', kind: 'transport', icon: '🐎' }, { x: 200, y: 100 },
+);
+assert.equal(wagon.length, 1, 'actual wagon-mounted lantern remains a night source');
+for (const icon of ['⛵', '🐫', '🐉'])
+  assert.equal(Visuals.lightingFixtures(
+    { id: 'transport-' + icon, kind: 'transport', icon }, { x: 200, y: 100 },
+  ).length, 0, 'no invisible lantern is added to a transport without one');
+for (const kind of ['teacher', 'smith', 'alchemist', 'fountain'])
+  assert.equal(Visuals.lightingFixtures({ id: kind, kind }, { x: 100, y: 100 }).length, 0,
+    'unmounted service ' + kind + ' does not receive a phantom lantern');
+for (const kind of ['supplier', 'recruiter', 'quests'])
+  assert.equal(Visuals.lightingFixtures({ id: kind, kind }, { x: 100, y: 100 }).length, 1,
+    'public service ' + kind + ' retains an attached entrance light');
 const sources = [...cottage, ...workshop, ...refuge, ...roadPost,
   { id: 'working-hearth', x: 290, y: 190, kind: 'fire' }];
 const day = probe(false, true, sources);
@@ -104,7 +132,7 @@ game.s.clock = 120;
 assert(!game.night(), 'day turns lamps off');
 game.s.clock = JSON.parse(before).clock;
 assert.equal(JSON.stringify(game.snapshot()), before, 'render sources never alter campaign saves');
-console.log('PASS wall-mounted cottage/workshop/refuge, street glass, day/night, GPU parity and save purity');
+console.log('PASS hierarchy and mounted cottage/workshop/refuge/street/service/wagon lighting, daylight, GPU parity and save purity');
 
 // Carried sources follow the real renderer's facing and bobbed foot anchor.
 const { createCanvas } = require('@napi-rs/canvas');
