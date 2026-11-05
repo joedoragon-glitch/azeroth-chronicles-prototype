@@ -480,7 +480,9 @@
             info.rank +
             (info.rank === 8
               ? ' · Maximum rank'
-              : ' · Automatic basics, Tap and Charged use this rank.') +
+              : g.hero.class === 'strategist'
+                ? ' · Developer-only material forms; separate automatic daggers.'
+                : ' · Automatic basics, Tap and Charged use this rank.') +
             (slot === 1 ? ' · Self-taught from Rank 1; rescued specialists refine it.' : ''),
           sections: skillSections(info),
           note: info.note,
@@ -509,7 +511,11 @@
         'Using skills',
         {
           summary:
-            'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.',
+            getGame().hero.class === 'strategist' && getGame().s.mode === 'developer'
+              ? (/^es/i.test(document?.documentElement?.lang || '')
+                ? 'Las dagas automáticas no gastan la recuperación de las tres habilidades. Toca para la forma normal; mantén para la cargada.'
+                : 'Automatic daggers do not spend the three starter skill cooldowns. Tap for normal; hold for charged.')
+              : 'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.',
           sections: [
             {
               title: 'Controls',
@@ -519,6 +525,19 @@
               title: 'Reading effects',
               text: 'Damage figures use your current Power, before enemy defenses and situational bonuses. Healing cannot exceed maximum health. Distances use map units.',
             },
+            ...(getGame().hero.class === 'strategist' && getGame().s.mode === 'developer'
+              ? [{
+                title: /^es/i.test(document?.documentElement?.lang || '') ? 'Reversión' : 'Reversal',
+                text: /^es/i.test(document?.documentElement?.lang || '')
+                  ? 'Acción independiente: toca REVERSIÓN o pulsa T si no está asignada. Requiere una advertencia enemiga activa y estar físicamente en la zona del impacto. Solo protege al grupo contra ese ataque concreto.'
+                  : 'Separate action: tap REVERSAL, or press T if it has no other binding. A live enemy warning must threaten the Ogre at its actual impact location. Only that attack release is reversed for the threatened party.',
+              }, {
+                title: /^es/i.test(document?.documentElement?.lang || '')
+                  ? 'Dagas y materiales' : 'Daggers and real materials',
+                text: /^es/i.test(document?.documentElement?.lang || '')
+                  ? 'Tres impactos básicos consecutivos sobre el mismo enemigo gastan una sola botella de ácido si existe. Las formas Agua, Mineral y Fuego requieren una fuente real cercana y visible. Las ranuras 4–8 aún no están implementadas.'
+                  : 'Three landed same-target basics spend exactly one Acid Bottle on the third hit if stocked. Water, Mineral and Fire forms need genuine nearby visible sources. Slots 4–8 are not implemented.',
+              }] : []),
           ],
           note: 'Skill ranks do not shorten cooldowns. Discipline training can.',
         },
