@@ -19134,40 +19134,42 @@
                 );
           }
         }
-      } else for (let y = y1; y < y2; y += 58) {
-        const end = Math.min(y2, y + 58),
-          seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
-          tooth = 8 + (seed % 12);
-        for (const side of [-1, 1]) {
-          const local = banks ? banks(y) : [x1, x2],
-            edge = side < 0 ? local[0] : local[1],
-            inside = edge - side * Math.min(tooth, width * 0.25),
-            mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
-          poly(
-            [
-              { x: edge, y },
-              { x: inside, y: mid },
-              { x: edge - side * 6, y: end },
-              { x: edge, y: end },
-            ],
-            water
-              ? side < 0
-                ? '#536a57'
-                : '#6a7c64'
-              : lava
-                ? seed % 2
-                  ? '#423b3b'
-                  : '#574039'
-                : side < 0
-                  ? '#696b61'
-                  : '#4b514c',
-          );
-          if (!water && !lava)
-            line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
-          if (water)
-            line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
-          else if (lava)
-            line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
+      } else {
+        for (let y = y1; y < y2; y += 58) {
+          const end = Math.min(y2, y + 58),
+            seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
+            tooth = 8 + (seed % 12);
+          for (const side of [-1, 1]) {
+            const local = banks ? banks(y) : [x1, x2],
+              edge = side < 0 ? local[0] : local[1],
+              inside = edge - side * Math.min(tooth, width * 0.25),
+              mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
+            poly(
+              [
+                { x: edge, y },
+                { x: inside, y: mid },
+                { x: edge - side * 6, y: end },
+                { x: edge, y: end },
+              ],
+              water
+                ? side < 0
+                  ? '#536a57'
+                  : '#6a7c64'
+                : lava
+                  ? seed % 2
+                    ? '#423b3b'
+                    : '#574039'
+                  : side < 0
+                    ? '#696b61'
+                    : '#4b514c',
+            );
+            if (!water && !lava)
+              line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
+            if (water)
+              line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
+            else if (lava)
+              line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
+          }
         }
       }
       for (let y = y1 + 24; y < y2 - 8; y += water ? 62 : 48) {
@@ -19235,7 +19237,7 @@
           const end = Math.min(y2, y + 24),
             lo = banks ? banks(y)[side] : [x1, x2][side],
             hi = banks ? banks(end)[side] : [x1, x2][side];
-          // Avoid drawing a hard continuous bright outline down both Verde banks.
+          // Avoid drawing a hard continuous bright outline down both Greenwood banks.
           const quiet = greenwoodShore && (Math.floor(y / 24) * 13 + side * 7) % 9 < 4;
           if (!quiet)
             line(
