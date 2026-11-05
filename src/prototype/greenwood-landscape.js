@@ -1301,108 +1301,105 @@
       ctx.stroke();
     };
     if (e.greenwoodFacility === 'mill') {
-      poly(
-        [
-          [-62, 7],
-          [-64, -88],
-          [8, -111],
-          [69, -87],
-          [69, -4],
-          [0, 18],
-        ],
-        '#725940',
-      );
-      poly(
-        [
-          [-64, -88],
-          [0, -66],
-          [69, -87],
-          [7, -112],
-        ],
-        '#a98b5d',
-      );
-      poly(
-        [
-          [-78, -86],
-          [-5, -143],
-          [82, -104],
-          [5, -56],
-        ],
-        '#624332',
-      );
-      poly(
-        [
-          [-78, -86],
-          [-5, -143],
-          [6, -56],
-        ],
-        '#a46e45',
-      );
-      poly(
-        [
-          [6, -56],
-          [82, -104],
-          [82, -96],
-          [6, -48],
-        ],
-        '#443a2c',
-      );
-      for (let j = 0; j < 7; j++) line([-62, -76 + j * 11], [3, -54 + j * 10], '#ba9b67', 2);
-      for (const x of [-56, -7, 58]) line([x, -67], [x, 5], '#463c2b', 5);
-      poly(
-        [
-          [-4, -31],
-          [18, -37],
-          [18, 10],
-          [-4, 16],
-        ],
-        '#282f26',
-      );
-      for (const [x, y] of [
-        [-38, -56],
-        [32, -64],
-      ]) {
-        poly(
-          [
-            [x, y],
-            [x + 15, y - 5],
-            [x + 15, y + 15],
-            [x, y + 20],
-          ],
-          '#293f35',
+      // One coherent two-storey timber-framed body. The roof and all infill
+      // share the same corners: no extra triangular workshop glued on top.
+      const pane = (pts, fill, edge = '#4d4030') => {
+        poly(pts, fill);
+        if (edge) {
+          ctx.strokeStyle = edge;
+          ctx.lineWidth = 1.7;
+          ctx.stroke();
+        }
+      };
+      const timber = (a, b, w = 4, color = '#705036') => line(a, b, color, w);
+      const wheel = { x: -80, y: -57, rx: 25, ry: 35 };
+      // Dry foundation/apron: the mill race is drawn by actual terrain, not
+      // by a second blue pond inside this building illustration.
+      pane([[-70, 4], [-2, 29], [77, 4], [77, -6], [-2, 19], [-70, -4]], '#92917e', '#686d61');
+      for (const y of [6, 14]) timber([-63, y], [-1, y + 22], 1.7, '#6d7465');
+      timber([0, 26], [76, 2], 2, '#c3bd9e');
+      // One shared primary frame: corners and story-line continue around both
+      // visible sides, instead of switching materials mid-facade.
+      pane([[-64, -83], [0, -60], [0, 15], [-64, -9]], '#a58d68');
+      pane([[0, -60], [70, -84], [70, -9], [0, 15]], '#b09b79');
+      // Upper-storey plaster occupies framed bays on BOTH visible facades.
+      pane([[-59, -79], [-4, -60], [-4, -39], [-59, -59]], '#d0c2a0');
+      pane([[5, -59], [65, -79], [65, -54], [5, -34]], '#c3b394');
+      // Lower-wall board divisions are consistently aligned to the frames.
+      for (let j = 0; j < 6; j++) {
+        const y = -34 + j * 8;
+        timber([-62, y], [-3, y + 22], 1.3, '#846b49');
+        timber([3, y + 22], [69, y], 1.2, '#8a7353');
+      }
+      for (const pair of [
+        [[-64, -83], [-64, -8]], [[0, -60], [0, 15]], [[70, -84], [70, -9]],
+        [[-64, -44], [0, -21]], [[0, -21], [70, -45]],
+        [[-28, -72], [-28, 3]], [[37, -72], [37, 3]],
+      ]) timber(...pair, 4);
+      for (const pair of [
+        [[-62, -78], [-29, -44]], [[-29, -44], [-61, -10]],
+        [[37, -72], [68, -43]], [[37, -23], [68, -12]],
+      ]) timber(...pair, 2.4, '#866442');
+      // One pitched roof, shared ridge and two consistent shingled faces.
+      // Ridge goes (-3,-132) to (76,-108); both eave edges run in parallel.
+      pane([[-78, -88], [-3, -132], [76, -108], [0, -64]], '#986d4b', '#533d31');
+      pane([[-3, -132], [9, -112], [84, -88], [76, -108]], '#654638', '#4c352d');
+      timber([-3, -132], [76, -108], 4.2, '#c8aa77');
+      timber([-78, -88], [0, -64], 3, '#c59d70');
+      timber([9, -112], [84, -88], 3, '#b18b64');
+      for (let j = 1; j < 5; j++) {
+        const t = j / 5;
+        timber(
+          [-78 + 75*t, -88 - 44*t],
+          [0 + 76*t, -64 - 44*t],
+          0.9,
+          j % 2 ? '#6f4a35' : '#c0986a',
         );
-        line([x + 7, y - 2], [x + 7, y + 17], '#b3a578', 2);
       }
-      // Wheel root matches the shared world-space head/tailrace junction:
-      // (-90,+15) world = (-79.8,-20.25) screen relative to this body.
-      const wx = -79.8,
-        wy = -56.25;
-      ctx.strokeStyle = '#453c2d';
+      // Recessed openings belong to their own inclined wall planes.
+      pane([[-46, -62], [-29, -56], [-29, -39], [-46, -45]], '#3a3a2e', '#786041');
+      timber([-37, -59], [-37, -43], 2, '#c7b184');
+      pane([[41, -67], [58, -73], [58, -55], [41, -50]], '#353f34', '#67543a');
+      timber([49, -70], [49, -52], 2, '#bda77a');
+      // Substantial loading door on the dry frontage; it is not a new
+      // interactable and stays physically connected to the farm service lane.
+      pane([[10, -21], [34, -29], [34, 6], [10, 14]], '#342f28', '#65503a');
+      pane([[13, -20], [31, -26], [31, 4], [13, 10]], '#806043');
+      for (const x of [18, 25]) timber([x, -20 - (x-13)*.32], [x, 8 - (x-13)*.32], 1.4, '#b18e60');
+      timber([10, -22], [10, 14], 4, '#553d2a');
+      timber([34, -30], [34, 7], 4, '#553d2a');
+      timber([10, 15], [36, 7], 3, '#b0a28a');
+      ctx.fillStyle = '#d5bf87'; ctx.fillRect(27, -7, 2.5, 3);
+      // A physically attached sheltered lantern by the loading door. At
+      // night the shared atmosphere pass illuminates its actual glass.
+      timber([47, -58], [55, -55], 2.2, '#4b4639');
+      timber([55, -55], [55, -49], 2, '#4b4639');
+      pane([[49, -50], [61, -50], [59, -39], [51, -39]], '#554a3d');
+      pane([[52, -48], [58, -48], [57, -41], [53, -41]], '#a58a59', null);
+      timber([48, -51], [62, -51], 2.8, '#48473c');
+      timber([50, -39], [60, -39], 2.3, '#48473c');
+      // Wheel support/axle reach a real facade framing post; the wheeled
+      // side is never an unexplained loose circle beside the roof.
+      timber([-65, -48], [wheel.x, wheel.y], 6, '#514333');
+      timber([-67, -40], [-100, -13], 4, '#6b5239');
+      ctx.strokeStyle = '#453b2d';
       ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.ellipse(wx, wy, 23, 36, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.strokeStyle = '#ba9c66';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      for (let j = 0; j < 12; j++) {
-        const a = (j * Math.PI) / 6;
-        line([wx, wy], [wx + Math.cos(a) * 23, wy + Math.sin(a) * 36], '#b49a68', 3);
+      ctx.beginPath(); ctx.ellipse(wheel.x, wheel.y, wheel.rx, wheel.ry, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = '#c3a270'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.ellipse(wheel.x, wheel.y, 22, 32, 0, 0, Math.PI * 2); ctx.stroke();
+      for (let j=0;j<12;j++) {
+        const a=j*Math.PI/6, x=wheel.x+Math.cos(a)*22, y=wheel.y+Math.sin(a)*32;
+        timber([wheel.x,wheel.y],[x,y],2.7,'#b79b70');
+        timber([x-2,y-4],[x+3,y+5],4,'#866b49');
       }
-      for (const dy of [-14, 0, 14]) line([wx - 25, wy + dy], [wx - 19, wy + dy + 8], '#d4bc83', 4);
-      line([wx, wy], [0, -16], '#51412d', 6);
-      poly(
-        [
-          [-62, 7],
-          [0, 26],
-          [72, 4],
-          [70, -4],
-          [0, 17],
-          [-62, 0],
-        ],
-        '#8a8970',
-      );
-      line([-58, 10], [2, 28], '#b0ac89', 3);
+      ctx.fillStyle='#d5bf8b';ctx.beginPath();ctx.ellipse(wheel.x,wheel.y,5,6,0,0,Math.PI*2);ctx.fill();
+      // Short wet-feed trough and discharge are accents attached to the
+      // already connected headrace/tailrace, not painted replacement water.
+      pane([[-119,-84],[-93,-80],[-77,-73],[-100,-77]],'#907252','#53483a');
+      timber([-118,-80],[-94,-77],2,'#c4ae85');
+      timber([-117,-78],[-91,-75],2,'#679391');
+      timber([-100,-13],[-66,-6],3,'#658c90');
+      for (const x of [-93,-85,-76]) timber([x,-12],[x+3,-5],1.4,'#b5d0bf');
     } else if (e.greenwoodFacility === 'new-planting') {
       for (const [x, y] of [
         [-26, 4],
