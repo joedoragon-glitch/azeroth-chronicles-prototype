@@ -31,6 +31,8 @@ const app = shell('en', 'paladin', {
 app.elements.get('title-new').click();
 click(app, 'New Developer Mode run');
 click(app, 'Strategist (Playtest)');
+// The real title preflight commits the first scene on its next animation frame.
+app.frame(0);
 const g = app.scope.Prototype.game;
 assert.equal(app.scope.Prototype.started, true);
 assert.equal(g.s.mode, 'developer');
