@@ -42,12 +42,16 @@ function fly(game, seconds = 3) {
     game.updateProjectiles(0.05);
   }
 }
-// The reconstructed Millhaven pond overlaps a second real water polygon. Use the
-// authored Greenwood main river below its first bridge, with dry endpoints.
-const from = { x: 1540, y: 1000 }, across = { x: 1800, y: 1000 };
+// The reconstructed northern bridge is at y=1000; take a genuinely submerged
+// channel cross-section farther south. Shared bank geometry adapts to the live map.
+const riverY = 1150;
+const [westBank, eastBank] = Campaign.rules.channelBanks(0, riverY);
+const from = { x: westBank - 40, y: riverY };
+const across = { x: eastBank + 40, y: riverY };
+const waterMid = { x: (westBank + eastBank) / 2, y: riverY };
 {
   const { game, foe, z } = scene('vale', from, across);
-  assert(game.blocked(1670, 1000, 'vale', 0), 'authored pond water is impassable');
+  assert(game.blocked(waterMid.x, waterMid.y, 'vale', 0), 'authored river water is impassable');
   assert.equal(game.line(game.hero, foe), false, 'original movement-based LOS stays unchanged');
   assert.equal(game.clearSegment(game.hero, foe, 0), false, 'movement segment stays blocked');
   assert(game.rangedLine(game.hero, foe), 'ranged LOS crosses water');
@@ -76,11 +80,11 @@ const from = { x: 1540, y: 1000 }, across = { x: 1800, y: 1000 };
   assert(game.hero.hp < heroHp, 'enemy projectile lands across the pond');
 
   // No projectile or movement tunneling through genuinely solid scenery.
-  z.props.push({ id: 'pond-shot-wall', x: 1670, y: 1000, r: 22 });
+  z.props.push({ id: 'pond-shot-wall', x: waterMid.x, y: waterMid.y, r: 22 });
   assert.equal(game.rangedLine(game.hero, foe), false, 'solid prop stops LOS over water');
   assert.equal(game.rangedSegment(game.hero, foe), false, 'solid prop stops projectiles');
   assert.equal(game.enemyRangedLine(foe, game.hero), false, 'enemy respects solid cover');
-  assert(game.blocked(1670, 1000, 'vale', 15), 'movement collision remains real');
+  assert(game.blocked(waterMid.x, waterMid.y, 'vale', 15), 'movement collision remains real');
 }
 {
   // Dark Crown's open lava channel is transparent to shots, not walkable.
