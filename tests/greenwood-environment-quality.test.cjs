@@ -19,6 +19,13 @@ const shape = (zone) =>
     .filter((p) => p.greenwoodGoblinShelter || p.greenwoodWall || p.id.includes('thorn-homestead'))
     .map((p) => JSON.parse(JSON.stringify(p)));
 const original = shape(z);
+assert.equal(z.greenwoodTreasuryYardLayoutVersion, 1, 'Treasury work yard migration is one-time');
+const treasuryYardIds = ['stronghold-treasury-yard-prop-2', 'stronghold-treasury-yard-prop-3'];
+for (const id of treasuryYardIds)
+  assert.equal(z.props.filter((p) => p.id === id).length, 1,
+    'Scornfang original yard object remains a singleton: ' + id);
+const restBay = z.props.find((p) => p.greenwoodFacility === 'thorn-rest-bay');
+assert(restBay?.roadBlocker && restBay?.r > 0, 'actual secondary shelter footprint preserved');
 for (let i = 0; i < 2; i++) {
   const restored = C.restore(g.snapshot(), rng(0x47564103));
   assert.deepEqual(
@@ -80,6 +87,15 @@ fs.writeFileSync(
   canvas.toBuffer('image/png'),
 );
 
+// Stage 2–4 source safeguards supplement the original native render and save
+// smoke checks. No new world interaction or unreviewed sprite identity.
+const landscapeSource = fs.readFileSync('src/prototype/greenwood-landscape.js', 'utf8');
+const rendererSource = fs.readFileSync('src/prototype/renderer.js', 'utf8');
+assert(landscapeSource.includes("const restRoof = ["), 'single-pitch resting shelter defined');
+assert(landscapeSource.includes("z.greenwoodTreasuryYardLayoutVersion = 1"),
+  'old v4 worlds can group the existing nonowned desk and barrel once');
+assert(rendererSource.includes('e.greenwoodWall || flatGround || selfGrounded'),
+  'native Canvas/Pixi common shadow contract suppresses duplicate farmyard ovals');
 // Structural roof regression: test the projected geometry, not a screenshot
 // baseline. Both planes must use the same ridge and parallel depth offset.
 for (const path of [

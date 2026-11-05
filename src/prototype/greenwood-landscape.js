@@ -556,6 +556,47 @@
           }
           z.greenwoodOwnerHomesteadLayoutVersion = 1;
         }
+        // Recompose Scornfang's *existing* loose records/store props beside
+        // the farm loading apron. Keep exact IDs and never move player property.
+        // This is intentionally independent of the already-completed fort pass,
+        // so old version-4 saves also receive the modest visual arrangement.
+        if (z.id === 'vale' && z.greenwoodTreasuryYardLayoutVersion !== 1) {
+          const center = R.greenwoodLayout.anchors.treasury;
+          const moves = [
+            ['stronghold-treasury-yard-prop-2', -110, 73],
+            ['stronghold-treasury-yard-prop-3', -143, 84],
+          ];
+          const grouped = [];
+          const skipped = [];
+          for (const [id, dx, dy] of moves) {
+            const p = z.props.find((q) => q.id === id);
+            if (!p || p.playerOwned || p.owned || p.custom) {
+              skipped.push(id);
+              continue;
+            }
+            const at = { x: center.x + dx, y: center.y + dy };
+            if (
+              this.blocked(at.x, at.y, 'vale', p.r || 0, true) ||
+              this.distanceToRoad(z, at) < 45 ||
+              z.buildings.some((b) => distance(b, at) < 85) ||
+              z.npcs.some((n) => distance(n.servicePoint || n, at) < 65) ||
+              z.props.some(
+                (q) =>
+                  q !== p &&
+                  !q.greenwoodWall &&
+                  !q.greenwoodNature &&
+                  distance(q, at) < (q.r || 0) + (p.r || 0) + 24,
+              )
+            ) {
+              skipped.push(id);
+              continue;
+            }
+            Object.assign(p, at);
+            grouped.push(id);
+          }
+          z.greenwoodTreasuryYardLayoutAudit = { grouped, skipped };
+          z.greenwoodTreasuryYardLayoutVersion = 1;
+        }
         if (
           z.id !== 'vale' ||
           z.greenwoodOwnerCompoundVersion === 2 ||
@@ -2089,6 +2130,18 @@
     if (kind === 'thorn-lodge') {
       // Appropriated agricultural store: the loading opening is retained at
       // wolf scale while the surrounding monumental roof is reauthored.
+      // Small body contact under the actual barn walls, not a displaced oval.
+      poly(
+        [
+          [-60, -1],
+          [31, 16],
+          [85, -2],
+          [85, 2],
+          [31, 21],
+          [-60, 4],
+        ],
+        '#293a2f66',
+      );
       poly(
         [
           [-63, 0],
@@ -2272,247 +2325,164 @@
       );
       lantern(40, -25);
     } else if (kind === 'thorn-rest-bay') {
-      oval(0, 10, 67, 15, '#142a233b');
-      // Open-sided timber shelter. The real posts hold a single continuous
-      // sloping roof; the wolf bedding remains visible beneath the eaves.
+      // Lower former livestock lean-to, now a wolf rest bay: one continuous
+      // single-pitch roof on four grounded posts, no fake enclosed cottage.
+      // The entrance and dry bedding remain fully visible from the yard.
       poly(
         [
-          [-55, -6],
-          [-14, 8],
-          [59, -13],
-          [15, -31],
+          [-47, -5],
+          [7, 13],
+          [57, -5],
+          [3, -22],
         ],
-        '#706756',
-      );
-      poly(
-        [
-          [-52, -14],
-          [-52, -63],
-          [18, -87],
-          [18, -35],
-        ],
-        '#66513e',
+        '#786f56',
       );
       poly(
         [
-          [18, -35],
-          [18, -87],
-          [66, -70],
-          [66, -22],
+          [-44, -3],
+          [6, 10],
+          [53, -5],
+          [3, -19],
         ],
-        '#594938',
+        '#80785c',
       );
+      // A short rear windbreak, below the open eaves.
       poly(
         [
-          [-42, -24],
-          [16, -44],
-          [50, -31],
-          [-8, -8],
+          [-40, -40],
+          [5, -61],
+          [5, -26],
+          [-40, -7],
         ],
-        '#30392f',
+        '#68513c',
       );
-      oval(1, -5, 35, 10, '#b8a178');
-      for (let j = 0; j < 6; j++)
-        stroke(
-          [
-            [-32 + j * 12, -10],
-            [-26 + j * 12, -2],
-          ],
-          '#d8c492',
-          2,
-        );
-      for (const [x, y, top] of [
-        [-54, 2, -61],
-        [16, -13, -83],
-        [67, -23, -68],
-      ])
-        stroke(
-          [
-            [x, y],
-            [x, top],
-          ],
-          beam,
-          7,
-        );
-      poly(
-        [
-          [-66, -66],
-          [11, -111],
-          [79, -79],
-          [1, -39],
-        ],
-        '#855f41',
-      );
-      poly(
-        [
-          [1, -39],
-          [79, -79],
-          [86, -72],
-          [7, -32],
-        ],
-        '#41372d',
-      );
-      stroke(
-        [
-          [-66, -66],
-          [11, -111],
-          [79, -79],
-          [1, -39],
-        ],
-        '#c09a69',
-        4,
-      );
-      for (let j = 1; j <= 4; j++) {
-        const t = j / 5;
-        stroke(
-          [
-            [-64 + t * 76, -67 - t * 44],
-            [4 + t * 75, -38 - t * 42],
-          ],
-          '#ad8156',
-          1.5,
-        );
-      }
-      stroke(
-        [
-          [-55, -56],
-          [-55, -2],
-        ],
-        '#44362c',
-        4,
-      );
-      stroke(
-        [
-          [67, -67],
-          [67, -18],
-        ],
-        '#44362c',
-        4,
-      );
-      // Low rack and tether ring belong to the structure, not to a new NPC.
-      stroke(
-        [
-          [50, -35],
-          [69, -41],
-        ],
-        '#af8e60',
-        2.3,
-      );
-      oval(52, -34, 3, 4, '#c6a36b');
-    } else if (kind === 'thorn-gear') {
-      oval(0, 9, 37, 8, '#1d302839');
-      stroke(
-        [
-          [-30, 9],
-          [-30, -48],
-        ],
-        beam,
-        5,
-      );
-      stroke(
-        [
-          [27, 4],
-          [27, -49],
-        ],
-        beam,
-        5,
-      );
-      stroke(
-        [
-          [-36, -52],
-          [34, -56],
-        ],
-        edge,
-        6,
-      );
-      poly(
-        [
-          [-38, -49],
-          [31, -54],
-          [22, -65],
-          [-28, -60],
-        ],
-        '#71533c',
-      );
-      for (const x of [-15, 2, 18]) {
-        stroke(
-          [
-            [x, -48],
-            [x, -21],
-          ],
-          '#4a4030',
-          2,
-        );
-        oval(x, -20, 5, 3, '#a68a59');
-      }
-      poly(
-        [
-          [-26, -2],
-          [4, -12],
-          [25, -4],
-          [-5, 6],
-        ],
-        '#615443',
-      );
-      for (let i = 0; i < 3; i++)
-        stroke(
-          [
-            [-20 + i * 13, 0],
-            [-14 + i * 13, -6],
-          ],
-          '#b29b73',
-          1.5,
-        );
-    } else if (kind === 'thorn-training') {
-      oval(0, 7, 52, 13, '#705f4247');
-      for (const [x, y] of [
-        [-37, 6],
-        [0, -9],
-        [36, 5],
+      stroke([[-38, -32], [4, -50]], '#a78a64', 2);
+      for (const [x, y, topY] of [
+        [3, -19, -78],
+        [54, -7, -55],
       ]) {
+        oval(x, y + 2, 6, 2.5, '#24372766');
+        stroke([[x, y], [x, topY]], beam, 6);
+      }
+      // Raised, dry bed with a neat bank of old straw behind the open front.
+      poly(
+        [
+          [-34, 0],
+          [5, 8],
+          [35, -2],
+          [-4, -12],
+        ],
+        '#4e4638',
+      );
+      oval(0, -3, 30, 8, '#b5a074');
+      oval(-2, -5, 25, 5, '#d1bc8b');
+      for (let j = 0; j < 5; j++)
         stroke(
           [
-            [x, y + 9],
-            [x, y - 32],
+            [-25 + j * 11, -4],
+            [-19 + j * 11, 1],
           ],
-          wood,
-          6,
+          '#ddc998',
+          1.5,
         );
+      for (const [x, y, topY] of [
+        [-43, -2, -60],
+        [7, 12, -32],
+      ]) {
+        oval(x, y + 2, 6, 2.5, '#24372766');
+        stroke([[x, y], [x, topY]], beam, 6);
+      }
+      // Four eaves are a parallelogram, never crossed roof slopes.
+      const restRoof = [
+        [-48, -62],
+        [4, -86],
+        [60, -62],
+        [8, -38],
+      ];
+      poly(restRoof, '#896645');
+      poly(
+        [
+          restRoof[3],
+          restRoof[2],
+          [60, -56],
+          [8, -32],
+        ],
+        '#4a3b2d',
+      );
+      stroke(restRoof.concat([restRoof[0]]), '#c5a477', 3);
+      for (let j = 1; j < 4; j++) {
+        const t = j / 4;
         stroke(
           [
-            [x - 11, y - 27],
-            [x + 10, y - 27],
+            [-48 + 52 * t, -62 - 24 * t],
+            [8 + 52 * t, -38 - 24 * t],
           ],
-          edge,
-          3,
+          '#ad875b',
+          1.2,
         );
+      }
+      stroke([[43, -28], [53, -33]], '#b39a6f', 2);
+      oval(44, -26, 3, 4, '#c7a572');
+    } else if (kind === 'thorn-gear') {
+      // A low open gear rack on the former threshing edge, not another roof.
+      poly(
+        [
+          [-35, 7],
+          [4, 14],
+          [39, 4],
+          [0, -3],
+        ],
+        '#7e7559',
+      );
+      for (const [x, ground, top] of [
+        [-26, 9, -43],
+        [27, 4, -46],
+      ]) {
+        oval(x, ground + 1, 5, 2.3, '#24372766');
+        stroke([[x, ground], [x, top]], beam, 5);
+      }
+      stroke([[-30, -47], [32, -50]], edge, 6);
+      stroke([[-26, -29], [28, -31]], '#ab9066', 3);
+      stroke([[-25, 6], [27, -29]], '#634b38', 2);
+      for (const x of [-12, 5, 19]) {
+        stroke([[x, -47], [x, -25]], '#4a4030', 2);
+        oval(x, -23, 4, 2.5, '#aa8a5c');
+      }
+      // Two rolled canvas bundles and the scout's compact field equipment.
+      poly([[-21, 3], [-2, 6], [10, 0], [-8, -3]], '#76664d');
+      poly([[7, 5], [23, 7], [31, 2], [15, 0]], '#ac956f');
+      stroke([[-18, 1], [-3, 4]], '#c3ac81', 1.5);
+    } else if (kind === 'thorn-training') {
+      // A coherent practice rail with two low targets; open yard remains clear.
+      poly(
+        [
+          [-42, 7],
+          [2, 18],
+          [44, 7],
+          [0, -5],
+        ],
+        '#82775a',
+      );
+      stroke([[-34, -20], [33, -24]], '#836848', 4);
+      for (const [x, y, height] of [
+        [-32, 8, 36],
+        [32, 5, 31],
+      ]) {
+        oval(x, y + 2, 5, 2.4, '#22352666');
+        stroke([[x, y], [x, y - height]], wood, 6);
         poly(
           [
-            [x - 7, y - 30],
-            [x + 7, y - 30],
-            [x + 9, y - 16],
-            [x - 9, y - 16],
+            [x - 8, y - height + 4],
+            [x + 8, y - height + 4],
+            [x + 10, y - height + 19],
+            [x - 10, y - height + 19],
           ],
-          '#958067',
+          '#998369',
         );
-        stroke(
-          [
-            [x - 6, y - 22],
-            [x + 6, y - 22],
-          ],
-          '#5b5142',
-          1.6,
-        );
+        stroke([[x - 6, y - height + 11], [x + 6, y - height + 11]], '#5b5142', 1.5);
       }
-      stroke(
-        [
-          [-36, 6],
-          [0, -9],
-          [36, 5],
-        ],
-        '#8b785a',
-        1.4,
-      );
+      // The practice line meets the posts, not a free-standing row of stakes.
+      stroke([[-32, 5], [32, 2]], '#ac8e63', 2);
     } else if (kind === 'thorn-rear-rail' || kind === 'thorn-east-rail') {
       const lean = kind === 'thorn-rear-rail' ? -1 : 1;
       const x1 = -52,
@@ -2538,6 +2508,7 @@
       for (let i = 0; i < 4; i++) {
         const x = x1 + i * 34,
           y = y1 + ((y2 - y1) * i) / 3;
+        oval(x, y + 7, 5, 2.2, '#24372766');
         stroke(
           [
             [x, y + 6],

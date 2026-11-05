@@ -9675,18 +9675,32 @@
             2,
           );
         mountedSconce(-35,-18,'workshop');
-        // Existing wooden receiving apron, ledgers and weighed/sorted goods.
+        // A shallow former loading apron with one clear doorway lane,
+        // flanked by secure goods and a modest records station.
         softPoly(
           [
-            [-40, 9],
-            [14, 21],
-            [43, 11],
-            [-12, -1],
+            [-49, 7],
+            [15, 21],
+            [46, 10],
+            [-18, -5],
           ],
-          '#8d7552',
+          '#82745a',
         );
-        craftAt(39, 8, 0.42, () => craftedDecoration('crate'));
-        craftAt(-36, 8, 0.38, () => craftedDecoration('scribe-desk'));
+        softPoly(
+          [
+            [-19, 8],
+            [8, 14],
+            [24, 7],
+            [-3, 0],
+          ],
+          '#b09970',
+        );
+        for (const x of [-10, 0, 10])
+          line([[x, 4], [x + 4, 12]], '#80694c', 1.2);
+        // The loose courtyard ledger and barrel now stand together outside;
+        // these small near-wall details keep the frontage from being empty.
+        craftAt(40, 7, 0.36, () => craftedDecoration('crate'));
+        craftAt(-38, 8, 0.31, () => craftedDecoration('scribe-desk'));
         return true;
       }
       const key =

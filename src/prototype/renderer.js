@@ -1103,14 +1103,20 @@
       const littlePlant = e.greenwoodNature === 'understory' ||
         /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure);
       if (littlePlant) { rx = 7; ry = 2; }
+      // The farmyard painter now supplies small contact at actual posts and
+      // timbers. Generic entity-sized bubbles would double those contacts.
+      const selfGrounded = String(e.greenwoodFacility || '').startsWith('thorn-');
+      const treasuryServiceProp = /^stronghold-treasury-yard-prop-/.test(String(e.id || ''));
+      if (treasuryServiceProp) { rx = 11; ry = 3; }
       rx *= scale;
       ry *= scale;
       // Keep only restrained contact darkness at night. Sun-cast ovals
       // cannot remain at full daylight strength beneath moonlight/lanterns.
       // Reading the existing daylight phase adds no saved state or new clock.
       const darkness = !game.isDungeon?.() ? game.daylightPhase?.().darkness || 0 : 0;
-      const shadowOpacity = Math.round(16 * (e.greenwoodWall || flatGround ? 0 :
-        littlePlant ? 0.30 : 1) * (1 - 0.72 * darkness)) / 16;
+      const shadowOpacity = Math.round(16 * (e.greenwoodWall || flatGround || selfGrounded ? 0 :
+        treasuryServiceProp ? 0.42 : littlePlant ? 0.30 : 1) *
+        (1 - 0.72 * darkness)) / 16;
       const type = e.renderKind,
         important =
           type === 'hero' || e.type === 'boss' || e.captain || e.roomCaptain || e.kind === 'quests';

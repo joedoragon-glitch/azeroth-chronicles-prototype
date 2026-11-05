@@ -5,7 +5,7 @@
   "designId": "greenwood-scornfang-counting-house",
   "name": "Scornfang's appropriated farm storehouse Treasury",
   "kind": "structure",
-  "nextAction": "Roof topology Priority 1 is proposed on draft art/greenwood-treasury-homestead-roofs-20261105; run focused native review and await owner appearance acceptance. Secondary shelter and courtyard correction remain independent later priorities; no sprite production or release authorized.",
+  "nextAction": "Complete native/Canvas/Pixi visual and focused functional review of the joint Priority 1–4 artistic candidate in draft PR #832. No merge, deployment, new raster production or owner's visual acceptance is claimed.",
   "context": {
     "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
     "decisionSummary": "Owner explicitly directs that Scornfang took possession of an agricultural structure to establish his Treasury and workplace. Supersedes purpose-built counting-house direction; preserve agricultural origin beneath security/receiving/accounting adaptations.",
@@ -18,13 +18,14 @@
   },
   "decisions": {
     "conceptAcceptance": "Owner-selected appropriated agricultural structure; no unseen procedural/raster appearance acceptance.",
-    "proceduralDesignAcceptance": "Existing procedural identity retained. New Priority 1 roof redraw is a draft implementation only; owner aesthetic acceptance and real-device rendering remain pending.",
+    "proceduralDesignAcceptance": "Priority 1–4 structural and compositional candidates authored in shared procedural art; original identities preserved. Focused tests and direct owner visual acceptance remain separate gates.",
     "spriteProductionAuthorization": "Not requested in this task.",
     "generatedAppearanceAcceptance": "None.",
     "pendingCorrections": [
       "Replace recycled cottage with recognizable former farm storage building",
       "Adapt original broad loading opening, secure storage and work apron for Treasury/reclamation use",
-      "Add restrained reinforcement, accounting/weights/records and organized goods; preserve routes/interior/recovery"
+      "Add restrained reinforcement, accounting/weights/records and organized goods; preserve routes/interior/recovery",
+      "Check roof joins, open rest bay, yard clusters, and restrained post grounding in both renderers at 150% camera before visual signoff"
     ]
   },
   "reference": {
