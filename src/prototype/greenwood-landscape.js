@@ -426,6 +426,89 @@
           this.s.zone = previous;
         }
       }
+      // Independent route/bridge version: existing v4 saves must never replay
+      // greenwoodRedesignFinish's destructive scenery and placement passes.
+      greenwoodRoadBridgeFinish(z) {
+        const cfg = R.greenwoodLayout;
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodRoadBridgeVersion === 1
+        )
+          return;
+        const scale = cfg.scale;
+        // R07's eastern bank path must leave the south bridge straight before
+        // turning toward Skeleton Watch. R08 must not double-paint 200 units
+        // of the main cart line before reaching its own Treasury junction.
+        const replacePoints = (index, expected, newPoints) => {
+          const route = z.greenwoodRoutes?.[index];
+          const path = z.footpaths?.[index - 4];
+          if (!route || !path || route.kind !== 'path') return false;
+          const matches = (p, x, y) =>
+            Math.abs(p.x - x * scale) < 0.01 && Math.abs(p.y - y * scale) < 0.01;
+          if (!expected.every(([j, x, y]) => matches(path[j] || {}, x, y)))
+            return false;
+          const points = newPoints.map(([x, y]) => ({ x: x * scale, y: y * scale }));
+          z.footpaths[index - 4] = points;
+          route.points = points;
+          return true;
+        };
+        replacePoints(
+          6,
+          [[0, 1740, 2280], [1, 2150, 2350]],
+          [[1740, 2280], [1950, 2280], [2150, 2350], [2300, 2220], [2670, 2220]],
+        );
+        replacePoints(
+          7,
+          [[0, 2070, 1000], [1, 1870, 1000]],
+          [[1870, 1000], [1870, 1250], [2120, 1250]],
+        );
+        z.greenwoodRoadKinds = z.greenwoodRoutes
+          ?.filter((r) => r.kind !== 'path')
+          .map((r) => r.kind) || ['cart', 'farm', 'farm', 'farm'];
+
+        // Crossing width metadata, collision gap and illustrated deck now
+        // describe one physical width. Existing art IDs and discoveries stay.
+        if (Array.isArray(z.bridgeApproaches))
+          z.bridgeApproaches.forEach((bridge, j) => {
+            bridge.width = j === 0 ? 100 : 56;
+          });
+
+        // A save can place a traveling actor near the *old* broad bridge
+        // edge. Move only an actor stranded by the newly narrower water gap,
+        // into the same crossing at its centerline; do not teleport residents,
+        // loot, work orders, or owned buildings across the river.
+        const affected = [];
+        const gaps = R.barriers[0].gaps;
+        const actors = [
+          ...z.enemies.filter((p) => p.hp > 0),
+          ...(this.s.zone === 'vale' ? [this.hero, ...this.s.party] : []),
+        ];
+        for (const p of actors) {
+          if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
+          for (const [lo, hi] of gaps) {
+            const center = (lo + hi) / 2;
+            const [left, right] = riverBanks(center, cfg.size);
+            if (
+              Math.abs(p.y - center) > 90 ||
+              p.x < left - 18 ||
+              p.x > right + 18 ||
+              !this.blocked(p.x, p.y, 'vale', p.r || 12, true)
+            )
+              continue;
+            if (!this.blocked(p.x, center, 'vale', p.r || 12, true)) {
+              p.y = center;
+              for (const key of ['path', 'pathTarget', 'idleWanderTarget'])
+                delete p[key];
+              affected.push(p.id || 'hero');
+            }
+            break;
+          }
+        }
+        z.greenwoodRoadBridgeAudit = { snappedActors: affected };
+        z.greenwoodRoadBridgeVersion = 1;
+      }
       greenwoodRedesignFinish(z) {
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 || z.greenwoodRedesignScene === cfg.sceneVersion)
