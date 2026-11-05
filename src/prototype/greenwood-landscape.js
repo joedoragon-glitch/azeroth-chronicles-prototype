@@ -1604,8 +1604,10 @@
     ctx.closePath();
   }
   function appendRoadCap(ctx, screen, point, width) {
+    // Match the clockwise winding of each quad. Opposite winding would
+    // cancel in Canvas's nonzero fill and punch holes at bend/junction caps.
     for (let k = 0; k < 12; k++) {
-      const a = (k * Math.PI) / 6;
+      const a = (-k * Math.PI) / 6;
       const p = screen({ x: point.x + Math.cos(a) * width, y: point.y + Math.sin(a) * width });
       if (k) ctx.lineTo(p.x, p.y);
       else ctx.moveTo(p.x, p.y);
