@@ -1272,6 +1272,10 @@ body[data-experience='phone'] #modal-actions output {
   }
   body[data-experience='phone'] #modal-description {
     margin-bottom: 5px;
+    line-height: 1.5;
+  }
+  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-description {
+    /* One short setup sentence, not a narrative reading page. */
     line-height: 1.35;
   }
   body[data-experience='phone'] #modal-actions {
@@ -1286,7 +1290,7 @@ body[data-experience='phone'] #modal-actions output {
   body[data-experience='phone'] #modal-actions .detail,
   body[data-experience='phone'] #modal-actions .menu-setting .detail {
     margin-top: 2px;
-    line-height: 1.3;
+    line-height: 1.35;
   }
   body[data-experience='phone'] #close-button {
     flex-shrink: 0;
@@ -1465,7 +1469,7 @@ body[data-experience='phone'] #modal-actions output {
   body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-role,
   body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-growth {
     margin-top: 1px;
-    line-height: 1.2;
+    line-height: 1.35;
   }
   @media (max-height: 400px) {
     /* The heading + visible four cards already explain this step.
