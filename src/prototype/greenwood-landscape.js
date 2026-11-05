@@ -1576,6 +1576,28 @@
     const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / n));
     return Math.hypot(p.x - (a.x + dx * t), p.y - (a.y + dy * t));
   }
+  function nearWideRoad(a, b, roads) {
+    // Split a footpath finely only where it could meet a broad road. Most
+    // woodland trails are far from carriageways and keep their original,
+    // much cheaper curved segments.
+    const cross = (p, q, t) => (q.x - p.x) * (t.y - p.y) - (q.y - p.y) * (t.x - p.x);
+    for (const road of roads) {
+      const cutoff = roadWidths[road.kind] + roadWidths.path + 12;
+      for (let i = 1; i < road.points.length; i++) {
+        const c = road.points[i - 1], d = road.points[i];
+        if (
+          distanceToRoadSegment(a, c, d) <= cutoff ||
+          distanceToRoadSegment(b, c, d) <= cutoff ||
+          distanceToRoadSegment(c, a, b) <= cutoff ||
+          distanceToRoadSegment(d, a, b) <= cutoff ||
+          (cross(a, b, c) * cross(a, b, d) < 0 &&
+           cross(c, d, a) * cross(c, d, b) < 0)
+        )
+          return true;
+      }
+    }
+    return false;
+  }
   function prepareRoadPaint(roads, footpaths = [], kinds = []) {
     const wide = (roads || []).map((points, i) => ({
       kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
@@ -1587,7 +1609,8 @@
       let run = [];
       for (let i = 1; i < points.length; i++) {
         const a = points[i - 1], b = points[i];
-        const len = distance(a, b), count = Math.max(1, Math.ceil(len / 16));
+        const len = distance(a, b);
+        const count = nearWideRoad(a, b, wide) ? Math.max(1, Math.ceil(len / 16)) : 1;
         for (let j = 0; j < count; j++) {
           const at = j / count, bt = (j + 1) / count;
           const p = { x: a.x * (1 - at) + b.x * at, y: a.y * (1 - at) + b.y * at };
