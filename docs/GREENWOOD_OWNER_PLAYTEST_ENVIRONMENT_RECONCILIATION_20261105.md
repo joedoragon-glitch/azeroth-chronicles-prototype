@@ -3,6 +3,16 @@
 **So I Became the Dark Lord's Problem (SIBDLP) | 5 November 2026**
 **Controlling continuation for PR #828.** This is the completed design/reconciliation stage requested by Joel. Engineering implementation is the next stage; this document does not claim owner acceptance of unseen art, successful integration, merge, deployment or device verification.
 
+## Active engineering checkpoint - 5 November 2026
+
+Owner has authorized staged implementation in #828. Current main e25ad8e8 is already an ancestor; no main merge was needed. Independently active watermill #814 head 3562d4d6 adds a shallow north creek, culvert, local millrace bridge, appended service routes, and proposes an 80-unit southern crossing. This branch does not import or replace those systems; merged 100/56 bridge geometry is retained until compatibility is proved against the mill candidate. No new scenery may occupy its proposed lane/culvert corridors.
+
+Implemented candidates: reauthored compact Thornfang agricultural building with unchanged usable opening and matched lamp anchor; one existing Crown standard; purpose-adapted Scornfang storehouse exterior; enlarged Goblin shelters and connected stockade expansion; idempotent v4 compound update; actual-wall-distance fort predicate; public light anchors with road clearance; shared native ground microtexture; source-driven occupied-site light additions and native defensively placed trap candidates. Full terrain layering, trade-scene completeness, scene review and global site disposition remain pending.
+
+Passed before this checkpoint: original fortification and road/bridge tests; compound/fixture/repeated-v4-restore native test; botanical integration; original regional street baseline after lamp clearance repair. Thornfang patrol test fails identically on unchanged main e25ad8e8 at 'real traversable boss movement'; compare #814's documented southern-crossing fix rather than attributing it to the new homestead. The native mill-art test's initial failure was its source provenance digest after authorized visual source changes; maintain reviewed evidence and rerun. No broad suite, merge, deployment, final art acceptance or device verification claimed.
+
+Next: run final focused tests on the checkpoint, inspect full-scene Canvas/Pixi frames, finish global occupied-site/trap audit and rural material/trade work, and test coexistence with #814 without overwriting it. Relevant failures remain holds; unrelated baseline failures are tracked separately.
+
 ## Start here
 
 Continue on existing **#828**, branch `fix/greenwood-owner-visual-review-20261105`. Do not create another environmental PR. It already contains the original chat's first corrections and this handoff. Use #825 only as a source of selectively reviewed candidates; do not merge that whole branch into this one. Keep the isolated fort correction in #826 as the preferred engineering source, subject to comparison with #827 and final wall-distance tests. One final implementation of each shared system must survive.

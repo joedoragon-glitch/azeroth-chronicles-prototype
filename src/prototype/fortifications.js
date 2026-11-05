@@ -15,26 +15,25 @@
     // the deliberate gate opening and prevents old wall-index offsets from
     // shifting combat protection away from the visible structure.
     function wallFootprint(walls, margin) {
-      const endpoints = walls.flatMap((p) => {
-        const line = p.greenwoodWall;
-        return line ? [line.a, line.b] : [];
-      }).filter((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y));
+      const endpoints = walls
+        .flatMap((p) => {
+          const line = p.greenwoodWall;
+          return line ? [line.a, line.b] : [];
+        })
+        .filter((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y));
       if (endpoints.length < 6) return null;
-      const sorted = endpoints
-        .map(({ x, y }) => [x, y])
-        .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-      const cross = (o, a, b) =>
-        (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+      const sorted = endpoints.map(({ x, y }) => [x, y]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
       const half = (points) => {
         const hull = [];
         for (const p of points) {
-          while (hull.length >= 2 && cross(hull.at(-2), hull.at(-1), p) <= 0)
-            hull.pop();
+          while (hull.length >= 2 && cross(hull.at(-2), hull.at(-1), p) <= 0) hull.pop();
           hull.push(p);
         }
         return hull;
       };
-      const lower = half(sorted), upper = half(sorted.slice().reverse());
+      const lower = half(sorted),
+        upper = half(sorted.slice().reverse());
       const hull = [...lower.slice(0, -1), ...upper.slice(0, -1)];
       if (hull.length < 3) return null;
       if (!(margin > 0)) return hull;
@@ -44,11 +43,11 @@
       // chords never shrink the promised leeway at diagonal approaches.
       for (let i = 0; i < hull.length; i++) {
         const previous = hull[(i + hull.length - 1) % hull.length];
-        const at = hull[i], next = hull[(i + 1) % hull.length];
-        const angle = (a, b) => Math.atan2(
-          -(b[0] - a[0]), b[1] - a[1],
-        );
-        let start = angle(previous, at), end = angle(at, next);
+        const at = hull[i],
+          next = hull[(i + 1) % hull.length];
+        const angle = (a, b) => Math.atan2(-(b[0] - a[0]), b[1] - a[1]);
+        let start = angle(previous, at),
+          end = angle(at, next);
         while (end <= start) end += 2 * Math.PI;
         const count = Math.max(1, Math.ceil((end - start) / (Math.PI / 10)));
         const step = (end - start) / count;
@@ -80,8 +79,10 @@
         // Indoor walkable rooms keep their existing exact bounds.
         const outdoorRectangle = (x1, x2, y1, y2) =>
           rectangle(
-            x1 - cfg.outdoorLeeway, x2 + cfg.outdoorLeeway,
-            y1 - cfg.outdoorLeeway, y2 + cfg.outdoorLeeway,
+            x1 - cfg.outdoorLeeway,
+            x2 + cfg.outdoorLeeway,
+            y1 - cfg.outdoorLeeway,
+            y2 + cfg.outdoorLeeway,
           );
         const add = (id, points, walls, partitions = []) =>
           areas.push({
@@ -133,7 +134,8 @@
           const actualWallPoints = walls.some((p) => p.greenwoodWall)
             ? wallFootprint(walls, cfg.outdoorLeeway)
             : null;
-          const points = actualWallPoints ||
+          const points =
+            actualWallPoints ||
             (plan.defenseStyle === 'fort'
               ? outdoorRectangle(center.x - 150, center.x + 150, center.y - 150, center.y + 150)
               : ring.map(([x, y]) => {
@@ -141,6 +143,27 @@
                   return [center.x + x * scale, center.y + y * scale];
                 }));
           add(plan.id, points, walls);
+          if (actualWallPoints) {
+            // Preserve authored ordering and concavity, closing only gate gaps.
+            const ordered = walls
+              .filter((p) => p.greenwoodWall)
+              .sort(
+                (a, b) =>
+                  Number(a.id.match(/-wall-(\d+)$/)?.[1] || 0) -
+                  Number(b.id.match(/-wall-(\d+)$/)?.[1] || 0),
+              );
+            const boundary = ordered
+              .flatMap((p) => [p.greenwoodWall.a, p.greenwoodWall.b])
+              .map((p) => [p.x, p.y]);
+            const area = areas.at(-1);
+            area.wallBoundary = boundary;
+            area.wallEdges = boundary.map((a, i) => {
+              const b = boundary[(i + 1) % boundary.length],
+                dx = b[0] - a[0],
+                dy = b[1] - a[1];
+              return { a, b, dx, dy, len2: dx * dx + dy * dy };
+            });
+          }
         }
         for (const mini of z.minis || []) {
           const walls = z.props.filter(
@@ -199,7 +222,19 @@
           !this.s.zones[this.zoneId]?.enemies.some((u) => u === e || u.id === e.id)
         )
           return null;
-        return this.fortAreas().find((f) => contains(f.points, e)) || null;
+        return (
+          this.fortAreas().find((f) => {
+            if (!f.wallBoundary) return contains(f.points, e);
+            if (contains(f.wallBoundary, e)) return true;
+            const margin2 = R.balance.fortifications.outdoorLeeway ** 2;
+            return f.wallEdges.some(({ a, dx, dy, len2 }) => {
+              const t = len2
+                ? Math.max(0, Math.min(1, ((e.x - a[0]) * dx + (e.y - a[1]) * dy) / len2))
+                : 0;
+              return (e.x - a[0] - t * dx) ** 2 + (e.y - a[1] - t * dy) ** 2 <= margin2;
+            });
+          }) || null
+        );
       }
       enemyRanged(e) {
         return e.ranged ?? ['archer', 'crownguard'].includes(e.species);

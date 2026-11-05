@@ -6,1052 +6,154 @@
   // Every row requires an exact matching AFTER coordinate; unrelated saves
   // and player-built objects are deliberately never repositioned.
   const dev233StreetInverse = {
-    "frontier": [
+    frontier: [
+      ['props', 'settlement-minor-0#1', 312.5, 2480.31, 216.81, 2371.37],
+      ['props', 'settlement-minor-2#1', 700, 2620, 680.67, 2506.64],
+      ['props', 'settlement-minor-4#1', 545, 2940, 657.63, 3080.41],
+      ['props', 'mini-wall-field-warlord-17#1', 3104.72, 1472.13, 3203.97, 1414.04],
+      ['props', 'aesthetic-hamlet-10#1', 1175, 1120, 1092.46, 1140.32],
+      ['props', 'aesthetic-nature-15#1', 312.28, 1282.28, 258.11, 1272.74],
+      ['props', 'aesthetic-nature-21#1', 190, 2732, 149.35, 2769.05],
+      ['props', 'aesthetic-nature-24#1', 571.71, 1130.71, 617.26, 1161.52],
+      ['props', 'aesthetic-nature-26#1', 379, 1366, 294.28, 1359.05],
+      ['props', 'aesthetic-nature-27#1', 282.54, 1814.46, 249.96, 1858.77],
+      ['props', 'aesthetic-nature-28#1', 450, 1931, 512.77, 1988.31],
+      ['props', 'aesthetic-nature-29#1', 468, 2207, 610.61, 2180.77],
+      ['props', 'aesthetic-nature-30#1', 386, 2452, 345.65, 2489.38],
+      ['props', 'aesthetic-nature-31#1', 405, 2708, 517.21, 2733.19],
+      ['props', 'aesthetic-nature-32#1', 468, 2929, 500.85, 2973.12],
+      ['props', 'aesthetic-nature-37#1', 626, 1657, 612.44, 1603.7],
+      ['props', 'aesthetic-nature-40#1', 714, 2720, 893.6, 2731.97],
+      ['props', 'aesthetic-nature-43#1', 937, 189, 983.35, 159.4],
+      ['props', 'aesthetic-nature-62#1', 1270, 2232, 1268.66, 2286.98],
+      ['props', 'aesthetic-nature-69#1', 1692.37, 1867.83, 1598.95, 1800.77],
+      ['props', 'aesthetic-bank-103#1', 1248.32, 429.84, 1341.18, 318.47],
+      ['props', 'aesthetic-bank-105#1', 1304.16, 1273, 1343.64, 1311.29],
+      ['props', 'aesthetic-bank-108#1', 1339.94, 1828.82, 1356.72, 1881.2],
+      ['props', 'aesthetic-bank-109#1', 1644.98, 1834, 1590.46, 1826.79],
+      ['props', 'frontier-layout-emberwatch-livelihood-6#1', 480, 1226.24, 528.73, 1251.75],
+      ['props', 'frontier-layout-burned-hamlet-recovery-8#1', 246.72, 1514, 96.9, 1613.78],
+      ['props', 'frontier-layout-burned-hamlet-recovery-12#1', 411.19, 1869.06, 357.91, 1882.7],
+      ['props', 'frontier-layout-burned-hamlet-recovery-13#1', 620, 1810, 610.44, 1864.16],
+      ['props', 'frontier-layout-burned-hamlet-recovery-14#1', 552.5, 1785.31, 553.86, 1840.29],
+      ['props', 'frontier-layout-burned-hamlet-recovery-15#1', 410, 1760, 368.17, 1795.72],
+      ['props', 'frontier-layout-burned-hamlet-recovery-16#1', 679.25, 1794.25, 645.38, 1837.58],
+      ['props', 'frontier-layout-roadworks-yard-23#1', 1090, 385, 1053.81, 426.42],
+      ['props', 'frontier-layout-inspection-yard-25#1', 2900, 1480, 2802.16, 1419.57],
+      ['props', 'frontier-layout-inspection-yard-26#1', 3015, 1440, 3070, 1439.41],
+      ['props', 'frontier-layout-inspection-yard-28#1', 2910, 1700, 2875.76, 1743.04],
+      ['props', 'frontier-layout-inspection-yard-29#1', 3110, 1670, 3161.58, 1689.09],
+      ['props', 'frontier-layout-checkpoint-support-32#1', 2237.3, 2806.22, 2207.69, 2852.57],
+      ['props', 'frontier-layout-checkpoint-support-33#1', 2285.45, 2853.42, 2236.89, 2879.24],
+      ['props', 'frontier-layout-checkpoint-support-36#1', 2314.69, 3132.5, 2283.49, 3177.8],
+      ['props', 'frontier-layout-bastion-cordon-40#1', 3134, 2938.23, 3174.45, 3012.99],
+      ['props', 'frontier-layout-bastion-cordon-42#1', 2881.59, 3217.12, 2886.86, 3271.87],
+      ['props', 'frontier-layout-bastion-cordon-43#1', 3136.32, 3209.08, 3171.48, 3251.37],
+      ['props', 'frontier-layout-bastion-cordon-45#1', 3234, 3042.97, 3271.82, 3082.91],
+      ['props', 'frontier-layout-route-convoy-service-47#1', 263.58, 2722.18, 235.22, 2769.3],
+      ['props', 'frontier-layout-route-convoy-service-50#1', 528.3, 2762.37, 616.54, 2560.85],
+      ['props', 'frontier-layout-route-north-ravine-works-51#1', 1192.25, 765.81, 1049.33, 790.26],
+      ['props', 'frontier-layout-route-inspection-spur-55#1', 2870, 1250, 2864.3, 1195.3],
+      ['props', 'frontier-layout-route-inspection-spur-57#1', 3029.69, 1482.5, 3112.01, 1461.34],
       [
-        "props",
-        "settlement-minor-0#1",
-        312.5,
-        2480.31,
-        216.81,
-        2371.37
-      ],
-      [
-        "props",
-        "settlement-minor-2#1",
-        700,
-        2620,
-        680.67,
-        2506.64
-      ],
-      [
-        "props",
-        "settlement-minor-4#1",
-        545,
-        2940,
-        657.63,
-        3080.41
-      ],
-      [
-        "props",
-        "mini-wall-field-warlord-17#1",
-        3104.72,
-        1472.13,
-        3203.97,
-        1414.04
-      ],
-      [
-        "props",
-        "aesthetic-hamlet-10#1",
-        1175,
-        1120,
-        1092.46,
-        1140.32
-      ],
-      [
-        "props",
-        "aesthetic-nature-15#1",
-        312.28,
-        1282.28,
-        258.11,
-        1272.74
-      ],
-      [
-        "props",
-        "aesthetic-nature-21#1",
-        190,
-        2732,
-        149.35,
-        2769.05
-      ],
-      [
-        "props",
-        "aesthetic-nature-24#1",
-        571.71,
-        1130.71,
-        617.26,
-        1161.52
-      ],
-      [
-        "props",
-        "aesthetic-nature-26#1",
-        379,
-        1366,
-        294.28,
-        1359.05
-      ],
-      [
-        "props",
-        "aesthetic-nature-27#1",
-        282.54,
-        1814.46,
-        249.96,
-        1858.77
-      ],
-      [
-        "props",
-        "aesthetic-nature-28#1",
-        450,
-        1931,
-        512.77,
-        1988.31
-      ],
-      [
-        "props",
-        "aesthetic-nature-29#1",
-        468,
-        2207,
-        610.61,
-        2180.77
-      ],
-      [
-        "props",
-        "aesthetic-nature-30#1",
-        386,
-        2452,
-        345.65,
-        2489.38
-      ],
-      [
-        "props",
-        "aesthetic-nature-31#1",
-        405,
-        2708,
-        517.21,
-        2733.19
-      ],
-      [
-        "props",
-        "aesthetic-nature-32#1",
-        468,
-        2929,
-        500.85,
-        2973.12
-      ],
-      [
-        "props",
-        "aesthetic-nature-37#1",
-        626,
-        1657,
-        612.44,
-        1603.7
-      ],
-      [
-        "props",
-        "aesthetic-nature-40#1",
-        714,
-        2720,
-        893.6,
-        2731.97
-      ],
-      [
-        "props",
-        "aesthetic-nature-43#1",
-        937,
-        189,
-        983.35,
-        159.4
-      ],
-      [
-        "props",
-        "aesthetic-nature-62#1",
-        1270,
-        2232,
-        1268.66,
-        2286.98
-      ],
-      [
-        "props",
-        "aesthetic-nature-69#1",
-        1692.37,
-        1867.83,
-        1598.95,
-        1800.77
-      ],
-      [
-        "props",
-        "aesthetic-bank-103#1",
-        1248.32,
-        429.84,
-        1341.18,
-        318.47
-      ],
-      [
-        "props",
-        "aesthetic-bank-105#1",
-        1304.16,
-        1273,
-        1343.64,
-        1311.29
-      ],
-      [
-        "props",
-        "aesthetic-bank-108#1",
-        1339.94,
-        1828.82,
-        1356.72,
-        1881.2
-      ],
-      [
-        "props",
-        "aesthetic-bank-109#1",
-        1644.98,
-        1834,
-        1590.46,
-        1826.79
-      ],
-      [
-        "props",
-        "frontier-layout-emberwatch-livelihood-6#1",
-        480,
-        1226.24,
-        528.73,
-        1251.75
-      ],
-      [
-        "props",
-        "frontier-layout-burned-hamlet-recovery-8#1",
-        246.72,
-        1514,
-        96.9,
-        1613.78
-      ],
-      [
-        "props",
-        "frontier-layout-burned-hamlet-recovery-12#1",
-        411.19,
-        1869.06,
-        357.91,
-        1882.7
-      ],
-      [
-        "props",
-        "frontier-layout-burned-hamlet-recovery-13#1",
-        620,
-        1810,
-        610.44,
-        1864.16
-      ],
-      [
-        "props",
-        "frontier-layout-burned-hamlet-recovery-14#1",
-        552.5,
-        1785.31,
-        553.86,
-        1840.29
-      ],
-      [
-        "props",
-        "frontier-layout-burned-hamlet-recovery-15#1",
-        410,
-        1760,
-        368.17,
-        1795.72
-      ],
-      [
-        "props",
-        "frontier-layout-burned-hamlet-recovery-16#1",
-        679.25,
-        1794.25,
-        645.38,
-        1837.58
-      ],
-      [
-        "props",
-        "frontier-layout-roadworks-yard-23#1",
-        1090,
-        385,
-        1053.81,
-        426.42
-      ],
-      [
-        "props",
-        "frontier-layout-inspection-yard-25#1",
-        2900,
-        1480,
-        2802.16,
-        1419.57
-      ],
-      [
-        "props",
-        "frontier-layout-inspection-yard-26#1",
-        3015,
-        1440,
-        3070,
-        1439.41
-      ],
-      [
-        "props",
-        "frontier-layout-inspection-yard-28#1",
-        2910,
-        1700,
-        2875.76,
-        1743.04
-      ],
-      [
-        "props",
-        "frontier-layout-inspection-yard-29#1",
-        3110,
-        1670,
-        3161.58,
-        1689.09
-      ],
-      [
-        "props",
-        "frontier-layout-checkpoint-support-32#1",
-        2237.3,
-        2806.22,
-        2207.69,
-        2852.57
-      ],
-      [
-        "props",
-        "frontier-layout-checkpoint-support-33#1",
-        2285.45,
-        2853.42,
-        2236.89,
-        2879.24
-      ],
-      [
-        "props",
-        "frontier-layout-checkpoint-support-36#1",
-        2314.69,
-        3132.5,
-        2283.49,
-        3177.8
-      ],
-      [
-        "props",
-        "frontier-layout-bastion-cordon-40#1",
-        3134,
-        2938.23,
-        3174.45,
-        3012.99
-      ],
-      [
-        "props",
-        "frontier-layout-bastion-cordon-42#1",
-        2881.59,
-        3217.12,
-        2886.86,
-        3271.87
-      ],
-      [
-        "props",
-        "frontier-layout-bastion-cordon-43#1",
-        3136.32,
-        3209.08,
-        3171.48,
-        3251.37
-      ],
-      [
-        "props",
-        "frontier-layout-bastion-cordon-45#1",
-        3234,
-        3042.97,
-        3271.82,
-        3082.91
-      ],
-      [
-        "props",
-        "frontier-layout-route-convoy-service-47#1",
-        263.58,
-        2722.18,
-        235.22,
-        2769.3
-      ],
-      [
-        "props",
-        "frontier-layout-route-convoy-service-50#1",
-        528.3,
-        2762.37,
-        616.54,
-        2560.85
-      ],
-      [
-        "props",
-        "frontier-layout-route-north-ravine-works-51#1",
-        1192.25,
-        765.81,
-        1049.33,
-        790.26
-      ],
-      [
-        "props",
-        "frontier-layout-route-inspection-spur-55#1",
-        2870,
-        1250,
-        2864.3,
-        1195.3
-      ],
-      [
-        "props",
-        "frontier-layout-route-inspection-spur-57#1",
-        3029.69,
-        1482.5,
-        3112.01,
-        1461.34
-      ],
-      [
-        "props",
-        "frontier-layout-route-checkpoint-logistics-61#1",
+        'props',
+        'frontier-layout-route-checkpoint-logistics-61#1',
         2305.5,
         2944.5,
         2302.95,
-        2999.44
+        2999.44,
       ],
-      [
-        "props",
-        "frontier-layout-route-bastion-cordon-65#1",
-        3139.09,
-        3004.97,
-        3176.26,
-        3045.5
-      ],
-      [
-        "props",
-        "regime-banner-frontier-3#1",
-        3073.42,
-        2575.72,
-        3128.32,
-        2572.48
-      ],
-      [
-        "props",
-        "recovery-heat-frontier-1#1",
-        517.93,
-        1070.71,
-        524.43,
-        1125.33
-      ],
-      [
-        "props",
-        "recovery-heat-frontier-17#1",
-        1218.43,
-        2058.95,
-        1200.15,
-        2110.83
-      ],
-      [
-        "props",
-        "recovery-heat-frontier-33#1",
-        2330,
-        2870,
-        2301.55,
-        2917.07
-      ],
-      [
-        "props",
-        "recovery-heat-frontier-36#1",
-        3070,
-        3130,
-        3149.73,
-        3159.45
-      ],
-      [
-        "props",
-        "recovery-heat-frontier-42#1",
-        3010,
-        1350,
-        3093.27,
-        1367.04
-      ],
-      [
-        "props",
-        "public-lantern-frontier-1#1",
-        1201.79,
-        1118.34,
-        1244.11,
-        1153.47
-      ],
-      [
-        "props",
-        "settlement-major-0#1",
-        210,
-        205,
-        156.36,
-        139.06
-      ],
-      [
-        "props",
-        "settlement-major-1#1",
-        745,
-        170,
-        781.66,
-        129
-      ],
-      [
-        "props",
-        "settlement-major-3#1",
-        1160,
-        190,
-        1180.08,
-        138.8
-      ],
-      [
-        "props",
-        "settlement-major-5#1",
-        620,
-        1320,
-        685.63,
-        1225.57
-      ],
-      [
-        "props",
-        "settlement-major-6#1",
-        975,
-        1180,
-        834.29,
-        1215.03
-      ],
-      [
-        "props",
-        "settlement-major-7#1",
-        232.22,
-        1581.57,
-        137.47,
-        2052.13
-      ],
-      [
-        "props",
-        "settlement-minor-1#1",
-        1940,
-        930,
-        2104.75,
-        1002.52
-      ],
-      [
-        "props",
-        "settlement-minor-5#1",
-        1165,
-        1420,
-        950.13,
-        1182.87
-      ],
-      [
-        "props",
-        "aesthetic-town-1#1",
-        1180,
-        835,
-        1090.59,
-        762.67
-      ],
-      [
-        "props",
-        "aesthetic-town-5#1",
-        1100,
-        995,
-        1045.02,
-        993.63
-      ],
-      [
-        "props",
-        "aesthetic-town-6#1",
-        1110,
-        1260,
-        1077.55,
-        1304.41
-      ],
-      [
-        "props",
-        "aesthetic-hamlet-9#1",
-        1190,
-        1330,
-        1242.18,
-        1347.39
-      ],
-      [
-        "props",
-        "frontier-layout-emberwatch-livelihood-0#1",
-        260,
-        1390,
-        233.81,
-        1309.14
-      ],
-      [
-        "props",
-        "frontier-layout-emberwatch-livelihood-1#1",
-        385,
-        1540,
-        120.35,
-        1593.48
-      ],
-      [
-        "props",
-        "frontier-layout-emberwatch-livelihood-2#1",
-        850,
-        1420,
-        837.6,
-        1366.42
-      ],
-      [
-        "props",
-        "frontier-layout-emberwatch-livelihood-4#1",
-        1180,
-        1510,
-        1228.45,
-        1536.02
-      ],
-      [
-        "props",
-        "frontier-layout-emberwatch-livelihood-5#1",
-        1220,
-        1180,
-        1352.5,
-        1238.89
-      ],
-      [
-        "props",
-        "frontier-layout-roadworks-yard-18#1",
-        1190,
-        725,
-        1075.81,
-        738.62
-      ],
-      [
-        "props",
-        "frontier-layout-roadworks-yard-20#1",
-        1220,
-        690,
-        1045.71,
-        734.98
-      ],
-      [
-        "props",
-        "frontier-layout-roadworks-yard-22#1",
-        1100.82,
-        434.44,
-        1011.13,
-        179.77
-      ],
-      [
-        "props",
-        "frontier-layout-route-north-ravine-works-52#1",
-        1115,
-        915,
-        1083.2,
-        870.13
-      ],
-      [
-        "props",
-        "regional-handoff-1#1",
-        1161.82,
-        1541.82,
-        1209.12,
-        1513.75
-      ],
-      [
-        "props",
-        "public-lantern-frontier-0#1",
-        475,
-        570,
-        524.71,
-        593.54
-      ],
-      [
-        "props",
-        "frontier-poppy-1#1",
-        708.43,
-        292.78,
-        664.09,
-        260.24
-      ],
-      [
-        "props",
-        "frontier-poppy-3#1",
-        550,
-        1405,
-        523.87,
-        1356.61
-      ],
-      [
-        "props",
-        "frontier-poppy-4#1",
-        1032.78,
-        1621.57,
-        981.69,
-        1641.94
-      ],
-      [
-        "props",
-        "frontier-poppy-6#1",
-        381.66,
-        2024.72,
-        344.96,
-        2065.68
-      ],
-      [
-        "props",
-        "frontier-poppy-15#1",
-        3030,
-        2180,
-        3075.44,
-        2210.99
-      ],
-      [
-        "props",
-        "frontier-poppy-17#1",
-        3130,
-        3095,
-        3166.18,
-        3136.42
-      ],
-      [
-        "npcs",
-        "supplier#1",
-        720,
-        420,
-        762.01,
-        244.97
-      ],
-      [
-        "npcs",
-        "recruiter#1",
-        385,
-        650,
-        350.82,
-        693.09
-      ],
-      [
-        "npcs",
-        "board#1",
-        550,
-        420,
-        569.88,
-        241.1
-      ],
-      [
-        "npcs",
-        "minor#1",
-        1100,
-        1100,
-        985.21,
-        1093.11
-      ]
+      ['props', 'frontier-layout-route-bastion-cordon-65#1', 3139.09, 3004.97, 3176.26, 3045.5],
+      ['props', 'regime-banner-frontier-3#1', 3073.42, 2575.72, 3128.32, 2572.48],
+      ['props', 'recovery-heat-frontier-1#1', 517.93, 1070.71, 524.43, 1125.33],
+      ['props', 'recovery-heat-frontier-17#1', 1218.43, 2058.95, 1200.15, 2110.83],
+      ['props', 'recovery-heat-frontier-33#1', 2330, 2870, 2301.55, 2917.07],
+      ['props', 'recovery-heat-frontier-36#1', 3070, 3130, 3149.73, 3159.45],
+      ['props', 'recovery-heat-frontier-42#1', 3010, 1350, 3093.27, 1367.04],
+      ['props', 'public-lantern-frontier-1#1', 1201.79, 1118.34, 1244.11, 1153.47],
+      ['props', 'settlement-major-0#1', 210, 205, 156.36, 139.06],
+      ['props', 'settlement-major-1#1', 745, 170, 781.66, 129],
+      ['props', 'settlement-major-3#1', 1160, 190, 1180.08, 138.8],
+      ['props', 'settlement-major-5#1', 620, 1320, 685.63, 1225.57],
+      ['props', 'settlement-major-6#1', 975, 1180, 834.29, 1215.03],
+      ['props', 'settlement-major-7#1', 232.22, 1581.57, 137.47, 2052.13],
+      ['props', 'settlement-minor-1#1', 1940, 930, 2104.75, 1002.52],
+      ['props', 'settlement-minor-5#1', 1165, 1420, 950.13, 1182.87],
+      ['props', 'aesthetic-town-1#1', 1180, 835, 1090.59, 762.67],
+      ['props', 'aesthetic-town-5#1', 1100, 995, 1045.02, 993.63],
+      ['props', 'aesthetic-town-6#1', 1110, 1260, 1077.55, 1304.41],
+      ['props', 'aesthetic-hamlet-9#1', 1190, 1330, 1242.18, 1347.39],
+      ['props', 'frontier-layout-emberwatch-livelihood-0#1', 260, 1390, 233.81, 1309.14],
+      ['props', 'frontier-layout-emberwatch-livelihood-1#1', 385, 1540, 120.35, 1593.48],
+      ['props', 'frontier-layout-emberwatch-livelihood-2#1', 850, 1420, 837.6, 1366.42],
+      ['props', 'frontier-layout-emberwatch-livelihood-4#1', 1180, 1510, 1228.45, 1536.02],
+      ['props', 'frontier-layout-emberwatch-livelihood-5#1', 1220, 1180, 1352.5, 1238.89],
+      ['props', 'frontier-layout-roadworks-yard-18#1', 1190, 725, 1075.81, 738.62],
+      ['props', 'frontier-layout-roadworks-yard-20#1', 1220, 690, 1045.71, 734.98],
+      ['props', 'frontier-layout-roadworks-yard-22#1', 1100.82, 434.44, 1011.13, 179.77],
+      ['props', 'frontier-layout-route-north-ravine-works-52#1', 1115, 915, 1083.2, 870.13],
+      ['props', 'regional-handoff-1#1', 1161.82, 1541.82, 1209.12, 1513.75],
+      ['props', 'public-lantern-frontier-0#1', 475, 570, 524.71, 593.54],
+      ['props', 'frontier-poppy-1#1', 708.43, 292.78, 664.09, 260.24],
+      ['props', 'frontier-poppy-3#1', 550, 1405, 523.87, 1356.61],
+      ['props', 'frontier-poppy-4#1', 1032.78, 1621.57, 981.69, 1641.94],
+      ['props', 'frontier-poppy-6#1', 381.66, 2024.72, 344.96, 2065.68],
+      ['props', 'frontier-poppy-15#1', 3030, 2180, 3075.44, 2210.99],
+      ['props', 'frontier-poppy-17#1', 3130, 3095, 3166.18, 3136.42],
+      ['npcs', 'supplier#1', 720, 420, 762.01, 244.97],
+      ['npcs', 'recruiter#1', 385, 650, 350.82, 693.09],
+      ['npcs', 'board#1', 550, 420, 569.88, 241.1],
+      ['npcs', 'minor#1', 1100, 1100, 985.21, 1093.11],
     ],
-    "crown": [
-      [
-        "props",
-        "aesthetic-nature-49#1",
-        895,
-        2437,
-        822.04,
-        2480.61
-      ],
-      [
-        "props",
-        "aesthetic-nature-65#1",
-        1554.07,
-        3041,
-        1500.65,
-        3054.09
-      ],
-      [
-        "props",
-        "crown-layout-route-levy-road-19#1",
-        278.9,
-        1563.14,
-        242.97,
-        1521.49
-      ],
-      [
-        "props",
-        "crown-layout-route-levy-road-20#1",
-        245,
-        1665,
-        201.28,
-        1698.37
-      ],
-      [
-        "props",
-        "regime-banner-crown-5#1",
-        300,
-        1530,
-        263.25,
-        1489.08
-      ],
-      [
-        "props",
-        "settlement-major-0#1",
-        180,
-        230,
-        144.51,
-        152.76
-      ],
-      [
-        "props",
-        "settlement-major-1#1",
-        400,
-        100,
-        1040,
-        100
-      ],
-      [
-        "props",
-        "settlement-major-2#1",
-        1040,
-        230,
-        1101.96,
-        171.81
-      ],
-      [
-        "props",
-        "settlement-major-3#1",
-        1040,
-        550,
-        1511.41,
-        640.4
-      ],
-      [
-        "props",
-        "settlement-major-5#1",
-        600,
-        1400,
-        120,
-        1800
-      ],
-      [
-        "props",
-        "settlement-major-6#1",
-        1040,
-        1490,
-        1446.29,
-        1349.19
-      ],
-      [
-        "props",
-        "settlement-major-7#1",
-        1040,
-        1000,
-        1455.27,
-        1240.73
-      ],
-      [
-        "props",
-        "settlement-major-8#1",
-        120,
-        360,
-        1200,
-        240
-      ],
-      [
-        "props",
-        "settlement-minor-0#1",
-        740,
-        1870,
-        620,
-        1430
-      ],
-      [
-        "props",
-        "settlement-minor-1#1",
-        1020,
-        2140,
-        1491.3,
-        2049.05
-      ],
-      [
-        "props",
-        "settlement-minor-2#1",
-        740,
-        2460,
-        260,
-        2380
-      ],
-      [
-        "props",
-        "settlement-minor-3#1",
-        968.34,
-        3024.72,
-        896.62,
-        3336.58
-      ],
-      [
-        "props",
-        "settlement-minor-4#1",
-        1020,
-        2460,
-        1260,
-        3060
-      ],
-      [
-        "props",
-        "settlement-minor-5#1",
-        680,
-        2040,
-        253.36,
-        1986.36
-      ],
-      [
-        "props",
-        "crown-layout-labor-quarter-0#1",
-        180,
-        550,
-        125.02,
-        548.67
-      ],
-      [
-        "props",
-        "aesthetic-town-0#1",
-        180,
-        710,
-        116.93,
-        653.02
-      ],
-      [
-        "props",
-        "aesthetic-town-1#1",
-        976.36,
-        1196.36,
-        953.65,
-        1146.27
-      ],
-      [
-        "props",
-        "aesthetic-town-3#1",
-        460,
-        920,
-        512.01,
-        902.12
-      ],
-      [
-        "props",
-        "aesthetic-town-4#1",
-        320,
-        610,
-        267.82,
-        627.39
-      ],
-      [
-        "props",
-        "aesthetic-town-5#1",
-        180,
-        810,
-        145.39,
-        852.75
-      ],
-      [
-        "props",
-        "aesthetic-town-6#1",
-        320,
-        840,
-        313.18,
-        894.58
-      ],
-      [
-        "props",
-        "aesthetic-hamlet-8#1",
-        650,
-        1820,
-        637.54,
-        1873.57
-      ],
-      [
-        "props",
-        "aesthetic-hamlet-10#1",
-        960,
-        2010,
-        982.45,
-        1959.79
-      ],
-      [
-        "props",
-        "aesthetic-hamlet-12#1",
-        640,
-        2250,
-        589.59,
-        2228
-      ],
-      [
-        "props",
-        "world-life-civilian-0#1",
-        290,
-        700,
-        191.39,
-        640.83
-      ],
-      [
-        "props",
-        "world-life-civilian-1#1",
-        1040,
-        1140,
-        1005.13,
-        1030.41
-      ],
-      [
-        "props",
-        "world-life-civilian-2#1",
-        180,
-        1560,
-        96.3,
-        1545.18
-      ],
-      [
-        "props",
-        "world-life-civilian-4#1",
-        790,
-        1560,
-        741.24,
-        1534.56
-      ],
-      [
-        "props",
-        "crown-layout-route-frontier-return-16#1",
-        820,
-        150,
-        977.8,
-        63.41
-      ],
-      [
-        "props",
-        "crown-layout-route-frontier-return-18#1",
-        740,
-        310,
-        761.81,
-        259.51
-      ],
-      [
-        "props",
-        "public-lantern-crown-1#1",
-        900,
-        1980,
-        797.73,
-        2032.6
-      ],
-      [
-        "npcs",
-        "recruiter#1",
-        600,
-        1100,
-        523.7,
-        1013.96
-      ],
-      [
-        "npcs",
-        "board#1",
-        600,
-        750,
-        520.06,
-        667.33
-      ],
-      [
-        "npcs",
-        "rest#1",
-        600,
-        550,
-        645.76,
-        580.51
-      ],
-      [
-        "npcs",
-        "minor#1",
-        1030,
-        1840,
-        1251.99,
-        1993.69
-      ]
-    ]
+    crown: [
+      ['props', 'aesthetic-nature-49#1', 895, 2437, 822.04, 2480.61],
+      ['props', 'aesthetic-nature-65#1', 1554.07, 3041, 1500.65, 3054.09],
+      ['props', 'crown-layout-route-levy-road-19#1', 278.9, 1563.14, 242.97, 1521.49],
+      ['props', 'crown-layout-route-levy-road-20#1', 245, 1665, 201.28, 1698.37],
+      ['props', 'regime-banner-crown-5#1', 300, 1530, 263.25, 1489.08],
+      ['props', 'settlement-major-0#1', 180, 230, 144.51, 152.76],
+      ['props', 'settlement-major-1#1', 400, 100, 1040, 100],
+      ['props', 'settlement-major-2#1', 1040, 230, 1101.96, 171.81],
+      ['props', 'settlement-major-3#1', 1040, 550, 1511.41, 640.4],
+      ['props', 'settlement-major-5#1', 600, 1400, 120, 1800],
+      ['props', 'settlement-major-6#1', 1040, 1490, 1446.29, 1349.19],
+      ['props', 'settlement-major-7#1', 1040, 1000, 1455.27, 1240.73],
+      ['props', 'settlement-major-8#1', 120, 360, 1200, 240],
+      ['props', 'settlement-minor-0#1', 740, 1870, 620, 1430],
+      ['props', 'settlement-minor-1#1', 1020, 2140, 1491.3, 2049.05],
+      ['props', 'settlement-minor-2#1', 740, 2460, 260, 2380],
+      ['props', 'settlement-minor-3#1', 968.34, 3024.72, 896.62, 3336.58],
+      ['props', 'settlement-minor-4#1', 1020, 2460, 1260, 3060],
+      ['props', 'settlement-minor-5#1', 680, 2040, 253.36, 1986.36],
+      ['props', 'crown-layout-labor-quarter-0#1', 180, 550, 125.02, 548.67],
+      ['props', 'aesthetic-town-0#1', 180, 710, 116.93, 653.02],
+      ['props', 'aesthetic-town-1#1', 976.36, 1196.36, 953.65, 1146.27],
+      ['props', 'aesthetic-town-3#1', 460, 920, 512.01, 902.12],
+      ['props', 'aesthetic-town-4#1', 320, 610, 267.82, 627.39],
+      ['props', 'aesthetic-town-5#1', 180, 810, 145.39, 852.75],
+      ['props', 'aesthetic-town-6#1', 320, 840, 313.18, 894.58],
+      ['props', 'aesthetic-hamlet-8#1', 650, 1820, 637.54, 1873.57],
+      ['props', 'aesthetic-hamlet-10#1', 960, 2010, 982.45, 1959.79],
+      ['props', 'aesthetic-hamlet-12#1', 640, 2250, 589.59, 2228],
+      ['props', 'world-life-civilian-0#1', 290, 700, 191.39, 640.83],
+      ['props', 'world-life-civilian-1#1', 1040, 1140, 1005.13, 1030.41],
+      ['props', 'world-life-civilian-2#1', 180, 1560, 96.3, 1545.18],
+      ['props', 'world-life-civilian-4#1', 790, 1560, 741.24, 1534.56],
+      ['props', 'crown-layout-route-frontier-return-16#1', 820, 150, 977.8, 63.41],
+      ['props', 'crown-layout-route-frontier-return-18#1', 740, 310, 761.81, 259.51],
+      ['props', 'public-lantern-crown-1#1', 900, 1980, 797.73, 2032.6],
+      ['npcs', 'recruiter#1', 600, 1100, 523.7, 1013.96],
+      ['npcs', 'board#1', 600, 750, 520.06, 667.33],
+      ['npcs', 'rest#1', 600, 550, 645.76, 580.51],
+      ['npcs', 'minor#1', 1030, 1840, 1251.99, 1993.69],
+    ],
   };
-  const dev233CrownLinks = [[350,600,400,600,5,120.71],[875,1825,875,1800,3,25],[1130,1220,1225,1220,5,112.07],[1040,380,840,380,5,231.62]];
+  const dev233CrownLinks = [
+    [350, 600, 400, 600, 5, 120.71],
+    [875, 1825, 875, 1800, 3, 25],
+    [1130, 1220, 1225, 1220, 5, 112.07],
+    [1040, 380, 840, 380, 5, 231.62],
+  ];
   function install(Campaign, { D, R, dungeonIds, classes }) {
     // Roster lookups are frequent during AI/render observation. Homes are
     // normally fixed; reuse their geometric distance, never the mutable roster
@@ -2331,6 +1433,115 @@
           }
         return best;
       }
+      ownerOccupiedEnvironment(z) {
+        if (z.ownerOccupiedEnvironmentVersion === 1) return;
+        const interior =
+          dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id);
+        const fire = /torch|lantern|grave-lamp|brazier|cookfire|hearth|fireplace|forge|ember/;
+        const audit = [];
+        const putLight = (id, center, structure) => {
+          if (z.props.some((p) => fire.test(p.structure || '') && dist(p, center) < 220)) {
+            audit.push({ id, status: 'existing' });
+            return;
+          }
+          for (const [dx, dy] of [
+            [-70, -55],
+            [70, -55],
+            [-100, 55],
+            [100, 55],
+            [0, -110],
+          ]) {
+            const at = { x: center.x + dx, y: center.y + dy };
+            if (
+              at.x < 40 ||
+              at.y < 40 ||
+              at.x > this.zoneSize(z.id) - 40 ||
+              at.y > this.zoneSize(z.id) - 40 ||
+              this.blocked(at.x, at.y, z.id, 12, true) ||
+              (!interior && this.distanceToRoad(z, at) < 100) ||
+              z.buildings.some((p) => dist(p, at) < 100) ||
+              z.npcs.some((p) => dist(p, at) < 45)
+            )
+              continue;
+            z.props.push({
+              id,
+              ...at,
+              r: 0,
+              decorative: true,
+              structure,
+              ownerPracticalLight: true,
+            });
+            audit.push({ id, status: 'placed' });
+            return;
+          }
+          audit.push({ id, status: 'unresolved' });
+        };
+        if (interior) {
+          const cells = new Map();
+          for (const e of z.enemies.filter((e) => !e.summon)) {
+            const home = e.home || e,
+              key = Math.floor(home.x / 350) + ':' + Math.floor(home.y / 350);
+            if (!cells.has(key)) cells.set(key, home);
+          }
+          for (const [key, home] of cells)
+            putLight(
+              'owner-occupied-light-' + z.id + '-' + key,
+              home,
+              /crypt|cellar/.test(z.id) ? 'warm-brazier' : 'torch',
+            );
+        } else {
+          for (const plan of R.creatureStrongholds.filter((p) => p.region === z.id)) {
+            const walls = z.props.filter((p) => p.stronghold === plan.id && !p.decorative);
+            if (!walls.length) continue;
+            const center = {
+              x: walls.reduce((sum, p) => sum + p.x, 0) / walls.length,
+              y: walls.reduce((sum, p) => sum + p.y, 0) / walls.length,
+            };
+            putLight(
+              'owner-occupied-light-' + plan.id,
+              center,
+              /skeleton|crypt|grave/.test(plan.id) ? 'grave-lamp' : 'cookfire',
+            );
+          }
+        }
+        if (!interior) {
+          z.ownerDefensiveTraps ||= [];
+          for (const plan of R.creatureStrongholds.filter((p) => p.region === z.id)) {
+            if (z.ownerDefensiveTraps.some((t) => t.owner === plan.id)) continue;
+            const walls = z.props.filter((p) => p.stronghold === plan.id && !p.decorative);
+            if (!walls.length) continue;
+            const cx = walls.reduce((n, p) => n + p.x, 0) / walls.length;
+            const cy = walls.reduce((n, p) => n + p.y, 0) / walls.length;
+            const right = Math.max(
+              ...walls.flatMap((p) =>
+                p.greenwoodWall ? [p.greenwoodWall.a.x, p.greenwoodWall.b.x] : [p.x],
+              ),
+            );
+            for (const [j, dy] of [-110, 110].entries()) {
+              const at = { x: right + 65, y: cy + dy };
+              if (
+                at.x > this.zoneSize(z.id) - 60 ||
+                at.y < 60 ||
+                at.y > this.zoneSize(z.id) - 60 ||
+                this.blocked(at.x, at.y, z.id, 50, true) ||
+                this.distanceToRoad(z, at) < 100 ||
+                z.nodes.some((p) => dist(p, at) < 100) ||
+                z.npcs.some((p) => dist(p, at) < 100) ||
+                dist(this.hero, at) < 160
+              )
+                continue;
+              z.ownerDefensiveTraps.push({
+                ...at,
+                kind: (R.outdoorMiniTrapKinds[z.id] || ['spikes'])[0],
+                index: 3200 + R.creatureStrongholds.indexOf(plan) * 2 + j,
+                owner: plan.id,
+              });
+            }
+          }
+        }
+        z.ownerOccupiedLightingAudit = audit;
+        z.ownerOccupiedEnvironmentVersion = 1;
+      }
       environmentCoherence(z) {
         if (
           dungeonIds.includes(z.id) ||
@@ -2873,38 +2084,56 @@
         // A dev.233 save may already contain the rejected *second* automatic pass.
         // Reverse only coordinates and Crown connector shapes with demonstrated
         // exact AFTER-state matches. Preserve every ID, reward and player camp.
-        if (!['frontier','crown'].includes(z.id) ||
-            z.finalStreetClearanceVersion !== 1 ||
-            z.regionalStreetRollbackVersion === 1) return;
-        const near = (a,b) => Math.abs(a-b) <= 0.06;
-        for (const [type,key,oldX,oldY,newX,newY] of dev233StreetInverse[z.id]) {
+        if (
+          !['frontier', 'crown'].includes(z.id) ||
+          z.finalStreetClearanceVersion !== 1 ||
+          z.regionalStreetRollbackVersion === 1
+        )
+          return;
+        const near = (a, b) => Math.abs(a - b) <= 0.06;
+        for (const [type, key, oldX, oldY, newX, newY] of dev233StreetInverse[z.id]) {
           const mark = key.lastIndexOf('#'),
-            id = key.slice(0,mark), number = Number(key.slice(mark+1)),
-            candidates = (z[type] || []).filter(p => String(p.id || p.structure || p.kind || 'unknown') === id),
-            p = candidates[number-1];
-          if (!p || !near(p.x,newX) || !near(p.y,newY)) continue;
+            id = key.slice(0, mark),
+            number = Number(key.slice(mark + 1)),
+            candidates = (z[type] || []).filter(
+              (p) => String(p.id || p.structure || p.kind || 'unknown') === id,
+            ),
+            p = candidates[number - 1];
+          if (!p || !near(p.x, newX) || !near(p.y, newY)) continue;
           p.x = oldX;
           p.y = oldY;
           if (type === 'npcs') {
             const placements = z[z.id + 'TownPlacements'];
             const cached = placements?.[id];
-            if (cached && near(cached[0],newX) && near(cached[1],newY))
-              placements[id] = [oldX,oldY];
-            if (this.s.refugeSite?.zone === z.id && this.s.refugeSite.id === id &&
-                near(this.s.refugeSite.x,newX) && near(this.s.refugeSite.y,newY))
-              Object.assign(this.s.refugeSite,{x:oldX,y:oldY});
+            if (cached && near(cached[0], newX) && near(cached[1], newY))
+              placements[id] = [oldX, oldY];
+            if (
+              this.s.refugeSite?.zone === z.id &&
+              this.s.refugeSite.id === id &&
+              near(this.s.refugeSite.x, newX) &&
+              near(this.s.refugeSite.y, newY)
+            )
+              Object.assign(this.s.refugeSite, { x: oldX, y: oldY });
           }
         }
         if (z.id === 'crown' && Array.isArray(z.roads)) {
           // Never remove an authored or player road on a vague endpoint guess:
           // length AND polyline vertex count must match a witnessed new link.
-          z.roads = z.roads.filter(road => !dev233CrownLinks.some(
-            ([x,y,tx,ty,count,length]) =>
-              road.length === count &&
-              near(road[0].x,x) && near(road[0].y,y) &&
-              near(road.at(-1).x,tx) && near(road.at(-1).y,ty) &&
-              near(road.reduce((sum,p,i) => sum + (i ? dist(p,road[i-1]) : 0),0),length)
-          ));
+          z.roads = z.roads.filter(
+            (road) =>
+              !dev233CrownLinks.some(
+                ([x, y, tx, ty, count, length]) =>
+                  road.length === count &&
+                  near(road[0].x, x) &&
+                  near(road[0].y, y) &&
+                  near(road.at(-1).x, tx) &&
+                  near(road.at(-1).y, ty) &&
+                  near(
+                    road.reduce((sum, p, i) => sum + (i ? dist(p, road[i - 1]) : 0), 0),
+                    length,
+                  ),
+              ),
+          );
         }
         z.regionalStreetRollbackVersion = 1;
       }
@@ -3599,6 +2828,7 @@
             this.greenwoodTrailLabels?.(z);
             this.greenwoodTributePlacement(z);
             this.greenwoodFreightDepot(z);
+            this.ownerOccupiedEnvironment(z);
             return z;
           }
           this.rollbackDev233GlobalStreets(z);
@@ -3637,6 +2867,7 @@
           // Keep only region-specific late street repairs; do not auto-join all roads.
           this.marchCoastalFinalClearance(z);
           this.setSceneryTraversal(z);
+          this.ownerOccupiedEnvironment(z);
           return z;
         }
         const i = this.regionIndex(),
@@ -3747,6 +2978,7 @@
           this.roomCaptainPopulation(z);
           this.interiorCoherence(z);
           this.defenderEncounterLayout(z);
+          this.ownerOccupiedEnvironment(z);
           return z;
         }
         const side = this.sideDungeon();
@@ -3823,6 +3055,7 @@
           z.sideDungeonVersion = 1;
           this.interiorCoherence(z);
           this.defenderEncounterLayout(z);
+          this.ownerOccupiedEnvironment(z);
           return z;
         }
         const region = r.id,
@@ -4071,6 +3304,7 @@
         // Keep only region-specific late street repairs; do not auto-join all roads.
         this.marchCoastalFinalClearance(z);
         this.setSceneryTraversal(z);
+        this.ownerOccupiedEnvironment(z);
         return z;
       }
       regionalDestinations(z) {
@@ -4902,9 +4136,10 @@
           const [mx, my] = D.minors[this.regionIndex(z.id)];
           const minor = { x: mx, y: my },
             homes = z.props
-              .filter((p) =>
-                ['crown-ash-house', 'crown-forgehouse'].includes(p.structure) &&
-                dist(p, minor) < 490,
+              .filter(
+                (p) =>
+                  ['crown-ash-house', 'crown-forgehouse'].includes(p.structure) &&
+                  dist(p, minor) < 490,
               )
               .sort((a, b) => dist(a, minor) - dist(b, minor));
           const clear = (p) =>
@@ -4921,18 +4156,34 @@
             ['washing', 'laundry', 'household-washing'],
           ]) {
             const id = 'crown-ash-refuge-life-' + key;
-            if (z.props.some((p) => p.id === id ||
-              (p.structure === structure && dist(p, minor) < 350))) continue;
+            if (
+              z.props.some(
+                (p) => p.id === id || (p.structure === structure && dist(p, minor) < 350),
+              )
+            )
+              continue;
             let found = null;
             for (const home of homes) {
               // Prefer open ground to one side of existing roofs, not their
               // door fronts or roads. Deterministic ring offsets survive saves.
               for (const radius of [95, 135, 180, 225]) {
-                for (const angle of [Math.PI, -Math.PI / 2, Math.PI / 2,
-                  Math.PI * 0.75, -Math.PI * 0.75, 0, Math.PI * 0.25]) {
-                  const p = { x: home.x + Math.cos(angle) * radius,
-                    y: home.y + Math.sin(angle) * radius };
-                  if (clear(p)) { found = p; break; }
+                for (const angle of [
+                  Math.PI,
+                  -Math.PI / 2,
+                  Math.PI / 2,
+                  Math.PI * 0.75,
+                  -Math.PI * 0.75,
+                  0,
+                  Math.PI * 0.25,
+                ]) {
+                  const p = {
+                    x: home.x + Math.cos(angle) * radius,
+                    y: home.y + Math.sin(angle) * radius,
+                  };
+                  if (clear(p)) {
+                    found = p;
+                    break;
+                  }
                 }
                 if (found) break;
               }
@@ -4940,8 +4191,13 @@
             }
             if (!found) continue; // Do not force a cookfire into lava or a door.
             z.props.push({
-              id, ...found, r: 0, decorative: true,
-              structure, ashRefugeDomestic: true, sceneRole: role,
+              id,
+              ...found,
+              r: 0,
+              decorative: true,
+              structure,
+              ashRefugeDomestic: true,
+              sceneRole: role,
             });
           }
           z.ashRefugeDomesticVersion = 1;
@@ -6453,9 +5709,12 @@
         // A one-time, identity-preserving parcel correction for active 3200 Vale
         // and already-saved redesigned zones. No new tribute or quest rewards.
         const cfg = R.greenwoodLayout;
-        if (z.id !== 'vale' || cfg?.version !== 2 ||
-            z.greenwoodRedesignScene !== cfg.sceneVersion ||
-            z.greenwoodFreightDepotVersion === 1)
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodFreightDepotVersion === 1
+        )
           return;
         const marker = z.npcs.find((n) => n.id === 'cache' && n.kind === 'landmark');
         if (!marker) return;
@@ -6465,20 +5724,45 @@
         try {
           target = this.safe(anchor.x, anchor.y, z.id);
         } catch (error) {
-          const checks = [[0, 0], [150, 0], [-150, 0], [0, 150],
-            [0, -150], [300, 0], [-300, 0], [0, 300], [0, -300]];
-          const nearby = z.props.filter((p) =>
-            Math.hypot(p.x - anchor.x, p.y - anchor.y) < 650)
-            .map((p) => ({ id: p.id, kind: p.structure,
-              r: p.r, decorative: p.decorative, x: p.x, y: p.y }))
+          const checks = [
+            [0, 0],
+            [150, 0],
+            [-150, 0],
+            [0, 150],
+            [0, -150],
+            [300, 0],
+            [-300, 0],
+            [0, 300],
+            [0, -300],
+          ];
+          const nearby = z.props
+            .filter((p) => Math.hypot(p.x - anchor.x, p.y - anchor.y) < 650)
+            .map((p) => ({
+              id: p.id,
+              kind: p.structure,
+              r: p.r,
+              decorative: p.decorative,
+              x: p.x,
+              y: p.y,
+            }))
             .slice(0, 24);
-          throw Error('Scornfang freight depot safe-placement audit: ' +
-            JSON.stringify({ anchor, before, activeZone: this.s.zone,
-              completeScene: z.greenwoodRedesignScene,
-              sample: checks.map(([dx, dy]) =>
-                [dx, dy, this.blocked(anchor.x + dx, anchor.y + dy, z.id),
-                this.blocked(anchor.x + dx, anchor.y + dy, z.id, 15, true)]),
-              nearby, originalError: error.message }));
+          throw Error(
+            'Scornfang freight depot safe-placement audit: ' +
+              JSON.stringify({
+                anchor,
+                before,
+                activeZone: this.s.zone,
+                completeScene: z.greenwoodRedesignScene,
+                sample: checks.map(([dx, dy]) => [
+                  dx,
+                  dy,
+                  this.blocked(anchor.x + dx, anchor.y + dy, z.id),
+                  this.blocked(anchor.x + dx, anchor.y + dy, z.id, 15, true),
+                ]),
+                nearby,
+                originalError: error.message,
+              }),
+          );
         }
         const dx = target.x - before.x,
           dy = target.y - before.y;
@@ -6511,8 +5795,14 @@
           const id = 'greenwood-cache-' + j;
           let p = z.props.find((p) => p.id === id);
           if (!p) {
-            p = { id, r: 0, decorative: true, greenwoodAuthored: true,
-              greenwoodDistrict: 'cache', structure: kind };
+            p = {
+              id,
+              r: 0,
+              decorative: true,
+              greenwoodAuthored: true,
+              greenwoodDistrict: 'cache',
+              structure: kind,
+            };
             z.props.push(p);
           }
           Object.assign(p, { x: x * sc, y: y * sc, structure: kind });
@@ -6520,11 +5810,18 @@
         // The main Crypt cartway already exists: extend only its short
         // off-road depot apron for previously saved complete scenes.
         const routes = z.greenwoodRoutes || [];
-        if (!routes.some((r) => r.kind === 'path' &&
-            r.points?.at(-1)?.x === cfg.anchors.cache.x &&
-            r.points?.at(-1)?.y === cfg.anchors.cache.y)) {
-          const spur = [{ x: 2500 * sc, y: 2660 * sc },
-            { x: cfg.anchors.cache.x, y: cfg.anchors.cache.y }];
+        if (
+          !routes.some(
+            (r) =>
+              r.kind === 'path' &&
+              r.points?.at(-1)?.x === cfg.anchors.cache.x &&
+              r.points?.at(-1)?.y === cfg.anchors.cache.y,
+          )
+        ) {
+          const spur = [
+            { x: 2500 * sc, y: 2660 * sc },
+            { x: cfg.anchors.cache.x, y: cfg.anchors.cache.y },
+          ];
           z.greenwoodRoutes ||= [];
           z.greenwoodRoutes.push({ kind: 'path', points: spur });
           z.footpaths ||= [];
@@ -6536,9 +5833,12 @@
         // Re-anchor every surviving finite Greenwood deposit to its rebuilt
         // authored landmark after scenery is final. Historical 2700/expanded
         // saves keep IDs, depletion, discovery, orders and cargo unchanged.
-        if (z.id !== 'vale' || z.tributeFortPlacementVersion === 1 ||
-            R.greenwoodLayout?.version !== 2 ||
-            z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion)
+        if (
+          z.id !== 'vale' ||
+          z.tributeFortPlacementVersion === 1 ||
+          R.greenwoodLayout?.version !== 2 ||
+          z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion
+        )
           return;
         const moved = new Set();
         for (const source of R.tributePlans.vale) {
@@ -6547,8 +5847,7 @@
           if (!marker || !node) return; // No partial migration marker.
           const [dx, dy] = source.offset,
             target = this.safe(marker.x + dx, marker.y + dy, z.id);
-          if (Math.hypot(target.x - node.x, target.y - node.y) > 1)
-            moved.add(node.id);
+          if (Math.hypot(target.x - node.x, target.y - node.y) > 1) moved.add(node.id);
           Object.assign(node, target, {
             site: source.site,
             siteName: marker.name,

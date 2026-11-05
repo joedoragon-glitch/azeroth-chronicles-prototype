@@ -194,7 +194,7 @@
     let visualScale = 1;
     // Existing watermill facade houses this lamp; no independent light actor.
     if (region === 0 && e.greenwoodFacility === 'thorn-lodge')
-      sites = [{ x: 54, y: -41, role: 'home', radius: 64, alpha: 0.20 }];
+      sites = [{ x: 40, y: -25, role: 'home', radius: 60, alpha: 0.2 }];
     else if (region === 0 && e.greenwoodFacility === 'mill')
       sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
     else if (structure === 'roadside-lantern')
@@ -203,10 +203,11 @@
       sites = [{ x: 0, y: -22, role: 'grave', radius: 66, alpha: 0.17 }];
     else if (kind === 'rest') {
       visualScale = featureScale({ ...e, renderKind: 'npc' });
-      sites = region === 0
-        ? [{ x: -25, y: -12, role: 'refuge', radius: 84, alpha: 0.27 }]
-        // Outside Greenwood, keep the historic dedicated entrance lantern.
-        : [{ x: -27, y: -9.5, role: 'refuge', radius: 76, alpha: 0.23 }];
+      sites =
+        region === 0
+          ? [{ x: -25, y: -12, role: 'refuge', radius: 84, alpha: 0.27 }]
+          : // Outside Greenwood, keep the historic dedicated entrance lantern.
+            [{ x: -27, y: -9.5, role: 'refuge', radius: 76, alpha: 0.23 }];
     } else if (structure === 'vale-cottage' || structure === 'vale-workshop') {
       visualScale = featureScale({ ...e, renderKind: 'prop' });
       if (structure === 'vale-cottage') {
@@ -215,12 +216,10 @@
         let hash = 2166136261;
         for (const ch of String(e.id || e.structure))
           hash = Math.imul(hash ^ ch.charCodeAt(0), 16777619) >>> 0;
-        sites = [{ x: -25, y: -12, role: 'home', radius: 48, alpha: 0.13,
-          lit: hash % 3 === 0 }];
-      } else
-        sites = [{ x: 27, y: -12, role: 'workshop', radius: 55, alpha: 0.16 }];
+        sites = [{ x: -25, y: -12, role: 'home', radius: 48, alpha: 0.13, lit: hash % 3 === 0 }];
+      } else sites = [{ x: 27, y: -12, role: 'workshop', radius: 55, alpha: 0.16 }];
     } else if (['quests', 'supplier', 'recruiter'].includes(kind)) {
-      sites = [{ x: 29, y: -20, role: 'stall', radius: 62, alpha: 0.20 }];
+      sites = [{ x: 29, y: -20, role: 'stall', radius: 62, alpha: 0.2 }];
     } else if (kind === 'transport' && !['⛵', '🐫', '🐉'].includes(e.icon)) {
       // The wagon painter carries this physical lantern at craftAt(-58,3,.4).
       visualScale = featureScale({ ...e, renderKind: 'npc' });
@@ -8613,7 +8612,8 @@
     // Distinct, physically mounted lamps, all centered on their actual glass.
     // These are always part of the facade; the night pass only lights the lens.
     function mountedSconce(x, y, role = 'home') {
-      const refuge = role === 'refuge', workshop = role === 'workshop',
+      const refuge = role === 'refuge',
+        workshop = role === 'workshop',
         stall = role === 'stall';
       const w = refuge ? 5.4 : workshop ? 4.6 : stall ? 4.2 : 3.8,
         h = refuge ? 7.2 : workshop ? 5.8 : stall ? 5.5 : 5.3;
@@ -8623,7 +8623,15 @@
       // Mounting plate and curved support follow the front wall/wooden post.
       softRect(x - 11, y - 8, 4, 10, '#594b3b', 1);
       for (const yy of [-6, -1]) oval(x - 9, y + yy, 0.75, 0.75, '#c0a77e');
-      line([[x - 9, y - 7], [x - 7, y - 11], [x - 2, y - 11]], iron, 2.2);
+      line(
+        [
+          [x - 9, y - 7],
+          [x - 7, y - 11],
+          [x - 2, y - 11],
+        ],
+        iron,
+        2.2,
+      );
       ctx.beginPath();
       ctx.strokeStyle = edge;
       ctx.lineWidth = 1.2;
@@ -8631,28 +8639,101 @@
       ctx.quadraticCurveTo(x + 1, y - 12, x, y - h - 2.8);
       ctx.stroke();
       // Hood, shallow bevel, protected panes and lower iron catch tray.
-      softPoly([[x - w - 1.5, y - h + 1], [x, y - h - 3.2],
-        [x + w + 1, y - h + 1], [x + w + 0.5, y - h + 2.1],
-        [x - w - 0.9, y - h + 2.1]], iron, 0.8);
-      line([[x - w, y - h + 1], [x, y - h - 2.2], [x + w, y - h + 1]], edge, 0.85);
-      softPoly([[x - w, y - h + 2], [x + w, y - h + 2],
-        [x + w - 0.7, y + h - 1.4], [x - w + 0.8, y + h - 1.4]],
-        '#434940', 0.9);
-      softPoly([[x - w + 1.2, y - h + 3], [x + w - 1.2, y - h + 3],
-        [x + w - 1.5, y + h - 2.1], [x - w + 1.5, y + h - 2.1]],
-        glass, 0.65);
-      line([[x, y - h + 2.6], [x, y + h - 1.4]], iron, 0.95);
-      line([[x - w + 2.1, y - h + 4], [x - w + 2.1, y + h - 3.2]], '#cbb990', 0.8);
-      softPoly([[x - w - 0.5, y + h - 2], [x + w + 0.5, y + h - 2],
-        [x + w - 0.6, y + h + 0.4], [x - w + 0.6, y + h + 0.4]], iron, 0.85);
-      line([[x - w + 0.6, y + h - 1.2], [x + w - 0.6, y + h - 1.2]], edge, 0.85);
+      softPoly(
+        [
+          [x - w - 1.5, y - h + 1],
+          [x, y - h - 3.2],
+          [x + w + 1, y - h + 1],
+          [x + w + 0.5, y - h + 2.1],
+          [x - w - 0.9, y - h + 2.1],
+        ],
+        iron,
+        0.8,
+      );
+      line(
+        [
+          [x - w, y - h + 1],
+          [x, y - h - 2.2],
+          [x + w, y - h + 1],
+        ],
+        edge,
+        0.85,
+      );
+      softPoly(
+        [
+          [x - w, y - h + 2],
+          [x + w, y - h + 2],
+          [x + w - 0.7, y + h - 1.4],
+          [x - w + 0.8, y + h - 1.4],
+        ],
+        '#434940',
+        0.9,
+      );
+      softPoly(
+        [
+          [x - w + 1.2, y - h + 3],
+          [x + w - 1.2, y - h + 3],
+          [x + w - 1.5, y + h - 2.1],
+          [x - w + 1.5, y + h - 2.1],
+        ],
+        glass,
+        0.65,
+      );
+      line(
+        [
+          [x, y - h + 2.6],
+          [x, y + h - 1.4],
+        ],
+        iron,
+        0.95,
+      );
+      line(
+        [
+          [x - w + 2.1, y - h + 4],
+          [x - w + 2.1, y + h - 3.2],
+        ],
+        '#cbb990',
+        0.8,
+      );
+      softPoly(
+        [
+          [x - w - 0.5, y + h - 2],
+          [x + w + 0.5, y + h - 2],
+          [x + w - 0.6, y + h + 0.4],
+          [x - w + 0.6, y + h + 0.4],
+        ],
+        iron,
+        0.85,
+      );
+      line(
+        [
+          [x - w + 0.6, y + h - 1.2],
+          [x + w - 0.6, y + h - 1.2],
+        ],
+        edge,
+        0.85,
+      );
       if (refuge) {
         // Refuge identity: protected double hook and a welcoming brass collar.
         oval(x, y - h - 4, 1.7, 1.3, '#b69a65');
-        line([[x - w - 1, y + h], [x + w + 1, y + h]], '#bbaa7a', 1.1);
+        line(
+          [
+            [x - w - 1, y + h],
+            [x + w + 1, y + h],
+          ],
+          '#bbaa7a',
+          1.1,
+        );
       } else if (workshop) {
         // A durable hood with a soot-dark underside, not a glowing workbench.
-        line([[x - w + 1, y - h + 2.9], [x + w - 1, y - h + 2.9]], '#383f3a', 1.2);
+        line(
+          [
+            [x - w + 1, y - h + 2.9],
+            [x + w - 1, y - h + 2.9],
+          ],
+          '#383f3a',
+          1.2,
+        );
       }
     }
     function craftedHouse(kind = 'house') {
@@ -8817,8 +8898,12 @@
       }
       // Corrected Greenwood design only. The five regional house palettes
       // are not license to stamp identical hardware across every settlement.
-      if (r === 0) mountedSconce(workshop ? 27 : -25, -12,
-        workshop ? 'workshop' : e.kind === 'rest' ? 'refuge' : 'home');
+      if (r === 0)
+        mountedSconce(
+          workshop ? 27 : -25,
+          -12,
+          workshop ? 'workshop' : e.kind === 'rest' ? 'refuge' : 'home',
+        );
     }
     function craftedFence(palisade = false) {
       for (const [x, h] of [
@@ -9464,6 +9549,108 @@
         rockPiece(29, 9, 12, 18, true);
         return true;
       }
+      if (boss === 'thorn') {
+        // Old agricultural loading hall adapted to secure reclamation work.
+        softPoly(
+          [
+            [-49, 0],
+            [23, 15],
+            [66, 0],
+            [-6, -15],
+          ],
+          '#78735e',
+        );
+        softPoly(
+          [
+            [-46, -48],
+            [22, -34],
+            [22, 12],
+            [-46, -2],
+          ],
+          '#957654',
+        );
+        softPoly(
+          [
+            [22, -34],
+            [62, -48],
+            [62, -1],
+            [22, 12],
+          ],
+          '#66513d',
+        );
+        softPoly(
+          [
+            [-46, -48],
+            [-13, -81],
+            [22, -34],
+          ],
+          '#9c7c56',
+        );
+        softPoly(
+          [
+            [-54, -51],
+            [-13, -91],
+            [33, -106],
+            [-6, -67],
+          ],
+          '#97714d',
+        );
+        softPoly(
+          [
+            [-13, -91],
+            [29, -36],
+            [73, -51],
+            [33, -106],
+          ],
+          '#604735',
+        );
+        line(
+          [
+            [-54, -51],
+            [-13, -91],
+            [33, -106],
+            [73, -51],
+            [29, -36],
+          ],
+          '#b5986e',
+          3,
+        );
+        // Loading doors remain visible beneath added iron straps and lock.
+        softRect(-29, -37, 37, 43, '#534635', 2);
+        for (const y of [-30, -10])
+          line(
+            [
+              [-28, y],
+              [7, y + 6],
+            ],
+            '#323833',
+            3,
+          );
+        softRect(-4, -15, 7, 9, '#a08b57', 1);
+        softRect(-18, -64, 14, 12, '#4a4032', 1);
+        for (const y of [-30, -23, -16])
+          line(
+            [
+              [36, y],
+              [52, y - 5],
+            ],
+            '#302e29',
+            2,
+          );
+        // Existing wooden receiving apron, ledgers and weighed/sorted goods.
+        softPoly(
+          [
+            [-40, 9],
+            [14, 21],
+            [43, 11],
+            [-12, -1],
+          ],
+          '#8d7552',
+        );
+        craftAt(39, 8, 0.42, () => craftedDecoration('crate'));
+        craftAt(-36, 8, 0.38, () => craftedDecoration('scribe-desk'));
+        return true;
+      }
       const key =
         boss === 'thorn'
           ? 'vale-cottage'
@@ -9547,7 +9734,12 @@
           timber([-29, 11], [-29, -27], 4);
           timber([29, 11], [29, -27], 4);
           softPoly(
-            [[-34, -26], [-26, -39], [24, -39], [35, -26]],
+            [
+              [-34, -26],
+              [-26, -39],
+              [24, -39],
+              [35, -26],
+            ],
             '#6e745c',
             1,
           );
@@ -11493,37 +11685,190 @@
       timber([x, y + 33], [x, y + 2], 3);
       // Recessed, tapered glass with a visible metal cage; daytime glass is
       // unlit, while nighttime flame is painted inside this exact silhouette.
-      poly([[x - 7, y - 5], [x + 7, y - 5], [x + 6, y + 11], [x - 6, y + 11]], '#4b574e');
-      poly([[x - 4, y - 2], [x + 4, y - 2], [x + 3.5, y + 9], [x - 3.5, y + 9]], '#86785c');
-      line([[x, y - 2], [x, y + 9]], '#515749', 1);
-      line([[x - 6, y + 11], [x + 6, y + 11]], '#62685b', 2);
-      poly([[x - 9, y - 5], [x, y - 11], [x + 9, y - 5]], '#7e8375');
-      line([[x - 3, y - 11], [x - 3, y - 16], [x + 4, y - 16]], '#666d61', 1.8);
-      line([[x - 2.2, y - 1], [x - 1.2, y + 4]], '#b0a084', 0.6);
+      poly(
+        [
+          [x - 7, y - 5],
+          [x + 7, y - 5],
+          [x + 6, y + 11],
+          [x - 6, y + 11],
+        ],
+        '#4b574e',
+      );
+      poly(
+        [
+          [x - 4, y - 2],
+          [x + 4, y - 2],
+          [x + 3.5, y + 9],
+          [x - 3.5, y + 9],
+        ],
+        '#86785c',
+      );
+      line(
+        [
+          [x, y - 2],
+          [x, y + 9],
+        ],
+        '#515749',
+        1,
+      );
+      line(
+        [
+          [x - 6, y + 11],
+          [x + 6, y + 11],
+        ],
+        '#62685b',
+        2,
+      );
+      poly(
+        [
+          [x - 9, y - 5],
+          [x, y - 11],
+          [x + 9, y - 5],
+        ],
+        '#7e8375',
+      );
+      line(
+        [
+          [x - 3, y - 11],
+          [x - 3, y - 16],
+          [x + 4, y - 16],
+        ],
+        '#666d61',
+        1.8,
+      );
+      line(
+        [
+          [x - 2.2, y - 1],
+          [x - 1.2, y + 4],
+        ],
+        '#b0a084',
+        0.6,
+      );
     }
     // Original roadside identity: the same tall weathered post and hooked
     // cage, with readable panes/rim instead of the pasted rectangular flare.
     function roadsideLamp() {
       timber([0, 15], [0, -42], 4, '#75664e');
-      line([[-1.4, -6], [-1.4, -36]], '#a69370', 0.85);
-      line([[1.8, -15], [1.8, 3]], '#4b5144', 0.65);
+      line(
+        [
+          [-1.4, -6],
+          [-1.4, -36],
+        ],
+        '#a69370',
+        0.85,
+      );
+      line(
+        [
+          [1.8, -15],
+          [1.8, 3],
+        ],
+        '#4b5144',
+        0.65,
+      );
       for (const yy of [3, -14, -28]) oval(0.6, yy, 0.85, 1.2, '#4c4c3c');
-      line([[0, -45], [0, -58], [4.5, -62], [9, -62]], '#525a51', 2.4);
-      line([[1, -45], [1, -56], [5, -60]], '#ad9877', 0.65);
+      line(
+        [
+          [0, -45],
+          [0, -58],
+          [4.5, -62],
+          [9, -62],
+        ],
+        '#525a51',
+        2.4,
+      );
+      line(
+        [
+          [1, -45],
+          [1, -56],
+          [5, -60],
+        ],
+        '#ad9877',
+        0.65,
+      );
       oval(9, -61, 1.5, 1.6, '#676f60');
       // Slightly tapered ironwork; glass sits behind a metal crossbar.
-      softPoly([[-8, -48], [8, -48], [7.2, -33], [-7.2, -33]], '#3e4a43', 1);
-      softPoly([[-5.8, -46.4], [5.8, -46.4], [5.2, -34.8], [-5.2, -34.8]],
-        '#8b8169', 0.7);
-      line([[-4.7, -45], [-4.7, -36]], '#b2a387', 0.85);
-      line([[0, -47], [0, -34]], '#4b5249', 1.2);
-      line([[4.5, -45], [4.5, -36]], '#54594b', 0.6);
-      softPoly([[-9.5, -49], [0, -55], [9.5, -49], [8.8, -46.7],
-        [-8.8, -46.7]], '#606b5e', 1.2);
-      line([[-8.4, -49.3], [0, -53.8], [8.4, -49.3]], '#b6ae90', 1);
-      softPoly([[-8.2, -34.1], [8.2, -34.1], [6.2, -31.8],
-        [-6.2, -31.8]], '#4a544c', 0.9);
-      line([[-7.4, -34.8], [7.4, -34.8]], '#998f70', 1);
+      softPoly(
+        [
+          [-8, -48],
+          [8, -48],
+          [7.2, -33],
+          [-7.2, -33],
+        ],
+        '#3e4a43',
+        1,
+      );
+      softPoly(
+        [
+          [-5.8, -46.4],
+          [5.8, -46.4],
+          [5.2, -34.8],
+          [-5.2, -34.8],
+        ],
+        '#8b8169',
+        0.7,
+      );
+      line(
+        [
+          [-4.7, -45],
+          [-4.7, -36],
+        ],
+        '#b2a387',
+        0.85,
+      );
+      line(
+        [
+          [0, -47],
+          [0, -34],
+        ],
+        '#4b5249',
+        1.2,
+      );
+      line(
+        [
+          [4.5, -45],
+          [4.5, -36],
+        ],
+        '#54594b',
+        0.6,
+      );
+      softPoly(
+        [
+          [-9.5, -49],
+          [0, -55],
+          [9.5, -49],
+          [8.8, -46.7],
+          [-8.8, -46.7],
+        ],
+        '#606b5e',
+        1.2,
+      );
+      line(
+        [
+          [-8.4, -49.3],
+          [0, -53.8],
+          [8.4, -49.3],
+        ],
+        '#b6ae90',
+        1,
+      );
+      softPoly(
+        [
+          [-8.2, -34.1],
+          [8.2, -34.1],
+          [6.2, -31.8],
+          [-6.2, -31.8],
+        ],
+        '#4a544c',
+        0.9,
+      );
+      line(
+        [
+          [-7.4, -34.8],
+          [7.4, -34.8],
+        ],
+        '#998f70',
+        1,
+      );
     }
     function pool(wet = true) {
       shaped(wet ? '#6c8378' : '#85765a', () => {
@@ -12722,12 +13067,55 @@
             // pallet, woven timber edges and a folded hide, not a stone ring.
             oval(0, 10, 38, 12, '#253b2944');
             for (const y of [-7, 4, 12])
-              line([[-29, y], [27, y + 3]], '#806b4c', 4);
-            softPoly([[-29, -3], [-15, -13], [15, -12], [29, 0], [13, 10], [-19, 7]], '#9d9066', 2);
-            softPoly([[-18, -7], [7, -12], [24, 0], [-10, 3]], '#b7a67f', 1.5);
-            line([[-16, 1], [6, 0], [22, 5]], '#746b4d', 1.1);
+              line(
+                [
+                  [-29, y],
+                  [27, y + 3],
+                ],
+                '#806b4c',
+                4,
+              );
+            softPoly(
+              [
+                [-29, -3],
+                [-15, -13],
+                [15, -12],
+                [29, 0],
+                [13, 10],
+                [-19, 7],
+              ],
+              '#9d9066',
+              2,
+            );
+            softPoly(
+              [
+                [-18, -7],
+                [7, -12],
+                [24, 0],
+                [-10, 3],
+              ],
+              '#b7a67f',
+              1.5,
+            );
+            line(
+              [
+                [-16, 1],
+                [6, 0],
+                [22, 5],
+              ],
+              '#746b4d',
+              1.1,
+            );
             for (const x of [-27, -14, 6, 19, 30])
-              line([[x, 12], [x + 5, 7], [x + 3, 2]], '#667c4b', 1.5);
+              line(
+                [
+                  [x, 12],
+                  [x + 5, 7],
+                  [x + 3, 2],
+                ],
+                '#667c4b',
+                1.5,
+              );
             break;
           }
           nest(0, 4, 1.2);
@@ -15053,15 +15441,37 @@
           if (region === 0 && e.greenwoodField) {
             // An occupied field reads as three cultivated strips, not a
             // miniature soil token. Rows are rendered, never new crop nodes.
-            for (const [dx, dy] of [[-48, 9], [0, -7], [48, -23]]) {
+            for (const [dx, dy] of [
+              [-48, 9],
+              [0, -7],
+              [48, -23],
+            ]) {
               softPoly(
-                [[dx - 32, dy + 1], [dx - 8, dy - 15], [dx + 34, dy - 5], [dx + 7, dy + 13]],
-                '#816b49', 2,
+                [
+                  [dx - 32, dy + 1],
+                  [dx - 8, dy - 15],
+                  [dx + 34, dy - 5],
+                  [dx + 7, dy + 13],
+                ],
+                '#816b49',
+                2,
               );
               for (const v of [-6, 2, 10]) {
-                line([[dx - 24 + v, dy + v * 0.3], [dx + 25 + v, dy - 6 + v * 0.3]], '#5d593d', 1.4);
+                line(
+                  [
+                    [dx - 24 + v, dy + v * 0.3],
+                    [dx + 25 + v, dy - 6 + v * 0.3],
+                  ],
+                  '#5d593d',
+                  1.4,
+                );
               }
-              for (const [fx, fy] of [[-19, 2], [-7, -3], [9, 4], [21, -3]])
+              for (const [fx, fy] of [
+                [-19, 2],
+                [-7, -3],
+                [9, 4],
+                [21, -3],
+              ])
                 foliage(dx + fx, dy + fy, 4.5, 4.5, '#6e8d51');
             }
             break;
@@ -15069,12 +15479,30 @@
           if (region === 0 && e.greenwoodKitchen) {
             for (const dx of [-28, 27]) {
               softPoly(
-                [[dx - 22, 1], [dx - 8, -17], [dx + 24, -8], [dx + 8, 11]], '#8a7752', 2,
+                [
+                  [dx - 22, 1],
+                  [dx - 8, -17],
+                  [dx + 24, -8],
+                  [dx + 8, 11],
+                ],
+                '#8a7752',
+                2,
               );
-              for (const [x, y] of [[dx - 12, -2], [dx, -8], [dx + 13, 0]])
+              for (const [x, y] of [
+                [dx - 12, -2],
+                [dx, -8],
+                [dx + 13, 0],
+              ])
                 foliage(x, y, 5, 6, '#71915c');
             }
-            line([[-52, 15], [52, 15]], '#b09b6e', 1.3);
+            line(
+              [
+                [-52, 15],
+                [52, 15],
+              ],
+              '#b09b6e',
+              1.3,
+            );
             break;
           }
           softPoly(
@@ -15899,10 +16327,25 @@
           rect(-29, -4, 58, 15, '#8a6e51');
           rect(-28, -29, 4, 35, '#684e3a');
           rect(24, -29, 4, 35, '#684e3a');
-          poly([[-34, -26], [-25, -38], [25, -38], [34, -26]], '#737b60');
+          poly(
+            [
+              [-34, -26],
+              [-25, -38],
+              [25, -38],
+              [34, -26],
+            ],
+            '#737b60',
+          );
           rect(-22, -14, 20, 12, '#96734f');
           rect(5, -17, 16, 15, '#b3a07b');
-          line([[-30, -26], [30, -26]], '#b8a083', 2);
+          line(
+            [
+              [-30, -26],
+              [30, -26],
+            ],
+            '#b8a083',
+            2,
+          );
           break;
         case 'wagon':
         case 'convoy':
@@ -18950,6 +19393,25 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
     }
+    if (outdoor && region === 0 && !blocked) {
+      // Stable low-contrast mineral/litter/grass grain lives in the existing
+      // static ground cache. No projected image, noise per frame or collision.
+      ctx.save();
+      ctx.lineWidth = 0.8;
+      const density = seed % 5;
+      for (let j = 0; j < density; j++) {
+        const h = Math.imul(seed ^ (j * 374761393), 668265263) >>> 0;
+        const u = ((h & 255) / 255 - 0.5) * 60;
+        const v = 10 + (((h >>> 8) & 255) / 255) * 21;
+        ctx.strokeStyle = j % 3 === 0 ? '#a6aa6c30' : '#78955445';
+        ctx.beginPath();
+        ctx.moveTo(p.x + u, p.y + v);
+        ctx.lineTo(p.x + u - 2, p.y + v - 2 - (h % 4));
+        if (j % 2) ctx.lineTo(p.x + u + 1, p.y + v - 1);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
     if (
       !blocked &&
       materials &&
@@ -19257,8 +19719,7 @@
         // Sparse dry-land patches rooted outside the legal river. Vary spacing,
         // side, scale and hue without per-frame RNG or new collidable props.
         for (let y = y1 + 43; y < y2 - 34; y += 91) {
-          if (R.barriers[region].gaps.some(([lo, hi]) => y >= lo - 65 && y <= hi + 65))
-            continue;
+          if (R.barriers[region].gaps.some(([lo, hi]) => y >= lo - 65 && y <= hi + 65)) continue;
           for (const side of [-1, 1]) {
             const index = Math.floor(y / 91);
             const seed =
@@ -19355,7 +19816,12 @@
             line({ x: x + 8, y: y - 4 }, { x: x + 8 + dx * 0.55, y: y + 8 }, '#c0d6c033', 0.8);
           } else {
             if (!omitTerrainMotion)
-              line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+              line(
+                { x, y: y + phase * 3 },
+                { x: x + span, y: y + 5 + phase * 3 },
+                '#9abeb788',
+                1.2,
+              );
             line(
               { x: x + span * 0.15, y: y + 12 },
               { x: x + span * 0.65, y: y + 14 },
@@ -19790,14 +20256,11 @@
               const lo = Math.max(0, pool.y - pool.ry - 30),
                 hi = Math.min(size, pool.y + pool.ry + 30),
                 land = [{ x: 0, y: lo }];
-              for (let y = lo; y < hi; y += 16)
-                land.push({ x: R.channelBanks(0, y)[0], y });
+              for (let y = lo; y < hi; y += 16) land.push({ x: R.channelBanks(0, y)[0], y });
               land.push({ x: R.channelBanks(0, hi)[0], y: hi }, { x: 0, y: hi });
               ctx.save();
               ctx.beginPath();
-              land.map(screen).forEach((v, j) =>
-                j ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y),
-              );
+              land.map(screen).forEach((v, j) => (j ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y)));
               ctx.closePath();
               ctx.clip();
               poly(rim, '#68745b');
@@ -20619,8 +21082,14 @@
     ctx.restore();
   }
   function roads(
-    ctx, paths, screen, region = 0, materials = null, viewport = null,
-    greenwoodPaths = [], greenwoodKinds = [],
+    ctx,
+    paths,
+    screen,
+    region = 0,
+    materials = null,
+    viewport = null,
+    greenwoodPaths = [],
+    greenwoodKinds = [],
   ) {
     if (region === 0 && R.greenwoodLayout?.version === 2)
       return GreenwoodLandscape.drawRoads(ctx, paths, screen, greenwoodPaths, greenwoodKinds);
@@ -20748,7 +21217,8 @@
     for (const p of renderedLights) {
       if (p.kind !== 'lantern' || p.fixture !== 'glass' || p.lit === false) continue;
       const scale = Math.max(0.2, Math.min(2.5, Number(p.scale) || 1));
-      const street = p.role === 'street', refuge = p.role === 'refuge';
+      const street = p.role === 'street',
+        refuge = p.role === 'refuge';
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.scale(scale, scale);
@@ -20829,13 +21299,26 @@
         const carried = p.kind === 'carried-lantern',
           window = p.kind === 'window',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
-          radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 :
-            p.fixture === 'glass' ? p.radius || 80 : 85,
+          radius = carried
+            ? 64
+            : window
+              ? 70
+              : p.kind === 'work-fire'
+                ? 105
+                : fire
+                  ? 90
+                  : p.fixture === 'glass'
+                    ? p.radius || 80
+                    : 85,
           y = carried || p.fixture === 'glass' ? p.y : p.y - (window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
-        glow(source, radius, window ? 0.27 : fire ? 0.3 :
-          p.fixture === 'glass' ? p.alpha || 0.25 : 0.25, tint);
+        glow(
+          source,
+          radius,
+          window ? 0.27 : fire ? 0.3 : p.fixture === 'glass' ? p.alpha || 0.25 : 0.25,
+          tint,
+        );
         if (carried) glow(source, 10, 0.5, '255,221,150');
       }
       ctx.globalCompositeOperation = 'source-over';
