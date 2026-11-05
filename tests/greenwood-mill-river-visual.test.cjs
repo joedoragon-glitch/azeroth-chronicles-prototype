@@ -87,6 +87,12 @@ assert.equal(saveHash(), snapshot, 'art and lights never mutate gameplay/save st
 // Verify that source intentionally avoids the known generic 58-unit sawtooth
 // motif for Greenwood. Other regions continue using their existing painter.
 const source = fs.readFileSync('src/prototype/visuals.js', 'utf8');
+const nativeSourceSha = crypto.createHash('sha256').update(source).digest('hex');
+const documentedSourceSha =
+  JSON.parse(fs.readFileSync('docs/evidence/SPRITE_SCOPE_RECONCILIATION.json', 'utf8'))
+    .sources['src/prototype/visuals.js'];
+console.log('Greenwood artwork provenance SHA256:', nativeSourceSha);
+assert.equal(nativeSourceSha, documentedSourceSha, 'reviewed visual source SHA256 must match native Node digest');
 assert.match(source, /if \(greenwoodShore\) \{/);
 assert.match(source, /ribbon\(-22, '#465a49'\)/);
 assert.match(source, /else \{\s*for \(let y = y1; y < y2; y \+= 58\)/);
