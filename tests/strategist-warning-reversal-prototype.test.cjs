@@ -33,7 +33,7 @@ function scene(family) {
           !g.strategistReversalCovers(warning, buddy)) continue;
       z.enemies = [boss];
       Object.assign(g.hero, onWarning, {
-        class: 'strategist', hp: 2000, maxHp: 2000, immune: 0, keeperHeld: null,
+        hp: 2000, maxHp: 2000, immune: 0, keeperHeld: null,
       });
       const soldier = g.s.party.find((p) => p.type === 'soldier');
       assert(soldier, 'starter party remains present');
@@ -174,10 +174,15 @@ assert.throws(() => new C('normal', 'strategist'), /Unknown mode or class/);
 console.log('PASS unsupported special excluded; no playable fifth class introduced');
 
 
+// The first half preserves the historical dormant proof. From here on, use
+// the real opt-in Developer-only Strategist class, including its legitimate
+// progression/talent profile and actual Cindermaw Tonic cleanup path.
+assert.equal(C.classes.strategist, undefined);
+assert.equal(C.enableStrategistDeveloperTest(), true);
 function cinderScene(targetAlly = false) {
   // Same genuine Crown actor/position used by the original Ministry suite.
   // No fabricated warning, collision bypass, or synthetic Distraint effects.
-  const g = new C('developer', 'paladin', () => 0.99);
+  const g = new C('developer', 'strategist', () => 0.99);
   g.enter('crown');
   g.s.mercyTime = 0;
   const boss = g.bossEnemy(g.boss('cindermaw'), 'normal', { x: 2200, y: 1750 });
