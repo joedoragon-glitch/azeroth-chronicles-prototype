@@ -720,7 +720,10 @@
         : '';
     }
     function labelHeight(e) {
-      return sceneryPlaceName(e) ? Math.max(130, spriteHeight(e)) : spriteHeight(e);
+      // This long, pitched granary fills the upper native phone viewport.
+      // Place its name *on* the roof instead of pushing the label offscreen
+      // above the building. Canvas and Pixi use the same projected anchor.
+      return sceneryPlaceName(e) ? 82 : spriteHeight(e);
     }
     function worldLabelVisible(e) {
       if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
@@ -3362,8 +3365,8 @@
                       : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
-          !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) &&
-            !sceneryPlaceName(e) ||
+          (!['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) &&
+            !sceneryPlaceName(e)) ||
           e.presentation === 'scout-tracks' ||
           !worldLabelVisible(e)
         )
