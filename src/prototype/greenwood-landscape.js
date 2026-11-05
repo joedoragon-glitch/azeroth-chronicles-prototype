@@ -528,7 +528,17 @@
         // This scenery pass observes routes but never edits their geometry.
         // Earlier scene-5 v4 saves have 16 corridors; the merged freight-depot
         // work adds one deliberately off-road apron without replacing any of them.
-        if (![16, 17].includes(z.greenwoodRoutes?.length)) return;
+        // The watermill's one additional farm spur comes AFTER #824's
+        // 16 original corridors plus the freight-depot apron. Admit exactly
+        // that documented 18th route; never accept arbitrary route mutations.
+        const routes = z.greenwoodRoutes || [],
+          lane = cfg.millServiceLane || [],
+          includesMillLane = routes.length === 18 &&
+            z.greenwoodWatermillVersion === 1 &&
+            routes.at(-1)?.kind === 'farm' &&
+            routes.at(-1)?.points?.length === lane.length &&
+            routes.at(-1).points.every((point, j) => distance(point, lane[j]) < 0.01);
+        if (![16, 17].includes(routes.length) && !includesMillLane) return;
         const change = (id, expected, target, detail = {}) => {
           const p = z.props.find((item) => item.id === id);
           if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
