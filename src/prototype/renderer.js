@@ -3492,23 +3492,23 @@
         : [
             ...z.props.flatMap((prop) => {
               const projected = screen(prop);
-              const fixtures = PrototypeVisuals.lightingFixtures?.(prop, projected) || [];
+              const fixtures = PrototypeVisuals.lightingFixtures?.(prop, projected, 1, game.regionIndex()) || [];
               if (fixtures.length) return fixtures;
               const kind = nightLightKind(String(prop.structure || ''));
               return kind ? [{ ...projected, kind, id: prop.id }] : [];
             }),
             ...z.buildings.flatMap((b) =>
-              b.progress >= 4 ? PrototypeVisuals.lightingFixtures?.(b, screen(b)) || [] : [],
+              b.progress >= 4 ? PrototypeVisuals.lightingFixtures?.(b, screen(b), 1, game.regionIndex()) || [] : [],
             ),
             ...game.visibleNPCs().flatMap((n) =>
               !n.interactionOnly
-                ? PrototypeVisuals.lightingFixtures?.(n, screen(n)) || []
+                ? PrototypeVisuals.lightingFixtures?.(n, screen(n), 1, game.regionIndex()) || []
                 : [],
             ),
           ]
             .filter(
               (p) =>
-                p.x > -140 && p.x < canvas.width + 140 && p.y > -160 && p.y < canvas.height + 140,
+                p.lit !== false && p.x > -140 && p.x < canvas.width + 140 && p.y > -160 && p.y < canvas.height + 140,
             )
             .sort((a, b) => {
               const da = (a.x - canvas.width / 2) ** 2 + (a.y - canvas.height / 2) ** 2;
