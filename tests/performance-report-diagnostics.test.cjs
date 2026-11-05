@@ -39,6 +39,25 @@ const { shell } = require('./helpers/production-shell.cjs');
     // One >650ms callback must activate the real existing emergency guard
     // before the graphics Auto override, followed by an actual resize request.
     app.frame(1300);
+    // Regression: the exact player-reported interruption MUST NOT stop the
+    // opt-in recorder. Both a hidden-document return and a deliberate menu
+    // return are nonterminal boundaries for the playtest evidence.
+    scope.document.hidden = true;
+    for (const fn of app.documentEvents.visibilitychange || []) fn();
+    assert.equal(scope.Prototype.started, false);
+    assert.equal(elements.get('title-screen').hidden, false);
+    assert.equal(JSON.parse(app.storage.get('sibdlp-playtest-diagnostics-v1')).active, true,
+      'background interruption checkpoints the live renderer capture');
+    scope.document.hidden = false;
+    for (const fn of app.documentEvents.visibilitychange || []) fn();
+    elements.get('title-continue').click();
+    app.frame(1330);
+    assert.equal(scope.Prototype.started, true, 'Continue resumes the campaign');
+    elements.get('menu-button').click();
+    click(label('Return to Main Menu', 'Volver al menú principal'));
+    assert.equal(scope.Prototype.started, false, 'manual title is also a nonterminal boundary');
+    elements.get('title-continue').click();
+    app.frame(1360);
     openPerformance();
     click(label('Stop renderer profiling', 'Detener registro del renderizador'));
     click(label('Export playtest report', 'Exportar informe de prueba'));
@@ -61,6 +80,14 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert(report.performance.graphicsRenderer, 'export retains renderer status');
     const capture = report.performance.rendererDiagnostics;
     assert.equal(capture.state, 'stopped');
+    const continuity = report.performance.diagnosticContinuity;
+    assert(continuity.events.some((row) =>
+      row.kind === 'return-to-title' && row.reason === 'document-hidden'));
+    assert(continuity.events.some((row) =>
+      row.kind === 'return-to-title' && row.reason === 'manual-menu'));
+    assert(continuity.priorFrameProfiles.some((entry) => entry.runtimeWindow &&
+      Number.isFinite(entry.runtimeWindow.sampledWindowMs)),
+      'pre-title rolling runtime performance survives Continue reset');
     assert.equal(capture.initialRenderer, 'canvas2d');
     assert.equal(capture.finalRenderer, 'canvas2d');
     assert.equal(capture.version, undefined, 'existing report shape has no public schema version');
@@ -113,6 +140,47 @@ const { shell } = require('./helpers/production-shell.cjs');
       'clearing optional renderer capture does not erase independent slowdown evidence');
     assert.equal(cleared.performance.rendererDiagnostics.state, 'not-recorded',
       'ordinary playtest export works without optional capture');
+
+    // A full document restart must retain a prior-clock segment and re-arm
+    // the opted-in capture. This is separate from v4 campaign serialization.
+    click(label('Start renderer profiling', 'Iniciar registro del renderizador'));
+    for (let i = 0; i < 5 && !elements.get('modal').hidden; i++)
+      elements.get('close-button').click();
+    app.frame(1800);
+    for (const fn of app.events.pagehide || []) fn();
+    const savedBeforeRestart = app.storage.get('azeroth-v4-normal');
+    const reopened = shell(language, 'paladin', { storage: app.storage, stayOnTitle: true });
+    assert.equal(app.storage.get('azeroth-v4-normal'), savedBeforeRestart,
+      'diagnostic restoration does not write or migrate campaign saves');
+    let restoredExport = null;
+    reopened.scope.URL.createObjectURL = (blob) => {
+      restoredExport = blob; return 'blob:diagnostic-continuity';
+    };
+    reopened.elements.get('title-settings').click();
+    const settingsActions = () => reopened.elements.get('modal-actions').children;
+    const settingsClick = (labelText) => {
+      const entry = settingsActions().find((item) => item.textContent.startsWith(labelText));
+      assert(entry && !entry.disabled, 'Missing title settings action: ' + labelText);
+      entry.click();
+    };
+    settingsClick(label('Screen and performance', 'Pantalla y rendimiento'));
+    settingsClick(label('Show performance details', 'Mostrar detalles de rendimiento'));
+    assert(settingsActions().some((item) => item.textContent.startsWith(
+      label('Stop renderer profiling', 'Detener registro del renderizador'))),
+      'profiler remains opt-in active after document restart');
+    settingsClick(label('Export playtest report', 'Exportar informe de prueba'));
+    assert(restoredExport);
+    const restoredReport = JSON.parse(await restoredExport.text());
+    assert.equal(restoredReport.performance.rendererDiagnostics.state, 'recording');
+    const restoredContinuity = restoredReport.performance.diagnosticContinuity;
+    assert(restoredContinuity.priorRendererSegments.length > 0,
+      'interrupted profiling survives as a separately clocked segment');
+    assert(restoredContinuity.priorRendererSegments.some((segment) =>
+      segment.boundary === 'document-restarted-or-restored'));
+    assert(restoredContinuity.priorFrameProfiles.length > 0,
+      'automatic frame-profile evidence is retained independently of profiling');
+    assert(restoredContinuity.events.some((row) =>
+      row.kind === 'document-start' && row.resumedProfiling));
   }
   console.log('Playtest export and optional renderer diagnostics pass in EN/ES.');
 })().catch((error) => { console.error(error); process.exitCode = 1; });
