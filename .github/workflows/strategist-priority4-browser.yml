@@ -1,0 +1,41 @@
+name: Strategist Priority 4 focused browser admission
+# Two real Chromium viewports only. No comprehensive suite or deployment.
+on:
+  push:
+    branches:
+      - feat/strategist-developer-playtest-20261104
+    paths:
+      - 'tests/strategist-priority4-browser.cjs'
+      - '.github/workflows/strategist-priority4-browser.yml'
+      - 'src/prototype/app.js'
+      - 'src/prototype/combat.js'
+      - 'src/prototype/menus.js'
+      - 'src/prototype/skill-reference.js'
+      - 'src/prototype/renderer.js'
+      - 'styles/phone.css'
+      - 'styles/desktop.css'
+permissions:
+  contents: read
+jobs:
+  real-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Install only the required Chromium browser
+        run: npx playwright install --with-deps chromium
+      - name: Two-viewport Developer-only interaction smoke
+        run: node tests/strategist-priority4-browser.cjs
+      - name: Preserve screenshots even when interaction fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategist-priority4-browser
+          path: test-artifacts/strategist-priority4/
+          if-no-files-found: ignore
+          retention-days: 14
