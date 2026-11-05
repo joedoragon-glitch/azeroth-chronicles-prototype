@@ -181,8 +181,9 @@
     const b = R.barriers[0];
     b.bounds = [1500 * scale, 1800 * scale, 0, size];
     b.gaps = [
-      [a.north.y - 90, a.north.y + 90],
-      [a.south.y - 65, a.south.y + 65],
+      // The actual walkable water gap and painted deck share the same span.
+      [a.north.y - 55, a.north.y + 55],
+      [a.south.y - 32, a.south.y + 32],
     ];
     const pond = ellipse(a.pond.x, a.pond.y, 140, 120),
       headrace = [
@@ -325,6 +326,181 @@
         }
         z.greenwoodRefinementAudit = audit;
         z.greenwoodRefinementVersion = 1;
+      }
+      // Non-destructive, versioned landscape composition: never replay the
+      // original scene-5 generator on an established v4 game. Keep stable
+      // gameplay/owner IDs and place only bounded, static regional decoration.
+      greenwoodCompositionFinish(z) {
+        const cfg = R.greenwoodLayout;
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodCompositionVersion === 1
+        )
+          return;
+        const scale = cfg.scale;
+        const at = (x, y) => ({ x: x * scale, y: y * scale });
+        const near = (a, b) => distance(a, b);
+        const audit = [];
+        const roads = z.greenwoodRoutes?.length === 16
+          ? z.greenwoodRoutes
+          : [
+              ...(z.roads || []).map((points, i) => ({ kind: i ? 'farm' : 'cart', points })),
+              ...(z.footpaths || []).map((points) => ({ kind: 'path', points })),
+            ];
+        if (roads.length !== 16) return;
+        // A Treasury spur used to reverse-paint a section of the main road.
+        // Share the actual junction vertex instead of overdrawing that edge.
+        const routeCopy = roads.map((r) => ({
+          kind: r.kind,
+          points: r.points.map((p) => ({ x: p.x, y: p.y })),
+        }));
+        const junction = at(1870, 1000);
+        const trunk = routeCopy[0].points;
+        const onSpine = trunk.findIndex((p) => near(p, at(2070, 1000)) < 0.1);
+        if (onSpine > 0 && !trunk.some((p) => near(p, junction) < 0.1))
+          trunk.splice(onSpine, 0, junction);
+        const spur = routeCopy[7].points;
+        if (
+          spur.length > 1 &&
+          near(spur[0], at(2070, 1000)) < 0.1 &&
+          near(spur[1], junction) < 0.1
+        )
+          spur.shift();
+        const frequency = new Map();
+        const key = (p) => Math.round(p.x * 10) + ':' + Math.round(p.y * 10);
+        for (const r of routeCopy)
+          for (const p of r.points) frequency.set(key(p), (frequency.get(key(p)) || 0) + 1);
+        // Soften open-country corners only; preserve bridge centers, shared
+        // junctions, short frontage spurs and safe original endpoints.
+        const soften = (r) => {
+          if (r.points.length < 3) return r;
+          const out = [r.points[0]];
+          for (let i = 1; i < r.points.length - 1; i++) {
+            const p = r.points[i], a = r.points[i - 1], b = r.points[i + 1];
+            if ((frequency.get(key(p)) || 0) > 1) {
+              out.push(p);
+              continue;
+            }
+            const d0 = near(a, p), d1 = near(b, p);
+            const cut = Math.min(r.kind === 'cart' ? 65 : r.kind === 'farm' ? 42 : 25, d0 * 0.19, d1 * 0.19);
+            if (cut < 10) {
+              out.push(p);
+              continue;
+            }
+            const before = { x: p.x + ((a.x - p.x) * cut) / d0, y: p.y + ((a.y - p.y) * cut) / d0 };
+            const after = { x: p.x + ((b.x - p.x) * cut) / d1, y: p.y + ((b.y - p.y) * cut) / d1 };
+            const curve = [before, 0.33, 0.67, after].map((t) => {
+              if (typeof t === 'object') return t;
+              return {
+                x: before.x * (1 - t) * (1 - t) + 2 * p.x * (1 - t) * t + after.x * t * t,
+                y: before.y * (1 - t) * (1 - t) + 2 * p.y * (1 - t) * t + after.y * t * t,
+              };
+            });
+            if (curve.some((v) => this.blocked(v.x, v.y, 'vale', 12, true)))
+              out.push(p);
+            else out.push(...curve);
+          }
+          out.push(r.points.at(-1));
+          return { kind: r.kind, points: out };
+        };
+        const shaped = routeCopy.map(soften);
+        z.greenwoodRoutes = shaped;
+        z.roads = shaped.filter((r) => r.kind !== 'path').map((r) => r.points);
+        z.footpaths = shaped.filter((r) => r.kind === 'path').map((r) => r.points);
+        const change = (id, expected, target, detail = {}) => {
+          const p = z.props.find((item) => item.id === id);
+          if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
+            audit.push({ id, placed: false, reason: 'missing, changed or owned scene object' });
+            return;
+          }
+          if (target) {
+            const desired = at(...target);
+            if (
+              this.blocked(desired.x, desired.y, 'vale', 4, true) ||
+              this.distanceToRoad(z, desired) < (detail.greenwoodField ? 125 : 55) ||
+              z.buildings.some((b) => near(b, desired) < 130)
+            ) {
+              audit.push({ id, placed: false, reason: 'target footprint conflicts; original retained' });
+              return;
+            }
+            Object.assign(p, desired);
+          }
+          Object.assign(p, detail);
+          audit.push({ id, placed: true, reason: 'existing scene identity retained' });
+        };
+        // The tiny shared garden/furrow icon is now an intentional household
+        // bed or a multi-row rural field, without resizing other regions.
+        for (const id of ['greenwood-homes-1', 'greenwood-homes-2', 'greenwood-homes-4', 'greenwood-hamlet-2'])
+          change(id, 'garden', null, { greenwoodKitchen: true });
+        for (const id of ['greenwood-homes-6', 'greenwood-homes-7'])
+          change(id, 'furrow-plot', null, { greenwoodField: true });
+        change('greenwood-orchard-6', 'furrow-plot', [510, 2080], { greenwoodField: true });
+        change('greenwood-refinement-den-thorn-bed', 'thorn-bed', [875, 3070], { greenwoodNest: true });
+        // Move the entire isolated pond flock to the Hamlet's smallhold, not
+        // one animal away from its feed. Avoid the bank and forest occlusion.
+        change('greenwood-pasture-0', 'pasture-sheep', [350, 2460]);
+        change('greenwood-pasture-1', 'feed-trough', [430, 2500]);
+        change('greenwood-pasture-2', 'hay-rick', [250, 2510]);
+        const orchard = z.npcs.find((n) => n.id === 'orchard');
+        if (orchard) {
+          const positions = [[1030, 2300], [1070, 2360], [1040, 2390]];
+          const chosen = positions.map(([x, y]) => at(x, y)).find((p) =>
+            !this.blocked(p.x, p.y, 'vale', 14, true) &&
+            this.distanceToRoad(z, p) > 88 &&
+            this.distanceToRoad({ roads: z.footpaths }, p) > 45 &&
+            !z.buildings.some((b) => near(b, p) < 130));
+          if (chosen) Object.assign(orchard, chosen);
+          audit.push({ id: 'orchard', placed: !!chosen, reason: chosen ? 'off-road planted site' : 'no legal marker location' });
+        }
+        const candidates = [
+          ['fruit', 510, 1835], ['fruit', 820, 1845], ['fruit', 425, 2490],
+          ['fruit', 760, 2380], ['fruit', 1050, 2410], ['fruit', 1090, 2110],
+          ['fruit', 330, 1930], ['fruit', 920, 2570], ['fruit', 950, 1940],
+          ['fruit', 1180, 2300], ['fruit', 670, 2550], ['fruit', 1100, 2600],
+          ['flowers', 490, 980], ['flowers', 730, 1150], ['flowers', 350, 1440],
+          ['flowers', 470, 1590], ['flowers', 1050, 1010], ['flowers', 300, 1880],
+          ['flowers', 920, 2430], ['flowers', 1070, 2630], ['flowers', 440, 2700],
+          ['flowers', 2210, 640], ['flowers', 2600, 790], ['flowers', 2900, 1700],
+          ['flowers', 2060, 2020], ['flowers', 2560, 2880], ['flowers', 850, 920],
+          ['flowers', 1140, 800], ['flowers', 340, 740], ['flowers', 2320, 2120],
+          ['bush', 1120, 1100], ['bush', 420, 1720], ['bush', 1130, 2700],
+          ['bush', 2440, 650], ['bush', 2850, 1800], ['bush', 530, 2750],
+        ];
+        let fruit = 0;
+        for (const [i, [kind, x, y]] of candidates.entries()) {
+          const id = 'greenwood-composition-' + kind + '-' + i;
+          if (z.props.some((p) => p.id === id)) continue;
+          const p = at(x, y), isTree = kind === 'fruit';
+          const limit = isTree ? 110 : kind === 'bush' ? 72 : 46;
+          const inUse =
+            this.blocked(p.x, p.y, 'vale', isTree ? 18 : 0, true) ||
+            this.distanceToRoad(z, p) < limit ||
+            this.distanceToRoad({ roads: z.footpaths }, p) < (isTree ? 70 : 28) ||
+            z.buildings.some((b) => near(b, p) < (isTree ? 175 : 130)) ||
+            z.npcs.some((n) => near(n.servicePoint || n, p) < (isTree ? 100 : 65)) ||
+            z.nodes.some((n) => near(n, p) < (isTree ? 65 : 32)) ||
+            z.props.some((q) =>
+              (q.owned || q.playerOwned || q.custom || q.roadBlocker) &&
+              near(q, p) < (isTree ? 155 : 85)) ||
+            (isTree && z.props.some((q) =>
+              (q.structure === 'fruit-tree' || q.greenwoodNature === 'tree') &&
+              near(q, p) < 105));
+          if (inUse || z.props.length >= 390) {
+            audit.push({ id, placed: false, reason: inUse ? 'protected clearance' : 'prop budget' });
+            continue;
+          }
+          z.props.push({
+            id, structure: isTree ? 'fruit-tree' : kind === 'flowers' ? 'wildflowers' : 'bush',
+            ...p, r: 0, decorative: true, greenwoodAuthored: true, greenwoodComposition: 1,
+          });
+          if (isTree) fruit++;
+          audit.push({ id, placed: true, reason: 'land-use-aware placement' });
+        }
+        z.greenwoodCompositionAudit = audit;
+        z.greenwoodCompositionFruitCount = fruit;
+        z.greenwoodCompositionVersion = 1;
       }
       greenwoodRedesignMigrate(z) {
         const cfg = R.greenwoodLayout;
@@ -580,8 +756,8 @@
           z.roads = routes.filter((r) => r.kind !== 'path').map((r) => r.points);
           z.footpaths = routes.filter((r) => r.kind === 'path').map((r) => r.points);
           z.bridgeApproaches = [
-            ['north', 90],
-            ['south', 65],
+            ['north', 55],
+            ['south', 32],
           ].map(([key, width]) => {
             const [lo, hi] = riverBanks(a[key].y, cfg.size);
             return {
@@ -1028,6 +1204,7 @@
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
           if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
           this.greenwoodRefinementScene(z);
+          this.greenwoodCompositionFinish(z);
         } finally {
           this.s.zone = previous;
         }
@@ -1426,55 +1603,43 @@
     ctx.restore();
   }
   function drawRoads(ctx, paths, screen) {
-    const poly = (points, color) => {
-      ctx.fillStyle = color;
+    // Three continuous roadbed bands per whole corridor, not separate opaque
+    // quads and circles at every point. World-space miters stay bounded.
+    const ribbon = (points, half) => {
+      const left = [], right = [];
+      for (let i = 0; i < points.length; i++) {
+        const a = points[Math.max(0, i - 1)];
+        const b = points[Math.min(points.length - 1, i + 1)];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const len = Math.hypot(dx, dy) || 1;
+        const nx = (-dy / len) * half, ny = (dx / len) * half;
+        left.push({ x: points[i].x + nx, y: points[i].y + ny });
+        right.push({ x: points[i].x - nx, y: points[i].y - ny });
+      }
+      return [...left, ...right.reverse()];
+    };
+    const paint = (points, color) => {
+      if (points.length < 3) return;
       ctx.beginPath();
-      points.map(screen).forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+      points.map(screen).forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
       ctx.closePath();
+      ctx.fillStyle = color;
       ctx.fill();
     };
-    for (const [index, path] of paths.entries()) {
-      const width = index === 0 ? 31 : 17,
-        base = index === 0 ? '#9a7250' : '#968562';
-      for (const [w, color] of [
-        [width + 5, '#58624988'],
-        [width, base],
-        [width * 0.6, index === 0 ? '#ae855f' : '#a3906c'],
-      ]) {
-        for (let j = 1; j < path.length; j++) {
-          const a = path[j - 1],
-            b = path[j],
-            d = distance(a, b) || 1,
-            nx = (-(b.y - a.y) / d) * w,
-            ny = ((b.x - a.x) / d) * w;
-          poly(
-            [
-              { x: a.x + nx, y: a.y + ny },
-              { x: b.x + nx, y: b.y + ny },
-              { x: b.x - nx, y: b.y - ny },
-              { x: a.x - nx, y: a.y - ny },
-            ],
-            index === 0 && (j === 2 || j === 3) && w <= width
-              ? w === width
-                ? '#93674f'
-                : '#b17a57'
-              : color,
-          );
-        }
-        for (const [j, p] of path.entries())
-          poly(
-            Array.from({ length: 16 }, (_, j) => ({
-              x: p.x + Math.cos((j * Math.PI) / 8) * w,
-              y: p.y + Math.sin((j * Math.PI) / 8) * w,
-            })),
-            index === 0 && j >= 1 && j <= 3 && w <= width
-              ? w === width
-                ? '#93674f'
-                : '#b17a57'
-              : color,
-          );
+    ctx.save();
+    for (let band = 0; band < 3; band++)
+      for (const [i, path] of (paths || []).entries()) {
+        if (path.length < 2) continue;
+        const trunk = i === 0, full = trunk ? 44 : 26;
+        const width = band === 0 ? full + 5 : band === 1 ? full : full * 0.57;
+        const color = band === 0
+          ? '#586249'
+          : band === 1
+            ? trunk ? '#9a7556' : '#978365'
+            : trunk ? '#b18b61' : '#b4a078';
+        paint(ribbon(path, width), color);
       }
-    }
+    ctx.restore();
   }
   function drawWall(ctx, e, p) {
     const w = e.greenwoodWall,
