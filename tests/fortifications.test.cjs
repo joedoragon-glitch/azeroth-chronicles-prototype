@@ -136,15 +136,33 @@ function fixture() {
       assert(area, plan.id + ': native defended footprint is registered');
       assert(zone.props.some((p) => p.stronghold === plan.id && !p.decorative && p.r > 0),
         plan.id + ': a real wall is still required');
-      if (plan.defenseStyle === 'fort') {
+      const authored = zone.props.filter((p) =>
+        p.stronghold === plan.id && p.greenwoodWall?.a && p.greenwoodWall?.b);
+      if (authored.length) {
+        assert.equal(region, 'vale', 'real segment outlines are Greenwood-only at this checkpoint');
+        assert(area.points.length >= 4, plan.id + ': reconstructed wall perimeter present');
+        const actual = authored.flatMap((p) => [p.greenwoodWall.a, p.greenwoodWall.b]);
+        const [minX, maxX] = [Math.min(...actual.map((p) => p.x)), Math.max(...actual.map((p) => p.x))];
+        const [minY, maxY] = [Math.min(...actual.map((p) => p.y)), Math.max(...actual.map((p) => p.y))];
+        if (plan.id === 'skeleton-watch') {
+          // The rebuilt rectangular watch is NOT the original ten-vertex ruin
+          // ring; its real 11 segments form four straights with an east gate.
+          assert(Math.abs(Math.min(...area.points.map((p) => p[0])) - (minX - apron)) < 1e-6);
+          assert(Math.abs(Math.max(...area.points.map((p) => p[0])) - (maxX + apron)) < 1e-6);
+          assert(Math.abs(Math.min(...area.points.map((p) => p[1])) - (minY - apron)) < 1e-6);
+          assert(Math.abs(Math.max(...area.points.map((p) => p[1])) - (maxY + apron)) < 1e-6);
+        } else if (plan.id === 'goblin-road-fort') {
+          assert(area.points.length >= 8,
+            'irregular Goblin perimeter follows its own connected wall segments');
+        }
+      } else if (plan.defenseStyle === 'fort') {
         assert.equal(area.points[1][0] - area.points[0][0], 2 * (150 + apron),
           plan.id + ': square fort horizontal margin');
         assert.equal(area.points[2][1] - area.points[1][1], 2 * (150 + apron),
           plan.id + ': square fort vertical margin');
       } else {
         assert.equal(area.points.length, ring.length);
-        // The midpoint of symmetrical outer vertices yields the current
-        // relocated wall-derived center, rather than the obsolete plan center.
+        // Legacy holds still use their own indexed wall ring and relocation.
         const east = area.points[4], west = area.points[9];
         const cx = (east[0] + west[0]) / 2;
         const cy = east[1] - 20 * (1 + apron / Math.hypot(155, 20));
@@ -194,6 +212,30 @@ function fixture() {
     'every actually walled field compound uses the margin; unwalled sites remain exempt');
   assert.equal(crownParcels, cfg.outdoorAreas.length, 'all Crown parcels checked');
 }
+
+{
+  // Irregular Goblin wall segments have their own geometry and a deliberate
+  // east-facing gate. The old generic ring must not govern protection here.
+  const g = world('vale');
+  const z = g.zone(), goblin = g.fortAreas().find((f) => f.id === 'goblin-road-fort');
+  const wall = z.props.find((p) => p.id === 'stronghold-goblin-road-fort-wall-0').greenwoodWall;
+  assert(goblin && wall, 'native Goblin gate and first angled palisade segment exist');
+  const mid = { x: (wall.a.x + wall.b.x) / 2, y: (wall.a.y + wall.b.y) / 2 };
+  const dx = wall.b.x - wall.a.x, dy = wall.b.y - wall.a.y;
+  const length = Math.hypot(dx, dy), outward = { x: dy / length, y: -dx / length };
+  const guard = z.enemies.find((e) => e.hp > 0 && e.stronghold === 'goblin-road-fort');
+  assert(guard, 'real Goblin fort guard exists');
+  const place = (distance) => {
+    guard.x = mid.x + outward.x * distance;
+    guard.y = mid.y + outward.y * distance;
+  };
+  place(145);
+  assert.equal(g.enemyFort(guard)?.id, 'goblin-road-fort',
+    'angled Goblin wall keeps the real 160-unit outward margin');
+  place(175);
+  assert.equal(g.enemyFort(guard), null,
+    'real irregular wall does not grant unlimited pursuit protection');
+}
 {
   const cfg = C.rules.balance.fortifications, g = world('vale');
   const watch = g.fortAreas().find((area) => area.id === 'skeleton-watch');
@@ -202,12 +244,32 @@ function fixture() {
   );
   assert(watch && defender, 'real Skeleton Watch guard and live walls are present');
   const oldPosition = { x: defender.x, y: defender.y };
-  const [eastX, eastY] = watch.points[4];
-  const originalWallX = eastX - cfg.outdoorLeeway * 155 / Math.hypot(155, 20);
-  defender.x = eastX - 60;
-  defender.y = eastY;
-  assert(defender.x > originalWallX, 'pursuer has stepped outside the original wall ring');
-  assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch', 'protection persists in the apron');
+  const wallEnds = g.zone().props.filter((p) =>
+    p.stronghold === 'skeleton-watch' && p.greenwoodWall)
+    .flatMap((p) => [p.greenwoodWall.a, p.greenwoodWall.b]);
+  const minX = Math.min(...wallEnds.map((p) => p.x));
+  const maxX = Math.max(...wallEnds.map((p) => p.x));
+  const minY = Math.min(...wallEnds.map((p) => p.y));
+  const maxY = Math.max(...wallEnds.map((p) => p.y));
+  const centerX = (minX + maxX) / 2, centerY = (minY + maxY) / 2;
+  // All four edges must own the FULL 160-unit margin from what is actually
+  // illustrated, not the obsolete center/ring. The old west and north cases
+  // incorrectly lost their shield at only ~100-120 units from visible walls.
+  for (const [inside, outside] of [
+    [{ x: minX - 145, y: centerY }, { x: minX - 175, y: centerY }],
+    [{ x: maxX + 145, y: centerY }, { x: maxX + 175, y: centerY }],
+    [{ x: centerX, y: minY - 145 }, { x: centerX, y: minY - 175 }],
+    [{ x: centerX, y: maxY + 145 }, { x: centerX, y: maxY + 175 }],
+  ]) {
+    Object.assign(defender, inside);
+    assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch',
+      'live Skeleton Watch guard keeps protection 145 beyond actual wall');
+    Object.assign(defender, outside);
+    assert.equal(g.enemyFort(defender), null,
+      'live Skeleton Watch guard loses protection 175 beyond actual wall');
+  }
+  Object.assign(defender, { x: maxX + 100, y: centerY });
+  assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch', 'pursuer retains east-wall apron');
   assert.equal(g.enemyRangedRange(defender), 416, 'position grants the fortified ranged basic value');
   // The natural Skeleton Watch guard in this fixture is melee. Its awareness
   // stays governed by the independent melee rule, not the ranged 416-unit rule.
@@ -229,7 +291,7 @@ function fixture() {
   const restoredGuard = restored.zone().enemies.find((enemy) => enemy.id === defender.id);
   assert.equal(restored.enemyFort(restoredGuard)?.id, 'skeleton-watch',
     'restoring v4 save derives the same protection without saved timers');
-  defender.x = eastX + 30;
+  defender.x = maxX + cfg.outdoorLeeway + 30;
   assert.equal(g.enemyFort(defender), null, 'leaving even the extended perimeter removes protection');
   assert.equal(g.enemyRangedRange(defender), 320, 'normal basic attack range returns');
   const outside = { source: 'enemy', sourceId: defender.id, x: defender.x, y: defender.y,
