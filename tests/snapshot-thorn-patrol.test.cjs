@@ -20,7 +20,10 @@ function frame(c, e, n) {
   c.updateEnemies(0.1);
   assert(dist(before, e) <= 8.2 + 1e-7, 'patrol/return must not teleport');
   assert(dist(nb, n) <= 24 + 1e-7, 'Mira must not teleport');
-  assert(c.clearSegment(before, e), 'real traversable boss movement');
+  assert(c.clearSegment(before, e),
+    'real traversable boss movement '+JSON.stringify({before,after:{x:e.x,y:e.y},
+      thornLeg:e.thornLeg,returning:e.thornReturn,gameTime:c.s.time,
+      beforeBlocked:c.blocked(before.x,before.y),afterBlocked:c.blocked(e.x,e.y)}));
   assert(c.clearSegment(nb, n), 'real traversable Mira movement');
   assert(!c.blocked(n.x, n.y), 'Mira must remain interactable outside walls');
   // The old 2700-unit town was near (300,350); the reconstructed
