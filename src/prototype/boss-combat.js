@@ -2160,6 +2160,12 @@
       strategistReversalCovers(a, point) {
         if (!a || !point || !Number.isFinite(point.x) || !Number.isFinite(point.y))
           return false;
+        // These Ministry marks are genuinely single-victim contact despite
+        // circle/line presentation. The Ogre must be an actual possible
+        // contact victim, not a bystander inside somebody else's marker.
+        if (['distraint', 'equalisation'].includes(a.cinderMechanic) &&
+            a.targetId !== 'hero')
+          return false;
         const geometry = R.combatGeometry;
         const segment = (from, to, width) =>
           Number.isFinite(from?.x) && Number.isFinite(from?.y) &&
