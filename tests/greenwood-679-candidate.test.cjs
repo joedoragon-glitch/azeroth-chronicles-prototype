@@ -182,3 +182,24 @@ assert.equal(oldScout.thornGuideStep, -1,
   'pre-guide in-flight save finishes its old waypoint without a reverse detour');
 assert(dist(oldScout, beforeOld) <= C.rules.thornPatrol.speed * 0.1 + 0.1);
 console.log('PASS #679 eight-leg complete scout loop, protected farm/town corridor and old/new saved mid-leg behavior');
+
+
+// #806 scoped draft-art review capture. Remove the temporary base64 log after
+// inspecting the native source draw: it is not a general runtime regression.
+if (process.env.CI && process.env.GITHUB_HEAD_REF === 'feat/greenwood-thornfang-homestead-20261105') {
+  const cp = require('node:child_process');
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const out = path.join(process.env.RUNNER_TEMP || '/tmp', 'thornfang-homestead-review');
+  cp.execFileSync(process.execPath, [
+    path.resolve(__dirname, '../tools/greenwood-layout/capture.cjs'),
+    '--landscape', '--size', '3200', '--home-only', '--out', out,
+  ], { stdio: 'pipe', timeout: 120000 });
+  for (const file of [
+    'native-3200-thorn-homestead-1280x800-day.webp',
+    'native-3200-thorn-homestead-852x393-night.webp',
+  ]) {
+    const bytes = fs.readFileSync(path.join(out, file));
+    console.log('THORNFANG_NATIVE_WEBP_BASE64 ' + file + ' ' + bytes.toString('base64'));
+  }
+}
