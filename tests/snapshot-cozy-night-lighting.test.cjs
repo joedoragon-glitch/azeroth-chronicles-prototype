@@ -214,3 +214,37 @@ assert.equal(glowing.innerFlames, 0, 'carried Wraith art has no second fixture p
 console.log(
   'PASS carried Wraith glass/ground illumination: day/night, moving/facing/scaled hand, Optimization Mode, death exclusion and save-pure rendering',
 );
+
+// Real native Canvas artwork smoke: coordinate assertions alone would pass
+// even if the procedural painters silently failed to draw their hardware.
+for (const [entity, label] of [
+  [{ id: 'home-1', renderKind: 'prop', structure: 'vale-cottage', visualScale: 1.4 }, 'cottage'],
+  [{ id: 'workshop', renderKind: 'prop', structure: 'vale-workshop', visualScale: 1.4 }, 'workshop'],
+  [{ id: 'refuge', renderKind: 'npc', kind: 'rest', visualScale: 1.4 }, 'refuge'],
+  [{ id: 'street', renderKind: 'prop', structure: 'roadside-lantern' }, 'street'],
+  [{ id: 'supplier', renderKind: 'npc', kind: 'supplier' }, 'service stall'],
+  [{ id: 'wagon', renderKind: 'npc', kind: 'transport', icon: '🐎', visualScale: 1.35 }, 'wagon'],
+]) {
+  const image = createCanvas(360, 280);
+  const paint = image.getContext('2d');
+  const anchor = { x: 180, y: 190 };
+  assert.doesNotThrow(() => Visuals.draw(paint, entity, anchor, 0),
+    label + ' physical artwork paints without errors');
+  const [lamp] = Visuals.lightingFixtures(entity, anchor, 1, 0);
+  assert(lamp, label + ' has an identified physical glass center');
+  const before = [...paint.getImageData(Math.round(lamp.x), Math.round(lamp.y), 1, 1).data];
+  assert(before[3] > 0, label + ' has day-visible glass or frame pixels at its lamp anchor');
+  Visuals.drawLightFixtures(paint, [lamp]);
+  const after = [...paint.getImageData(Math.round(lamp.x), Math.round(lamp.y), 1, 1).data];
+  assert.notDeepEqual(after, before, label + ' turns on its actual painted glass at night');
+}
+const sleepingImage = createCanvas(260, 180);
+const sleepingGlass = Visuals.lightingFixtures(
+  { id: 'home', structure: 'vale-cottage' }, { x: 160, y: 130 },
+)[0];
+Visuals.drawLightFixtures(sleepingImage.getContext('2d'), [sleepingGlass]);
+const sleepingPixels = sleepingImage.getContext('2d').getImageData(0, 0, 260, 180).data;
+assert(sleepingPixels.every((value) => value === 0),
+  'a sleeping cottage remains unlit even if its dormant fixture is examined');
+console.log('PASS real procedural lantern glass at native Canvas anchors and off-duty dark glass');
+
