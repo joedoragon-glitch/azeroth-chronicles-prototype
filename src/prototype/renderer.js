@@ -297,8 +297,10 @@
     const lanterns = /(?:^|[-_])(?:lantern|grave-lamp)(?:$|[-_])/i;
     const thermal =
       /^(?:geothermal-heat-intake|crown-glass-kiln|crown-ceramic-kiln|heat-distribution-post|heated-drying-shed|heated-washhouse|thermal-flue)$/;
+    // Domestic glass is intentionally dark at night; actual facade lamps
+    // are enumerated from the canonical drawings by lightingFixtures().
     return domestic.test(structure)
-      ? 'window'
+      ? null
       : lanterns.test(structure)
         ? 'lantern'
         : thermal.test(structure)
@@ -3489,39 +3491,20 @@
         ? []
         : [
             ...z.props.flatMap((prop) => {
-              const structure = String(prop.structure || '');
-              const kind = nightLightKind(structure);
-              return kind
-                ? [
-                    {
-                      ...screen(prop),
-                      kind,
-                      id: prop.id,
-                      ...(structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
-                    },
-                  ]
-                : [];
+              const projected = screen(prop);
+              const fixtures = PrototypeVisuals.lightingFixtures?.(prop, projected) || [];
+              if (fixtures.length) return fixtures;
+              const kind = nightLightKind(String(prop.structure || ''));
+              return kind ? [{ ...projected, kind, id: prop.id }] : [];
             }),
-            ...z.buildings
-              .filter((b) => b.progress >= 4)
-              .map((b) => ({ ...screen(b), kind: 'window', id: b.id })),
-            ...game
-              .visibleNPCs()
-              .filter(
-                (n) =>
-                  [
-                    'rest',
-                    'supplier',
-                    'recruiter',
-                    'quests',
-                    'fountain',
-                    'transport',
-                    'smith',
-                    'teacher',
-                    'alchemist',
-                  ].includes(n.kind) && !n.interactionOnly,
-              )
-              .map((n) => ({ ...screen(n), kind: 'lantern', id: n.id })),
+            ...z.buildings.flatMap((b) =>
+              b.progress >= 4 ? PrototypeVisuals.lightingFixtures?.(b, screen(b)) || [] : [],
+            ),
+            ...game.visibleNPCs().flatMap((n) =>
+              !n.interactionOnly
+                ? PrototypeVisuals.lightingFixtures?.(n, screen(n)) || []
+                : [],
+            ),
           ]
             .filter(
               (p) =>
