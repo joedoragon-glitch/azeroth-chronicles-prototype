@@ -1,5 +1,46 @@
 # So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
 
+## 5 November 2026 — #783 readback trial REJECTED by paired performance regression
+
+The owner’s dev.257 iPhone Air playtest recorded a 175ms game callback
+(173ms total synchronous rendering), without the optional Pixi substage trace.
+Controlled prior R3 Chromium experiments identified a potentially expensive
+full-bitmap `getImageData` operation during cold procedural sprite creation.
+However, that did not prove the specific iPhone event’s cause.
+
+A bounded R4 trial documented in [PR #818](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/818)
+requested `willReadFrequently: true` for the temporary Pixi procedural-bake
+canvas. The API hint kept the source artwork code intact but **severely
+regressed real browser crowd performance** in the paired, same-runner #755
+comparison ([run #41993913603](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41993913603)):
+
+| Native Chromium software-WebGL scenario | Unchanged main | Trial | Consequence |
+| --- | ---: | ---: | --- |
+| 24 actors p50 synchronous composited draw | 8.9ms | 444.3ms | ~50× slower |
+| 24 actors p95 draw | 445.35ms | 755.45ms | ~70% slower |
+| 48 actors p50 draw | 12.25ms | 444.2ms | ~36× slower |
+
+The trial is **rejected and removed** from the PR branch, including its
+test-only assertion and obsolete Pixi-specific PWA fingerprint. The accepted
+diagnostic change retains its own updated worker fingerprint. This is a valid test
+failure, not a tolerable noise waiver or evidence of an iPhone performance
+improvement. The original procedural baking, cropped artwork, rendering
+defaults, cache and save behaviour are left intact.
+
+Follow-up on PR #818 is now limited to retaining existing Pixi vs Canvas
+timings within exceptional callback reports, avoiding new per-stage clocks on
+ordinary play. That is **diagnostic-only**, with eight impacted focused tests,
+documentation checks and reproducible build **PASS** in
+[run #41996910783](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41996910783),
+and the focused browser offline-update check **PASS** in
+[run #41996910764](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41996910764).
+An independent stale platform/save-test assertion was reconciled to the
+already-existing native Greenwood migration, without changing v4 saves.
+Original iPhone root-cause identification and a safe measurable speedup remain
+**open** in issue #783. Merge and hosted publication must be verified from their exact-commit
+GitHub receipts. No physical iPhone cure or FPS gain has been verified.
+
+
 ## 30 October 2026 — incremental browser updates and offline cache audit
 
 The current game is distributed by an HTTPS web link, **not as a native app**.
@@ -58,7 +99,9 @@ Automated CI evidence, merge, deployment and real-device verification remain
 distinct, with build-generated entry pages and service workers kept in sync.
 
 
-## 28 October 2026 — background-session title contract, PR #576 (implementation candidate)
+## 28 October 2026 — background-session title contract, PR #576 (historical implemented policy)
+
+**5 November 2026 superseding implementation (MERGED AND PUBLISHED via PR #816):** The original 28 October rule below is now **historical** for very short hidden/visible events. The current game still saves and freezes immediately when the document is hidden, but a brief healthy interruption (under 2.5 s) may resume the same scene. Longer hiding, pending renderer recovery and scene transitions use the original safeguarded title/Continue warmup. [Main commit `af881655`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/af881655fe724cb3a6039fc8455c816a8edf49dd) passed [GitHub Pages publication and focused checks #42014042313](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42014042313). The owner's iPhone device acceptance and the earlier unexpected-menu root cause remain unverified. Details: [background return-to-title](BACKGROUND_RETURN_TO_TITLE_20261028.md#5-november-2026--short-hidden-classification-merged-and-published-pr-816).
 
 **Newer owner decision, superseding this document's historical in-place background-resume requirement:** when the game is actually hidden/minimized while playing, save the validated live campaign and show the existing bilingual title screen. A simple window blur without a hidden document remains an in-place pause. Returning to a visible tab **does not automatically resume combat**; **Continue Adventure / Continuar aventura** explicitly starts sprite/terrain/GPU preparation, validates the ready scene, and only then activates the game. Reuse any surviving GPU textures; if the WebGL context was lost, use Canvas fallback and rebuild behind the loading state. If the tab is hidden during Continue loading, cancel the pending activation instead of launching it on foreground return. A failed save keeps the game paused in memory rather than abandoning progress.
 

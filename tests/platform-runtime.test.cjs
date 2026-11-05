@@ -96,7 +96,14 @@ game.hero.gold = 317;
 store.save(game, profile);
 const restored = store.load('normal');
 assert.equal(restored.hero.gold, 317);
-assert.deepEqual(restored.snapshot(), game.snapshot(), 'v4 snapshot and state remain compatible');
+// Existing Greenwood migration adds the save-time Vale trail label marker to
+// the restored campaign. Compare against the same production restore boundary,
+// rather than falsely requiring the pre-migration live instance to be identical.
+const expectedRestored = C.restore(game.snapshot(), () => 0.9);
+assert.equal(restored.s.zones.vale.greenwoodTrailTextVersion, 1,
+  'v4 restore applies the current authored Vale trail label migration');
+assert.deepEqual(restored.snapshot(), expectedRestored.snapshot(),
+  'v4 save reload remains equivalent after the current source-aware migrations');
 assert(store.exists('normal'));
 assert(!store.exists('nightmare'));
 items.set(Store.saveKey('nightmare'), '{broken');
