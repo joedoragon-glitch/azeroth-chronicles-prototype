@@ -20432,7 +20432,9 @@
     }
     return commands;
   }
-  function footpaths(ctx, paths, screen) {
+  function footpaths(ctx, paths, screen, region = -1) {
+    // Greenwood v2 footpaths are joined with main roads in one ground layer.
+    if (region === 0 && R.greenwoodLayout?.version === 2) return;
     ctx.save();
     ctx.lineJoin = 'round';
     for (const path of paths || [])
@@ -20457,9 +20459,12 @@
       }
     ctx.restore();
   }
-  function roads(ctx, paths, screen, region = 0, materials = null, viewport = null) {
+  function roads(
+    ctx, paths, screen, region = 0, materials = null, viewport = null,
+    greenwoodPaths = [], greenwoodKinds = [],
+  ) {
     if (region === 0 && R.greenwoodLayout?.version === 2)
-      return GreenwoodLandscape.drawRoads(ctx, paths, screen);
+      return GreenwoodLandscape.drawRoads(ctx, paths, screen, greenwoodPaths, greenwoodKinds);
     const barrier = R.barriers[region];
     let commands;
     if (roadCacheMatches(paths, region, barrier)) commands = roadCache.commands;

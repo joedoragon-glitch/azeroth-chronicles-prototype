@@ -1,0 +1,56 @@
+name: Greenwood roads and bridges — targeted real-scene review
+# User-authorized focused visual QA. No broad browser matrix, merge or deploy.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/greenwood-road-bridge-preview.yml'
+      - 'tools/greenwood-layout/browser-review.cjs'
+      - 'src/prototype/greenwood-landscape.js'
+      - 'src/prototype/visuals.js'
+      - 'src/prototype/renderer.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: greenwood-visual-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  scenes:
+    name: Real scene captures — ${{ matrix.mode }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [canvas, pixi]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install chromium --with-deps
+      - name: Resolve exact local Chromium
+        run: echo "CHROMIUM_EXECUTABLE=$(node -e 'console.log(require("playwright").chromium.executablePath())')" >> "$GITHUB_ENV"
+      - name: Check exact production-source fingerprints
+        run: node scripts/build.cjs --check
+      - name: Capture Millhaven junctions and both complete bridge approaches at real 150 percent camera
+        shell: bash
+        env:
+          MODE: ${{ matrix.mode }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [[ "$MODE" == "pixi" ]]; then ARGS=(--pixi); fi
+          node tools/greenwood-layout/browser-review.cjs --road-bridge-scenes --desktop-only --daytime --out "test-artifacts/greenwood-road-bridge/$MODE/desktop" "${ARGS[@]}"
+          node tools/greenwood-layout/browser-review.cjs --road-bridge-scenes --landscape-only --daytime --out "test-artifacts/greenwood-road-bridge/$MODE/phone-landscape" "${ARGS[@]}"
+      - name: Save exact-head Canvas and Pixi real-browser visual receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: greenwood-road-bridge-${{ matrix.mode }}
+          path: test-artifacts/greenwood-road-bridge/${{ matrix.mode }}/
+          retention-days: 30
+          if-no-files-found: ignore
