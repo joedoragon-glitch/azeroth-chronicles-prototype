@@ -20862,10 +20862,16 @@
       ctx.translate(p.x, p.y);
       ctx.scale(scale, scale);
       // Restrained internal candle: curved silhouette, never a solid panel.
-      ctx.fillStyle = street ? 'rgba(237,181,98,.18)' : 'rgba(238,172,87,.15)';
+      // Preserve the approved translucent glass color, but encode opacity
+      // via globalAlpha. Pixi's canonical vector accessory adapter accepts
+      // hex fills plus alpha, not CSS rgba(...) paint strings.
+      const baseAlpha = ctx.globalAlpha;
+      ctx.globalAlpha = baseAlpha * (street ? 0.18 : 0.15);
+      ctx.fillStyle = street ? '#edb562' : '#eeac57';
       ctx.beginPath();
       ctx.ellipse(0, 0, street ? 3.5 : 2.8, street ? 4.1 : 3.6, 0, 0, Math.PI * 2);
       ctx.fill();
+      ctx.globalAlpha = baseAlpha;
       ctx.fillStyle = refuge ? '#eac282' : '#e1a864';
       ctx.beginPath();
       ctx.moveTo(0, -3.3);
