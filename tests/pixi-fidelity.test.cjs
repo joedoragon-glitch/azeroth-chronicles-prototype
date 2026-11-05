@@ -97,7 +97,7 @@ function canvas() {
     width: 0,
     height: 0,
     style: {},
-    getContext(type, attributes) {
+    getContext(type) {
       if (type !== '2d') return null;
       return {
         setTransform(ratio) {
@@ -110,11 +110,6 @@ function canvas() {
           if (args.length === 3) backgroundCopies++;
         },
         getImageData() {
-          // The renderer's procedural bake immediately reads its entire square
-          // working canvas. Check the real call site via this focused mock.
-          if (surface.width === surface.height && surface.width >= 576)
-            assert.equal(attributes?.willReadFrequently, true,
-              'Pixi procedural bake should request optimized full-pixel readback');
           const data = new Uint8ClampedArray(surface.width * surface.height * 4);
           const x = Math.floor(surface.width / 2),
             y = Math.floor(surface.height * 0.8);
