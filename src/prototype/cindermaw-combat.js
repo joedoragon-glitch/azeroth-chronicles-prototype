@@ -549,6 +549,15 @@
       }
       resolveAttack(e) {
         const a = e.telegraph;
+        // Cindermaw does not use the generic attack resolver for its
+        // physically moving Distraint, delegates or finishing rush. Consume a
+        // properly readied warning BEFORE it creates any contact-capable motion:
+        // no immunity/tonic strip, damage, critical receipt or later ghost hit.
+        // A missed, late or invalid Reversal leaves native behavior unchanged.
+        if (a && this.strategistResolveReversal(e, a)) {
+          if (a.cinderMechanic === 'finisher') this.stopCinderDelegation(e);
+          return;
+        }
         if (a?.cinderDelegate) {
           const owner = this.zone().enemies.find((u) => u.id === a.cinderOwner);
           if (!alive(owner) || !owner.cinderDelegation || e.slow > 0) return;
