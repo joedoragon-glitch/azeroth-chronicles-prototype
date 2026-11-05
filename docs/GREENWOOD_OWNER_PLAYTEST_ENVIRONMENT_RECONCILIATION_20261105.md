@@ -16,6 +16,8 @@
 
 **5 November 2026 — Parallel estate integration:** PR #832's visual refinements were reconciled with the now-merged Forest Crypt winter-estate PR #833 at main `74f2e27b`; the Treasury/homestead rooftop, shelter and yard art does not replace the Forest Crypt's moved entrance or its preserved cartway, one-time migration, new estate facade or reviewed sprite canon. This is an integration checkpoint on the still-draft PR; its exact-head checks must pass before any readiness claim. The separately running Pixi performance comparison is not a reason to stop independent corrective work.
 
+**5 November 2026 — Latest independent main integration:** Draft #832 now incorporates main `bd6dcc65`, including separately merged liquid-transparent ranged-combat fix #830, its existing tests and source, without modifying the new combat/navigation implementation. Only the PWA service-worker fingerprints overlapped with the architecture branch; these were reconciled from current main while preserving the Treasury/homestead visual-source hashes. The previous exact-head #832 validation at `4ac5e346` passed focused checks, native scenes, PWA, Pixi contour and paired performance. This merge commit is new and requires its own focused validation before readiness or merge eligibility is claimed. The PR stays draft and unmerged; no deploy or device approval.
+
 ## Active engineering checkpoint - 5 November 2026 / dev.262
 
 Owner has authorized staged engineering in existing #828. Current main `e25ad8e8` is already an ancestor. Implementation is complete as a procedural candidate; final browser/Pixi scene review and current-head CI/performance disposition remain open. No merge, deployment, device verification or owner aesthetic acceptance is claimed.
