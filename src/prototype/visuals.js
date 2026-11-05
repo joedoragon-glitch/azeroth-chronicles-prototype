@@ -192,7 +192,10 @@
     const kind = String(e.kind || '');
     let sites = [];
     let visualScale = 1;
-    if (structure === 'roadside-lantern')
+    // Existing watermill facade houses this lamp; no independent light actor.
+    if (region === 0 && e.greenwoodFacility === 'mill')
+      sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
+    else if (structure === 'roadside-lantern')
       sites = [{ x: 0, y: -42, role: 'street', radius: 80, alpha: 0.25 }];
     else if (structure === 'grave-lamp')
       sites = [{ x: 0, y: -22, role: 'grave', radius: 66, alpha: 0.17 }];
@@ -19056,7 +19059,18 @@
         if (water) {
           const x = lo + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
-          line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+          if (region === 0 && R.greenwoodLayout?.version === 2 && banks) {
+            const a = banks(Math.max(y1, y - 14)),
+              b = banks(Math.min(y2, y + 14)),
+              dx = (b[0] + b[1] - a[0] - a[1]) * 0.38;
+            line(
+              { x: x - dx * 0.5, y: y - 11 + phase * 2 },
+              { x: x + dx * 0.5, y: y + 11 + phase * 2 },
+              '#9abeb772',
+              1,
+            );
+          } else
+            line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
         } else {
           const mid = lo + localWidth * (0.4 + (seed % 3) * 0.08);
           line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
@@ -19178,6 +19192,7 @@
       const water = kind === 'water',
         lava = kind === 'lava',
         cliff = kind === 'cliff',
+        greenwoodShore = water && region === 0 && R.greenwoodLayout?.version === 2,
         width = x2 - x1,
         bank = water ? (region === 1 ? '#677561' : '#64725a') : lava ? '#54413e' : '#726c5d';
       const ribbon = (inset, color, material = null) => {
@@ -19192,48 +19207,99 @@
         }
         poly([...left, ...right.reverse()], color, material);
       };
-      // Collision and the continuous curved bank use the same authored function.
-      ribbon(-8, bank);
-      ribbon(0, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
-      ribbon(
-        7,
-        water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
-        water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
-      );
-      for (let y = y1; y < y2; y += 58) {
-        const end = Math.min(y2, y + 58),
-          seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
-          tooth = 8 + (seed % 12);
-        for (const side of [-1, 1]) {
-          const local = banks ? banks(y) : [x1, x2],
-            edge = side < 0 ? local[0] : local[1],
-            inside = edge - side * Math.min(tooth, width * 0.25),
-            mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
-          poly(
-            [
-              { x: edge, y },
-              { x: inside, y: mid },
-              { x: edge - side * 6, y: end },
-              { x: edge, y: end },
-            ],
-            water
-              ? side < 0
-                ? '#536a57'
-                : '#6a7c64'
-              : lava
-                ? seed % 2
-                  ? '#423b3b'
-                  : '#574039'
-                : side < 0
-                  ? '#696b61'
-                  : '#4b514c',
-          );
-          if (!water && !lava)
-            line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
-          if (water)
-            line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
-          else if (lava)
-            line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
+      // The bank contour is the *same* profile used by collision. Greenwood's
+      // graded material shoulders replace the old repetitive triangular teeth;
+      // all other region art is deliberately unchanged.
+      if (greenwoodShore) {
+        ribbon(-22, '#465a49');
+        ribbon(-15, '#61705a');
+        ribbon(-8, '#718066');
+        ribbon(-3, '#3d6064');
+        ribbon(0, '#285d70');
+        ribbon(7, '#397783');
+      } else {
+        ribbon(-8, bank);
+        ribbon(0, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
+        ribbon(
+          7,
+          water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
+          water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
+        );
+      }
+      if (greenwoodShore) {
+        // Sparse dry-land patches rooted outside the legal river. Vary spacing,
+        // side, scale and hue without per-frame RNG or new collidable props.
+        for (let y = y1 + 43; y < y2 - 34; y += 91) {
+          if (R.barriers[region].gaps.some(([lo, hi]) => y >= lo - 65 && y <= hi + 65))
+            continue;
+          for (const side of [-1, 1]) {
+            const index = Math.floor(y / 91);
+            const seed =
+              (Math.imul(index + (side + 2) * 17, 73856093) ^ Math.imul(index + 37, 19349663)) >>>
+              0;
+            if (seed % 6 === 0) continue;
+            const [lo, hi] = banks ? banks(y) : [x1, x2],
+              edge = side < 0 ? lo : hi,
+              cx = edge + side * (26 + (seed % 17)),
+              cy = y + ((seed >>> 7) % 21) - 10,
+              rx = 9 + ((seed >>> 12) % 7),
+              ry = 10 + ((seed >>> 16) % 13);
+            if (!visible({ x: cx, y: cy })) continue;
+            poly(
+              Array.from({ length: 12 }, (_, j) => {
+                const a = (j * Math.PI) / 6,
+                  variation = 1 + Math.sin(a * 3 + (seed % 11)) * 0.09;
+                return { x: cx + Math.cos(a) * rx * variation, y: cy + Math.sin(a) * ry };
+              }),
+              seed % 3 === 0 ? '#596f4b99' : '#4c694d88',
+            );
+            // A few low temperate grass/fern strokes; not a Marches reed wall.
+            if (seed % 3 !== 1)
+              for (let j = -1; j <= 1; j++)
+                line(
+                  { x: cx + j * 5, y: cy + 2 },
+                  { x: cx + j * 4 + (seed % 5) - 2, y: cy - 8 - ((seed >>> (j + 3)) % 6) },
+                  '#879c6988',
+                  0.9,
+                );
+          }
+        }
+      } else {
+        for (let y = y1; y < y2; y += 58) {
+          const end = Math.min(y2, y + 58),
+            seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
+            tooth = 8 + (seed % 12);
+          for (const side of [-1, 1]) {
+            const local = banks ? banks(y) : [x1, x2],
+              edge = side < 0 ? local[0] : local[1],
+              inside = edge - side * Math.min(tooth, width * 0.25),
+              mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
+            poly(
+              [
+                { x: edge, y },
+                { x: inside, y: mid },
+                { x: edge - side * 6, y: end },
+                { x: edge, y: end },
+              ],
+              water
+                ? side < 0
+                  ? '#536a57'
+                  : '#6a7c64'
+                : lava
+                  ? seed % 2
+                    ? '#423b3b'
+                    : '#574039'
+                  : side < 0
+                    ? '#696b61'
+                    : '#4b514c',
+            );
+            if (!water && !lava)
+              line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
+            if (water)
+              line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
+            else if (lava)
+              line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
+          }
         }
       }
       for (let y = y1 + 24; y < y2 - 8; y += water ? 62 : 48) {
@@ -19246,14 +19312,30 @@
         if (water) {
           const x = localX1 + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
-          if (!omitTerrainMotion)
-            line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
-          line(
-            { x: x + span * 0.15, y: y + 12 },
-            { x: x + span * 0.65, y: y + 14 },
-            '#c0d6c044',
-            0.8,
-          );
+          if (greenwoodShore && banks) {
+            // Travel along the watercourse, not a fixed screen-horizontal dash.
+            const a = banks(Math.max(y1, y - 14)),
+              b = banks(Math.min(y2, y + 14)),
+              dx = (b[0] + b[1] - a[0] - a[1]) * 0.38,
+              drift = phase * 2;
+            if (!omitTerrainMotion)
+              line(
+                { x: x - dx * 0.5, y: y - 11 + drift },
+                { x: x + dx * 0.5, y: y + 11 + drift },
+                '#9abeb772',
+                1,
+              );
+            line({ x: x + 8, y: y - 4 }, { x: x + 8 + dx * 0.55, y: y + 8 }, '#c0d6c033', 0.8);
+          } else {
+            if (!omitTerrainMotion)
+              line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+            line(
+              { x: x + span * 0.15, y: y + 12 },
+              { x: x + span * 0.65, y: y + 14 },
+              '#c0d6c044',
+              0.8,
+            );
+          }
         } else if (lava) {
           const mid = localX1 + localWidth * (0.4 + (seed % 3) * 0.08);
           if (!omitTerrainMotion) {
@@ -19285,12 +19367,15 @@
           const end = Math.min(y2, y + 24),
             lo = banks ? banks(y)[side] : [x1, x2][side],
             hi = banks ? banks(end)[side] : [x1, x2][side];
-          line(
-            { x: lo, y },
-            { x: hi, y: end },
-            water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99',
-            1.5,
-          );
+          // Avoid drawing a hard continuous bright outline down both Greenwood banks.
+          const quiet = greenwoodShore && (Math.floor(y / 24) * 13 + side * 7) % 9 < 4;
+          if (!quiet)
+            line(
+              { x: lo, y },
+              { x: hi, y: end },
+              greenwoodShore ? '#99b49b4d' : water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99',
+              greenwoodShore ? 1.1 : 1.5,
+            );
         }
       }
     };
@@ -19659,6 +19744,51 @@
         continue;
       }
       if (kind === 'rain-pools') {
+        if (region === 0 && p.wetland && R.greenwoodLayout?.version === 2) {
+          // One hydraulic composition: paint *all* earth rims first, then all
+          // water surfaces. Per-shape rim/interior painting used to overdraw
+          // connected channels at the pond, wheel and river confluence.
+          for (let index = 0; index < p.pools.length; index++) {
+            const pool = p.pools[index],
+              rim = pool.points.map((q) => ({
+                x: pool.x + (q.x - pool.x) * 1.055,
+                y: pool.y + (q.y - pool.y) * 1.055,
+              }));
+            if (index === 3) {
+              // The tailrace is one continuous water surface with the river.
+              // Its earthy outer rim stops at the *real* western riverbank,
+              // instead of making a triangular wedge over the flowing river.
+              // Clip the visual rim only; the identical source water polygon
+              // continues to own navigation/collision at the confluence.
+              const lo = Math.max(0, pool.y - pool.ry - 30),
+                hi = Math.min(size, pool.y + pool.ry + 30),
+                land = [{ x: 0, y: lo }];
+              for (let y = lo; y < hi; y += 16)
+                land.push({ x: R.channelBanks(0, y)[0], y });
+              land.push({ x: R.channelBanks(0, hi)[0], y: hi }, { x: 0, y: hi });
+              ctx.save();
+              ctx.beginPath();
+              land.map(screen).forEach((v, j) =>
+                j ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y),
+              );
+              ctx.closePath();
+              ctx.clip();
+              poly(rim, '#68745b');
+              ctx.restore();
+            } else poly(rim, '#68745b');
+          }
+          for (const pool of p.pools) poly(pool.points, '#285d70');
+          for (const pool of p.pools) poly(pool.points, '#397783');
+          // Quiet pond reflections; directed channels stay unobstructed.
+          const pond = p.pools[0];
+          for (let j = -1; j <= 1; j++) {
+            const y = pond.y + j * pond.ry * 0.28,
+              x = pond.x - pond.rx * 0.24;
+            if (visible({ x, y }))
+              line({ x, y }, { x: x + pond.rx * 0.28, y: y + 4 }, '#a5bdb15c', 1);
+          }
+          continue;
+        }
         for (const pool of p.pools) {
           const rim = pool.points.map((q) => ({
             x: pool.x + (q.x - pool.x) * 1.075,
