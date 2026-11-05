@@ -40,6 +40,17 @@ for (const [i, bridge] of z.bridgeApproaches.entries()) {
   assert(g.route(bridge.west, bridge.east).length, 'native solver crosses west to east');
   assert(g.route(bridge.east, bridge.west).length, 'native solver crosses east to west');
 }
+// Reproduce the actual boss patrol step that the previous narrow south
+// bridge blocked at ~17 units off center (focused CI #42042501901).
+// Actors must use the illustrated deck, not an invisible water shortcut.
+assert(g.clearSegment(
+  {x:1664.444437970413,y:2292.850355197068},
+  {x:1658.0060039246753,y:2297.9284027587482},
+  15,
+), 'Thornfang can physically complete the formerly obstructed south-bridge stride');
+assert(g.clearSegment(
+  {x:1530,y:2297}, {x:1940,y:2297}, 15, true,
+), 'southern footbridge has body clearance even with modest off-center walking');
 const prepared = Landscape.prepareRoadPaint(z.roads, z.footpaths, z.greenwoodRoadKinds);
 assert.equal(prepared.widths.cart * 2, 88);
 assert.equal(prepared.widths.farm * 2, 52);
