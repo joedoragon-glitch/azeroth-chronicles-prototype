@@ -272,13 +272,17 @@
         width: 76 * scale, kind: 'stone-culvert',
       },
       // One genuine service road branches from the existing west-bank farm road,
-      // crosses the millrace exactly where the timber bridge lies, then
-      // meets a NARROW footpath to the dry-side loading doorway.
+      // ends on dry ground; its NARROW footpath crosses the true
+      // millrace timber bridge before reaching the loading doorway.
       millServiceLane = [
         [650, 1550], [785, 1595], [990, 1655], [1200, 1660],
-        [1290, 1600], [1350, 1530], [1400, 1490],
       ].map(q),
-      millDoorFootpath = [[1400, 1490], [1290, 1490], [1210, 1485]].map(q);
+      // A 24-unit pedestrian trail, NOT a cart road, runs across the
+      // 62-unit-wide timber deck and then bends to the actual mill door.
+      millDoorFootpath = [
+        [1200, 1660], [1290, 1600], [1350, 1530],
+        [1400, 1490], [1290, 1490], [1210, 1485],
+      ].map(q);
     R.terrain[0] = [
       { kind: 'rain-pools', wetland: true, pools: waters,
         blockingPools: waters.filter((pool) => !pool.shallow) },
