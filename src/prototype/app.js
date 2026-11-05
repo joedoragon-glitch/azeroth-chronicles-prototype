@@ -3454,6 +3454,11 @@
         b = document.createElement('button');
         b.textContent = translateMenu(a.label);
         if (a.uiPrimary) b.classList.add('menu-primary');
+        if (typeof a.uiChosen === 'boolean') {
+          b.classList.toggle('menu-choice-active', a.uiChosen);
+          b.setAttribute('aria-pressed', String(a.uiChosen));
+        }
+        if (a.uiWide) b.classList.add('menu-wide');
         if (a.classId === 'rogue') {
           const symbol = document.createElement('span');
           symbol.setAttribute('aria-hidden', 'true');
@@ -5453,12 +5458,16 @@
     }
     const selected = (mode) => newAdventureMode === mode;
     const refresh = () => newGameMenu(newAdventureMode, true);
+    // A checked difficulty and the keyboard-focused action are different
+    // concepts: expose the actual choice independently of menu navigation.
+    const chosen = (entry, isChosen) => {
+      entry.uiChosen = !!isChosen;
+      return entry;
+    };
     const primary = action(
       es ? 'Elegir héroe' : 'Choose Hero',
       () => chooseClass(newAdventureMode, newAdventureSuccession),
-      es
-        ? 'Continúa con la selección de clase.'
-        : 'Continue to class selection.',
+      es ? 'Continúa con la selección de clase.' : 'Continue to class selection.',
     );
     primary.uiPrimary = true;
     openMenu(
@@ -5467,43 +5476,56 @@
         ? 'Elige la dificultad y el desafío opcional antes de elegir a tu héroe.'
         : 'Choose difficulty and optional challenge before selecting your hero.',
       [
-        primary,
         menuControls.section(es ? 'Dificultad' : 'Difficulty'),
-        action(
-          (es ? 'Normal · Recomendada' : 'Normal · Recommended') + (selected('normal') ? ' ✓' : ''),
-          () => {
-            newAdventureMode = 'normal';
-            refresh();
-          },
-          es ? 'Para tu primera aventura.' : 'For your first adventure.',
+        chosen(
+          action(
+            (es ? 'Normal · Recomendada' : 'Normal · Recommended') +
+              (selected('normal') ? ' ✓' : ''),
+            () => {
+              newAdventureMode = 'normal';
+              refresh();
+            },
+            es ? 'Para tu primera aventura.' : 'For your first adventure.',
+          ),
+          selected('normal'),
         ),
-        action(
-          (es ? 'Pesadilla' : 'Nightmare') + (selected('nightmare') ? ' ✓' : ''),
-          () => {
-            newAdventureMode = 'nightmare';
-            refresh();
-          },
-          profile.nightmareUnlocked
-            ? es
-              ? 'Un desafío más difícil.'
-              : 'A more demanding adventure.'
-            : es
-              ? 'Se desbloquea con el final pacífico.'
-              : 'Unlock by completing the peaceful ending.',
-          !profile.nightmareUnlocked,
+        chosen(
+          action(
+            (es ? 'Pesadilla' : 'Nightmare') + (selected('nightmare') ? ' ✓' : ''),
+            () => {
+              newAdventureMode = 'nightmare';
+              refresh();
+            },
+            profile.nightmareUnlocked
+              ? es
+                ? 'Un desafío más difícil.'
+                : 'A more demanding adventure.'
+              : es
+                ? 'Se desbloquea con el final pacífico.'
+                : 'Unlock by completing the peaceful ending.',
+            !profile.nightmareUnlocked,
+          ),
+          selected('nightmare'),
         ),
         menuControls.section(es ? 'Desafío opcional' : 'Optional challenge'),
-        action(
-          (es ? 'Sucesión' : 'Succession') +
-            ' · ' +
-            (newAdventureSuccession ? (es ? 'Activada' : 'On') : es ? 'Desactivada' : 'Off'),
-          () => {
-            newAdventureSuccession = !newAdventureSuccession;
-            refresh();
-          },
-          es
-            ? 'Cada clase caída se pierde en esta partida. Si caen las cuatro, termina.'
-            : 'A fallen class is lost for this run. Lose all four and the run ends.',
+        chosen(
+          action(
+            (es ? 'Sucesión' : 'Succession') +
+              ' · ' +
+              (newAdventureSuccession ? (es ? 'Activada' : 'On') : es ? 'Desactivada' : 'Off'),
+            () => {
+              newAdventureSuccession = !newAdventureSuccession;
+              refresh();
+            },
+            newAdventureSuccession
+              ? es
+                ? 'Las clases caídas no regresan. Si caen las cuatro, termina la partida.'
+                : 'Fallen classes cannot return. Lose all four and the run ends.'
+              : es
+                ? 'Recuperación habitual con sus penalizaciones. Activarla hace perder las clases caídas.'
+                : 'Standard recovery keeps its penalties. Turning this on permanently loses fallen classes.',
+          ),
+          newAdventureSuccession,
         ),
         ...(combatDiagnosticsEnabled
           ? [
@@ -5517,6 +5539,9 @@
         ...(developerEnabled
           ? [action('New Developer Mode run', () => chooseClass('developer', false))]
           : []),
+        // The primary next-step action follows the decisions it commits, not
+        // the other way around. Players can still take the default path fast.
+        primary,
       ],
       newAdventureBack,
       { view: 'new-adventure' },
