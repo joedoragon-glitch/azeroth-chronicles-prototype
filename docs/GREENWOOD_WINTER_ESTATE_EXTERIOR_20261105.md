@@ -1,3 +1,7 @@
+
+## Post-publication visual follow-up — 5 November 2026 (draft only)
+
+The owner has inspected the actual installed estate and rejected the central roof silhouette as asymmetric and poorly joined. The separately authored correction branch `fix/greenwood-owner-roofs-homestead-wagon-road-20261105` revises just the facade's roof planes to a centered, straight central ridge with matching projection on both slopes, corrects the left occupied wing roof joins, and aligns the unfinished right-wing gable framing. The original dark door and crypt arch, construction stage, scenery work props, roadway, scenery migration and quest remain untouched. These source changes are a **draft candidate only**, not merged/published, tested end-to-end, visually accepted or device-verified. The merged #833 and dev.263 verification above remain historical evidence for the older appearance.
 # Greenwood Forest Crypt — winter-estate exterior redesign
 
 **5 November 2026 · SIBDLP · Merged via PR #833, commit `74f2e27b66712bbff10597525ba213d380c3aa2d` · Hosted in verified dev.263 Pages release**
