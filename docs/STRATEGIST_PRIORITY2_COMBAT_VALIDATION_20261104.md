@@ -38,3 +38,8 @@ The CURRENT **3 November 2026 v3.2** chapter in PR #697's `docs/STRATEGIST_STAGE
 - **Integration:** Relevant parallel Strategist Labs/material work remains in separate draft PRs and must not be silently merged. Re-compare main before eventual integration. No comprehensive suites were run.
 
 **Stop condition met for this bounded task:** Priority 2's original Campaign regression and the Reversal safety regression are green at the exact gameplay source SHA. Priorities 3–5 are untouched. Nothing merged, deployed or publicly enabled.
+
+
+## Subsequent work handoff (documentation-only follow-up)
+
+The next independently authorized workstream is [Priority 3: Developer Admission, Saves & Class Isolation](STRATEGIST_PRIORITY3_ADMISSION_SAVES_HANDOFF_20261104.md). This Priority 2 evidence remains attributable to tested gameplay source `c44fcd4`. Do **not** reinterpret the passed Priority 2 admission smoke/narrow tests as completion of Priority 3's real app/persistence and historical-save acceptance. Priorities 4 and 5 remain pending and separate.
