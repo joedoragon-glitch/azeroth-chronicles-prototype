@@ -194,10 +194,7 @@
     // density as Canvas (camera zoom × backing ratio), not a 1x bitmap.
     const width = Math.round(576 * density),
       work = makeCanvas(width, width),
-      // This temporary bake surface is read in full immediately below for alpha
-      // bounds. Ask the browser to optimize 2D pixels for synchronous readback,
-      // not hardware compositing. Preserve the exact crop/image/anchor path.
-      c = work.getContext('2d', { willReadFrequently: true });
+      c = work.getContext('2d');
     requireValue(c, 'Original procedural artist is unavailable');
     c.setTransform(density, 0, 0, density, 0, 0);
     const center = { x: 288, y: 460 };
