@@ -4,7 +4,7 @@
   "designId": "settlement-night-lanterns-20261105",
   "name": "Greenwood settlement lanterns and night lighting",
   "kind": "decoration / building-attached light",
-  "nextAction": "Owner reviews lantern design live on the published game and sends any aesthetic adjustments; engineering iterates on concrete observations without new setup or pre-release image approvals.",
+  "nextAction": "Wait for the owner's live Greenwood/Millhaven visual feedback, implement scoped refinements and record actual aesthetic acceptance; only after the owner personally transitions to another region, repeat its own design audit and release iteration. Reuse the workflow and engineering safeguards, never blanket-copy Greenwood's visual fixtures.",
   "context": {
     "originConversation": "5 November 2026 SIBDLP chat; conversation URL unavailable; owner supplied 3 in-game nighttime screenshots and explicitly requested independent game-designer audit before engineering.",
     "decisionSummary": "Owner rejects roof-mounted glowing rectangles and overlaid rectangular post glass, wants believable, attractive entrance and street lanterns; wants the refuge lit after dark, without houses/workshops appearing fully active all night. Independent audit identified additional risks from draft PR #803 and specified corrected artistic choices. Later owner authorization explicitly makes in-game postmerge live viewing the artistic acceptance; a standalone sprite/mockup approval round is not required.",
@@ -12,7 +12,8 @@
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/821",
     "contentDocuments": [
       "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md",
-      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812"
+      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812",
+      "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md#10-cross-region-precedent--owner-direction-5-november-2026"
     ],
     "locationAndLore": "Millhaven Refuge, adjacent Millhaven cottages/workshops, streetlight posts and Orchard Hamlet in the first region; preserve existing service identities, path/door access and accepted other-region scenes."
   },
@@ -23,7 +24,8 @@
     "generatedAppearanceAcceptance": "None. No new generated images.",
     "pendingCorrections": [
       "Owner will judge actual in-game lighting aesthetic after published merge; further changes follow normal visual iteration.",
-      "Keep regional distinctions, quiet cottage windows, single nighttime workshop security lamp, actual service fixtures and true glass alignment protected."
+      "Keep regional distinctions, quiet cottage windows, single nighttime workshop security lamp, actual service fixtures and true glass alignment protected.",
+      "Owner personally reviews regions in sequence; Greenwood lighting work establishes the reusable design/engineering/test/release workflow, not automatic visual approval or a cross-region lighting redesign."
     ]
   },
   "reference": {
