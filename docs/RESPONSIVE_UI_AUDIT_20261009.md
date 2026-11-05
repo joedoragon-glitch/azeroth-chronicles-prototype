@@ -97,3 +97,6 @@ The candidate PR applies a shared content-sized and safe-inset-bounded phone mod
 
 
 **5 November 2026 CSS precedence fix:** The initial sparse-form test caught a 680px legacy width despite the new 540px content-size rule. Cause: high-specificity generic `data-dialog-size` selectors with numerous `:not()` clauses still matched all forms. Exclude `data-menu-layout=form/choices` from those three generic selectors, preserving content-sensitive form/catalog widths and the CSS geometry acceptance test.
+
+
+**5 November 2026 — verified dev.258 release receipt:** [PR #810](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/810) **MERGED** at [main `9eaff39a`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/9eaff39a901fb0cd083bb7b4799a59ad56ee8261); [focused validation and GitHub Pages #42012319325](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42012319325) **SUCCESS**. Exact rebased head `60ee1332` passed bilingual Chromium/WebKit phone menu geometry, phone/desktop renderer, PWA update and source/build checks. This supersedes the earlier draft/pending status in this audit. The sparse form sizing and Archive positioning fixes shipped without overwriting parallel Greenwood lantern/Pixi work. Physical iPhone Air PWA update and touch/visual acceptance remain open (#790).
