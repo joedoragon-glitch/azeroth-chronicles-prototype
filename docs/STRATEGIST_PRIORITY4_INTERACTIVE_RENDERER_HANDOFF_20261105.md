@@ -1,5 +1,7 @@
 # SIBDLP Strategist — Priority 4 interactive controls and renderer integration handoff (5 November 2026)
 
+**OWNER HOLD — 5 November 2026:** Strategist engineering is intentionally **PAUSED after bounded Priority 4** while the owner prioritizes **SIBDLP v0.9.2**. Do not continue Priority 5, merge PR #792, deploy, publicly enable Strategist, or make its remaining acceptance a v0.9.2 release blocker without fresh owner direction. The four public classes and v0.9.2 core-game stability/release work take precedence. The remaining Strategist owner art review, physical iPhone/WebKit and complete Stage 1A playthrough are **deferred, not passed or waived**. Resume from the Priority 4 handoff and live repository/CI state; the draft branch is not a published game version.
+
 **Decision: GO for the bounded Priority 4 source, original Campaign/app-shell and two-viewport real-Chromium input gate. NOT a full Stage 1A acceptance.** The existing [draft PR #792](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/792) stays unmerged, unpublished and guarded behind `?developer=1` + Developer Mode. The query flag is a developer preview switch, **not authentication**. The current public roster remains Paladin, Mage, Ranger and Rogue. No comprehensive test suite or actual device verification was authorized or performed.
 
 ## Authority and inherited work
