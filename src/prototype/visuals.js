@@ -183,7 +183,7 @@
   // All coordinates below belong to existing procedural building/prop art;
   // renderers supply only the projected world point. No save fields or
   // nighttime-only surrogate windows are needed.
-  function lightingFixtures(e, point) {
+  function lightingFixtures(e, point, projectionScale = 1) {
     if (!e || !point || e.interactionOnly) return [];
     const structure = String(e.structure || '');
     let sites = [];
@@ -209,8 +209,8 @@
     if (Number.isFinite(e.visualScale) && e.visualScale > 0 && scale > 1)
       scale = e.visualScale;
     return sites.map(([x, y, glassScale], i) => ({
-      x: point.x + x * scale,
-      y: point.y + y * scale,
+      x: point.x + x * scale * projectionScale,
+      y: point.y + y * scale * projectionScale,
       kind: 'lantern',
       fixture: 'glass',
       scale: glassScale * scale,
