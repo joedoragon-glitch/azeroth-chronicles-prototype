@@ -17,7 +17,8 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
   const nearby = z.props.filter(p => distance(p,anchor)<490).map(relevant).sort((a,b)=>a.d-b.d);
   const trees = nearby.filter(p=>p.kind==='tree');
   const likely = nearby.filter(p=>/fallen-log|sheep|poultry|cart|supply|barrel|mill|reeds|bush/.test(p.kind));
-  console.log('MILL_OCCLUSION_CENSUS '+JSON.stringify({seed,nearbyCount:nearby.length,trees,likely,other:nearby.filter(p=>!trees.includes(p)&&!likely.includes(p)).slice(0,35)}));
+  const enemies = z.enemies.filter(e => distance(e,anchor)<630).map(e => ({id:e.id,species:e.species || e.family,type:e.type,ranged:e.ranged||false,home:e.home?{x:Math.round(e.home.x),y:Math.round(e.home.y)}:null,...relevant(e)})).sort((a,b)=>a.d-b.d);
+  console.log('MILL_OCCLUSION_CENSUS '+JSON.stringify({seed,nearbyCount:nearby.length,trees,likely,enemies,other:nearby.filter(p=>!trees.includes(p)&&!likely.includes(p)).slice(0,35)}));
   assert(z.props.some(p=>p.id==='greenwood-working-mill'));
   assert.equal(z.nodes.reduce((n,p)=>n+p.amount,0),640);
 }
