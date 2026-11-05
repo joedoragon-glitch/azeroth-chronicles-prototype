@@ -313,6 +313,37 @@
   }
   function install(C, { D, R }) {
     class Landscape {
+      // Source-owned water and the bridge are shared by every v4 save. The
+      // existing authored road and mill-yard props also need one additive,
+      // idempotent reconciliation for saves created before the repair.
+      greenwoodWatermillScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion ||
+            z.greenwoodWatermillVersion === 1) return;
+        const lane = cfg.millServiceLane;
+        const same = (path) => Array.isArray(path) && path.length === lane.length &&
+          path.every((p,j) => distance(p,lane[j]) < 0.01);
+        if (!z.roads.some(same)) z.roads.push(lane.map((p) => ({ ...p })));
+        if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r) => same(r.points)))
+          z.greenwoodRoutes.push({ kind: 'farm', points: lane.map((p) => ({ ...p })) });
+        const targets = [
+          ['greenwood-mill-0', 1375, 1540],
+          ['greenwood-mill-1', 1390, 1485],
+          ['greenwood-mill-2', 1325, 1520],
+        ];
+        // Relocate only known disposable work decoration, never an owner's
+        // camp, a saved order, a quest prop, a resident or an enemy home.
+        for (const [id,x,y] of targets) {
+          const p = z.props.find((entry) => entry.id === id);
+          if (!p || p.playerOwned || p.owned || p.custom) continue;
+          const q = { x: x * cfg.scale, y: y * cfg.scale };
+          if (this.blocked(q.x,q.y,'vale',p.r || 12,true) ||
+              z.buildings.some((b) => distance(b,q) < 130)) continue;
+          Object.assign(p,q);
+        }
+        z.greenwoodWatermillVersion = 1;
+      }
       // GV-679 is an additive, nonblocking scene overlay. Never re-run the
       // layout's destructive scene generator or its enemy/home corrections to
       // deliver cosmetic refinements to an existing v4 campaign.
@@ -459,8 +490,11 @@
       }
       greenwoodRedesignFinish(z) {
         const cfg = R.greenwoodLayout;
-        if (z.id !== 'vale' || cfg?.version !== 2 || z.greenwoodRedesignScene === cfg.sceneVersion)
+        if (z.id !== 'vale' || cfg?.version !== 2) return;
+        if (z.greenwoodRedesignScene === cfg.sceneVersion) {
+          this.greenwoodWatermillScene(z);
           return;
+        }
         const a = cfg.anchors,
           s = cfg.scale,
           q = (p) => ({ x: p[0] * s, y: p[1] * s });
@@ -1060,6 +1094,7 @@
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
           if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
           this.greenwoodRefinementScene(z);
+          this.greenwoodWatermillScene(z);
         } finally {
           this.s.zone = previous;
         }
