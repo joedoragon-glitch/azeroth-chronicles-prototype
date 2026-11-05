@@ -282,6 +282,9 @@
         return R.teachers[family] || null;
       }
       skillRevealed(slot) {
+        // The preview owns only its three implemented starter slots.
+        // Advanced Neri lessons remain unavailable until separately authored.
+        if (this.hero.class === 'strategist' && slot > 3) return false;
         const def = D.skills.find((s) => s[0] === slot);
         return (
           !!def &&
@@ -296,6 +299,7 @@
           index = slot - 1;
         if (
           !def ||
+          (this.hero.class === 'strategist' && slot > 3) ||
           this.hero.skills[index] ||
           def[4] !== family ||
           !this.teacherCatalog(family)?.learn.includes(slot) ||
@@ -329,6 +333,7 @@
         if (
           !def ||
           !rank ||
+          (this.hero.class === 'strategist' && slot > 3) ||
           !this.teacherCatalog(family)?.train.includes(slot) ||
           !this.s.rescued[family] ||
           next > (this.teacherCatalog(family)?.maxRank || 0)
