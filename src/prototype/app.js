@@ -4958,8 +4958,8 @@
       mode === 'arena'
         ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
         : language === 'es'
-          ? 'Elige quién liderará la resistencia. Cada clase recibe su ventaja innata desde el nivel 1. Rescata especialistas para aprender más habilidades y conseguir equipo.'
-          : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
+          ? 'Elige a tu héroe. Rescata especialistas para aprender más habilidades y conseguir equipo.'
+          : 'Choose your hero. Rescue specialists to learn more skills and gain equipment.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
           (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id),
@@ -5455,15 +5455,15 @@
       es ? 'Elegir héroe' : 'Choose Hero',
       () => chooseClass(newAdventureMode, newAdventureSuccession),
       es
-        ? 'Continúa con la clase y un nombre opcional.'
-        : 'Continue to your class and optional name.',
+        ? 'Continúa con la selección de clase.'
+        : 'Continue to class selection.',
     );
     primary.uiPrimary = true;
     openMenu(
       es ? 'Nueva aventura' : 'New Adventure',
       es
-        ? 'Elige la dificultad y el desafío opcional. La recuperación estándar conserva sus penalizaciones.'
-        : 'Choose difficulty and an optional challenge. Standard recovery keeps its usual penalties.',
+        ? 'Elige la dificultad y el desafío opcional antes de elegir a tu héroe.'
+        : 'Choose a difficulty and optional challenge before selecting your hero.',
       [
         primary,
         menuControls.section(es ? 'Dificultad' : 'Difficulty'),
