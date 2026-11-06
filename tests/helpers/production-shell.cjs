@@ -78,7 +78,11 @@ function shell(language, heroClass = 'paladin', options = {}) {
     innerWidth: 393,
     innerHeight: 852,
     Sprint: { enabled: false, press() {}, release() {}, reset() {}, tick: () => 1 },
-    localStorage: { getItem: (k) => storage.get(k), setItem: (k, v) => storage.set(k, v) },
+    localStorage: {
+      getItem: (k) => storage.get(k),
+      setItem: (k, v) => storage.set(k, v),
+      removeItem: (k) => storage.delete(k),
+    },
     location: options.location || { protocol: 'file:', hostname: '' },
     navigator: options.navigator || {},
     document: {

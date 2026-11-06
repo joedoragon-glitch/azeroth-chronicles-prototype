@@ -80,7 +80,7 @@ async function selectPixi(page) {
 }
 // Drive the actual modern title-screen flow. Earlier graphics tests relied
 // on automatic gameplay startup and could silently skip preloading entirely.
-async function enterPlayableGame(page) {
+async function enterPlayableGame(page, hero = 'Paladin', developer = false) {
   await page.waitForFunction(() => !!window.Prototype?.renderer);
   // The first-use choice is above the title, after the automatic update gate.
   await page.waitForFunction(() => document.querySelector('#startup-update')?.hidden);
@@ -114,7 +114,9 @@ async function enterPlayableGame(page) {
         );
       }
       await page.locator('#title-new').click();
-      await page.getByRole('button', { name: /^Choose Hero/ }).click();
+      await page
+        .getByRole('button', { name: developer ? 'New Developer Mode run' : /^Choose Hero/ })
+        .click();
       const geometry = await page.evaluate(() => {
         const modal = document.querySelector('#modal'),
           back = document.querySelector('#close-button');
@@ -155,7 +157,7 @@ async function enterPlayableGame(page) {
         );
       console.log('Stage 4 computed menu geometry ' + JSON.stringify(geometry));
       await page
-        .getByRole('button', { name: /Paladin/ })
+        .getByRole('button', { name: new RegExp(hero) })
         .first()
         .click();
     }
@@ -247,6 +249,182 @@ const server = http.createServer((req, res) => {
   });
   fs.createReadStream(filename).pipe(res);
 });
+// Issue #841: separate isolated desktop cases, never the owner's browser storage.
+async function startupCase(browser, host, scenario) {
+  assert(['fresh', 'recordings', 'interrupted', 'repeated', 'unavailable'].includes(scenario));
+  const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  try {
+    await context.addInitScript(
+      ({ scenario }) => {
+        if (!sessionStorage.getItem('841-seeded')) {
+          sessionStorage.setItem('841-seeded', 'yes');
+          if (scenario === 'interrupted' || scenario === 'repeated') {
+            localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+            localStorage.setItem('azeroth-renderer-choice-v1', 'webgl2');
+            if (scenario === 'interrupted')
+              localStorage.setItem('azeroth-renderer-trial-pending-v1', 'pending');
+            else localStorage.setItem('azeroth-webgl2-recovery-hold-v1', 'repeated-failures');
+          }
+        }
+        if (scenario === 'unavailable') {
+          const original = HTMLCanvasElement.prototype.getContext;
+          HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+            return /webgl/.test(type) ? null : original.call(this, type, ...args);
+          };
+        }
+      },
+      { scenario },
+    );
+    const page = await context.newPage();
+    await page.goto(host + 'index.html?developer=1');
+    await enterPlayableGame(page, 'Mage', true);
+    assert.equal(await page.evaluate(() => Prototype.game.s.mode), 'developer');
+    const state = await page.evaluate(() => Prototype.experimentalGraphics);
+    if (scenario === 'fresh' || scenario === 'recordings') {
+      assert.equal(state.mode, 'webgl2', JSON.stringify(state));
+      assert.equal(state.phase, 'confirmed');
+      const contextInfo = await page.evaluate(() => {
+        const canvas = document.querySelector('#world-pixi-experimental');
+        const gl = canvas?.getContext('webgl2');
+        const debug = gl?.getExtension('WEBGL_debug_renderer_info');
+        return {
+          live: !!gl && !gl.isContextLost(),
+          visible: canvas?.style.display,
+          renderer: debug
+            ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)
+            : gl?.getParameter(gl.RENDERER),
+        };
+      });
+      assert(contextInfo.live && contextInfo.visible === 'block', JSON.stringify(contextInfo));
+      console.log(
+        'Actual WebGL2 context (software CI is not hardware FPS): ' + JSON.stringify(contextInfo),
+      );
+      if (scenario === 'recordings') {
+        const position = await page.evaluate(() => [Prototype.game.hero.x, Prototype.game.hero.y]);
+        for (let round = 1; round <= 3; round++) {
+          await page.locator('#menu-button').click();
+          await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+          await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+          const details = page.getByRole('button', { name: /^Show performance details/ });
+          if (await details.isVisible()) await details.click();
+          await page.getByRole('button', { name: /^Start renderer profiling/ }).click();
+          await page.getByRole('button', { name: /^Start effect recording/ }).click();
+          await page.getByRole('button', { name: /^Start navigation profiling/ }).click();
+          for (let back = 0; back < 4 && (await page.locator('#modal').isVisible()); back++)
+            await page.keyboard.press('Escape');
+          assert.equal(await page.locator('#modal').isVisible(), false);
+          for (let interval = 0; interval < 3; interval++) {
+            await new Promise((resolve) => setTimeout(resolve, 40000));
+            assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2');
+            console.log('Round ' + round + ': Mage idle ' + (interval + 1) * 40 + 's, Pixi active');
+          }
+          assert.deepEqual(
+            await page.evaluate(() => [Prototype.game.hero.x, Prototype.game.hero.y]),
+            position,
+          );
+          await page.locator('#menu-button').click();
+          await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+          await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+          await page.getByRole('button', { name: /^Stop renderer profiling/ }).click();
+          await page.getByRole('button', { name: /^Stop effect recording/ }).click();
+          await page.getByRole('button', { name: /^Stop navigation profiling/ }).click();
+          const downloaded = page.waitForEvent('download');
+          await page.getByRole('button', { name: /^Export playtest report/ }).click();
+          const report = JSON.parse(fs.readFileSync(await (await downloaded).path(), 'utf8'));
+          assert.equal(report.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
+          assert.equal(report.performance.graphicsRenderer.preferredRenderer, 'webgl2');
+          assert.equal(report.performance.rendererDiagnostics.initialRenderer, 'pixijs-webgl2');
+          assert.equal(report.performance.rendererDiagnostics.finalRenderer, 'pixijs-webgl2');
+          assert.equal(report.performance.rendererDiagnostics.state, 'stopped');
+          console.log(
+            'PASS exact owner sequence round ' + round + ': exported report confirms active Pixi',
+          );
+          for (let back = 0; back < 4 && (await page.locator('#modal').isVisible()); back++)
+            await page.keyboard.press('Escape');
+        }
+        return;
+      }
+      // Observe actual frame submissions through both authored light phases.
+      for (const night of [false, true]) {
+        await page.evaluate((night) => {
+          Prototype.game.s.clock = night ? Campaign.rules.dayCycle.nightAt + 30 : 0;
+        }, night);
+        assert.equal(await page.evaluate(() => Prototype.game.night()), night);
+        await page.evaluate(
+          () =>
+            new Promise((resolve) => {
+              let count = 0;
+              const check = () => {
+                if (Prototype.experimentalGraphics.mode !== 'webgl2')
+                  throw Error('Pixi lost during idle light-phase frames');
+                if (++count === 8) resolve();
+                else requestAnimationFrame(check);
+              };
+              requestAnimationFrame(check);
+            }),
+        );
+      }
+      await page.locator('#menu-button').click();
+      await page.getByRole('button', { name: 'Return to Main Menu', exact: true }).click();
+      await enterPlayableGame(page);
+      assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2');
+      await page.reload();
+      await enterPlayableGame(page);
+      assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2');
+    } else if (scenario === 'unavailable') {
+      assert.equal(state.mode, 'canvas2d');
+      assert(state.lastFailure?.type && state.lastFallbackReason, JSON.stringify(state));
+      assert.equal(state.firstFailure.type, state.lastFailure.type);
+      assert.equal(state.preferredRenderer, 'webgl2');
+      await page.reload();
+      await enterPlayableGame(page);
+      const next = await page.evaluate(() => Prototype.experimentalGraphics);
+      assert.equal(
+        next.firstFailure.timestampMs,
+        state.firstFailure.timestampMs,
+        'earliest real failure survives reload',
+      );
+    } else {
+      const hold = scenario === 'interrupted' ? 'interrupted-restore' : 'repeated-failures';
+      assert.equal(state.mode, 'canvas2d');
+      assert.equal(state.preferredRenderer, 'webgl2');
+      assert.equal(state.recoveryPaused, true);
+      assert.equal(state.recoveryAttempts, 0);
+      assert.equal(state.lastFallbackReason, 'confirmed-recovery-quarantined');
+      assert.equal(state.startupDecision.recoveryHoldReason, hold);
+      assert.equal(state.firstFailure, null, 'old hold does not prove a GPU error');
+      assert.equal(
+        await page.locator('#world-pixi-experimental').count(),
+        0,
+        'no GPU boot through a hold',
+      );
+      await page.locator('#gpu-renderer-trial').waitFor({ state: 'visible' });
+      assert.match(
+        await page.locator('#gpu-renderer-trial').textContent(),
+        /Automatic retries are paused/,
+      );
+      await page.reload();
+      await enterPlayableGame(page);
+      assert.equal(
+        await page.evaluate(() => Prototype.experimentalGraphics.recoveryHoldReason),
+        hold,
+      );
+      // Actual explicit button, unchanged real 15-second Keep/Revert protection.
+      await page.getByRole('button', { name: 'Retry PixiJS WebGL2', exact: true }).click();
+      await page.waitForFunction(() => Prototype.experimentalGraphics.phase === 'trial', null, {
+        timeout: 180000,
+      });
+      await keepPixiTrial(page, false, 'explicit startup-hold retry');
+      assert.equal(
+        await page.evaluate(() => localStorage.getItem('azeroth-webgl2-recovery-hold-v1')),
+        null,
+      );
+    }
+    console.log('PASS isolated #841 startup / ' + scenario);
+  } finally {
+    await context.close();
+  }
+}
 async function run() {
   let browser;
   try {
@@ -271,6 +449,11 @@ async function run() {
     const host = process.env.PLAYTEST_URL
       ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
       : 'http://127.0.0.1:' + server.address().port + '/';
+
+    if (process.env.PIXI_STARTUP_CASE) {
+      await startupCase(browser, host, process.env.PIXI_STARTUP_CASE);
+      return;
+    }
 
     // Exercise both form factors through current title/new/continue preparation.
     // A previous Canvas choice is superseded only on the first migrated boot.
@@ -310,6 +493,8 @@ async function run() {
         await enterPlayableGame(gamePage);
         const active = await gamePage.evaluate(() => Prototype.experimentalGraphics);
         assert.equal(active.preferredRenderer, 'webgl2');
+        if (requireWebGL)
+          assert.equal(active.mode, 'webgl2', 'usable clean migration must actually activate Pixi');
         if (active.mode === 'webgl2')
           assert.equal(
             active.phase,
@@ -318,8 +503,7 @@ async function run() {
           );
         else
           assert(
-            active.mode === 'canvas2d' &&
-              (active.lastError || active.lastFallbackReason || active.recoveryPaused),
+            active.mode === 'canvas2d' && (active.lastError || active.lastFallbackReason),
             'Unusable GPU must fall back to Canvas with a diagnostic reason',
           );
         if (!phone) {

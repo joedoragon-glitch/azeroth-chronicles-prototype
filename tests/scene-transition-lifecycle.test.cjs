@@ -364,7 +364,7 @@ function openForwardTravel(app) {
       'retry only redraws presentation without modifying campaign progress');
   }
 
-  // Title idle can warm only the selected, previously loaded save's artwork.
+  // Selecting a save on title stays idle; only Continue warms its artwork.
   {
     const app = shell('en', 'paladin', { stayOnTitle: true });
     let warmCalls = 0;
@@ -383,13 +383,14 @@ function openForwardTravel(app) {
     option.click();
     const saved = app.storage.get('azeroth-v4-normal');
     await flush();
-    assert(warmCalls > 0, 'selecting a validated save prepares only its own visual resources');
+    assert.equal(warmCalls, 0, 'selecting a save must not start idle title preparation');
     assert.equal(app.scope.Prototype.started, false);
     assert.equal(app.storage.get('azeroth-v4-normal'), saved,
       'title-only warming cannot rewrite campaign data');
     app.elements.get('title-continue').click();
     await flush();
     app.frame(600);
+    assert(warmCalls > 0, 'Continue prepares only the selected save visual resources');
     assert.equal(app.scope.Prototype.started, true, 'Continue eventually reveals prepared view');
   }
 

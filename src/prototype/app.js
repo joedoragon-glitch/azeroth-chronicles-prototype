@@ -983,6 +983,17 @@
     'PixiJS WebGL2 · Default': 'PixiJS WebGL2 · Predeterminado',
     'PixiJS WebGL2 · 15-second trial': 'PixiJS WebGL2 · Prueba de 15 segundos',
     'Keep WebGL2': 'Conservar WebGL2',
+    'Retry PixiJS WebGL2': 'Reintentar PixiJS WebGL2',
+    'Use Canvas 2D': 'Usar Canvas 2D',
+    'Canvas backup is active because a previous WebGL2 startup did not finish. Automatic retries are paused. You can retry PixiJS or use Canvas.':
+      'Canvas está activo porque un inicio anterior de WebGL2 no terminó. Los reintentos automáticos están pausados. Puedes reintentar PixiJS o usar Canvas.',
+    'Canvas backup is active after repeated WebGL2 failures. Automatic retries are paused. You can retry PixiJS or use Canvas.':
+      'Canvas está activo tras varios fallos de WebGL2. Los reintentos automáticos están pausados. Puedes reintentar PixiJS o usar Canvas.',
+    'Canvas backup is active because a saved graphics safety hold paused automatic retries. The earlier cause is unknown. You can retry PixiJS or use Canvas.':
+      'Canvas está activo porque una protección gráfica guardada pausó los reintentos automáticos. La causa anterior se desconoce. Puedes reintentar PixiJS o usar Canvas.',
+    'WebGL2 was interrupted. Canvas backup is active; recovery will retry when safe.':
+      'WebGL2 se interrumpió. Canvas está activo como respaldo; se reintentará cuando sea seguro.',
+
     'Revert to Canvas': 'Volver a Canvas',
     'Frame rate': 'Fotogramas por segundo',
     'Adaptive frame skip': 'Salto adaptativo de fotogramas',
@@ -2375,14 +2386,36 @@
     queueOriginalVisuals(events);
     pixiGame.noteEvents(events);
   };
+  function rendererFallbackMessage(snapshot) {
+    if (snapshot.recoveryPaused) {
+      if (snapshot.recoveryHoldReason === 'interrupted-restore')
+        return 'Canvas backup is active because a previous WebGL2 startup did not finish. Automatic retries are paused. You can retry PixiJS or use Canvas.';
+      if (snapshot.recoveryHoldReason === 'repeated-failures')
+        return 'Canvas backup is active after repeated WebGL2 failures. Automatic retries are paused. You can retry PixiJS or use Canvas.';
+      return 'Canvas backup is active because a saved graphics safety hold paused automatic retries. The earlier cause is unknown. You can retry PixiJS or use Canvas.';
+    }
+    return 'WebGL2 was interrupted. Canvas backup is active; recovery will retry when safe.';
+  }
   function updateGpuTrial(snapshot) {
     const trial = snapshot.phase === 'trial';
     const preparing = snapshot.phase === 'preparing';
+    const held =
+      snapshot.phase === 'canvas' &&
+      snapshot.recoveryPaused &&
+      snapshot.preferredRenderer === 'webgl2' &&
+      started;
+    gpuTrialHint.hidden = held;
     // A launch remains one visible title-screen preparation, including
     // Pixi initialization and the actual saved arrival's GPU uploads.
     // Manual renderer changes outside startup retain the Keep/Revert panel.
-    gpuTrialPanel.hidden = (!trial && !preparing) || (preparing && titleLoading);
-    gpuTrialActions.style.display = trial ? 'grid' : 'none';
+    gpuTrialPanel.hidden = (!trial && !preparing && !held) || (preparing && titleLoading);
+    gpuTrialActions.style.display = trial || held ? 'grid' : 'none';
+    if (held) {
+      gpuTrialMessage.textContent = tr(rendererFallbackMessage(snapshot));
+      gpuKeep.textContent = tr('Retry PixiJS WebGL2');
+      gpuRevert.textContent = tr('Use Canvas 2D');
+      return;
+    }
     if (preparing) {
       gpuTrialMessage.textContent = tr('Preparing PixiJS graphics…');
       return;
@@ -2425,6 +2458,7 @@
   graphicsController = graphicsGuard
     ? graphicsGuard.create({
         storage: localStorage,
+        startupDecision: previousRendererChoice,
         prepareWebGL: () => pixiGame.prepare(),
         getFailureDetails: () => pixiGame.failureDetails?.() || null,
         // Do not rebuild a GPU scene while the player is moving or enemies
@@ -2469,7 +2503,10 @@
         notify: updateGpuTrial,
       })
     : fallbackController;
-  gpuKeep.onclick = () => graphicsController.confirm();
+  gpuKeep.onclick = () =>
+    graphicsController.status().phase === 'canvas'
+      ? graphicsController.requestWebGL()
+      : graphicsController.confirm();
   gpuRevert.onclick = () => graphicsController.revert();
   // iOS Home Screen PWAs dispatch visibilitychange on document, not window.
   document.addEventListener('visibilitychange', () =>
@@ -4182,6 +4219,7 @@
     titleLoading = false;
     cancelSceneTransition();
     started = false;
+    updateGpuTrial(graphicsController.status());
     paused = false;
     clearInput();
     // Title stops gameplay simulation, not its own theme's audio clock.
@@ -4302,6 +4340,7 @@
         titleSkipGraphics = null;
         titleCanvasContinue.hidden = true;
         started = true;
+        updateGpuTrial(graphicsController.status());
         titleScreen.hidden = true;
         document.body.classList.remove('title-active');
         paused = false;
@@ -5862,7 +5901,7 @@
         },
         graphicsController.status().preferredRenderer === 'webgl2' &&
           graphicsController.status().mode === 'canvas2d'
-          ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
+          ? rendererFallbackMessage(graphicsController.status())
           : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(graphicsController.status().recoveryPaused

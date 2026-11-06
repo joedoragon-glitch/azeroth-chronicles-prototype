@@ -43,3 +43,29 @@ jobs:
           REQUIRE_WEBGL2: '1'
           PIXI_BROWSER_DEVICE: ${{ matrix.device }}
         run: node tests/pixi-default-browser.test.cjs
+
+  startup:
+    name: Desktop startup / ${{ matrix.scenario }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: [fresh, recordings, interrupted, repeated, unavailable]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked tools and focused Chromium
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install chromium --with-deps
+      - name: Exercise isolated startup and safe recovery
+        env:
+          BROWSER_ENGINE: chromium
+          REQUIRE_WEBGL2: '1'
+          PIXI_BROWSER_DEVICE: desktop
+          PIXI_STARTUP_CASE: ${{ matrix.scenario }}
+        run: node tests/pixi-default-browser.test.cjs
