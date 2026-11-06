@@ -20,6 +20,11 @@
             'Exporting game version label, not an immutable build identity. Use root buildCommit when present and valid; if absent, exact installed source SHA is unknown. Do not infer installation from current GitHub main or a green PR.',
         },
         {
+          path: 'buildCommit',
+          meaning:
+            'Full immutable Git SHA stamped into the actually packaged game script, when available. A valid 40-character SHA identifies the loaded code build, including cached/offline launches; null means the build identity is unknown or unstamped, not that GitHub or CI failed. Never substitute current GitHub main, the server build.txt or a PR SHA for a missing value. Corroborate with release receipts when required.',
+        },
+        {
           path: 'performance.startupDiagnostics',
           meaning:
             'Automatic bounded startup/foreground attempts, oldest to newest; no profiler or player movement required. startedAt/updatedAt are Unix wall-clock milliseconds; event elapsedMs is relative to that attempt, including waiting/suspension, not CPU time. ready means scene gate completed, not verified monitor pixels. first-live-draw is synchronous submission; first-movement-observed requires actual movement. Interrupted preparation is not proof of a crash or GPU fault. firstFailure may survive dropped middle events; check retention, dropped counts and persistence status. History before recorder installation/load is unavailable.',

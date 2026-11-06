@@ -7,6 +7,12 @@ const { shell } = require('./helpers/production-shell.cjs');
     let clock = 0;
     const app = shell(language, 'paladin', { now: () => clock });
     const { scope, elements } = app;
+    // Simulate the metadata stamped into the actual deployable build.
+    const simulatedBuildCommit = 'a'.repeat(40);
+    scope.PrototypeBuild = Object.freeze({
+      version: scope.PrototypeBuild.version,
+      commit: simulatedBuildCommit,
+    });
     let exported = null;
     scope.URL.createObjectURL = (blob) => { exported = blob; return 'blob:diagnostic-test'; };
     const label = (en, es) => language === 'es' ? es : en;
@@ -66,6 +72,8 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert(exported, 'the player receives the standard local JSON download');
     const report = JSON.parse(await exported.text());
     assert(report.version, 'export retains the original version field');
+    assert.equal(report.buildCommit, simulatedBuildCommit,
+      'EN/ES report exports the exact loaded packaged build SHA');
     assert(report.performance.frameProfile, 'export retains standard frame profiling');
     const slowdowns = report.performance.frameProfile.slowdownIncidents;
     assert(slowdowns, 'ordinary export automatically includes exceptional callbacks');
@@ -178,6 +186,8 @@ const { shell } = require('./helpers/production-shell.cjs');
     settingsClick(label('Export playtest report', 'Exportar informe de prueba'));
     assert(restoredExport);
     const restoredReport = JSON.parse(await restoredExport.text());
+    assert.equal(restoredReport.buildCommit, null,
+      'an unstamped local build must explicitly leave provenance unknown');
     assert.equal(restoredReport.performance.rendererDiagnostics.state, 'recording');
     assert.notEqual(restoredReport.performance.diagnosticContinuity.documentId,
       continuity.documentId, 'a new JavaScript document has a new event identity');

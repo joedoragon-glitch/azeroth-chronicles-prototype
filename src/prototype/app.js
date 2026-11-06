@@ -5737,6 +5737,11 @@
     exportJSON(
       {
         version: PrototypeBuild.version,
+        // Provenance is embedded in the actual packaged script, not inferred
+        // from the current GitHub main or another server response.
+        buildCommit: /^[a-f0-9]{40}$/.test(PrototypeBuild.commit || '')
+          ? PrototypeBuild.commit
+          : null,
         analysisGuide: PrototypePlaytestReportGuide.create(),
         settings: playtestSettings(),
         performance: {

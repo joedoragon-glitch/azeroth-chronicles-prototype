@@ -1,3 +1,5 @@
+> **6 November 2026 — Phase 1 exact build identification (PR #840):** Once its separately approved release has passed current dev.265 integration checks and actually deployed, the ordinary report export contains root `buildCommit` (the full SHA of the *loaded packaged game script*), alongside its human-readable `version`. Packaging stamps the same commit as `build.txt` and updates the offline cache fingerprint; an unstamped local source exports `null`. The field identifies code provenance only, not monitor-presented FPS, GPU quality, correctness of saved preferences or a speedup. The existing JSON download needs no modification. Do not claim an installed release from a green PR job. See #839 and #840.
+
 # Companion and pet playtest instrumentation — dev.181 (25 October 2026)
 
 ## Purpose
