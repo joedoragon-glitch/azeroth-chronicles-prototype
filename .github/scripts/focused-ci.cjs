@@ -413,6 +413,7 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
       file === TEST + 'environment-atmosphere-browser.test.cjs' ||
       file === TEST + 'status-renderer-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
+      file === TEST + 'pixi-fixed-quality-combat-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs'
     ) {
       // Two explicit narrow Chromium acceptance files; never a browser matrix.
@@ -482,6 +483,7 @@ function run(
       statusBrowser ||
       file === TEST + 'environment-atmosphere-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
+      file === TEST + 'pixi-fixed-quality-combat-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs';
     const result = cp.spawnSync(process.execPath, [path.join(root, file)], {
       cwd: root,
@@ -505,7 +507,9 @@ function run(
       // The owner-approved full-current-region Pixi smoke is readiness-driven,
       // not bounded by the older 4-minute fringe-preload assumption. Preserve
       // the test and its failure reporting with a longer runner ceiling.
-      timeout: statusBrowser ? 660000 : pixiBrowser ? 360000 : narrowBrowser ? 240000 : undefined,
+      timeout: statusBrowser ? 660000 : pixiBrowser ? 360000 :
+        file === TEST + 'pixi-fixed-quality-combat-browser.test.cjs' ? 360000 :
+          narrowBrowser ? 240000 : undefined,
     });
     // Replay the full original stdout/stderr in CI; also retain a short
     // actionable first error for the structured report.
