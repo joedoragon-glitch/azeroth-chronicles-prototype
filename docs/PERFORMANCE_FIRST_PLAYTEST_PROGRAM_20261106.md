@@ -1,5 +1,16 @@
 # P0 — PC performance-first playtest program (6 November 2026)
 
+## Latest owner-confirmed device, acceptance target and safe-documentation policy — 6 November 2026
+
+**Authoritative device correction:** The owner's actual, personally accessible primary test device is an **ASUS Chromebook Plus CX5403CM notebook, model CX5403CMA-DB588, Intel Core Ultra 5, 8 GB RAM, Chrome desktop on ChromeOS**. The older Issue #841 hardware line claiming “Intel Core m5” was a **transcription/misspeaking error**, corrected by the owner. Do not treat it as another Chromebook or request the model again.
+
+**Current primary success goal:** Achieve **stable approximately 20 FPS throughout the existing game on this owner's Chromebook**, **regardless of region or ordinary gameplay activity**—including full regions, movement, towns, interiors, dense enemies, companion activity, combat, bosses, day/night and sustained play—with acceptable occasional short dips, responsive input and no lasting freezes. This target is an explicit owner requirement, not merely a hypothetical example or a confirmed attained FPS result. Test the full range of demanding scenes; the three idle starting-town reports alone cannot establish this outcome. Preserve game mechanics, enemy and companion AI, combat fairness, graphics, saves and progression. The colleague's lower-end PC is **later**; its hardware is currently unknown and must not drive the immediate work or be solicited before the owner's next decision.
+
+**Documentation authorization now clarified:** The owner allows GitHub documentation/status updates as normal independent project work **provided those changes do not publish, refresh or require download of a player game/PWA build**. Permitted safe surfaces include existing GitHub issues/comments and edits on an **unmerged draft branch**, with clear status. **Do not merge a docs-only PR or push directly to `main` under this authorization**, because this repository's successful main branch builds can publish Pages and a new release-SHA-stamped PWA even for a documentation-only commit. Runtime edits, merges, player deployment, broad suites and external tester outreach remain separately gated.
+
+**Priority order:** Resolve/document #841 Pixi/WebGL2 versus Canvas2D startup/fallback on the owner's Chromebook first, verify build-identifiable exports when separately released, then assess representative **whole-campaign** performance on that same machine. Only later consider the colleague's machine. This updated owner directive supersedes older portions of the five-phase plan that assume the colleague's PC is the immediate test target; preserve the original phase methods as historical planning.
+
+
 **Status:** owner-approved **priority and plan**, NOT a runtime implementation, measured improvement, acceptance certificate, or authorization to publish.  
 **Primary tracking:** [Issue #839](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/839).  
 **Game:** *So I Became the Dark Lord's Problem* (historical repository name `azeroth-chronicles-prototype`). This is a browser/JavaScript/PixiJS + Canvas game, **not** a Unity project.  
