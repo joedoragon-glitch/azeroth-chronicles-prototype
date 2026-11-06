@@ -10,6 +10,7 @@
   const PENDING_KEY='azeroth-renderer-trial-pending-v1';
   const DURATION_MS=15000;
   const RECOVERY_HOLD_KEY='azeroth-webgl2-recovery-hold-v1';
+  const RECOVERY_EVIDENCE_KEY='azeroth-webgl2-recovery-evidence-v1';
   const PRIMARY_DEFAULT_MIGRATION_KEY='azeroth-renderer-webgl-primary-v1';
   const RECOVERY_BACKOFF_MS=[5000,20000];
   const defaultMode='canvas2d';
@@ -22,6 +23,38 @@
   const remove=(storage,key)=>{
     try{if(!storage?.removeItem)return false;storage.removeItem(key);return true;}catch(_){return false;}
   };
+  // Only fixed codes and bounded renderer facts enter diagnostics. Never copy
+  // arbitrary localStorage values or campaign/browser identity into reports.
+  function holdReason(storage){
+    const value=read(storage,RECOVERY_HOLD_KEY);
+    return !value?'':value==='interrupted-restore'||value==='repeated-failures'
+      ? value:'unknown-recovery-hold';
+  }
+  function failureSnapshot(input){
+    if(!input||typeof input!=='object')return null;
+    const bounded=(v,max)=>typeof v==='string'?v.slice(0,max):'';
+    const count=n=>Number.isFinite(n)&&n>=0?Math.round(n):0;
+    return Object.freeze({
+      type:bounded(input.type,64),stage:bounded(input.stage,64),
+      message:bounded(input.message,240),
+      timestampMs:Number.isFinite(input.timestampMs)?input.timestampMs:null,
+      resources:input.resources&&typeof input.resources==='object'?{
+        proceduralTextures:count(input.resources.proceduralTextures),
+        proceduralBytes:count(input.resources.proceduralBytes),
+        loadedTextures:count(input.resources.loadedTextures)
+      }:null
+    });
+  }
+  function recoveryEvidence(storage){
+    const raw=read(storage,RECOVERY_EVIDENCE_KEY);
+    if(!raw||raw.length>4096)return {};
+    try{
+      const saved=JSON.parse(raw);
+      if(saved?.version!==1)return {};
+      return {firstFailure:failureSnapshot(saved.firstFailure),
+        lastFailure:failureSnapshot(saved.lastFailure)};
+    }catch(_){return {};}
+  }
   function startupChoice(storage){
     // Interrupted trial or crash: discard WebGL preference before initializing
     // ANY graphics contexts. A failed trial can never strand a player.
@@ -73,6 +106,7 @@
   }
   function create({
     storage=null,
+    startupDecision=null,
     prepareWebGL,
     showWebGL,
     showCanvas,
@@ -87,7 +121,22 @@
        typeof showCanvas!=='function')
       throw Error('WebGL preparation, atomic reveal, and reliable Canvas fallback hooks are required');
     let mode='canvas2d',phase='canvas',deadline=0,timer=null,serial=0,closed=false;
-    let lastFallbackReason='',lastFailure=null;
+    const initialHold=holdReason(storage);
+    const initialDecision=Object.freeze({
+      renderer:startupDecision?.renderer==='webgl2'?'webgl2':defaultMode,
+      reason:initialHold?'confirmed-recovery-quarantined':
+        ['primary-default-migration','confirmed-preference','canvas-default','interrupted-trial']
+          .includes(startupDecision?.reason)?startupDecision.reason:'canvas-default',
+      recoveryHoldReason:initialHold
+    });
+    const savedEvidence=recoveryEvidence(storage);
+    let lastFallbackReason=initialHold?'confirmed-recovery-quarantined':
+      initialDecision.reason==='interrupted-trial'?'interrupted-trial':'';
+    let lastFailure=savedEvidence.lastFailure||null;
+    let firstFailure=savedEvidence.firstFailure||null;
+    function retainEvidence(){
+      write(storage,RECOVERY_EVIDENCE_KEY,JSON.stringify({version:1,firstFailure,lastFailure}));
+    }
     let hidden=false,restoringConfirmed=false,recoveryPending=false,
       recoveryAttempts=0,recoveryDue=0,
       recoveryPaused=!!read(storage,RECOVERY_HOLD_KEY);
@@ -104,28 +153,23 @@
         'confirmed-webgl-preparation-failed':'preparation-failed',
         'webgl-context-or-render-failure':'unknown-webgl-failure'
       };
-      const bounded=(v,max)=>typeof v==='string'?v.slice(0,max):'';
-      const count=(n)=>Number.isFinite(n)&&n>=0?Math.round(n):0;
-      const resources=input.resources&&typeof input.resources==='object'
-        ? {
-            proceduralTextures:count(input.resources.proceduralTextures),
-            proceduralBytes:count(input.resources.proceduralBytes),
-            loadedTextures:count(input.resources.loadedTextures)
-          } : null;
-      lastFailure=Object.freeze({
-        type:bounded(input.type,64)||defaults[reason]||'renderer-failure',
-        stage:bounded(input.stage,64)||reason,
-        message:bounded(input.message,240)||reason,
-        timestampMs:Number.isFinite(input.timestampMs)?input.timestampMs:Date.now(),
-        resources
+      lastFailure=failureSnapshot({
+        ...input,
+        type:input.type||defaults[reason]||'renderer-failure',
+        stage:input.stage||reason,message:input.message||reason,
+        timestampMs:Number.isFinite(input.timestampMs)?input.timestampMs:Date.now()
       });
+      if(!firstFailure)firstFailure=lastFailure;
+      retainEvidence();
     }
+
     function remaining(){
       return phase==='trial'?Math.max(0,Math.ceil((deadline-now())/1000)):0;
     }
     function snapshot(reason=''){
       return Object.freeze({
         mode,phase,secondsRemaining:remaining(),reason,lastFallbackReason,lastFailure,
+        firstFailure,startupDecision:initialDecision,recoveryHoldReason:holdReason(storage),
         preferredRenderer:read(storage,PREFERENCE_KEY)==='webgl2'?'webgl2':defaultMode,
         recoveryPending,recoveryAttempts,recoveryPaused
       });
@@ -214,7 +258,18 @@
     // Only a PREVIOUSLY confirmed choice can resume without a new countdown.
     // Keep Canvas live until its first completed GPU scene and visible controls.
     async function resumeConfirmedWebGL(fromRecovery=false){
-      if(closed||phase!=='canvas'||hidden||!armConfirmedBoot(storage))return false;
+      if(closed||phase!=='canvas'||hidden||recoveryPaused||
+         holdReason(storage))return false;
+      if(!armConfirmedBoot(storage)){
+        if(read(storage,PREFERENCE_KEY)==='webgl2'){
+          restoringConfirmed=true;
+          fallback('webgl-persistence-unavailable',{
+            type:'storage-unavailable',stage:'arm-confirmed-boot',
+            message:'Could not store the graphics crash-recovery marker'
+          });
+        }
+        return false;
+      }
       const own=++serial;
       restoringConfirmed=true;
       phase='preparing';mode=defaultMode;
@@ -336,7 +391,7 @@
   }
   const api=Object.freeze({
     create,startupChoice,armConfirmedBoot,finishConfirmedBoot,
-    PREFERENCE_KEY,PENDING_KEY,RECOVERY_HOLD_KEY,PRIMARY_DEFAULT_MIGRATION_KEY,DURATION_MS
+    PREFERENCE_KEY,PENDING_KEY,RECOVERY_HOLD_KEY,RECOVERY_EVIDENCE_KEY,PRIMARY_DEFAULT_MIGRATION_KEY,DURATION_MS
   });
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   else root.AzerothRendererSwitchGuard=api;

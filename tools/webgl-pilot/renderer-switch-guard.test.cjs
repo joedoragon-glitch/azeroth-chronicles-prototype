@@ -3,8 +3,8 @@ const assert=require('node:assert/strict');
 const test=require('node:test');
 const Guard=require('./renderer-switch-guard.js');
 function fixture({prepareWebGL=async()=>true,failReveal=false,brokenStorage=false,
-  getFailureDetails=()=>null,canRecover=()=>true}={}){
- const values=new Map(),jobs=new Map(),notifications=[],events=[];
+  getFailureDetails=()=>null,canRecover=()=>true,initialValues=[],startup=false}={}){
+ const values=new Map(initialValues),jobs=new Map(),notifications=[],events=[];
  let time=0,next=0,visible='canvas';
  const storage={
    getItem:key=>{if(brokenStorage)throw Error('storage denied');return values.get(key)??null;},
@@ -13,6 +13,7 @@ function fixture({prepareWebGL=async()=>true,failReveal=false,brokenStorage=fals
  };
  const run=Guard.create({
    storage,prepareWebGL,getFailureDetails,canRecover,
+   startupDecision:startup?Guard.startupChoice(storage):null,
    showWebGL(){events.push('webgl-reveal');if(failReveal)throw Error('GPU reveal unavailable');visible='webgl2';},
    showCanvas(reason){events.push('canvas-reveal:'+reason);visible='canvas';},
    notify:status=>notifications.push(status),
@@ -506,4 +507,59 @@ test('session-only confirmation without storage cannot automatically retry',asyn
  assert.equal(f.run.status().recoveryPending,false);
  assert.equal(f.run.status().mode,'canvas2d');
  f.run.dispose();
+});
+
+for(const marker of ['interrupted-restore','repeated-failures','legacy-unknown'])
+test('startup recovery hold is explained and cannot auto retry: '+marker,async()=>{
+ let attempts=0;
+ const f=fixture({startup:true,initialValues:[
+   [Guard.PREFERENCE_KEY,'webgl2'],[Guard.PRIMARY_DEFAULT_MIGRATION_KEY,'applied'],
+   [Guard.RECOVERY_HOLD_KEY,marker]],prepareWebGL:async()=>{attempts++;return true;}});
+ const state=f.run.status();
+ assert.equal(state.lastFallbackReason,'confirmed-recovery-quarantined');
+ assert.equal(state.startupDecision.reason,'confirmed-recovery-quarantined');
+ assert.equal(state.recoveryHoldReason,marker==='legacy-unknown'?'unknown-recovery-hold':marker);
+ assert.equal(state.firstFailure,null,'never invent an old GPU error');
+ assert.equal(await f.run.resumeConfirmedWebGL(),false);
+ f.advance(120000);assert.equal(await f.run.maybeRecover(),false);
+ assert.equal(attempts,0);assert.equal(f.storage.getItem(Guard.RECOVERY_HOLD_KEY),marker);
+ assert.equal(await f.run.requestWebGL(),true,'explicit retry still uses the guarded trial');
+ assert.equal(f.run.status().phase,'trial');assert.equal(f.run.status().secondsRemaining,15);
+ assert.equal(f.run.status().startupDecision.recoveryHoldReason,state.recoveryHoldReason);
+ f.run.revert();assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');f.run.dispose();
+});
+test('first real error and latest failure survive reload while hold reason stays distinct',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();f.run.confirm();
+ f.run.webglFailed({type:'context-loss',stage:'webglcontextlost',message:'first',timestampMs:101});
+ f.advance(5000);await f.run.maybeRecover();
+ f.run.webglFailed({type:'render-exception',stage:'scene-render',message:'second',timestampMs:202});
+ const saved=new Map(f.values);
+ saved.set(Guard.RECOVERY_HOLD_KEY,'repeated-failures');
+ const reload=fixture({startup:true,initialValues:saved});
+ assert.equal(reload.run.status().firstFailure.message,'first');
+ assert.equal(reload.run.status().lastFailure.message,'second');
+ assert.equal(reload.run.status().recoveryHoldReason,'repeated-failures');
+ assert.equal(reload.run.status().lastFallbackReason,'confirmed-recovery-quarantined');
+ f.run.dispose();reload.run.dispose();
+});
+test('diagnostic storage is bounded and corrupt evidence never bypasses a safety hold',()=>{
+ for(const raw of ['{bad',JSON.stringify({version:3}), 'x'.repeat(4097)]){
+  const f=fixture({startup:true,initialValues:[[Guard.RECOVERY_EVIDENCE_KEY,raw],
+   [Guard.RECOVERY_HOLD_KEY,'private-unrecognized-value'],[Guard.PREFERENCE_KEY,'webgl2']]});
+  assert.equal(f.run.status().lastFailure,null);
+  assert.equal(f.run.status().recoveryPaused,true);
+  assert(!JSON.stringify(f.run.status()).includes('private-unrecognized-value'));
+  f.run.dispose();
+ }
+});
+test('refused crash-marker write is reported before any automatic GPU work',async()=>{
+ let attempts=0;
+ const f=fixture({prepareWebGL:async()=>{attempts++;return true;}});
+ f.values.set(Guard.PREFERENCE_KEY,'webgl2');
+ const native=f.storage.setItem;
+ f.storage.setItem=(key,value)=>{if(key===Guard.PENDING_KEY)throw Error('denied');native(key,value);};
+ assert.equal(await f.run.resumeConfirmedWebGL(),false);assert.equal(attempts,0);
+ assert.equal(f.run.status().lastFallbackReason,'webgl-persistence-unavailable');
+ assert.equal(f.run.status().firstFailure.stage,'arm-confirmed-boot');f.run.dispose();
 });

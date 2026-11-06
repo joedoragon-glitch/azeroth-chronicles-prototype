@@ -78,7 +78,11 @@ function shell(language, heroClass = 'paladin', options = {}) {
     innerWidth: 393,
     innerHeight: 852,
     Sprint: { enabled: false, press() {}, release() {}, reset() {}, tick: () => 1 },
-    localStorage: { getItem: (k) => storage.get(k), setItem: (k, v) => storage.set(k, v) },
+    localStorage: {
+      getItem: (k) => storage.get(k),
+      setItem: (k, v) => storage.set(k, v),
+      removeItem: (k) => storage.delete(k),
+    },
     location: options.location || { protocol: 'file:', hostname: '' },
     navigator: options.navigator || {},
     document: {
@@ -107,6 +111,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     PrototypeHeroPresentation: 'hero-presentation',
     PrototypeMenus: 'menus',
     PrototypeBuild: 'build-info',
+    PrototypePlaytestReportGuide: 'playtest-report-guide',
     PrototypeInput: 'input',
     PrototypePersistence: 'persistence',
     PrototypePlatform: 'platform',
@@ -135,6 +140,10 @@ function shell(language, heroClass = 'paladin', options = {}) {
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
   scope.window = scope;
   vm.createContext(scope);
+  vm.runInContext(
+    fs.readFileSync(require.resolve('../../src/prototype/startup-diagnostics'), 'utf8'),
+    scope,
+  );
   vm.runInContext(fs.readFileSync(require.resolve('../../src/prototype/app'), 'utf8'), scope);
   scope.Prototype.renderer.draw = () => {};
   // Existing presentation fixtures explicitly enter gameplay; the title
