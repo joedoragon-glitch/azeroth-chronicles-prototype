@@ -71,5 +71,5 @@ test('opt-in overlay phases distinguish ground, nameplates, occlusion and cues',
   assert.match(app, /renderer\.setOverlaySubpassProfiling\(false\)/);
   assert.match(app, /if \(overlay && rendererDiagnosticActive\)/);
   assert.match(app, /overlayDraws: \(stages\.overlayDraws \|\| \[\]\)/);
-  assert.match(pixi, /bake\(painted, current, backingRatio \* zoom, trace\)/);
+  assert.match(pixi, /bake\(painted, current, backingRatio \* zoom, trace, trace \? measureNow : null\)/);
 });
