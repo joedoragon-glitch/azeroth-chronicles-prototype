@@ -57,7 +57,10 @@ assert.equal(pixi.autoQualityChanges,0);
 assert.equal(pixi.optimizationOn,false,'Live Pixi must not auto-enable graphics reduction');
 const pixiRenderer=fs.readFileSync(path.resolve(__dirname,
   '../src/prototype/pixi-experimental.js'),'utf8');
-assert.match(pixiRenderer,/backingRatio[\\s\\S]{0,220}zoom/,
-  'Pixi renderer uses output density for procedural artwork');
+assert(pixiRenderer.includes('bake(painted, current, backingRatio * zoom)'),
+  'Pixi procedural bake density must incorporate backing ratio and camera zoom');
+assert(pixiRenderer.includes('function revisionFor(') &&
+  pixiRenderer.includes('backingRatio,'),
+  'Procedural cache keys must retain the output-density revision');
 console.log('PASS Pixi fixed-quality policy: pressured Canvas changes density, Pixi does not');
 console.log('POLICY_AB '+JSON.stringify({baseline,pixi}));
