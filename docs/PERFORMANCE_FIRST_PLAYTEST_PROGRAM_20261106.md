@@ -1,3 +1,5 @@
+> **Integration status correction — 6 November 2026:** The original plan below is a dated Phase 1 handoff, not a current player-release receipt. Issue #841 renderer diagnostics merged/published as dev.265 through PR #842 (merge SHA `b099b490caf7fa17ddf1507bcfa245dfc948b231`), and owner Chromebook reports (26)/(27) confirm manual recovery from a persisted `repeated-failures` hold followed by automatic PixiJS startup on the subsequent game entry. PR #840 buildCommit provenance has now been explicitly authorized by the owner to merge and publish **when the combined dev.265 source passes fresh checks**. Its merge/release/installed status must be independently verified; historical dev.263 code/test baselines below must not be treated as current. The owner tests the whole existing campaign first; the colleague's hardware and participation are still deferred. Preserve the historical source results as evidence.
+
 # P0 — PC performance-first playtest program (6 November 2026)
 
 ## Owner's developer-learning objective — 6 November 2026

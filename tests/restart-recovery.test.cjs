@@ -43,6 +43,7 @@ function bootstrap(store) {
   const shared = {
     get: k => store.getItem(k), set: (k, v) => store.setItem(k, v),
     has: k => store.getItem(k) != null,
+    delete: k => store.removeItem(k),
   };
   const app = shell('en', 'paladin', { storage: shared });
   return app;
