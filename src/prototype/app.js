@@ -5546,6 +5546,11 @@
     exportJSON(
       {
         version: PrototypeBuild.version,
+        // This SHA is stamped into the packaged offline script at publish time.
+        // Null in an un-stamped source checkout: never guess the loaded build.
+        buildCommit: /^[a-f0-9]{40}$/.test(PrototypeBuild.commit || '')
+          ? PrototypeBuild.commit
+          : null,
         performance: {
           ...runtime.report(
             {

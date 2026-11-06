@@ -4,7 +4,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const cp = require('node:child_process');
-const {stampWorker, stampSite, validCommit} = require('../scripts/pwa-release-id.cjs');
+const crypto = require('node:crypto');
+const {stampWorker, stampBuildInfo, stampSite, validCommit} = require('../scripts/pwa-release-id.cjs');
 const root = path.resolve(__dirname, '..');
 const version = require('../package.json').version;
 const original = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
@@ -29,10 +30,25 @@ const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-pwa-revision-'));
 try {
   fs.writeFileSync(path.join(folder, 'sw.js'), original);
   fs.writeFileSync(path.join(folder, 'build.txt'), one+'\n');
-  assert.equal(stampSite(folder, one, version), first);
-  assert.equal(fs.readFileSync(path.join(folder, 'sw.js'),'utf8'), first);
+  fs.mkdirSync(path.join(folder, 'src/prototype'), {recursive:true});
+  const sourceBuildInfo = fs.readFileSync(path.join(root, 'src/prototype/build-info.js'), 'utf8');
+  const buildInfoPath = path.join(folder, 'src/prototype/build-info.js');
+  fs.writeFileSync(buildInfoPath, sourceBuildInfo);
+  assert(stampBuildInfo(sourceBuildInfo, one, version).includes('commit:"'+one+'"'));
+  const published = stampSite(folder, one, version);
+  assert.notEqual(published, first, 'release metadata changes the offline fingerprint');
+  assert.equal(fs.readFileSync(path.join(folder, 'sw.js'),'utf8'), published);
+  assert(fs.readFileSync(buildInfoPath,'utf8').includes('commit:"'+one+'"'));
+  const hash = (content) => {
+    const bytes = Buffer.from(content);
+    return crypto.createHash('sha1')
+      .update('blob '+bytes.length+'\0').update(bytes).digest('hex');
+  };
+  const index = JSON.parse(published.split('const APP_FINGERPRINTS = ')[1].split(';')[0]);
+  assert.equal(index['./src/prototype/build-info.js'], hash(fs.readFileSync(buildInfoPath,'utf8')),
+    'offline cache fingerprint must cover the stamped build metadata');
   assert.throws(()=>stampSite(folder, two, version), /differs from packaged build/);
-  assert.equal(fs.readFileSync(path.join(folder, 'sw.js'),'utf8'), first,
+  assert.equal(fs.readFileSync(path.join(folder, 'sw.js'),'utf8'), published,
     'failed verification never modifies the deployed worker');
 } finally {fs.rmSync(folder,{recursive:true,force:true});}
 assert.equal(fs.readFileSync(path.join(root, 'sw.js'), 'utf8'), original,
@@ -51,6 +67,9 @@ try {
   });
   assert.equal(run.status,0,run.stderr||run.stdout);
   assert.equal(fs.readFileSync(path.join(site,'build.txt'),'utf8').trim(),actualHead);
+  const installedInfo = fs.readFileSync(path.join(site,'src/prototype/build-info.js'), 'utf8');
+  assert(installedInfo.includes('commit:"'+actualHead+'"'),
+    'built game records exact Git HEAD, including for offline/cached installs');
   const published=fs.readFileSync(path.join(site,'sw.js'),'utf8');
   assert(published.includes('-release-'+actualHead.slice(0,12)),
     'a local site package must use its Git HEAD even without GitHub Actions');

@@ -17,6 +17,7 @@ const files = [
   'frame-skip.test.cjs',
   'auto-fps-adaptive-coupling.test.cjs',
   'performance-default-upgrade.test.cjs',
+  'pwa-release-id.test.cjs',
 ];
 let failures = 0;
 for (const file of files) {
