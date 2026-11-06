@@ -4,7 +4,21 @@
 **Primary tracking:** [Issue #839](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/839).  
 **Game:** *So I Became the Dark Lord's Problem* (historical repository name `azeroth-chronicles-prototype`). This is a browser/JavaScript/PixiJS + Canvas game, **not** a Unity project.  
 **Source-inspection checkpoint:** `main@272330b8c472446ad4d0b5bcf5027589f200c8d6`, package `0.9.1+snapshot.dev.263`. **Do not confuse repository head/version with the installed test-device build**; recheck both at execution time.  
-**Immediate next action:** conduct **Phase 1 in a separate owner-authorized chat**. No testing has been run for this new phase by the act of preparing this document.
+**Latest next action:** Phase 1 candidate tested; await separate owner authorization to merge/publish the diagnostics-only build provenance patch, verify the installed release SHA, then begin the prepared paired Phase 2 baseline. The original preparation and historical Phase 1 HOLD below remain as audit evidence.
+
+## Latest Phase 1 follow-up — 6 November 2026 (supersedes original HOLD, NOT released)
+
+The owner confirms the existing playtest JSON **already downloads repeatedly in their actual browser**, so the earlier lack of a fresh native download smoke is an **owner-confirmed working path**, not a remaining reason to block this narrowly requested change. Historical Phase 1 testing did not make a real-browser download claim; the owner supplies that independent observation.
+
+Draft PR #840 now adds top-level `buildCommit`: the **exact full SHA of the loaded packaged game**, alongside the existing `version`, so that two reports with the same human-readable dev.263 version can still be distinguished by true release. `scripts/pwa-release-id.cjs` stamps the same immutable SHA as `build.txt` into the deployed `src/prototype/build-info.js` and updates its offline-cache content fingerprint. A source checkout without packaging intentionally says `buildCommit: null`, never a false known release. This has no effect on gameplay, AI, frames, performance, save data, controls or report downloading itself.
+
+**Evidence / Phase 1 candidate PASS:**
+- **Source baseline:** unchanged `main@272330b8c472446ad4d0b5bcf5027589f200c8d6` / package dev.263. **Draft code candidate:** `114b154a8f4afc4cca6b2ea12e303d79045e4bd9`, unmerged and unshipped.
+- [Exact focused PR run #42220906472](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42220906472), GitHub Actions virtual merge tested `3b584d43a488bbb0f47741f634c666f00bac7907`: **SUCCESS**, nine narrowed diagnostics tests PASS (bilingual report field and real packaged/offline release matching included), eleven impacted focused files PASS, reproducible offline-ready build PASS, Pages publication **SKIPPED**.
+- [Focused browser PWA update acceptance #42220907035](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42220907035): **SUCCESS**, no deployment. [Focused menu acceptance #42220906647](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42220906647): **SUCCESS**. Neither establishes the tester's FPS.
+- No tester contact, raw JSON publication, full test matrix, optimization, balance changes, campaign/AI/save changes, merge or deployment.
+
+**Status split:** Phase 1 diagnostics *candidate engineering* **PASS**; installed/released version not yet changed, so **release and Phase 2 tester solicitation remain HOLD** until a separate owner-approved publication and verification of the game loaded on the tester's device. The existing Spanish two-area protocol is prepared but unsent.
 
 ## Authority and priority change
 
