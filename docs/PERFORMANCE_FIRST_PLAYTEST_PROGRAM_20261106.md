@@ -1,5 +1,11 @@
 # P0 — PC performance-first playtest program (6 November 2026)
 
+## Owner's developer-learning objective — 6 November 2026
+
+**Teaching is a deliverable alongside engineering.** The owner wants to learn the vocabulary and reasoning of software development by working on this game. **Do not remove real developer terminology in the name of accessibility.** Use accurate terms such as *commit*, *branch*, *pull request (PR)*, *CI*, *deployment*, *renderer*, *fallback*, *regression test*, *build SHA*, *bottleneck* and *p95*; introduce an unfamiliar term with a short, concrete explanation as it becomes relevant to the work. Explain what the code or test does, why it matters, what the evidence does and does not prove, and the trade-offs behind a decision. Reuse established terms rather than repeating a beginner glossary every turn. Offer more technical depth, source paths or brief code examples when the owner asks or when they materially illuminate a decision. Avoid dense jargon dumps and permanent oversimplification, as well as unsolicited courses or quizzes.
+
+**Keep execution ownership with the assistant:** technical learning must not become unnecessary homework. Investigate source, maintain GitHub, run authorized focused validation and explain the engineering as part of the results. Treat the owner as a capable collaborator building fluency in developer conversations, not as a passive recipient of simplified status labels.
+
 ## Latest owner-confirmed device, acceptance target and safe-documentation policy — 6 November 2026
 
 **Authoritative device correction:** The owner's actual, personally accessible primary test device is an **ASUS Chromebook Plus CX5403CM notebook, model CX5403CMA-DB588, Intel Core Ultra 5, 8 GB RAM, Chrome desktop on ChromeOS**. The older Issue #841 hardware line claiming “Intel Core m5” was a **transcription/misspeaking error**, corrected by the owner. Do not treat it as another Chromebook or request the model again.
