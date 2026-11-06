@@ -1972,7 +1972,7 @@
       active = false;
       canvasRenderer.setSilhouetteFrames?.(null);
       silhouetteFrames = null;
-      if (app?.canvas) app.canvas.style.display = 'none';
+      if (app?.renderer && app.canvas) app.canvas.style.display = 'none';
     }
     function disposeResources() {
       dropBackgroundLookahead(true);
@@ -1990,10 +1990,16 @@
       backing?.destroy?.(false);
       backing = null;
       if (app) {
-        const node = app.canvas;
-        app.destroy(true);
-        node?.remove();
+        // Pixi's canvas getter dereferences renderer.canvas. If init rejected
+        // before a renderer existed, calling it (or destroy) masks the root
+        // startup error and strands the next retry on a half-created app.
+        const previous = app;
         app = null;
+        if (previous.renderer) {
+          const node = previous.canvas;
+          previous.destroy(true);
+          node?.remove();
+        }
       }
       backgroundRenderer = null;
       backdrop = null;

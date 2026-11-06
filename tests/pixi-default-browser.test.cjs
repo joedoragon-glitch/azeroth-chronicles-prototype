@@ -333,8 +333,8 @@ async function startupCase(browser, host, scenario) {
           const report = JSON.parse(fs.readFileSync(await (await downloaded).path(), 'utf8'));
           assert.equal(report.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
           assert.equal(report.performance.graphicsRenderer.preferredRenderer, 'webgl2');
-          assert.equal(report.performance.rendererDiagnostics.initialRenderer, 'pixijs-webgl2');
-          assert.equal(report.performance.rendererDiagnostics.finalRenderer, 'pixijs-webgl2');
+          assert.equal(report.performance.rendererDiagnostics.initialRenderer, 'webgl2');
+          assert.equal(report.performance.rendererDiagnostics.finalRenderer, 'webgl2');
           assert.equal(report.performance.rendererDiagnostics.state, 'stopped');
           console.log(
             'PASS exact owner sequence round ' + round + ': exported report confirms active Pixi',

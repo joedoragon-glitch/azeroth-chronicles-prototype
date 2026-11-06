@@ -90,6 +90,7 @@ let currentActorTextures = new Set(),
   destroyedProcedural = 0,
   lastApplicationCanvas = null,
   rejectWebGLContext = false,
+  failApplicationInit = false,
   failSceneDraw = false,
   syntheticSceneDelayMs = 0;
 function canvas() {
@@ -157,6 +158,15 @@ class Application {
   }
   async init(options) {
     inits.push(options);
+    if (failApplicationInit) {
+      this.renderer = undefined;
+      Object.defineProperty(this, 'canvas', {
+        get() {
+          return this.renderer.canvas;
+        },
+      });
+      throw Error('No available renderer for the current environment');
+    }
     this.renderer.resize(options.width, options.height, options.resolution);
   }
   destroy() {}
@@ -1286,6 +1296,27 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(startupGpu.failureDetails().type, 'context-unavailable');
   assert.equal(startupGpu.failureDetails().stage, 'webgl2-context');
   assert.match(startupGpu.failureDetails().message, /WebGL2 context not available/);
+  failApplicationInit = true;
+  const partialGpu = runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(
+    await partialGpu.prepare(),
+    false,
+    'partial init cleanup must not throw over the first error',
+  );
+  assert.equal(partialGpu.failureDetails().type, 'preparation-failed');
+  assert.equal(partialGpu.failureDetails().stage, 'application-init');
+  assert.equal(
+    partialGpu.failureDetails().message,
+    'No available renderer for the current environment',
+  );
+  assert.doesNotThrow(() => partialGpu.release(), 'failed partial app is safely releasable twice');
+  failApplicationInit = false;
+  assert.equal(
+    await partialGpu.prepare(),
+    true,
+    'a later supported attempt must not be stranded on partial cleanup',
+  );
+  partialGpu.release();
   // Narrow presentation acceptance on the real Pixi actorFrame path.
   resources.clear();
   currentActorTextures.clear();
