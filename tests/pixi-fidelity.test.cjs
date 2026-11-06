@@ -132,7 +132,34 @@ class Application {
   constructor() {
     this.canvas = canvas();
     lastApplicationCanvas = this.canvas;
-    this.canvas.getContext = (type) => (type === 'webgl2' && !rejectWebGLContext ? {} : null);
+    this.canvas.getContext = (type) =>
+      type === 'webgl2' && !rejectWebGLContext
+        ? {
+            VERSION: 1,
+            RENDERER: 2,
+            VENDOR: 3,
+            SHADING_LANGUAGE_VERSION: 4,
+            MAX_TEXTURE_SIZE: 5,
+            MAX_RENDERBUFFER_SIZE: 6,
+            getParameter(token) {
+              return {
+                1: 'WebGL 2.0 test',
+                2: 'Test masked renderer',
+                3: 'Test vendor',
+                4: 'GLSL test',
+                5: 4096,
+                6: 8192,
+                7: 'Test GPU',
+                8: 'Test GPU vendor',
+              }[token];
+            },
+            getExtension(name) {
+              return name === 'WEBGL_debug_renderer_info'
+                ? { UNMASKED_RENDERER_WEBGL: 7, UNMASKED_VENDOR_WEBGL: 8 }
+                : null;
+            },
+          }
+        : null;
     this.renderer = {
       prepare: {
         upload: (textures) => {
@@ -346,7 +373,11 @@ game.props = [
 ];
 const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
 (async () => {
+  assert.equal(gpu.status().deviceGraphics, null, 'reading status before startup never probes GPU');
   assert.equal(await gpu.prepare(), true, 'retina Pixi scene must prepare');
+  assert.equal(gpu.status().deviceGraphics.source, 'existing-game-webgl2-context');
+  assert.equal(gpu.status().deviceGraphics.unmaskedRenderer, 'Test GPU');
+  assert.equal(gpu.status().deviceGraphics.maxTextureSize, 4096);
   assert.equal(
     gpu.status().neighborhoodPrepared,
     1,

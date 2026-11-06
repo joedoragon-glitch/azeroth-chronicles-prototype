@@ -1,6 +1,7 @@
 'use strict';
 // One inventory drives entry validation, offline packaging and deployment.
 const scripts = [
+  'src/prototype/startup-diagnostics.js',
   'src/sprint.js',
   ...[
     'highlands',

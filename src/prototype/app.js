@@ -1,10 +1,18 @@
 /* Browser shell. Saved campaign rules are independent of this UI. */
 (function () {
   'use strict';
+  const startup =
+    typeof PrototypeStartupDiagnostics === 'undefined' ? null : PrototypeStartupDiagnostics.journal;
+  const startupEvent = (stage, detail) => startup?.record(stage, detail);
+  let nextStartupEntry = 'continue',
+    startupObservedFailure = null;
+  startupEvent('app-entered', typeof PrototypeBuild === 'undefined' ? {} : PrototypeBuild);
   const $ = (id) => document.getElementById(id),
-    canvas = $('world'),
-    ctx = canvas.getContext('2d'),
-    D = Campaign.data,
+    canvas = $('world');
+  startupEvent('canvas-context-start');
+  const ctx = canvas.getContext('2d');
+  startupEvent('canvas-context-ready', { ready: !!ctx });
+  const D = Campaign.data,
     manaEnabled = PrototypeRules.resourceMode.manaEnabled,
     developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || ''),
     // Unlisted low-spec test route. A query link is not authentication.
@@ -1940,6 +1948,7 @@
     });
   }
   function finishStartupUpdate() {
+    startupEvent('update-gate-finished', { reason: startupUpdateNotice || 'complete' });
     if (!startupUpdatePending) return;
     startupUpdatePending = false;
     $('startup-update').hidden = true;
@@ -1947,6 +1956,7 @@
     showTitleScreen();
   }
   async function initializeStartupUpdate() {
+    startupEvent('update-check-start', { ready: !!navigator.serviceWorker?.controller });
     const supported =
       'serviceWorker' in navigator &&
       (location.protocol === 'https:' ||
@@ -2138,6 +2148,7 @@
     game = activateLiveCritical(restored);
     return true;
   }
+  startupEvent('save-load-start');
   let recoveredOnStartup = false;
   let loaded = combatDiagnosticsEnabled
     ? load('arena')
@@ -2156,6 +2167,11 @@
       persistence.writeCandidate(game);
     } else game = activateLiveCritical(new Campaign());
   }
+  startupEvent('save-load-finished', {
+    loaded,
+    canWrite: writerGuard.canWrite(),
+    zone: game?.zoneId,
+  });
   // An unclean active-session marker indicates the previous browser stopped
   // before its normal shutdown. Keep validated campaign progress, but never
   // restart inside the potentially frozen encounter.
@@ -2397,6 +2413,23 @@
     return 'WebGL2 was interrupted. Canvas backup is active; recovery will retry when safe.';
   }
   function updateGpuTrial(snapshot) {
+    const startupFailure =
+      snapshot.reason !== 'canvas-default' && snapshot.lastFailure !== startupObservedFailure
+        ? snapshot.lastFailure
+        : null;
+    startupObservedFailure = snapshot.lastFailure || startupObservedFailure;
+    startupEvent('graphics-state', {
+      renderer: snapshot.mode,
+      phase: snapshot.phase,
+      reason: snapshot.reason || snapshot.lastFallbackReason,
+      preferredRenderer: snapshot.preferredRenderer,
+      hold: snapshot.recoveryHoldReason,
+      recoveryPaused: snapshot.recoveryPaused,
+      recoveryPending: snapshot.recoveryPending,
+      failureType: startupFailure?.type,
+      failureStage: startupFailure?.stage,
+      failureMessage: startupFailure?.message,
+    });
     const trial = snapshot.phase === 'trial';
     const preparing = snapshot.phase === 'preparing';
     const held =
@@ -2503,6 +2536,23 @@
         notify: updateGpuTrial,
       })
     : fallbackController;
+  function startupGraphics() {
+    const state = graphicsController.status();
+    return {
+      renderer: state.mode,
+      preferredRenderer: state.preferredRenderer,
+      phase: state.phase,
+      hold: state.recoveryHoldReason,
+      recoveryAttempts: state.recoveryAttempts,
+      viewportWidth: viewport.width,
+      viewportHeight: viewport.height,
+      backingWidth: canvas.width,
+      backingHeight: canvas.height,
+      recoveryPaused: state.recoveryPaused,
+      recoveryPending: state.recoveryPending,
+    };
+  }
+  startupEvent('graphics-choice', { ...startupGraphics(), reason: previousRendererChoice.reason });
   gpuKeep.onclick = () =>
     graphicsController.status().phase === 'canvas'
       ? graphicsController.requestWebGL()
@@ -2557,6 +2607,8 @@
       timing.canvasWorldMs = canvasMs;
       timing.canvasWorldDrawn = true;
     }
+    if (started && !titleLoading && !sceneTransition && startup?.needsLiveDraw())
+      startupEvent('first-live-draw', startupGraphics());
     return timing;
   }
   function addRenderStageTimes(stageTimes, timing) {
@@ -3961,17 +4013,28 @@
       .catch(() => false);
   }
   function drawReadyScene() {
+    if (titleLoading) startupEvent('scene-draw-start', startupGraphics());
     try {
       drawWorld();
+      if (titleLoading) startupEvent('scene-draw-completed', startupGraphics());
       return true;
-    } catch (_) {
+    } catch (error) {
+      if (titleLoading)
+        startupEvent('scene-draw-failed', {
+          failureType: 'scene-render-failed',
+          failureStage: 'first-scene',
+          failureMessage: error?.message,
+        });
       // A first-use WebGL exception must not strand the player behind loading.
       try {
         graphicsController.revert();
         renderer.setRenderLayer('full');
         renderer.draw();
+        if (titleLoading)
+          startupEvent('scene-draw-completed', { ...startupGraphics(), reason: 'canvas-fallback' });
         return true;
       } catch (_) {
+        if (titleLoading) startupEvent('scene-draw-failed', startupGraphics());
         return false;
       }
     }
@@ -4211,6 +4274,7 @@
     }
   }
   function showTitleScreen(reason = 'internal') {
+    if (titleLoading) startup?.interrupt(reason);
     if (started || titleLoading) notePlaytestLifecycle('return-to-title', { reason });
     titleBackupNotice = null;
     ++titleEpoch;
@@ -4233,6 +4297,7 @@
     }
     const showWelcome = !startupUpdatePending && firstLanguageChoice;
     titleScreen.hidden = startupUpdatePending || showWelcome;
+    if (!titleScreen.hidden) startupEvent('title-shown', { reason, ready: true });
     if (languageWelcome) languageWelcome.hidden = !showWelcome;
     $('startup-update').hidden = !startupUpdatePending;
     document.body.classList.add('title-active');
@@ -4255,6 +4320,9 @@
     if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite())
       return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
+    startup?.entry(nextStartupEntry);
+    nextStartupEntry = 'continue';
+    startupEvent('sprites-start', { zone: game.zoneId });
     // Continue is already a browser gesture. Unlock before asynchronous warmup.
     const entryUnlock = audio.unlock();
     titleLoading = true;
@@ -4283,8 +4351,11 @@
         refreshTitleScreen();
         return;
       }
+      startupEvent('sprites-settled', { zone: game.zoneId, skipped: !!titleSkipGraphics?.skipped });
+      startupEvent('save-recovery-start');
       // Only Continue authorizes abnormal-session recovery.
       recoverLoadedSession();
+      startupEvent('save-recovery-finished', { zone: game.zoneId });
       // Crash recovery may replace the Campaign object with a safe-location
       // clone. Continue's readiness guards must track that validated recovery,
       // not silently abandon the title in its disabled loading state.
@@ -4307,6 +4378,7 @@
         // A missing audio device must never defer campaign activation.
         if (!entryAudioAttempted && audio.ctx) {
           entryAudioAttempted = true;
+          startupEvent('audio-start');
           $('title-loading').textContent =
             language === 'es' ? 'Preparando la música…' : 'Preparing soundtrack…';
           // Start the destination score before movement is enabled. Missing
@@ -4331,8 +4403,11 @@
               return audio.productionPending || true;
             })
             .catch(() => false);
-          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))]).then(() =>
-            requestAnimationFrame(finish),
+          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))]).then(
+            () => {
+              if (epoch === titleEpoch) startupEvent('audio-settled');
+              requestAnimationFrame(finish);
+            },
           );
           return;
         }
@@ -4353,6 +4428,8 @@
         updateHUD();
         audio.setPaused(false);
         $('menu-button').focus?.({ preventScroll: true });
+        startupEvent('scene-revealed', { ...startupGraphics(), zone: game.zoneId });
+        startupEvent('controls-ready', startupGraphics());
       };
       const paint = () => {
         if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
@@ -4374,14 +4451,19 @@
             refreshTitleScreen();
             return;
           }
+          startupEvent('arrival-start', startupGraphics());
           const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
           if (gpuWarmup)
             void Promise.race([gpuWarmup, skipPromise.then(() => false)]).then((ready) => {
               if (epoch !== titleEpoch) return;
+              startupEvent('arrival-settled', { ready: ready === true, ...startupGraphics() });
               if (!ready) graphicsController.revert();
               requestAnimationFrame(finish);
             });
-          else requestAnimationFrame(finish);
+          else {
+            startupEvent('arrival-settled', { ready: true, ...startupGraphics() });
+            requestAnimationFrame(finish);
+          }
         };
         // The save supplies the actual zone/hero/party. Only after recovery
         // and that scene's sprite warmup do we initialize confirmed Pixi,
@@ -4396,8 +4478,14 @@
         if (!shouldRestorePixi) return showReadyFrame();
         $('title-loading').textContent =
           language === 'es' ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
+        startupEvent('gpu-start', startupGraphics());
         const restoration = graphicsController.resumeConfirmedWebGL();
-        void Promise.race([restoration, skipPromise]).then(showReadyFrame, showReadyFrame);
+        const observedReadyFrame = (ready) => {
+          if (epoch === titleEpoch)
+            startupEvent('gpu-settled', { ready: ready === true, ...startupGraphics() });
+          showReadyFrame();
+        };
+        void Promise.race([restoration, skipPromise]).then(observedReadyFrame, observedReadyFrame);
       };
       // Recovering an unclean save can change the spawn after title warmup.
       const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
@@ -4794,6 +4882,7 @@
     if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
     persistProfile();
     showTitleScreen();
+    nextStartupEntry = 'new-game';
     enterPreparedScene();
   }
   function savedRunRecoveryMenu() {
@@ -5581,10 +5670,74 @@
   }, 12000);
   addEventListener('error', () => notePlaytestLifecycle('uncaught-page-error'));
   addEventListener('unhandledrejection', () => notePlaytestLifecycle('unhandled-rejection'));
+  function playtestSettings() {
+    // Reuse the canonical sound/performance sections instead of duplicating
+    // their values. Snapshot only player options, never arbitrary storage.
+    return {
+      version: 1,
+      capturedAt: new Date().toISOString(),
+      references: { performance: 'performance', sound: 'audio.settings' },
+      display: {
+        language,
+        screenPreference: platform.preference,
+        activeScreen: platform.mode,
+        cameraZoom: platform.cameraZoom,
+      },
+      controls: { ...input.preferences, bindings: { ...input.preferences.bindings } },
+      accessibility: {
+        reducedMotion: !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
+      },
+      gameplay: {
+        succession: game.s.challenge?.succession === true,
+        squadDoctrine: game.s.squadDoctrine || null,
+        fallenCharmSlotPolicy: game.s.rogueFallenCharmSlotPolicy || null,
+      },
+      note: 'One English-only settings snapshot at export. Canonical sound levels/mute are in audio.settings; chosen and effective graphics, FPS, resolution and emergency overrides are in performance. No settings are changed by reporting.',
+    };
+  }
+  function playtestDevice() {
+    const number = (value) => (Number.isFinite(value) && value >= 0 ? value : null);
+    const text = (value) => (typeof value === 'string' ? value.slice(0, 160) : null);
+    const hints = navigator.userAgentData;
+    const memory = performance.memory;
+    return {
+      platform: text(navigator.platform),
+      browserHints: hints
+        ? {
+            platform: text(hints.platform),
+            mobile: !!hints.mobile,
+            brands: Array.isArray(hints.brands)
+              ? hints.brands
+                  .slice(0, 5)
+                  .map((x) => ({ brand: text(x.brand), version: text(x.version) }))
+              : [],
+          }
+        : null,
+      maxTouchPoints: number(navigator.maxTouchPoints),
+      screen: {
+        cssWidth: number(window.screen?.width),
+        cssHeight: number(window.screen?.height),
+        availableCssWidth: number(window.screen?.availWidth),
+        availableCssHeight: number(window.screen?.availHeight),
+        colorDepth: number(window.screen?.colorDepth),
+      },
+      jsHeapEstimate: memory
+        ? {
+            usedBytes: number(memory.usedJSHeapSize),
+            allocatedBytes: number(memory.totalJSHeapSize),
+            limitBytes: number(memory.jsHeapSizeLimit),
+          }
+        : null,
+      exactDeviceModel: null,
+      exactCpuModel: null,
+      note: 'Browser-reported, potentially reduced/spoofed/coarse capabilities; null means unavailable, not unsupported. Existing userAgent, CPU concurrency and coarse RAM estimate are in this environment section. GPU details, when an actual game context existed, are graphicsRenderer.deviceGraphics. Heap estimates exclude browser/GPU/driver memory. No extra GPU probe, hardware scan, permission prompt, identifier or upload.',
+    };
+  }
   function exportPlaytestReport() {
     exportJSON(
       {
         version: PrototypeBuild.version,
+        settings: playtestSettings(),
         performance: {
           ...runtime.report(
             {
@@ -5609,6 +5762,7 @@
           },
           frameProfile: frameProfile.report(),
           rendererDiagnostics: rendererRecordingReport(),
+          startupDiagnostics: startup?.report() || null,
           diagnosticContinuity: {
             documentId: playtestDocumentId,
             navigationType: playtestNavigationType,
@@ -5628,6 +5782,7 @@
               : null,
             viewportWidth: viewport.width,
             viewportHeight: viewport.height,
+            device: playtestDevice(),
           },
           crowdDiagnostics: game.crowdDiagnosticsReport(),
           ...(developerEnabled && game.s.mode === 'developer'
@@ -6838,6 +6993,7 @@
 
   // prettier-ignore
   function showMap(back = closeMenu) {
+    startupEvent('map-opened', {zone:game.zoneId});
     if (game.s.mode === 'arena') return arenaDestinations();
     const zone = game.zone();
     const room = game.supplyRoom();
@@ -8361,8 +8517,18 @@
       graphics.recoveryPending === true ||
       (graphics.mode === 'webgl2' && !['confirmed', 'trial'].includes(graphics.phase));
     const mustUseTitle = hiddenDurationMs >= backgroundTitleGraceMs || needsGraphicsGate;
-    const canResume = pending.saved && writerGuard.canWrite() &&
-      !persistence.conflicted(game.s.mode);
+    const canResume =
+      pending.saved && writerGuard.canWrite() && !persistence.conflicted(game.s.mode);
+    startupEvent('background-return-classified', {
+      hiddenDurationMs,
+      decision: !canResume
+        ? 'save-or-ownership-pause'
+        : mustUseTitle
+          ? 'guarded-continue'
+          : 'live-resume',
+      ...startupGraphics(),
+      canWrite: writerGuard.canWrite(),
+    });
     notePlaytestLifecycle('background-return-classified', {
       source, hiddenDurationMs: Math.round(hiddenDurationMs),
       decision: !canResume ? 'save-or-ownership-pause'
@@ -8382,6 +8548,8 @@
     }
     // Short benign visibility glitches do not close a menu, change a campaign
     // or reset the opted-in profiler. Preserve an intentional pre-hide pause.
+    startupEvent('scene-revealed', { ...startupGraphics(), reason: 'live-resume' });
+    if (!pending.wasPaused && !menu) startupEvent('controls-ready', startupGraphics());
     paused = pending.wasPaused;
     audio.setPaused(paused || !focused);
     if (!paused && focused) restartGuard.arm(game);
@@ -8471,6 +8639,7 @@
       notePlaytestLifecycle('back-forward-cache-restore');
       // A page restored from BFCache has already released its writer lock.
       // Reload to acquire ownership again; ordinary app minimize uses no reload.
+      startupEvent('update-reload-requested', { reason: 'bfcache-writer-reacquisition' });
       location.reload();
       return;
     }
@@ -9682,6 +9851,15 @@
         },
       });
       game.crowdDiagnosticsEndFrame();
+      if (
+        startup?.needsMovement() &&
+        game.hero === movingHero &&
+        game.zoneId === was.zone &&
+        game.s.statistics.deaths === was.deaths &&
+        (x || y || was.order) &&
+        Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.1
+      )
+        startupEvent('first-movement-observed', startupGraphics());
       game.partyDiagnosticsObserveTick();
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
@@ -10034,9 +10212,13 @@
         : 'Optimization Mode now defaults to Auto. You can change it in Settings.',
     );
   requestAnimationFrame(frame);
+  startupEvent(writerGuard.pending ? 'ownership-start' : 'ownership-settled', {
+    canWrite: writerGuard.canWrite(),
+  });
   if (writerGuard.pending)
     writerGuard.ready
       .then((state) => {
+        startupEvent('ownership-settled', { canWrite: state === 'owner' });
         if (state !== 'owner') {
           savedRunConflictMenu();
           return;
@@ -10110,6 +10292,7 @@
       if (hadServiceWorkerController) {
         appReloadRequested = false;
         appControllerReloaded = true;
+        startupEvent('update-reload-requested', { reason: 'service-worker-controller-change' });
         notePlaytestLifecycle('service-worker-controller-change');
         if (started && writerGuard.canWrite() && !save()) {
           appControllerReloaded = false;

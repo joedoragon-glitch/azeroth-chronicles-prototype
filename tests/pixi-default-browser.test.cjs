@@ -251,7 +251,11 @@ const server = http.createServer((req, res) => {
 });
 // Issue #841: separate isolated desktop cases, never the owner's browser storage.
 async function startupCase(browser, host, scenario) {
-  assert(['fresh', 'recordings', 'interrupted', 'repeated', 'unavailable'].includes(scenario));
+  assert(
+    ['fresh', 'recordings', 'startup-history', 'interrupted', 'repeated', 'unavailable'].includes(
+      scenario,
+    ),
+  );
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   try {
     await context.addInitScript(
@@ -276,10 +280,116 @@ async function startupCase(browser, host, scenario) {
       { scenario },
     );
     const page = await context.newPage();
-    await page.goto(host + 'index.html?developer=1');
+    if (scenario === 'startup-history') {
+      // Failure before app.js: automatic head recorder must retain it even
+      // when the broken page cannot open a menu or export a report.
+      await page.route('**/src/prototype/engine.js', (route) => route.abort());
+      await page.goto(host + 'index.html?developer=1');
+      await page.waitForFunction(() =>
+        window.PrototypeStartupDiagnostics?.journal
+          .report()
+          .attempts.at(-1)
+          .events.some((e) => e.stage === 'asset-error'),
+      );
+      assert.equal(
+        await page.locator('#title-new').isVisible(),
+        false,
+        'failed boot never reached playable title',
+      );
+      await page.unroute('**/src/prototype/engine.js');
+      await page.reload();
+    } else await page.goto(host + 'index.html?developer=1');
     await enterPlayableGame(page, 'Mage', true);
     assert.equal(await page.evaluate(() => Prototype.game.s.mode), 'developer');
     const state = await page.evaluate(() => Prototype.experimentalGraphics);
+    if (scenario === 'startup-history') {
+      assert.equal(state.mode, 'webgl2');
+      await page.waitForFunction(() =>
+        PrototypeStartupDiagnostics.journal
+          .report()
+          .attempts.at(-1)
+          .events.some((e) => e.stage === 'first-live-draw'),
+      );
+      const beforeMove = await page.evaluate(() => PrototypeStartupDiagnostics.journal.report());
+      assert(
+        beforeMove.attempts.some((a) =>
+          a.events.some((e) => e.stage === 'asset-error' && e.asset === 'engine.js'),
+        ),
+      );
+      assert.equal(beforeMove.attempts.at(-1).outcome, 'ready');
+      assert(
+        !beforeMove.attempts.at(-1).events.some((e) => e.stage === 'first-movement-observed'),
+        'idle startup is complete without player input',
+      );
+      await page.keyboard.down('d');
+      try {
+        await page.waitForFunction(() =>
+          PrototypeStartupDiagnostics.journal
+            .report()
+            .attempts.at(-1)
+            .events.some((e) => e.stage === 'first-movement-observed'),
+        );
+      } finally {
+        await page.keyboard.up('d');
+      }
+      await page.keyboard.press('z');
+      await page.getByRole('heading', { name: / map$/ }).waitFor({ state: 'visible' });
+      assert(
+        await page.evaluate(() =>
+          PrototypeStartupDiagnostics.journal
+            .report()
+            .attempts.at(-1)
+            .events.some((e) => e.stage === 'map-opened'),
+        ),
+      );
+      await page.keyboard.press('Escape');
+      await page.locator('#menu-button').click();
+      await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+      await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+      const downloaded = page.waitForEvent('download');
+      await page.getByRole('button', { name: /^Export playtest report/ }).click();
+      const report = JSON.parse(fs.readFileSync(await (await downloaded).path(), 'utf8'));
+      const boot = report.performance.startupDiagnostics;
+      assert.equal(report.performance.rendererDiagnostics.state, 'not-recorded');
+      assert.equal(report.settings.references.sound, 'audio.settings');
+      assert.equal(typeof report.audio.settings.master, 'number');
+      assert.equal(typeof report.settings.controls.bindings.up, 'string');
+      assert.equal(typeof report.performance.environment.device.maxTouchPoints, 'number');
+      assert.equal(
+        report.performance.graphicsRenderer.deviceGraphics.source,
+        'existing-game-webgl2-context',
+      );
+      assert.match(report.performance.graphicsRenderer.deviceGraphics.version, /WebGL 2/);
+      assert.equal(boot.attempts.at(-1).outcome, 'ready');
+      assert(
+        boot.attempts.some((a) => a.events.some((e) => e.stage === 'asset-error')),
+        'existing report includes pre-app failure after reload',
+      );
+      for (const stage of [
+        'document-open',
+        'app-entered',
+        'graphics-choice',
+        'sprites-start',
+        'gpu-start',
+        'gpu-settled',
+        'scene-draw-completed',
+        'scene-revealed',
+        'controls-ready',
+        'first-live-draw',
+        'first-movement-observed',
+        'map-opened',
+      ])
+        assert(
+          boot.attempts.at(-1).events.some((e) => e.stage === stage),
+          'report includes automatic ' + stage,
+        );
+      assert.equal(report.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
+      assert(boot.attempts.length <= 3);
+      console.log(
+        'PASS automatic startup history: failed asset before app, reload, native movement/map, same one JSON, no optional profiling',
+      );
+      return;
+    }
     if (scenario === 'fresh' || scenario === 'recordings') {
       assert.equal(state.mode, 'webgl2', JSON.stringify(state));
       assert.equal(state.phase, 'confirmed');

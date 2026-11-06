@@ -335,7 +335,8 @@
       proceduralGpuPrepared = 0,
       gpuPreparationMs = 0,
       gpuPreparationBatches = 0;
-    let cancelGpuPreparation = null;
+    let cancelGpuPreparation = null,
+      deviceGraphics = null;
     // One portrait-stamped Crown coin texture, reused for every visible drop.
     const crownLootTextureId = 'pixi-world-crown-loot';
     let crownLootTexture = null,
@@ -1712,6 +1713,39 @@
       scene.syncMotes(motes, zoom);
       scene.setVignette({ darkness, optimized: !!options.getOptimizationMode() });
     }
+    function readDeviceGraphics(gl) {
+      if (typeof gl?.getParameter !== 'function') return null;
+      const read = (token) => {
+        try {
+          if (token === undefined) return null;
+          const value = gl.getParameter(token);
+          return typeof value === 'string'
+            ? value.slice(0, 240)
+            : Number.isFinite(value)
+              ? value
+              : null;
+        } catch (_) {
+          return null;
+        }
+      };
+      let debug = null;
+      try {
+        debug = gl.getExtension?.('WEBGL_debug_renderer_info');
+      } catch (_) {}
+      return Object.freeze({
+        source: 'existing-game-webgl2-context',
+        observedAt: new Date().toISOString(),
+        version: read(gl.VERSION),
+        renderer: read(gl.RENDERER),
+        vendor: read(gl.VENDOR),
+        shaderVersion: read(gl.SHADING_LANGUAGE_VERSION),
+        unmaskedRenderer: read(debug?.UNMASKED_RENDERER_WEBGL),
+        unmaskedVendor: read(debug?.UNMASKED_VENDOR_WEBGL),
+        maxTextureSize: read(gl.MAX_TEXTURE_SIZE),
+        maxRenderbufferSize: read(gl.MAX_RENDERBUFFER_SIZE),
+        note: 'Last observed actual game context, not a new probe. May describe software rendering; values can be masked/unavailable. This does not certify device speed or current context health.',
+      });
+    }
     async function prepare() {
       if (disposed) throw Error('Experimental renderer disposed');
       // A previous WebGL context can dispatch an asynchronous contextlost
@@ -1754,7 +1788,9 @@
           background: 0x0c1913,
         });
         stage = 'webgl2-context';
-        requireValue(app.canvas.getContext('webgl2'), 'WebGL2 context not available');
+        const actualContext = app.canvas.getContext('webgl2');
+        requireValue(actualContext, 'WebGL2 context not available');
+        deviceGraphics = readDeviceGraphics(actualContext);
         requireValue(
           typeof app.renderer.prepare?.upload === 'function',
           'PixiJS GPU preparation system not installed',
@@ -2031,6 +2067,7 @@
       status: () => ({
         active,
         lastError,
+        deviceGraphics,
         // Actual Pixi scene counters; Canvas overlay counters are separate.
         sceneMetrics: scene?.metrics?.() || null,
         drawCpuProfile: drawCpuReport(),

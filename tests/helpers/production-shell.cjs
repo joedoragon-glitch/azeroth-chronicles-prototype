@@ -139,6 +139,10 @@ function shell(language, heroClass = 'paladin', options = {}) {
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
   scope.window = scope;
   vm.createContext(scope);
+  vm.runInContext(
+    fs.readFileSync(require.resolve('../../src/prototype/startup-diagnostics'), 'utf8'),
+    scope,
+  );
   vm.runInContext(fs.readFileSync(require.resolve('../../src/prototype/app'), 'utf8'), scope);
   scope.Prototype.renderer.draw = () => {};
   // Existing presentation fixtures explicitly enter gameplay; the title

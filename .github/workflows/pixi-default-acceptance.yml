@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        scenario: [fresh, recordings, interrupted, repeated, unavailable]
+        scenario: [fresh, recordings, startup-history, interrupted, repeated, unavailable]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

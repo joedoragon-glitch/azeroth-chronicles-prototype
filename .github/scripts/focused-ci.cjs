@@ -15,6 +15,11 @@ const {
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
+  {
+    match:
+      /^src\/prototype\/startup-diagnostics\.js$|^src\/prototype\/app\.js$|^scripts\/site-assets\.cjs$|^templates\/game\.html$/,
+    tests: [TEST + 'startup-diagnostics.test.cjs'],
+  },
   // #755: future comparator edits must exercise the positive-control guard.
   {
     match: /^scripts\/pixi-755-compare\.cjs$|^tests\/pixi-755-acceptance\.test\.cjs$/,
@@ -297,7 +302,8 @@ const groups = [
     // #727 Stage 2–6 source ledgers are the production truth for the isolated
     // preview importer; its own source preflight must not fall through to a
     // generic architecture test.
-    match: /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies|production-routing)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
+    match:
+      /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies|production-routing)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
     tests: [TEST + 'environment-727-stage6-source.test.cjs'],
   },
   {

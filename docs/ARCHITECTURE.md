@@ -92,6 +92,7 @@ The table below is intentionally **current ownership reference**, rather than an
 | `material-contract.js` / `materials.js` | Manifest-driven optional world textures, deterministic compatibility/fallback and bounded decoded/presentation residency |
 | `audio-score.js` | Source-derived score cue selection, contextual observation, scheduling and transitions; the environment/recordings owners handle their independent playback. |
 | `audio-runtime.js` / `audio-effects.js` | Context lifecycle, mixer/source cleanup/bounds, diagnostics and contextual effect recipes |
+| `startup-diagnostics.js` | Early, automatic bounded startup/foreground milestone history, local checkpoint key and report snapshot; no campaign ownership, network upload, profiler opt-in or recovery decisions. Loaded first in canonical HTML. |
 | `runtime.js` | Bounded stage/frame samples, two Auto/manual FPS policies, adaptive draw skips, critical emergency holds, resolution control and idle redraw scheduling |
 | `skill-reference.js` | Read-only class skill descriptions, current effect figures and next-rank comparisons; native hero combat and rules remain authoritative |
 | `menus.js` | Specialist, barracks, party, inventory and training menu definitions/actions; current game and shell callbacks injected |
