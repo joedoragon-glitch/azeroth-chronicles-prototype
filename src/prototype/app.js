@@ -10057,12 +10057,12 @@
         ? null
         : autoOptimization.observe(now, {
             activePlay: simulating || recovering,
-        emergency: recovering || frameSkip.emergency,
-        preference: optimizationPreference,
-        optimized: optimizationMode,
-        intervalMs,
-        workMs: frameWorkMs,
-        adaptiveSkipped,
+            emergency: recovering || frameSkip.emergency,
+            preference: optimizationPreference,
+            optimized: optimizationMode,
+            intervalMs,
+            workMs: frameWorkMs,
+            adaptiveSkipped,
             target: fps.target,
           });
       if (game.s.mode === 'arena') {
