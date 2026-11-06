@@ -2610,6 +2610,8 @@
     const canvasStartedAt = performance.now();
     renderer.draw();
     const canvasMs = Math.max(0, performance.now() - canvasStartedAt);
+    if (overlay && rendererDiagnosticActive)
+      timing.overlayPhases = renderer.consumeOverlaySubpassProfile();
     if (overlay) {
       timing.canvasOverlayMs = canvasMs;
       timing.canvasOverlayDrawn = true;
@@ -2627,6 +2629,8 @@
     for (const key of ['pixiAttempted', 'canvasOverlayDrawn', 'canvasWorldDrawn'])
       stageTimes[key] ||= timing[key];
     if (stageTimes.pixiDraws && timing.pixiDraw) stageTimes.pixiDraws.push(timing.pixiDraw);
+    if (stageTimes.overlayDraws && timing.overlayPhases)
+      stageTimes.overlayDraws.push(timing.overlayPhases);
   }
 
   const {
@@ -5506,6 +5510,7 @@
     };
     lastRendererRecording = null;
     rendererDiagnosticActive = true;
+    renderer.setOverlaySubpassProfiling(true);
     notePlaytestLifecycle(retainPreviousSegments ? 'renderer-profiling-restored' : 'renderer-profiling-started');
   }
   // Recent graphics-policy timeline, separate from the original arrival log.
@@ -5558,6 +5563,11 @@
       adaptiveSkipped: !!skipped,
       frameId: rendererRecordingFrameId,
       graphicsTransitions: rendererRecordingFrameEvents?.slice() || [],
+      overlayDraws: (stages.overlayDraws || []).slice(0, 2).map((stages) =>
+        Object.fromEntries(
+          Object.entries(stages).map(([name, ms]) => [name, +ms.toFixed(2)]),
+        ),
+      ),
       pixiDraws: (stages.pixiDraws || []).slice(0, 2).map((trace) => ({
         elapsedStartMs: +(trace.startedAtMs - capture.startedClockMs).toFixed(2),
         totalMs: +trace.totalMs.toFixed(2),
@@ -5667,6 +5677,7 @@
     lastRendererRecording = rendererRecording;
     rendererRecording = null;
     rendererDiagnosticActive = false;
+    renderer.setOverlaySubpassProfiling(false);
     rendererRecordingFrameId = null;
     rendererRecordingFrameEvents = null;
     notePlaytestLifecycle('renderer-profiling-stopped');
@@ -9826,6 +9837,7 @@
           canvasOverlayDrawn: false,
           canvasWorldDrawn: false,
           pixiDraws: rendererDiagnosticActive ? [] : null,
+          overlayDraws: rendererDiagnosticActive ? [] : null,
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;

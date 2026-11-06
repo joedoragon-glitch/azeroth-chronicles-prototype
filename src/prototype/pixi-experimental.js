@@ -189,7 +189,7 @@
     // Canvas sorts the presented body, not a ferry's separate boarding location.
     return result.sort((a, b) => a.visual.x + a.visual.y - (b.visual.x + b.visual.y));
   }
-  function bake(visual, game, density = 1) {
+  function bake(visual, game, density = 1, trace = null) {
     // The procedural artist draws vectors. Bake at the same final display
     // density as Canvas (camera zoom × backing ratio), not a 1x bitmap.
     const width = Math.round(576 * density),
@@ -199,6 +199,7 @@
     c.setTransform(density, 0, 0, density, 0, 0);
     const center = { x: 288, y: 460 };
     const ambientParts = [];
+    const painterAt = trace ? measureNow() : 0;
     const ambient = root.Campaign?.rules?.ambientLife?.[visual.structure || visual.id];
     root.PrototypeVisuals.draw(
       c,
@@ -212,7 +213,13 @@
           : { mode: 'static', onPart: (part) => ambientParts.push(part) }
         : null,
     );
+    if (trace)
+      trace.proceduralPainterMs = (trace.proceduralPainterMs || 0) + Math.max(0, measureNow() - painterAt);
+    const readbackAt = trace ? measureNow() : 0;
     const { data } = c.getImageData(0, 0, work.width, work.height);
+    if (trace)
+      trace.proceduralReadbackMs = (trace.proceduralReadbackMs || 0) + Math.max(0, measureNow() - readbackAt);
+    const alphaScanAt = trace ? measureNow() : 0;
     let left = width,
       top = width,
       right = -1,
@@ -226,6 +233,8 @@
           bottom = Math.max(bottom, y);
         }
       }
+    if (trace)
+      trace.proceduralAlphaScanMs = (trace.proceduralAlphaScanMs || 0) + Math.max(0, measureNow() - alphaScanAt);
     if (right < left || bottom < top) {
       if (!ambientParts.length) return null;
       // Animal-only groups still need a tiny, transparent retained home node.
@@ -238,6 +247,7 @@
         ambientParts,
       };
     }
+    const cropAt = trace ? measureNow() : 0;
     left = Math.max(0, left - 2);
     top = Math.max(0, top - 2);
     right = Math.min(width - 1, right + 2);
@@ -246,6 +256,8 @@
     image
       .getContext('2d')
       .drawImage(work, left, top, image.width, image.height, 0, 0, image.width, image.height);
+    if (trace)
+      trace.proceduralCropMs = (trace.proceduralCropMs || 0) + Math.max(0, measureNow() - cropAt);
     return {
       image,
       dx: left / density - center.x,
@@ -1060,7 +1072,7 @@
         return baked.get(revision);
       }
       const started = measureNow();
-      const body = bake(painted, current, backingRatio * zoom);
+      const body = bake(painted, current, backingRatio * zoom, trace);
       if (trace) {
         trace.proceduralRasterMs =
           (trace.proceduralRasterMs || 0) + Math.max(0, measureNow() - started);

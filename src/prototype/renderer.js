@@ -622,6 +622,9 @@
     let cacheGround = true,
       optimized = false;
     const phaseSamples = [];
+    // Only the existing opt-in renderer recording activates these subpass clocks.
+    let overlaySubpassEnabled = false,
+      overlaySubpassLast = null;
     let drawCount = 0,
       phaseSample = null,
       phaseAt = 0;
@@ -3122,6 +3125,17 @@
       // between simulation steps or change warning/damage geometry.
       const warningFrameShapes = new Map();
       if (renderLayer === 'overlay') {
+        // Do not time ordinary frames or create an opt-in sample unless requested.
+        overlaySubpassLast = null;
+        const overlayStages = overlaySubpassEnabled ? {} : null;
+        let overlayMarkAt = overlayStages ? now() : 0;
+        const overlayMark = overlayStages
+          ? (name) => {
+              const next = now();
+              overlayStages[name] = Math.max(0, next - overlayMarkAt);
+              overlayMarkAt = next;
+            }
+          : null;
         // On the experimental PixiJS path, keep essential native combat cues
         // above the independent GPU world instead of hiding player warnings.
         // The full normal Canvas path below is unchanged.
@@ -3138,6 +3152,7 @@
           warningFrameShapes,
         );
         PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
+        if (overlayMark) overlayMark('groundAndClear');
         // The Pixi cue layer receives raw Campaign actors, unlike Canvas's
         // presented entities. Pass the actor kind explicitly so hostile bars
         // and the position-derived fortress shield use the shared drawing path.
@@ -3158,9 +3173,14 @@
           if (p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120)
             healthPlate(e, p, renderKind);
         }
+        if (overlayMark) overlayMark('healthPlates');
         drawPixiNameplates();
+        if (overlayMark) overlayMark('nameplates');
         // Reuse the bounded alpha-mask painter: no GPU readback or new texture.
-        drawOcclusionOutlines(collectVisibleEntities());
+        const overlayVisible = collectVisibleEntities();
+        if (overlayMark) overlayMark('occlusionCandidates');
+        drawOcclusionOutlines(overlayVisible);
+        if (overlayMark) overlayMark('occlusionMasks');
         PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
         for (const projectile of game.s.projectiles) drawProjectile(projectile);
         drawVisualFx();
@@ -3174,6 +3194,10 @@
         targetGuidance();
         drawNavigationRoute();
         drawPausePresentation();
+        if (overlayMark) {
+          overlayMark('remainingCombatCues');
+          overlaySubpassLast = overlayStages;
+        }
         finishPhase('effects');
         return;
       }
@@ -3660,6 +3684,15 @@
     }
     return {
       draw,
+      setOverlaySubpassProfiling(enabled) {
+        overlaySubpassEnabled = !!enabled;
+        if (!overlaySubpassEnabled) overlaySubpassLast = null;
+      },
+      consumeOverlaySubpassProfile() {
+        const profile = overlaySubpassLast;
+        overlaySubpassLast = null;
+        return profile;
+      },
       // No diagnostic object is constructed outside an explicit developer opt-in.
       setEffectDiagnostics(enabled) {
         if (enabled && getGame().s.mode === 'developer') {
