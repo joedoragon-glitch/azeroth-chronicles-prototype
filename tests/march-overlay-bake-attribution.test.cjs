@@ -12,7 +12,7 @@ const canvas = readFileSync(path.join(root, 'src/prototype/renderer.js'), 'utf8'
 const app = readFileSync(path.join(root, 'src/prototype/app.js'), 'utf8');
 
 test('diagnostic-only bake substeps retain exact cropped artwork dimensions and offsets', () => {
-  const begin = pixi.indexOf('  function bake(visual, game, density = 1, trace = null) {');
+  const begin = pixi.indexOf('  function bake(visual, game, density = 1, trace = null, clock = null) {');
   const end = pixi.indexOf('\n  function create(options) {', begin);
   assert(begin !== -1 && end > begin, 'extract the actual production bake function');
   const baked = vm.runInNewContext(`
@@ -42,7 +42,8 @@ test('diagnostic-only bake substeps retain exact cropped artwork dimensions and 
   const visual = { structure: 'marsh-artist', family: 'ridge' };
   const without = baked(visual, game, 0.05);
   const row = {};
-  const withTrace = baked(visual, game, 0.05, row);
+  let timestamp = 0;
+  const withTrace = baked(visual, game, 0.05, row, () => ++timestamp);
   assert.equal(withTrace.image.width, without.image.width);
   assert.equal(withTrace.image.height, without.image.height);
   assert.equal(withTrace.dx, without.dx);
