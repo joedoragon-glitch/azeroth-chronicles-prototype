@@ -249,6 +249,48 @@ const server = http.createServer((req, res) => {
   });
   fs.createReadStream(filename).pipe(res);
 });
+async function downloadReport(page) {
+  await page.locator('#menu-button').click();
+  await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: /^Export playtest report/ }).click();
+  const report = JSON.parse(fs.readFileSync(await (await download).path(), 'utf8'));
+  for (let back = 0; back < 4 && (await page.locator('#modal').isVisible()); back++)
+    await page.keyboard.press('Escape');
+  return report;
+}
+function reportReceipt(report, scenario) {
+  const g = report.performance.graphicsRenderer,
+    r = report.performance.rendererDiagnostics;
+  // Synthetic test observations only. Never log complete player/save/device reports.
+  console.log(
+    'STARTUP_REPORT_RECEIPT ' +
+      JSON.stringify({
+        scenario,
+        version: report.version,
+        active: g.activeRenderer,
+        preferred: g.preferredRenderer,
+        reason: g.lastFallbackReason,
+        hold: g.recoveryHoldReason,
+        firstFailure: g.firstFailure
+          ? { type: g.firstFailure.type, stage: g.firstFailure.stage }
+          : null,
+        startup: report.performance.startupDiagnostics.attempts.at(-1).outcome,
+        rendererRecording: r.state,
+        durationMs: r.durationMs,
+        frames: r.frames,
+        draws: r.draws,
+        initial: r.initialRenderer,
+        final: r.finalRenderer,
+        guideVersion: report.analysisGuide.version,
+        effectsRecording: report.performance.effectDiagnostics?.recording,
+        effectDraws: report.performance.effectDiagnostics?.drawFrames,
+        navigationRecording: report.performance.crowdDiagnostics.recording,
+        navigationTicks: report.performance.crowdDiagnostics.sampledSimulationTicks,
+      }),
+  );
+}
 // Issue #841: separate isolated desktop cases, never the owner's browser storage.
 async function startupCase(browser, host, scenario) {
   assert(
@@ -302,6 +344,28 @@ async function startupCase(browser, host, scenario) {
     await enterPlayableGame(page, 'Mage', true);
     assert.equal(await page.evaluate(() => Prototype.game.s.mode), 'developer');
     const state = await page.evaluate(() => Prototype.experimentalGraphics);
+    if (['unavailable', 'interrupted', 'repeated'].includes(scenario)) {
+      const report = await downloadReport(page);
+      const g = report.performance.graphicsRenderer;
+      assert.equal(g.activeRenderer, 'canvas2d');
+      assert.equal(g.preferredRenderer, 'webgl2');
+      assert(g.lastFallbackReason, 'actual downloaded fallback report must explain Canvas');
+      assert.equal(report.performance.startupDiagnostics.attempts.at(-1).outcome, 'ready');
+      if (scenario === 'unavailable') {
+        assert(g.firstFailure?.type, 'actual GPU rejection is recorded');
+        assert(
+          report.performance.startupDiagnostics.attempts.at(-1).firstFailure,
+          'startup journal retains the observed failure',
+        );
+      } else {
+        assert.equal(
+          g.recoveryHoldReason,
+          scenario === 'interrupted' ? 'interrupted-restore' : 'repeated-failures',
+        );
+        assert.equal(g.firstFailure, null, 'old hold does not invent its original failure');
+      }
+      reportReceipt(report, scenario);
+    }
     if (scenario === 'startup-history') {
       assert.equal(state.mode, 'webgl2');
       await page.waitForFunction(() =>
@@ -351,6 +415,7 @@ async function startupCase(browser, host, scenario) {
       const report = JSON.parse(fs.readFileSync(await (await downloaded).path(), 'utf8'));
       const boot = report.performance.startupDiagnostics;
       assert.equal(report.performance.rendererDiagnostics.state, 'not-recorded');
+      assert.equal(report.analysisGuide.version, 1);
       assert.equal(report.settings.references.sound, 'audio.settings');
       assert.equal(typeof report.audio.settings.master, 'number');
       assert.equal(typeof report.settings.controls.bindings.up, 'string');
@@ -446,6 +511,27 @@ async function startupCase(browser, host, scenario) {
           assert.equal(report.performance.rendererDiagnostics.initialRenderer, 'webgl2');
           assert.equal(report.performance.rendererDiagnostics.finalRenderer, 'webgl2');
           assert.equal(report.performance.rendererDiagnostics.state, 'stopped');
+          assert.equal(report.analysisGuide.language, 'en');
+          for (const path of [
+            'performance.rendererDiagnostics',
+            'performance.effectDiagnostics',
+            'performance.crowdDiagnostics',
+          ])
+            assert(
+              report.analysisGuide.sections.some((section) => section.path === path),
+              'guide covers ' + path,
+            );
+          assert.equal(report.performance.effectDiagnostics.recording, false);
+          assert(
+            report.performance.effectDiagnostics.drawFrames > 0,
+            'stopped effects retain actual observations',
+          );
+          assert.equal(report.performance.crowdDiagnostics.recording, false);
+          assert(
+            report.performance.crowdDiagnostics.sampledSimulationTicks > 0,
+            'stopped navigation retains actual observations',
+          );
+          reportReceipt(report, 'recordings-round-' + round);
           console.log(
             'PASS exact owner sequence round ' + round + ': exported report confirms active Pixi',
           );

@@ -111,6 +111,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     PrototypeHeroPresentation: 'hero-presentation',
     PrototypeMenus: 'menus',
     PrototypeBuild: 'build-info',
+    PrototypePlaytestReportGuide: 'playtest-report-guide',
     PrototypeInput: 'input',
     PrototypePersistence: 'persistence',
     PrototypePlatform: 'platform',

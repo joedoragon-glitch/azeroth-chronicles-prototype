@@ -17,7 +17,7 @@ const PILOT = 'tools/webgl-pilot/';
 const groups = [
   {
     match:
-      /^src\/prototype\/startup-diagnostics\.js$|^src\/prototype\/app\.js$|^scripts\/site-assets\.cjs$|^templates\/game\.html$/,
+      /^src\/prototype\/(?:startup-diagnostics|playtest-report-guide)\.js$|^src\/prototype\/app\.js$|^scripts\/site-assets\.cjs$|^templates\/game\.html$/,
     tests: [TEST + 'startup-diagnostics.test.cjs'],
   },
   // #755: future comparator edits must exercise the positive-control guard.

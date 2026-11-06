@@ -176,6 +176,7 @@ function menu(app, label) {
         'automatic milestone ' + stage,
       );
     assert(!last(j).events.some((x) => x.stage === 'first-movement-observed'));
+    assert.doesNotThrow(() => app.events.pagehide[0](), 'minimal lifecycle event stays nonfatal');
     let blob;
     app.scope.URL.createObjectURL = (value) => {
       blob = value;
@@ -187,6 +188,36 @@ function menu(app, label) {
     menu(app, language === 'es' ? 'Exportar informe de prueba' : 'Export playtest report');
     const report = JSON.parse(await blob.text());
     assert.equal(report.performance.startupDiagnostics.attempts.at(-1).outcome, 'ready');
+    assert.equal(report.analysisGuide.version, 1);
+    assert.equal(report.analysisGuide.language, 'en');
+    const sections = new Map(
+      report.analysisGuide.sections.map((section) => [section.path, section]),
+    );
+    for (const path of [
+      'performance.rendererDiagnostics',
+      'performance.effectDiagnostics',
+      'performance.crowdDiagnostics',
+      'performance.frameProfile',
+      'performance.startupDiagnostics',
+      'partyDiagnostics',
+      'settings',
+      'audio',
+      'sprites',
+      'materials',
+    ])
+      assert(sections.has(path), 'self-contained guidance for ' + path);
+    for (const section of sections.values()) {
+      const value = section.path.split('.').reduce((object, key) => object?.[key], report);
+      assert(
+        value !== undefined || section.optional,
+        'documented paths resolve in actual export: ' + section.path,
+      );
+    }
+    for (const key of Object.keys(report))
+      assert(
+        [...sections.keys()].some((path) => path.split('.')[0] === key) || key === 'analysisGuide',
+        'every exported root section has guidance: ' + key,
+      );
     assert.equal(report.settings.display.language, language);
     assert.deepEqual(report.settings.controls, JSON.parse(JSON.stringify(owner.input.preferences)));
     assert.equal(report.settings.references.sound, 'audio.settings');

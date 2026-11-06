@@ -5737,6 +5737,7 @@
     exportJSON(
       {
         version: PrototypeBuild.version,
+        analysisGuide: PrototypePlaytestReportGuide.create(),
         settings: playtestSettings(),
         performance: {
           ...runtime.report(

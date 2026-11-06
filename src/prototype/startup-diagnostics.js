@@ -372,10 +372,10 @@
       } else journal.foreground();
     });
     root.addEventListener('pagehide', (event) =>
-      journal.record('pagehide', { persisted: event.persisted === true }),
+      journal.record('pagehide', { persisted: event?.persisted === true }),
     );
     root.addEventListener('pageshow', (event) => {
-      if (event.persisted) journal.foreground('bfcache-return');
+      if (event?.persisted) journal.foreground('bfcache-return');
     });
   }
 })(typeof window !== 'undefined' ? window : globalThis);
