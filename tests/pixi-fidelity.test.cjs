@@ -92,7 +92,17 @@ let currentActorTextures = new Set(),
   rejectWebGLContext = false,
   failApplicationInit = false,
   failSceneDraw = false,
-  syntheticSceneDelayMs = 0;
+  syntheticSceneDelayMs = 0,
+  syntheticBackgroundDelayMs = 0,
+  syntheticRasterDelayMs = 0,
+  syntheticTextureDelayMs = 0,
+  syntheticActorSubmitDelayMs = 0,
+  syntheticResizeDelayMs = 0;
+function syntheticWork(ms) {
+  if (ms <= 0) return;
+  const until = Date.now() + ms;
+  while (Date.now() < until) {} // Positive control: test-only stage delay.
+}
 function canvas() {
   const surface = {
     width: 0,
@@ -108,7 +118,10 @@ function canvas() {
         restore() {},
         clearRect() {},
         drawImage(...args) {
-          if (args.length === 3) backgroundCopies++;
+          if (args.length === 3) {
+            backgroundCopies++;
+            syntheticWork(syntheticBackgroundDelayMs);
+          }
         },
         getImageData() {
           const data = new Uint8ClampedArray(surface.width * surface.height * 4);
@@ -176,6 +189,7 @@ class Application {
         },
       },
       resize: (w, h, ratio) => {
+        syntheticWork(syntheticResizeDelayMs);
         resizes.push(ratio);
         this.screen = { width: w, height: h };
         this.canvas.width = Math.round(w * ratio);
@@ -198,7 +212,9 @@ class Application {
   }
   destroy() {}
 }
-const textureFrom = (image) => ({
+const textureFrom = (image) => {
+  syntheticWork(syntheticTextureDelayMs);
+  return {
   source: {
     width: image.width,
     height: image.height,
@@ -209,7 +225,8 @@ const textureFrom = (image) => ({
   destroy(releaseSource) {
     if (releaseSource) destroyedProcedural++;
   },
-});
+  };
+};
 const runtime = {
   Campaign: { rules: { terrain: [] }, data: { regions: [{ id: 'vale' }, { id: 'highlands' }] } },
   PIXI: {
@@ -237,6 +254,7 @@ const runtime = {
         if (value === false) stagingGroundReuseDisabled++;
       },
       draw() {
+        syntheticWork(syntheticBackgroundDelayMs);
         draws.push({ width: canvas.width, height: canvas.height, ratio: ctx.ratio });
       },
     }),
@@ -249,7 +267,7 @@ const runtime = {
   },
   PrototypeSprites: { timeMs: () => 1000 },
   PrototypeVisuals: {
-    draw() {},
+    draw() { syntheticWork(syntheticRasterDelayMs); },
     atmosphereMotes: Visuals.atmosphereMotes,
     terrainMotionLines: () => [],
   },
@@ -290,6 +308,7 @@ const runtime = {
       setBackground() {},
       moveBackground() {},
       syncActors(list) {
+        syntheticWork(syntheticActorSubmitDelayMs);
         for (const actor of list)
           assert(
             resources.has(actor.textureId),
@@ -309,10 +328,7 @@ const runtime = {
       syncLiquidMotion() {},
       setVignette() {},
       draw() {
-        if (syntheticSceneDelayMs > 0) {
-          const until = Date.now() + syntheticSceneDelayMs;
-          while (Date.now() < until) {} // Deliberate short test-only stage delay.
-        }
+        syntheticWork(syntheticSceneDelayMs);
         if (failSceneDraw)
           throw Error(
             failSceneDraw === 'context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error',
@@ -902,6 +918,111 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'opt-in timings expose a deliberate 18ms Pixi scene submission stall');
   assert(syntheticStall.phaseMs.scene > syntheticStall.phaseMs.actors,
     'scene delay is not falsely classified as actor rasterization');
+  // #783 R3A: one-factor positive controls on the ORIGINAL Pixi draw order.
+  // These demonstrate causal stage attribution in a source-faithful mock,
+  // not a reproduction of the iPhone's 684ms stall or GPU upload latency.
+  const r3DelayMs = 20;
+  game.props.push({ id: 'r783-r3-raster-cold', x: 2160, y: 2359, structure: 'crate' });
+  syntheticRasterDelayMs = r3DelayMs;
+  const r3Raster = valeNightGpu.draw();
+  syntheticRasterDelayMs = 0;
+  assert.equal(r3Raster.bakesDuringDraw, 1);
+  assert(r3Raster.phaseMs.proceduralRasterMs >= 15,
+    'cold visual drawing delay is attributed to procedural rasterization');
+  assert(r3Raster.phaseMs.actors >= r3Raster.phaseMs.proceduralRasterMs,
+    'procedural rasterization is nested inside actors, not separate frame work');
+  const r3Warm = valeNightGpu.draw();
+  assert.equal(r3Warm.bakesDuringDraw, 0, 'warm revisit needs no procedural bake');
+  assert.equal(r3Warm.phaseMs.proceduralRasterMs, undefined,
+    'warm revisit does not manufacture a rasterization timing');
+
+  game.props.push({ id: 'r783-r3-new-texture', x: 2160, y: 2359, structure: 'barrel' });
+  syntheticTextureDelayMs = r3DelayMs;
+  const r3Texture = valeNightGpu.draw();
+  syntheticTextureDelayMs = 0;
+  assert.equal(r3Texture.bakesDuringDraw, 1);
+  assert(r3Texture.phaseMs.proceduralRegisterMs >= 15,
+    'deliberately expensive texture source registration is separately attributed');
+  assert(r3Texture.phaseMs.actors >= r3Texture.phaseMs.proceduralRegisterMs);
+
+  syntheticActorSubmitDelayMs = r3DelayMs;
+  const r3Actors = valeNightGpu.draw();
+  syntheticActorSubmitDelayMs = 0;
+  assert.equal(r3Actors.bakesDuringDraw, 0);
+  assert(r3Actors.phaseMs.actorSubmitMs >= 15,
+    'scene actor synchronization has its own measured substage');
+
+  // Move enough to force a genuine retained-background repaint without
+  // changing density, spawning actors, or touching the renderer's policy.
+  const r3TileReuseBefore = valeNightGpu.status().terrainTileReuses;
+  syntheticBackgroundDelayMs = r3DelayMs;
+  game.hero.x += 1200;
+  const r3Background = valeNightGpu.draw();
+  syntheticBackgroundDelayMs = 0;
+  assert(
+    r3Background.backgroundRepaintsDuringDraw >= 1 ||
+      valeNightGpu.status().terrainTileReuses > r3TileReuseBefore,
+    'far camera movement triggers either the original painter or cached tile reuse');
+  assert(r3Background.phaseMs.background >= 15,
+    'background draw/composition expense belongs to background, not scene submission');
+  game.hero.x = 2160;
+  valeNightGpu.draw();
+
+  // Prepare both densities WITHOUT the injected cost. Revisit an already
+  // cached scale while delaying only the native app.renderer.resize operation.
+  canvasSurface.width = 1368;
+  canvasSurface.height = 630;
+  valeNightGpu.draw();
+  canvasSurface.width = 912;
+  canvasSurface.height = 420;
+  valeNightGpu.draw();
+  syntheticResizeDelayMs = r3DelayMs;
+  canvasSurface.width = 1368;
+  canvasSurface.height = 630;
+  const r3Resolution = valeNightGpu.draw();
+  syntheticResizeDelayMs = 0;
+  assert.equal(r3Resolution.resolutionChanged, true);
+  assert.equal(r3Resolution.bakesDuringDraw, 0,
+    'one-factor resize control reuses the already-prepared 1.5x procedural art');
+  assert(r3Resolution.phaseMs.resolution >= 15,
+    'expensive Pixi renderer resize is attributed to resolution stage');
+  canvasSurface.width = 912;
+  canvasSurface.height = 420;
+  valeNightGpu.draw();
+
+  // Actor-density-only control; additional approved raster sprites must not
+  // cause fresh procedural bakes at an unchanged density.
+  const originalNpcCrowd = game.npcs;
+  game.npcs = [
+    ...originalNpcCrowd,
+    ...Array.from({ length: 15 }, (_, i) => ({
+      id: 'r783-r3-additional-npc-' + i,
+      kind: 'service',
+      x: 2160 + (i % 5) * 17,
+      y: 2359 + Math.floor(i / 5) * 17,
+    })),
+  ];
+  const r3Density = valeNightGpu.draw();
+  assert.equal(r3Density.bakesDuringDraw, 0);
+  assert.equal(
+    frames.at(-1).filter((actor) => actor.key.startsWith('npc:r783-')).length,
+    30,
+    'one-factor actor density doubles the original mock NPC count',
+  );
+  game.npcs = originalNpcCrowd;
+  console.log('PIXI_783_R3_JSON ' + JSON.stringify({
+    scenario: 'R3A one-factor mocked draw-stage controls',
+    syntheticDelayMs: r3DelayMs,
+    rasterMs: +r3Raster.phaseMs.proceduralRasterMs.toFixed(1),
+    textureRegisterMs: +r3Texture.phaseMs.proceduralRegisterMs.toFixed(1),
+    actorSubmitMs: +r3Actors.phaseMs.actorSubmitMs.toFixed(1),
+    backgroundMs: +r3Background.phaseMs.background.toFixed(1),
+    pixiResolutionMs: +r3Resolution.phaseMs.resolution.toFixed(1),
+    resizeRebakes: r3Resolution.bakesDuringDraw,
+    warmRebakes: r3Warm.bakesDuringDraw,
+    denseNpcCount: 30,
+    note: 'source-faithful mocked Pixi stages only; no actual GPU or iPhone timing',
+  }));
   r783TraceActive = false;
   assert.equal(valeNightGpu.draw(), undefined, 'opt-out leaves ordinary draws untimed');
   assert.equal(valeNightGpu.status().drawCpuProfile.sampledFrames, 0,

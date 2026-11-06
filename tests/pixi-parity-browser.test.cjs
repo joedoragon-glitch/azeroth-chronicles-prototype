@@ -137,7 +137,8 @@ async function main() {
     );
     const rows = [],
       lifecycle = [],
-      benchmarks = [];
+      benchmarks = [],
+      r3Probes = [];
     for (const fixture of (
       process.env.PARITY_FIXTURES ||
       'warlord,ridge,regalia,cover,registered,wildlife,lamp,flight,bundle,keeper,pursuit,idle'
@@ -321,6 +322,7 @@ async function main() {
           getGame: () => g,
           canvasRenderer: painter,
           getOptimizationMode: () => optimized,
+          getDiagnosticRecording: () => window.r3Trace === true,
           getRendererOptions: () => opts,
           onFailure: (e) => {
             throw Error(JSON.stringify(e));
@@ -342,6 +344,166 @@ async function main() {
           );
         }
       });
+      // R3B is explicitly gated to one native Chromium/Pixi scene.
+      // It never runs in regular visual parity or the paired #755 fixture.
+      if (fixture === 'cover' && process.env.PARITY_R3_STAGE_AUDIT === '1') {
+        const trace = await page.evaluate(() => {
+          window.r3Trace = true;
+          gpu.activate();
+          const room = g.zone();
+          const original = {
+            heroX: g.hero.x, heroY: g.hero.y,
+            props: room.props, enemies: room.enemies,
+            width: opts.canvas.width, height: opts.canvas.height,
+            saved: JSON.stringify(g.s),
+          };
+          const read = (name) => {
+            const savedBeforeDraw = JSON.stringify(g.s);
+            const before = gpu.status();
+            const result = gpu.draw();
+            const after = gpu.status();
+            if (JSON.stringify(g.s) !== savedBeforeDraw)
+              throw Error('R3B native Campaign changed INSIDE draw ' + name +
+                ' (nextId: ' + JSON.parse(savedBeforeDraw).nextId + ' -> ' + g.s.nextId + ')');
+            if (!result?.phaseMs || !after.active || after.lastError)
+              throw Error('R3B native Pixi draw failed: ' + name);
+            return {
+              name,
+              totalMs: +result.totalMs.toFixed(2),
+              phaseMs: Object.fromEntries(Object.entries(result.phaseMs)
+                .map(([key, value]) => [key, +value.toFixed(2)])),
+              bakes: result.bakesDuringDraw,
+              backgroundRepaints: result.backgroundRepaintsDuringDraw,
+              tileReuses: after.terrainTileReuses - before.terrainTileReuses,
+              ratioBefore: result.ratioBefore,
+              ratioAfter: result.ratioAfter,
+              resolutionChanged: result.resolutionChanged,
+            };
+          };
+          // #783 R3C: inspect how the real *bake()* divides synchronous CPU
+          // cost among original vector drawing, Canvas pixel readback and
+          // remaining raster work (notably the full alpha-bounds scan).
+          // Patch only during the chosen diagnostic draw, restore in finally,
+          // and never alter the shipped renderer or ordinary parity pathway.
+          const readBakeCpu = (name) => {
+            const nativeVisualDraw = PrototypeVisuals.draw;
+            const nativeGetImageData = CanvasRenderingContext2D.prototype.getImageData;
+            const subs = { vectorDrawingMs: 0, pixelReadbackMs: 0,
+              vectorCalls: 0, readbackCalls: 0, readbackPixels: 0 };
+            PrototypeVisuals.draw = function (...args) {
+              const started = performance.now();
+              try { return nativeVisualDraw.apply(this, args); }
+              finally {
+                subs.vectorDrawingMs += performance.now() - started;
+                subs.vectorCalls++;
+              }
+            };
+            CanvasRenderingContext2D.prototype.getImageData = function (...args) {
+              const started = performance.now();
+              try { return nativeGetImageData.apply(this, args); }
+              finally {
+                subs.pixelReadbackMs += performance.now() - started;
+                subs.readbackCalls++;
+                subs.readbackPixels += Math.max(0, args[2] * args[3]);
+              }
+            };
+            let result;
+            try {
+              result = read(name);
+            } finally {
+              PrototypeVisuals.draw = nativeVisualDraw;
+              CanvasRenderingContext2D.prototype.getImageData = nativeGetImageData;
+            }
+            if (result.bakes > 0 && (!subs.readbackCalls || !subs.vectorCalls))
+              throw Error('R3C expected native procedural vector and pixel-readback calls');
+            const inclusiveRasterMs = result.phaseMs.proceduralRasterMs || 0;
+            return {
+              ...result,
+              bakeCpu: {
+                vectorDrawingMs: +subs.vectorDrawingMs.toFixed(2),
+                pixelReadbackMs: +subs.pixelReadbackMs.toFixed(2),
+                residualCpuMs: +Math.max(0,
+                  inclusiveRasterMs - subs.vectorDrawingMs - subs.pixelReadbackMs).toFixed(2),
+                vectorCalls: subs.vectorCalls,
+                readbackCalls: subs.readbackCalls,
+                readbackPixels: subs.readbackPixels,
+                scope: 'source-level production Canvas calls; residual includes alpha scan, allocation and crop',
+              },
+            };
+          };
+          try {
+            const warm = [read('baseline-warm-1'), read('baseline-warm-2')];
+            room.props = [...original.props, {
+              id: 'r3-native-new-crate', x: g.hero.x + 25,
+              y: g.hero.y + 20, structure: 'crate', decorative: false,
+            }];
+            const cold = readBakeCpu('cold-procedural');
+            const reused = read('warm-procedural');
+            room.props = original.props;
+            read('after-prop-restore');
+            if (reused.bakes !== 0) throw Error('R3B warmed art rebaked');
+            g.hero.x += 600;
+            const camera = readBakeCpu('camera-shift');
+            g.hero.x = original.heroX;
+            read('camera-return');
+            opts.canvas.width = Math.round(innerWidth * 1.5);
+            opts.canvas.height = Math.round(innerHeight * 1.5);
+            const densityUp = readBakeCpu('density-1.5x-cold');
+            opts.canvas.width = original.width;
+            opts.canvas.height = original.height;
+            const densityDown = read('density-return-1x');
+            opts.canvas.width = Math.round(innerWidth * 1.5);
+            opts.canvas.height = Math.round(innerHeight * 1.5);
+            const densityUpWarm = read('density-1.5x-warm');
+            opts.canvas.width = original.width;
+            opts.canvas.height = original.height;
+            read('density-final-restore');
+            if (!densityUp.resolutionChanged || !densityDown.resolutionChanged ||
+                !densityUpWarm.resolutionChanged || densityDown.bakes ||
+                densityUpWarm.bakes) throw Error('R3B density cache/resize path not isolated');
+            // #755 already covers native 1/8/24/48 browser actor density.
+            // Do not inject synthetic enemy entities into this separate
+            // saved-Campaign invariance experiment: native zone admission may
+            // assign IDs when noncanonical enemies are inserted.
+            return {
+              environment: 'Chromium ANGLE SwiftShader real Pixi WebGL2',
+              fixture: 'native cover',
+              warm, cold, reused, camera, densityUp, densityDown,
+              densityUpWarm,
+              limitation: 'JS submission only, not actual iOS Safari or GPU completion',
+            };
+          } finally {
+            room.props = original.props;
+            room.enemies = original.enemies;
+            g.hero.x = original.heroX;
+            g.hero.y = original.heroY;
+            opts.canvas.width = original.width;
+            opts.canvas.height = original.height;
+            opts.ctx.setTransform(original.width / innerWidth, 0, 0,
+              original.width / innerWidth, 0, 0);
+            window.r3Trace = false;
+            if (JSON.stringify(g.s) !== original.saved) {
+              const findDifference = (before, after, prefix = 's', depth = 0) => {
+                if (JSON.stringify(before) === JSON.stringify(after)) return null;
+                if (depth >= 8 || before === null || after === null ||
+                    typeof before !== 'object' || typeof after !== 'object')
+                  return prefix + ': ' + JSON.stringify(before).slice(0, 60) +
+                    ' -> ' + JSON.stringify(after).slice(0, 60);
+                const keys = new Set([...Object.keys(before), ...Object.keys(after)]);
+                for (const key of keys) {
+                  if (JSON.stringify(before[key]) !== JSON.stringify(after[key]))
+                    return findDifference(before[key], after[key], prefix + '.' + key, depth + 1);
+                }
+                return prefix;
+              };
+              throw Error('R3B native Campaign mismatch at ' +
+                findDifference(JSON.parse(original.saved), g.s));
+            }
+          }
+        });
+        r3Probes.push(trace);
+        console.log('PIXI_783_R3_BROWSER_JSON ' + JSON.stringify(trace));
+      }
       for (const mode of ['canvas', 'pixi']) {
         await page.evaluate((mode) => {
           if (mode === 'canvas') {
@@ -685,7 +847,7 @@ async function main() {
       console.log('CAPTURED ' + fixture);
       fs.writeFileSync(
         path.join(out, 'checkpoint.json'),
-        JSON.stringify({ rows, lifecycle, benchmarks, errors }, null, 2),
+        JSON.stringify({ rows, lifecycle, benchmarks, r3Probes, errors }, null, 2),
       );
     }
     assert.deepEqual(errors, []);
@@ -712,6 +874,7 @@ async function main() {
           rows,
           lifecycle,
           benchmarks,
+          r3Probes,
           errors,
         },
         null,
