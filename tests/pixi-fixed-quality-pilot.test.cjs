@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { pixiFixedQualityExperimentActive } = require('../src/prototype/runtime');
+const { pixiFixedQualityExperimentActive, createResolution, createAutoOptimization } = require('../src/prototype/runtime');
 
 // Only a live Pixi world disables automatic quality adjustments. The backup
 // renderer and incomplete GPU startup retain their normal adaptation policy.
@@ -21,4 +21,43 @@ assert.match(app, /const optimizationDecision = pixiFixedQualityPilotActive\(\)\
 assert.match(app, /graphicsController\?\.status\(\)\.mode,[\s\S]*?pixiGame\.status\(\)\.active/);
 assert.match(app, /const adaptiveSkipped = eligibleDraw && frameSkip\.shouldSkip\(/);
 assert.match(app, /graphicsController\?\.webglFailed\(failure\)/);
-console.log('Pixi fixed-quality draft pilot policy and safety boundaries: OK');
+// Controlled A/B policy stress: the identical 62-ms per-draw load would have
+// caused automatic scaling with the original path; live Pixi must not invoke
+// that path. The Canvas control retains normal adaptation. This does NOT
+// simulate real GPU presentation, enemy AI, or real-device frame rate.
+function stress(activeMode, pixiActive) {
+  const fixed=pixiFixedQualityExperimentActive(activeMode,pixiActive);
+  const resolution=createResolution();
+  resolution.configure(1.5);
+  const optimizer=createAutoOptimization();
+  let optimizationOn=false;
+  let autoQualityChanges=0;
+  for(let i=0;i<=140;i++){
+    const now=i*50;
+    if(!fixed && resolution.observe(now,62,20,4))autoQualityChanges++;
+    if(!fixed){
+      const changed=optimizer.observe(now,{
+        activePlay:true,emergency:false,preference:'auto',
+        optimized:optimizationOn,intervalMs:50,workMs:66,target:20,
+      });
+      if(changed!==null)optimizationOn=changed;
+    }
+  }
+  return {fixed,...resolution.status(),optimizationOn,autoQualityChanges};
+}
+const baseline=stress('canvas2d',false);
+const pixi=stress('webgl2',true);
+assert(baseline.ratio<1.5 && baseline.autoQualityChanges>0,
+  'Negative control: old automatic policy changes backing density under high render cost');
+assert.equal(baseline.optimizationOn,true,
+  'Negative control: old automatic policy enables optimization');
+assert.equal(pixi.ratio,1.5,'Live Pixi must retain startup density');
+assert.equal(pixi.changes,0,'Live Pixi must not adapt render density');
+assert.equal(pixi.autoQualityChanges,0);
+assert.equal(pixi.optimizationOn,false,'Live Pixi must not auto-enable graphics reduction');
+const pixiRenderer=fs.readFileSync(path.resolve(__dirname,
+  '../src/prototype/pixi-experimental.js'),'utf8');
+assert.match(pixiRenderer,/backingRatio[\\s\\S]{0,220}zoom/,
+  'Pixi renderer uses output density for procedural artwork');
+console.log('PASS Pixi fixed-quality policy: pressured Canvas changes density, Pixi does not');
+console.log('POLICY_AB '+JSON.stringify({baseline,pixi}));
