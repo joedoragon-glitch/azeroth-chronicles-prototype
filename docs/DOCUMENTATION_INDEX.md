@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 3 November 2026 · **459 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 6 November 2026 · **460 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -18,7 +18,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (22)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (52)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
-- [Rendering, optimization, performance and WebGL](#rendering-optimization-performance-and-webgl) (47)
+- [Rendering, optimization, performance and WebGL](#rendering-optimization-performance-and-webgl) (48)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
 - [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (13)
 - [Save data, backup and recovery](#save-data-backup-and-recovery) (6)
@@ -377,6 +377,10 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Terrain Texture Pipeline](TERRAIN_TEXTURE_PIPELINE.md)** — **Reference.** Describes terrain texture pipeline decisions, constraints or engineering observations from its original development checkpoint.
 
 ## Rendering, optimization, performance and WebGL
+
+**New active owner priority — 6 November 2026:** [P0 PC performance-first playtest program](PERFORMANCE_FIRST_PLAYTEST_PROGRAM_20261106.md) (tracked at [issue #839](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/839)) is the current cross-chat handoff. It supersedes scheduling of discretionary art/feature/mobile work and starts with Phase 1 instrumentation checks only; do not confuse this plan with a verified FPS gain or an authorized release.
+
+- **[P0 PC Performance-First Playtest Program (2026-11-06)](PERFORMANCE_FIRST_PLAYTEST_PROGRAM_20261106.md)** — **Active owner handoff.** Phase 1 source/test plan, evidence and scope gates, PC tester protocol, later milestones and next-chat prompt. Planning only; no phase execution claim.
 
 **Current renderer (3 November 2026):** PixiJS WebGL2 is the published default world presentation; independent Canvas 2D remains selectable and supplies critical gameplay-cue overlays. Ferry grounding (#758), boss aura optimization (#762), idle occlusion contours (#767) and paired-performance checks (#765) have merged. None proves physical iPhone/Chromebook visual acceptance or sustained FPS. [Architecture](ARCHITECTURE.md) owns source routing; [Development state](DEVELOPMENT_STATE.md) owns exact release status. Historical source filenames do not imply an experimental live renderer.
 
