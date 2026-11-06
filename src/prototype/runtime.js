@@ -349,6 +349,12 @@
       },
     };
   }
+  // P0 #839 controlled, unmerged Pixi fixed-quality experiment: the current
+  // active renderer, not the saved preference, determines whether we freeze
+  // automatic presentation changes. Never disable real WebGL failure recovery.
+  function pixiFixedQualityExperimentActive(mode, active) {
+    return mode === 'webgl2' && active === true;
+  }
   // Presentation-only relief. Normal Off is respected outside true emergencies;
   // confirmed near-freeze recovery temporarily overrides even manual Off.
   // A separate active-time gate prevents stale/paused samples from triggering it.
@@ -667,6 +673,7 @@
     createFrameSkip,
     frameSkipPreferenceKey,
     createAutoOptimization,
+    pixiFixedQualityExperimentActive,
     createResolution,
     resolutionPreferenceKey,
   };
