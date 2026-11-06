@@ -43,16 +43,32 @@ async function run(){
       null,{timeout:90000});
     if(!(await page.locator('#title-screen').evaluate(e=>e.hidden))){
       await page.locator('#title-new').click();
-      await page.getByRole('button',{name:'New Normal game',exact:true}).click();
-      await page.getByRole('button',{name:/^English(?: ✓)?$/}).click();
-      await page.getByRole('button',
-        {name:'Standard death and refuge recovery',exact:true}).click();
+      // Reuse the accepted Pixi-default browser test's current New Game route.
+      // The older multi-step Normal/Language/Recovery path can stage a different
+      // launch sequence and cannot be assumed equivalent for P0 measurement.
+      await page.getByRole('button',{name:/^Choose Hero/}).click();
       await page.getByRole('button',{name:/Paladin/}).first().click();
     }
-    await page.waitForFunction(()=>Prototype.started &&
-      document.querySelector('#title-screen')?.hidden &&
-      document.querySelector('#scene-loading')?.hidden!==false,
-      null,{timeout:240000});
+    try {
+      await page.waitForFunction(()=>Prototype.started &&
+        document.querySelector('#title-screen')?.hidden &&
+        document.querySelector('#scene-loading')?.hidden!==false,
+        null,{timeout:180000});
+    } catch (err) {
+      const details=await page.evaluate(()=>({
+        started:Prototype?.started,paused:Prototype?.paused,
+        titleHidden:document.querySelector('#title-screen')?.hidden,
+        sceneLoadingText:document.querySelector('#scene-loading-text')?.textContent,
+        sceneLoadingHidden:document.querySelector('#scene-loading')?.hidden,
+        titleLoadingText:document.querySelector('#title-loading')?.textContent,
+        titleLoadingHidden:document.querySelector('#title-loading')?.hidden,
+        modal:document.querySelector('#modal-title')?.textContent,
+        renderer:Prototype?.experimentalGraphics,
+        recentStatus:document.querySelector('#status')?.textContent,
+      })).catch(e=>({diagnosticError:String(e)}));
+      throw Error('Pixi combat test never reached game entry: '+
+        JSON.stringify(details)+'; '+String(err));
+    }
     await page.waitForFunction(()=>Prototype.experimentalGraphics.mode==='webgl2' &&
       Prototype.experimentalGraphics.active,null,{timeout:90000});
     await page.waitForFunction(()=>document.querySelector('#modal')?.hidden,
@@ -65,6 +81,7 @@ async function run(){
       e.aggro=true;g.zone().enemies.push(e);g.s.heroTarget=e.id;
       g.s.mercyTime=0;h.cd[0]=0;
       Prototype.fps.select('20');Prototype.closeMenu();Prototype.updateHUD();
+      window.__pilotHeroX=h.x;
       return {heroX:h.x,clock:g.s.time,enemy:e.id,
         ratio:Prototype.renderResolution.status().ratio,
         changes:Prototype.renderResolution.status().changes,
@@ -76,10 +93,10 @@ async function run(){
     await page.keyboard.down('d');await page.waitForTimeout(850);await page.keyboard.up('d');
     const combat=await page.evaluate(()=>({
       clock:Prototype.game.s.time,
-      moved:Prototype.game.hero.x!==undefined,
+      moved:Prototype.game.hero.x!==window.__pilotHeroX,
       enemies:Prototype.game.zone().enemies.filter(e=>e.hp>0&&e.aggro).length
     }));
-    assert(combat.clock>before.clock&&combat.enemies>0,
+    assert(combat.clock>before.clock&&combat.enemies>0&&combat.moved,
       'Actual live combat did not progress '+JSON.stringify(combat));
     // Forced 62-ms work inside REAL Canvas combat-overlay draws challenges
     // the old automatic rendering policy. Not representative hardware timing.
