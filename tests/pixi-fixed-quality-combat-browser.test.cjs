@@ -36,18 +36,18 @@ async function run(){
     const page=await ctx.newPage(),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     page.setDefaultTimeout(20000);
-    await page.goto('http://127.0.0.1:'+server.address().port+'/index.html');
+    await page.goto('http://127.0.0.1:'+server.address().port+'/index.html?developer=1');
     await page.waitForFunction(()=>!!window.Prototype?.renderer,null,{timeout:30000});
     await require('./helpers/language-browser.cjs').selectEnglish(page);
     await page.waitForFunction(()=>document.querySelector('#startup-update')?.hidden,
       null,{timeout:90000});
     if(!(await page.locator('#title-screen').evaluate(e=>e.hidden))){
       await page.locator('#title-new').click();
-      // Reuse the accepted Pixi-default browser test's current New Game route.
+      // Reuse the accepted Pixi-default browser test's developer-mode startup route.
       // The older multi-step Normal/Language/Recovery path can stage a different
-      // launch sequence and cannot be assumed equivalent for P0 measurement.
-      await page.getByRole('button',{name:/^Choose Hero/}).click();
-      await page.getByRole('button',{name:/Paladin/}).first().click();
+      // launch sequence. Owner also used the developer-mode entry in the real reports.
+      await page.getByRole('button',{name:'New Developer Mode run',exact:true}).click();
+      await page.getByRole('button',{name:/Mage/}).first().click();
     }
     try {
       await page.waitForFunction(()=>Prototype.started &&
