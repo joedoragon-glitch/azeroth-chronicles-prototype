@@ -2396,6 +2396,16 @@
             );
           },
         });
+  // P0 #839 DRAFT EXPERIMENT: keep the existing Pixi density stable through
+  // combat, rather than re-baking cached artwork when Auto reacts to lag.
+  // This does not affect player-chosen settings, frame-skip emergency protection,
+  // WebGL failure classification, or the Canvas backup.
+  function pixiFixedQualityPilotActive() {
+    return PrototypeRuntime.pixiFixedQualityExperimentActive(
+      graphicsController?.status().mode,
+      pixiGame.status().active,
+    );
+  }
   // Fan out presentation events without editing the protected simulation loop.
   const queueOriginalVisuals = renderer.queue;
   renderer.queue = (events) => {
@@ -9763,7 +9773,7 @@
       crashRecoveryPending = true;
       // Act before further expensive rendering; never require the player to
       // reach Settings while hostile simulation is critically stalled.
-      if (!optimizationMode) {
+      if (!optimizationMode && !pixiFixedQualityPilotActive()) {
         const override = autoOptimization.observe(now, {
           activePlay: true,
           emergency: true,
@@ -10001,7 +10011,10 @@
         stageTimes.renderMs += sample.renderMs;
         addRenderStageTimes(stageTimes, drawTiming);
         const priorRatio = rendererDiagnosticActive ? renderResolution.ratio : null;
-        if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
+        if (
+          !pixiFixedQualityPilotActive() &&
+          renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)
+        ) {
           if (rendererDiagnosticActive)
             recordRendererTransition('adaptive-resolution-change', {
               fromRatio: priorRatio,
@@ -10040,16 +10053,18 @@
           frameSkip.emergency ? 'emergency-enter-after-draw' : 'emergency-exit-after-draw',
           { frameWorkMs: +frameWorkMs.toFixed(2), renderMs: +stageTimes.renderMs.toFixed(2) },
         );
-      const optimizationDecision = autoOptimization.observe(now, {
-        activePlay: simulating || recovering,
-        emergency: recovering || frameSkip.emergency,
-        preference: optimizationPreference,
-        optimized: optimizationMode,
-        intervalMs,
-        workMs: frameWorkMs,
-        adaptiveSkipped,
-        target: fps.target,
-      });
+      const optimizationDecision = pixiFixedQualityPilotActive()
+        ? null
+        : autoOptimization.observe(now, {
+            activePlay: simulating || recovering,
+            emergency: recovering || frameSkip.emergency,
+            preference: optimizationPreference,
+            optimized: optimizationMode,
+            intervalMs,
+            workMs: frameWorkMs,
+            adaptiveSkipped,
+            target: fps.target,
+          });
       if (game.s.mode === 'arena') {
         if (!optimizationMode) setOptimizationActive(true);
       } else if (optimizationDecision !== null)
