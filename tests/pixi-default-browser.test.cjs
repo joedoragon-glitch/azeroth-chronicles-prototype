@@ -11,6 +11,7 @@ const path = require('node:path');
 const http = require('node:http');
 const cp = require('node:child_process');
 const playwright = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const Campaign = require('../src/prototype/engine');
 
 const root = path.resolve(__dirname, '..');
 // An isolated browser smoke may run before the general build step. Ensure
@@ -288,6 +289,10 @@ function reportReceipt(report, scenario) {
         effectDraws: report.performance.effectDiagnostics?.drawFrames,
         navigationRecording: report.performance.crowdDiagnostics.recording,
         navigationTicks: report.performance.crowdDiagnostics.sampledSimulationTicks,
+        recoveryActions: report.partyDiagnostics.recoveryActions.map((row) => row.action),
+        emergencyTransitions: report.partyDiagnostics.emergencyTransitions.length,
+        callbackP95UpperMs: r.approximatePercentiles?.callbackInterval.p95UpperMs,
+        workP95UpperMs: r.approximatePercentiles?.frameWork.p95UpperMs,
       }),
   );
 }
@@ -475,8 +480,21 @@ async function startupCase(browser, host, scenario) {
         'Actual WebGL2 context (software CI is not hardware FPS): ' + JSON.stringify(contextInfo),
       );
       if (scenario === 'recordings') {
-        const position = await page.evaluate(() => [Prototype.game.hero.x, Prototype.game.hero.y]);
+        // Native recovery destination is an independent oracle, never a forced
+        // position or disabled safety feature in the browser under test.
+        const oracle = new Campaign('developer', 'mage', () => 0.5);
+        assert(oracle.emergencyReturnToSafety());
+        const safetyPoint = [oracle.hero.x, oracle.hero.y];
         for (let round = 1; round <= 3; round++) {
+          const baseline = await page.evaluate(() => ({
+            position: [Prototype.game.hero.x, Prototype.game.hero.y],
+            zone: Prototype.game.zoneId,
+            deaths: Prototype.game.s.statistics.deaths,
+            rescues: Prototype.game
+              .partyDiagnosticsReport()
+              .recoveryActions.filter((row) => row.action === 'refuge-return-attempt').length,
+          }));
+          const observedModes = [];
           await page.locator('#menu-button').click();
           await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
           await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
@@ -490,13 +508,12 @@ async function startupCase(browser, host, scenario) {
           assert.equal(await page.locator('#modal').isVisible(), false);
           for (let interval = 0; interval < 3; interval++) {
             await new Promise((resolve) => setTimeout(resolve, 40000));
-            assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2');
-            console.log('Round ' + round + ': Mage idle ' + (interval + 1) * 40 + 's, Pixi active');
+            const mode = await page.evaluate(() => Prototype.experimentalGraphics.mode);
+            observedModes.push(mode);
+            console.log(
+              'Round ' + round + ': Mage idle ' + (interval + 1) * 40 + 's, actual ' + mode,
+            );
           }
-          assert.deepEqual(
-            await page.evaluate(() => [Prototype.game.hero.x, Prototype.game.hero.y]),
-            position,
-          );
           await page.locator('#menu-button').click();
           await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
           await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
@@ -506,6 +523,44 @@ async function startupCase(browser, host, scenario) {
           const downloaded = page.waitForEvent('download');
           await page.getByRole('button', { name: /^Export playtest report/ }).click();
           const report = JSON.parse(fs.readFileSync(await (await downloaded).path(), 'utf8'));
+          // Always collect evidence before rejecting a renderer or position.
+          reportReceipt(report, 'recordings-round-' + round);
+          assert(
+            observedModes.every((mode) => mode === 'webgl2'),
+            'Pixi must remain active at every timed checkpoint',
+          );
+          const current = await page.evaluate(() => ({
+            position: [Prototype.game.hero.x, Prototype.game.hero.y],
+            zone: Prototype.game.zoneId,
+          }));
+          assert.equal(current.zone, baseline.zone);
+          assert.equal(
+            report.statistics.deaths,
+            baseline.deaths,
+            'idle replay cannot conceal a defeat',
+          );
+          assert(
+            !report.performance.startupDiagnostics.attempts
+              .at(-1)
+              .events.some((event) => event.stage === 'first-movement-observed'),
+            'no player movement during recording replay',
+          );
+          if (current.position.some((value, index) => value !== baseline.position[index])) {
+            assert(
+              report.partyDiagnostics.recoveryActions.filter(
+                (row) => row.action === 'refuge-return-attempt',
+              ).length > baseline.rescues,
+              'position changes require a newly observed native safety recovery',
+            );
+            assert.deepEqual(
+              current.position,
+              safetyPoint,
+              'only the unchanged native recovery destination is allowed',
+            );
+            console.log(
+              'QUALIFICATION: native slowdown protection relocated the idle Mage; renderer/report acceptance is not stationary-position or device-speed acceptance.',
+            );
+          }
           assert.equal(report.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
           assert.equal(report.performance.graphicsRenderer.preferredRenderer, 'webgl2');
           assert.equal(report.performance.rendererDiagnostics.initialRenderer, 'webgl2');
@@ -531,7 +586,6 @@ async function startupCase(browser, host, scenario) {
             report.performance.crowdDiagnostics.sampledSimulationTicks > 0,
             'stopped navigation retains actual observations',
           );
-          reportReceipt(report, 'recordings-round-' + round);
           console.log(
             'PASS exact owner sequence round ' + round + ': exported report confirms active Pixi',
           );
