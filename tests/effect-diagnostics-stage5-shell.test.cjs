@@ -35,7 +35,6 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     return 'blob:effect-stage5-test';
   };
   const exportReport = async () => {
-    click('Screen and performance');
     click('Export playtest report');
     assert(saved instanceof Blob, 'actual playtest export was not produced');
     return JSON.parse(await saved.text());
@@ -71,7 +70,7 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     h.click('Screen and performance');
     assert(!h.contains('Start effect recording'),
       'diagnostic controls should not clutter collapsed performance view');
-    h.click('Show performance details');
+    h.click('Diagnostics');
     assert(h.contains('Start effect recording'));
     assert(h.contains('Clear effect recording'));
     const renderer = h.scope.Prototype.renderer;
@@ -108,6 +107,7 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     // Clearing must discard the in-memory trace without altering normal save.
     h.elements.get('close-button').click(); // Return to Game and settings
     h.click('Screen and performance');
+    h.click('Diagnostics');
     h.click('Clear effect recording');
     assert.equal(renderer.effectDiagnosticsReport().captured, false);
   }
@@ -118,7 +118,7 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     h.elements.get('menu-button').click();
     h.click('Game and settings');
     h.click('Screen and performance');
-    h.click('Show performance details');
+    h.click('Diagnostics');
     assert(!h.contains('Start effect recording'), 'ordinary player must not see developer recorder');
     assert(!h.contains('Clear effect recording'), 'ordinary player must not see recorder reset');
     h.elements.get('close-button').click();
@@ -133,7 +133,7 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     h.elements.get('menu-button').click();
     h.click('Game and settings');
     h.click('Screen and performance');
-    h.click('Show performance details');
+    h.click('Diagnostics');
     assert(!h.contains('Start effect recording'),
       'developer query parameter with a Normal run must not enable diagnostics');
   }
