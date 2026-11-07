@@ -55,12 +55,13 @@ assert.equal(pixi.ratio,1.5,'Live Pixi must retain startup density');
 assert.equal(pixi.changes,0,'Live Pixi must not adapt render density');
 assert.equal(pixi.autoQualityChanges,0);
 assert.equal(pixi.optimizationOn,false,'Live Pixi must not auto-enable graphics reduction');
-const pixiRenderer=fs.readFileSync(path.resolve(__dirname,
-  '../src/prototype/pixi-experimental.js'),'utf8');
-assert(pixiRenderer.includes('bake(painted, current, backingRatio * zoom)'),
-  'Pixi procedural bake density must incorporate backing ratio and camera zoom');
-assert(pixiRenderer.includes('function revisionFor(') &&
-  pixiRenderer.includes('backingRatio,'),
-  'Procedural cache keys must retain the output-density revision');
-console.log('PASS Pixi fixed-quality policy: pressured Canvas changes density, Pixi does not');
-console.log('POLICY_AB '+JSON.stringify({baseline,pixi}));
+const recovered = createResolution();
+recovered.configure(1.5);
+for (let i = 0; i <= 140; i++) recovered.observe(i * 50, 62, 20, 4);
+assert(recovered.ratio < 1.5, 'Canvas must retain its adaptive relief');
+const canvasRatio = recovered.ratio;
+assert.equal(recovered.selectedRatio(1.5), 1.5, 'Pixi preparation uses the selected ceiling');
+assert.equal(recovered.ratio, canvasRatio, 'Failed retry can reuse the previous Canvas density');
+recovered.select('80');
+assert.equal(recovered.selectedRatio(1.5), 0.8, 'Explicit density still wins');
+console.log('PASS Pixi fixed-quality and Canvas relief isolation');

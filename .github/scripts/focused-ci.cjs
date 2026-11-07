@@ -148,6 +148,7 @@ const groups = [
       /(?:^|\/)(?:pixi-experimental\.js|pixi-scene-bridge\.js|native-sprite-adapter\.js|renderer-switch-guard\.js|native-webgl2-core\.js)$|^tests\/pixi-|^tools\/webgl-pilot\//,
     tests: [
       TEST + 'pixi-fidelity.test.cjs',
+      TEST + 'pixi-fixed-quality-pilot.test.cjs',
       TEST + 'pixi-parity.test.cjs',
       TEST + 'pixi-step3-source.test.cjs',
       PILOT + 'pixi-scene-bridge.test.cjs',

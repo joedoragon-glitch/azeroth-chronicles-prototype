@@ -75,6 +75,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     Campaign: C,
     console,
     performance: { now: options.now || (() => 0) },
+    devicePixelRatio: options.devicePixelRatio,
     innerWidth: 393,
     innerHeight: 852,
     Sprint: { enabled: false, press() {}, release() {}, reset() {}, tick: () => 1 },
@@ -136,6 +137,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     const runtime = scope.PrototypeRuntime;
     scope.PrototypeRuntime = { ...runtime, create: () => runtime.create(options.now) };
   }
+  if (options.pixi) scope.PrototypePixiExperimental = options.pixi;
   if (options.graphicsGuard) scope.AzerothRendererSwitchGuard = options.graphicsGuard;
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
   scope.window = scope;

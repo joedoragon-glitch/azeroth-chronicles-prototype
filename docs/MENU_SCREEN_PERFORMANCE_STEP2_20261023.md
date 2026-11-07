@@ -34,3 +34,7 @@ Untested until a deliberately scoped later device check: real phone touch scroll
 **Merge to `main` is separately authorized after focused validation; do not merge while checks are failing. GitHub's normal focused publisher may deploy after merge. No manual broad matrix.** After validation and merge of this PR, proceed to Step 3 (Music & Sound) as its own scoped branch/change.
 
 Validation note: the initial focused run validated the Step 1 + Step 2 stack against the original main. After Step 1 merged, the diff against the updated main contains only five Step 2 files. The focused validation must still pass on the current proposed changes before Step 2 merges.
+
+## Pixi recovery follow-up, dev.271 candidate
+
+Pixi preparation uses the explicit rendering density and optimization preference. Canvas backup retains its temporary adaptive density and optimization state while Pixi prepares or runs. A failed retry or return to Canvas restores that state. Playtest reports show the effective Pixi backing ratio while Pixi owns the presentation. Existing settings and controls remain available. This candidate is unmerged and unpublished.
