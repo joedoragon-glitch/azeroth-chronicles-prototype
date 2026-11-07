@@ -9670,7 +9670,7 @@
         softPoly(
           [
             [-46, -48],
-            [-23, -87],
+            [-12, -79],
             [22, -34],
           ],
           '#9c7c56',
@@ -9691,6 +9691,10 @@
           [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
           '#604735',
         );
+        // Seal the small eave overhang to the existing storehouse walls,
+        // instead of exposing a green background wedge at the roof junction.
+        softPoly([roofFrontRight, roofRearRight, [62, -48], [22, -34]], '#493a2c');
+        softPoly([roofFrontRidge, roofFrontRight, [22, -34], [-12, -75]], '#493a2c');
         // A single narrow fascia, without a second bulky or fractured
         // roof below the actual eaves.
         line([roofFrontLeft, roofFrontRidge, roofFrontRight], '#b5986e', 2.4);

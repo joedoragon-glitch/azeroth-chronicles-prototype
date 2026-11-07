@@ -194,6 +194,16 @@ assert(!treasuryApron.includes("craftedDecoration('crate')") &&
 assert(landscapeSource.includes('roofRearRight = [84, -66]'),
   'homestead roof uses common 48,-16 depth vector');
 
+
+assert(landscapeSource.includes('[-14, -98],\\n          [31, -45]'),
+  'homestead gable rises to the pitched roof ridge, with no protruding peak');
+assert(landscapeSource.includes('poly([roofFrontRight, roofRearRight, [84, -63], [31, -45]]'),
+  'homestead right eave fascia closes against the actual wall');
+assert(repairedRoofArt.includes('[-12, -79],\\n            [22, -34]'),
+  'Treasury gable aligns with its roof ridge');
+assert(repairedRoofArt.includes('softPoly([roofFrontRight, roofRearRight, [62, -48], [22, -34]]'),
+  'Treasury wall-to-roof overhang is enclosed');
+
 console.log(
   'PASS native compounds, roof topology, Crown standard, fixture anchor and repeat v4 restore',
 );

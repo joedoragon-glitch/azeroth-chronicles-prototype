@@ -2238,7 +2238,7 @@
       poly(
         [
           [-60, -63],
-          [-29, -99],
+          [-14, -98],
           [31, -45],
         ],
         '#9b7b56',
@@ -2284,24 +2284,9 @@
         beam,
         5,
       );
-      // Original high grain hatch and side ventilation retain farm identity.
-      poly(
-        [
-          [-24, -74],
-          [-9, -83],
-          [5, -68],
-          [-9, -63],
-        ],
-        '#493e30',
-      );
-      stroke(
-        [
-          [-21, -73],
-          [2, -68],
-        ],
-        '#b29a72',
-        2,
-      );
+      // Keep the reused granary's front gable solid and legible. The old
+      // dark diamond grain hatch overlapped the pitched roof as a false hole.
+      // Small side ventilation below remains sufficient farm-building detail.
       for (let j = 0; j < 3; j++)
         stroke(
           [
@@ -2328,6 +2313,9 @@
         [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
         '#624c38',
       );
+      // Close the overhanging right eave onto the real side wall. Without
+      // this narrow fascia, the backdrop shows through as a green wedge.
+      poly([roofFrontRight, roofRearRight, [84, -63], [31, -45]], '#4b3b2d');
       stroke([roofFrontLeft, roofFrontRidge, roofFrontRight], edge, 2.5);
       stroke([roofFrontRidge, roofRearRidge], '#b6956a', 2);
       stroke([roofFrontLeft, roofRearLeft], '#a98c64', 1.6);
