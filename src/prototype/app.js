@@ -3726,7 +3726,7 @@
         b.onclick = () => {
           audio.unlock().then(() => audio.interfaceSound('confirm'));
           a.action();
-          if (started) save();
+          if (started && a.saveCampaign !== false) save();
           updateHUD();
         };
       }
@@ -6209,8 +6209,12 @@
     );
   }
   let effectRecording = false;
+  const performanceAction = (label, callback, detail) => ({
+    ...action(label, callback, detail),
+    saveCampaign: false,
+  });
   const performanceExport = () =>
-    action(
+    performanceAction(
       'Export playtest report',
       exportPlaytestReport,
       'Download a local JSON report to share yourself.',
@@ -6302,7 +6306,7 @@
           'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
         ),
         ...(!pixiSettings && preferred === 'PixiJS WebGL2'
-          ? [action('Retry PixiJS WebGL2', requestPerformancePixi)]
+          ? [performanceAction('Retry PixiJS WebGL2', requestPerformancePixi)]
           : []),
       ]);
       return;
@@ -6461,7 +6465,7 @@
         page,
         [
           performanceExport(),
-          action(
+          performanceAction(
             rendererRecording ? 'Stop renderer profiling' : 'Start renderer profiling',
             () => {
               if (rendererRecording) stopRendererRecording();
@@ -6473,7 +6477,7 @@
           ...((lastRendererRecording || playtestJournal.capture?.state === 'stopped') &&
           !rendererRecording
             ? [
-                action('Clear renderer profiling', () => {
+                performanceAction('Clear renderer profiling', () => {
                   lastRendererRecording = null;
                   playtestJournal.capture = null;
                   playtestJournal.active = false;
@@ -6499,7 +6503,7 @@
               '\n\n' +
               game.crowdDiagnosticsDescribe(),
           ),
-          action(
+          performanceAction(
             game.crowdDiagnosticsReport().recording
               ? 'Stop navigation profiling'
               : 'Start navigation profiling',
@@ -6513,7 +6517,7 @@
           ...(developerEnabled && game.s.mode === 'developer'
             ? [
                 menuControls.section('Developer effect diagnostics'),
-                action(
+                performanceAction(
                   effectRecording ? 'Stop effect recording' : 'Start effect recording',
                   () => {
                     effectRecording = renderer.setEffectDiagnostics(!effectRecording);
@@ -6521,7 +6525,7 @@
                   },
                   'Bounded, in-memory recording. Export with the existing playtest report.',
                 ),
-                action('Clear effect recording', () => {
+                performanceAction('Clear effect recording', () => {
                   renderer.resetEffectDiagnostics();
                   effectRecording = false;
                   performancePage('Diagnostics');
@@ -6533,7 +6537,7 @@
                 ),
               ]
             : []),
-          action('Reset performance sample', confirmPerformanceReset),
+          performanceAction('Reset performance sample', confirmPerformanceReset),
         ],
         'Local samples are diagnostic estimates, not verified display FPS.',
       );
@@ -6545,13 +6549,13 @@
       [
         ...rendererState,
         ...summary,
-        action('Display', () => performancePage('Display')),
-        action('Renderer and recovery', () => performancePage('Renderer and recovery')),
-        action(pixiSettings ? 'Pixi graphics' : 'Canvas graphics', () =>
+        performanceAction('Display', () => performancePage('Display')),
+        performanceAction('Renderer and recovery', () => performancePage('Renderer and recovery')),
+        performanceAction(pixiSettings ? 'Pixi graphics' : 'Canvas graphics', () =>
           performancePage('Graphics'),
         ),
-        action('Frame pacing', () => performancePage('Frame pacing')),
-        action('Diagnostics', () => performancePage('Diagnostics')),
+        performanceAction('Frame pacing', () => performancePage('Frame pacing')),
+        performanceAction('Diagnostics', () => performancePage('Diagnostics')),
         performanceExport(),
       ],
       systemMenu,
@@ -6578,7 +6582,7 @@
       'This clears local timings and slow-frame evidence. Export a report first if you want to keep them.',
       [
         performanceExport(),
-        action('Confirm sample reset', () => {
+        performanceAction('Confirm sample reset', () => {
           runtime.reset();
           frameProfile.reset();
           frameProfile.clearSlowdowns();
@@ -6600,7 +6604,7 @@
         ...(appRegistration && appUpdateReady
           ? [action('Install available game update', updateApp)]
           : []),
-        action('Screen and performance', platformMenu),
+        performanceAction('Screen and performance', platformMenu),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
         action('Language · ' + (language === 'es' ? 'Español' : 'English'), () =>
