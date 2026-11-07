@@ -948,6 +948,8 @@
     'Tap reachable ground to move.': 'Toca terreno accesible para moverte.',
     'Optimization Mode': 'Modo de optimización',
     'Atmospheric particles': 'Partículas ambientales',
+    'Active draw target': 'Objetivo de dibujo activo',
+    'Effective density': 'Densidad efectiva', 
     'Custom resolution. Optimization Mode applies the performance limit.':
       'Resolución personalizada. El modo de optimización aplica el límite de rendimiento.',
     'Use the Pixi performance preset. Turn it off to restore custom settings.':
@@ -6289,7 +6291,7 @@
           ? 'Custom resolution. Optimization Mode applies the performance limit.'
           : 'Choose world detail without changing screen size or controls.',
       ),
-      menuControls.section('Frame rate'),
+      menuControls.section('Frame rate', tr('Active draw target') + ': ' + fps.target + ' FPS'),
       menuControls.select(
         'Frame rate',
         fps.preference,
@@ -6299,6 +6301,7 @@
           frameSkip.suspend();
           runtime.reset();
           frameProfile.reset();
+          platformMenu(back);
         },
         'Choose a target for smoother motion or lower graphics load.',
       ),
@@ -6317,6 +6320,10 @@
         'Graphics renderer',
         (graphics.mode === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D') +
           ' · ' +
+          tr('Effective density') +
+          ' ' +
+          resolutionStatus().ratio.toFixed(2) +
+          '× · ' +
           canvas.width +
           ' × ' +
           canvas.height,
