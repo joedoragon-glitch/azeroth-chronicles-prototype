@@ -512,6 +512,11 @@ function run(
               ? {
                   PIXI_BROWSER_DEVICE:
                     file === TEST + 'pixi-renderer-phone-browser.test.cjs' ? 'phone' : 'desktop',
+                  // Full manually-invoked graphics/lighting/restart matrix remains
+                  // unchanged; CI exercises the single regression owning this PR.
+                  ...(file === TEST + 'pixi-renderer-browser.test.cjs'
+                    ? { PIXI_BROWSER_FOCUSED: '1' }
+                    : {}),
                 }
               : {}),
             ...(pixiBrowser || statusBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
