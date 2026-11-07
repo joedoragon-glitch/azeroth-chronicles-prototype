@@ -71,4 +71,28 @@ assert.match(source, /ctx\.fillStyle = charmedCompanion\(e\)\s*\? '#99efcf'/,
   'Canvas ally distinction');
 assert.match(source, /if \(slot && namedCompanion\(e\)\)/,
   'only conventional named companions may get a Canvas background');
-console.log('PASS Charmed nickname, stable Canvas/Pixi position, tint, compact style and non-Charm isolation');
+// Exercise the actual shared predicate, including the old boss exemption,
+// and confirm the Pixi overlay uses it instead of drawing every living enemy.
+const visibility = between('    function enemyHudVisible(e) {', '    function tileBounds(');
+const hostileHud = new Function('game', visibility +
+  '\nreturn { enemyHudVisible, worldLabelVisible };')({ hero: { x: 0, y: 0 } });
+for (const kind of [
+  { type: 'normal' }, { type: 'boss' }, { type: 'normal', captain: true },
+  { type: 'normal', roomCaptain: true },
+]) {
+  const e = { renderKind: 'enemy', hp: 100, aggro: false, ...kind };
+  assert.equal(hostileHud.worldLabelVisible(e), false, 'idle enemy, boss or captain stays undiscovered');
+  e.aggro = true;
+  assert.equal(hostileHud.worldLabelVisible(e), true, 'engagement reveals hostile HUD');
+  e.aggro = false;
+  assert.equal(hostileHud.worldLabelVisible(e), false, 'disengagement hides hostile HUD');
+  e.aggro = true; e.hp = 0;
+  assert.equal(hostileHud.worldLabelVisible(e), false, 'dead hostile has no HUD');
+}
+const pixiHealthPass = between('        const actors = [...enemies, ...allies, game.hero];',
+  "        if (overlayMark) overlayMark('healthPlates');");
+assert.match(pixiHealthPass, /renderKind === 'enemy' && !enemyHudVisible\(e\)/,
+  'Pixi overlay HP drawing must honor the same combat-only guard as Canvas');
+assert.equal(hostileHud.worldLabelVisible({ renderKind: 'ally', hp: 100 }), true,
+  'friendly labels retain their independent behavior');
+console.log('PASS Charmed nickname, stable Canvas/Pixi position, tint, compact style, enemy combat-only HUD parity');
