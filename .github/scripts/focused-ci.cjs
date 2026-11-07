@@ -163,6 +163,21 @@ const groups = [
     ],
   },
   {
+    // Changes to the shared Canvas/Pixi combat-cue painter can violate
+    // attack/hazard timing, Rogue/Ledger cast exceptions and native pixels.
+    // Keep this focused: no full browser or complete campaign test matrix.
+    match: /^src\/prototype\/combat-visuals\.js$/,
+    tests: [
+      TEST + 'warning-effect-handoff.test.cjs',
+      TEST + 'effect-warning-anonymous-cast.test.cjs',
+      TEST + 'effect-warning-ledger-cast.test.cjs',
+      TEST + 'effect-warning-reuse-family-matrix.test.cjs',
+      TEST + 'effect-warning-crowd-fps.test.cjs',
+      TEST + 'rogue-cast-continuity.test.cjs',
+      TEST + 'terrain-effects.test.cjs',
+    ],
+  },
+  {
     match: /^src\/prototype\/(?:visuals|hero-presentation)\.js$/,
     tests: [
       TEST + 'world-proportions.test.cjs',
