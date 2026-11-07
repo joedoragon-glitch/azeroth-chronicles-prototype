@@ -18,7 +18,10 @@ test('native route returns identical waypoints with observer enabled, and observ
   const origin = { x: g.hero.x, y: g.hero.y };
   const target = { x: origin.x + 145, y: origin.y + 50 };
   const baseline = g.route(origin, target);
-  const row = { routeCalls: 0, routeMs: 0, maxRouteMs: 0 };
+  const row = {
+    routeCalls: 0, routeMs: 0, maxRouteMs: 0,
+    budgetedCalls: 0, budgetedMs: 0, maxBudgetedMs: 0,
+  };
   const trace = { phase: 'roster', phases: { roster: row } };
   g.setEnemyRouteTrace(trace);
   const observed = g.route(origin, target);
@@ -26,9 +29,15 @@ test('native route returns identical waypoints with observer enabled, and observ
   assert.equal(row.routeCalls, 1);
   assert(Number.isFinite(row.routeMs) && row.routeMs >= 0);
   assert(Number.isFinite(row.maxRouteMs) && row.maxRouteMs >= 0);
+  const budget = g.advanceBudgetedRoute(origin, target, 'pursuit');
+  assert(budget && typeof budget === 'object', 'native incremental planner returned a result');
+  assert.equal(row.budgetedCalls, 1, 'incremental planning must not be lost behind full-route count');
+  assert(Number.isFinite(row.budgetedMs) && row.budgetedMs >= 0);
   g.setEnemyRouteTrace(null);
   assert.deepEqual(g.route(origin, target), baseline);
+  g.advanceBudgetedRoute(origin, target, 'pursuit');
   assert.equal(row.routeCalls, 1, 'disabled recorder no longer accumulates route calls');
+  assert.equal(row.budgetedCalls, 1, 'disabled recorder no longer accumulates incremental calls');
 });
 
 test('native campaign enemy markers bracket the same source tick with state parity', () => {
@@ -55,5 +64,7 @@ test('renderer opt-in and exception cleanup are explicit and bounded', () => {
   assert.match(engine, /const enemyMark = typeof input\.performanceEnemyMark === 'function'/);
   assert.match(navigation, /const trace = enemyRouteTraces\.get\(this\)/);
   assert.match(navigation, /if \(!trace\) return originalRoute\.apply\(this, args\)/);
+  assert.match(navigation, /if \(!trace\) return originalBudgetedRoute\.apply\(this, args\)/);
+  assert.match(app, /budgetedCalls: row\.budgetedCalls/);
   assert.match(navigation, /finally \{[\s\S]*?row\.routeCalls\+\+/);
 });
