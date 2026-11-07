@@ -22,48 +22,41 @@
   // Quiet fourth-class release. Register before profile/load/save validation,
   // New Game and Succession; v4 storage keys and original classes stay intact.
   Campaign.enableRoguePlaytest();
-  // Dev.170 is a one-time upgrade to the recommended performance baseline.
-  // Deliberately supersede earlier device choices once, before any controllers
-  // read them. Never touch campaigns, audio, language, controls or renderer.
-  const performanceBaselineKey = 'azeroth-performance-defaults-dev170-v1';
+  const optimizationKey = 'azeroth-optimization-mode-v1';
+  const graphicsGuard =
+    typeof AzerothRendererSwitchGuard === 'undefined' ? null : AzerothRendererSwitchGuard;
+  const performanceBaselineKey = 'azeroth-pixi-settings-baseline-v1';
   function applyPerformanceBaseline(storage) {
     try {
       if (storage.getItem(performanceBaselineKey) === 'applied') return false;
-      for (const [key, value] of [
+      const defaults = [
+        ['azeroth-screen-v1', 'auto'],
+        ['azeroth-camera-v2', JSON.stringify({ desktop: 1.5, phone: 1.5 })],
         ['azeroth-fps-v1', 'auto'],
         ['azeroth-adaptive-frame-skip-v1', 'on'],
         ['azeroth-render-resolution-v1', 'auto'],
-        ['azeroth-optimization-mode-v1', 'off'],
-        ['azeroth-camera-v2', JSON.stringify({ desktop: 1.5, phone: 1.5 })],
-      ])
-        storage.setItem(key, value);
-      // The marker is written LAST, only after the baseline is durable.
-      // Later player adjustments must remain their own choices.
+        [optimizationKey, 'auto'],
+        ['azeroth-pixi-resolution-v1', 'auto'],
+        ['azeroth-pixi-quality-v1', JSON.stringify({ preset: false, particles: true })],
+      ];
+      // Let startupChoice consume an interrupted trial with its original
+      // preference. Changing it here would misclassify an unconfirmed trial
+      // as a previously confirmed WebGL startup. A hold remains authoritative.
+      if (graphicsGuard && storage.getItem(graphicsGuard.PENDING_KEY) !== 'pending')
+        defaults.push([graphicsGuard.PREFERENCE_KEY, 'webgl2']);
+      const changed = defaults.some(([key, value]) => {
+        const saved = storage.getItem(key);
+        return saved != null && saved !== value;
+      });
+      for (const [key, value] of defaults) storage.setItem(key, value);
       storage.setItem(performanceBaselineKey, 'applied');
-      return true;
+      return changed;
     } catch (_) {
-      // Restricted storage keeps the game's existing safe in-memory defaults.
+      // Incomplete writes stay unmarked and are retried on a later launch.
       return false;
     }
   }
   const performanceBaselineUpgraded = applyPerformanceBaseline(localStorage);
-
-  // One-time device upgrade: Auto is the new optimization default, including
-  // for previously saved On/Off choices. Subsequent user choices persist.
-  // Campaign saves, FPS choices and other settings are not touched.
-  const optimizationKey = 'azeroth-optimization-mode-v1';
-  const optimizationAutoUpgradeKey = 'azeroth-optimization-auto-default-v1';
-  function upgradeOptimizationAuto(storage) {
-    try {
-      if (storage.getItem(optimizationAutoUpgradeKey) === 'applied') return false;
-      storage.setItem(optimizationKey, 'auto');
-      storage.setItem(optimizationAutoUpgradeKey, 'applied');
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-  const optimizationAutoUpgraded = upgradeOptimizationAuto(localStorage);
   let optimizationPreference = 'auto';
   try {
     const saved = localStorage.getItem(optimizationKey);
@@ -966,6 +959,49 @@
     Display: 'Pantalla',
     Graphics: 'Gráficos',
     Diagnostics: 'Diagnósticos',
+    'Renderer and recovery': 'Motor gráfico y recuperación',
+    'Active renderer': 'Motor gráfico activo',
+    'Preferred renderer': 'Motor gráfico preferido',
+    'Renderer status': 'Estado del motor gráfico',
+    'Active layout': 'Disposición activa',
+    'Pixi graphics': 'Gráficos de Pixi',
+    'Canvas graphics': 'Gráficos de Canvas',
+    'Frame pacing': 'Ritmo de fotogramas',
+    'Drawing target (FPS)': 'Objetivo de dibujo (FPS)',
+    'Device sharpness': 'Nitidez del dispositivo',
+    'Effective atmospheric particles': 'Partículas atmosféricas efectivas',
+    'Effective optimization': 'Optimización efectiva',
+    'Choose how the game looks and runs.': 'Elige cómo se ve y funciona el juego.',
+    'Zoom changes how much you see and can affect graphics workload.':
+      'El zoom cambia cuánto ves y puede afectar la carga gráfica.',
+    'Saved choice. The preset currently hides decorative particles.':
+      'Opción guardada. El preajuste oculta las partículas decorativas.',
+    'Decorative motes only.': 'Solo partículas decorativas.',
+    'Auto can reduce graphics detail and ambient audio under sustained load. Emergency protection still applies.':
+      'El modo automático puede reducir el detalle gráfico y el audio ambiental bajo carga sostenida. La protección de emergencia sigue activa.',
+    'Device sharpness stays fixed during play.':
+      'La nitidez del dispositivo se mantiene fija durante la partida.',
+    'Automatic sharpness can adapt during play.':
+      'La nitidez automática puede adaptarse durante la partida.',
+    'Canvas controls apply during fallback. Your Pixi choices are kept.':
+      'Los ajustes de Canvas se aplican mientras funciona como respaldo. Se conservan tus ajustes de Pixi.',
+    'Controls when the game draws. Displayed FPS can be lower. Simulation timing is independent.':
+      'Controla cuándo se dibujan los fotogramas. Los FPS mostrados pueden ser menores. La simulación tiene su propio ritmo.',
+    'Record frame spikes and renderer activity while playing.':
+      'Registra fotogramas lentos y actividad del motor gráfico durante la partida.',
+    'Canvas combat overlay timing': 'Tiempo de la capa de combate de Canvas',
+    'Canvas world timing': 'Tiempo de dibujo del mundo en Canvas',
+    'This clears local timings and slow-frame evidence. Export a report first if you want to keep them.':
+      'Esto borra las mediciones locales y los registros de fotogramas lentos. Exporta un informe primero si quieres conservarlos.',
+    'Confirm sample reset': 'Confirmar reinicio de la muestra',
+    'Canvas is active because the previous Pixi trial was interrupted.':
+      'Canvas está activo porque se interrumpió la prueba anterior de Pixi.',
+    'Canvas is active because Pixi could not start safely.':
+      'Canvas está activo porque Pixi no pudo iniciarse de forma segura.',
+    'Canvas is active while Pixi prepares.': 'Canvas está activo mientras se prepara Pixi.',
+    'Pixi is running in a confirmation trial.':
+      'Pixi está funcionando en una prueba pendiente de confirmación.',
+    'PixiJS WebGL2 (trial)': 'PixiJS WebGL2 (prueba)',
     'Show performance details': 'Mostrar detalles de rendimiento',
     'Hide performance details': 'Ocultar detalles de rendimiento',
     'Start navigation profiling': 'Iniciar medición de multitudes',
@@ -2471,7 +2507,16 @@
         return 'Canvas backup is active after repeated WebGL2 failures. Automatic retries are paused. You can retry PixiJS or use Canvas.';
       return 'Canvas backup is active because a saved graphics safety hold paused automatic retries. The earlier cause is unknown. You can retry PixiJS or use Canvas.';
     }
-    return 'WebGL2 was interrupted. Canvas backup is active; recovery will retry when safe.';
+    if (snapshot.phase === 'trial') return 'Pixi is running in a confirmation trial.';
+    if (snapshot.phase === 'preparing') return 'Canvas is active while Pixi prepares.';
+    if (snapshot.mode === 'webgl2') return '';
+    if (snapshot.recoveryPending)
+      return 'WebGL2 was interrupted. Canvas backup is active; recovery will retry when safe.';
+    if (snapshot.lastFallbackReason === 'interrupted-trial')
+      return 'Canvas is active because the previous Pixi trial was interrupted.';
+    if (snapshot.preferredRenderer === 'webgl2' || snapshot.lastFallbackReason?.startsWith('webgl-'))
+      return 'Canvas is active because Pixi could not start safely.';
+    return '';
   }
   function updateGpuTrial(snapshot) {
     const startupFailure =
@@ -2491,6 +2536,11 @@
       failureStage: startupFailure?.stage,
       failureMessage: startupFailure?.message,
     });
+    const openPerformance = menu?.view?.startsWith('performance-') ? menu : null;
+    if (openPerformance && snapshot.phase !== 'trial')
+      Promise.resolve().then(() => {
+        if (menu === openPerformance) performancePage(menu.view.slice('performance-'.length));
+      });
     const trial = snapshot.phase === 'trial';
     const preparing = snapshot.phase === 'preparing';
     const held =
@@ -2544,8 +2594,6 @@
     webglFailed: () => false,
     visibilityChanged() {},
   };
-  const graphicsGuard =
-    typeof AzerothRendererSwitchGuard === 'undefined' ? null : AzerothRendererSwitchGuard;
   const previousRendererChoice = graphicsGuard
     ? graphicsGuard.startupChoice(localStorage)
     : { renderer: 'canvas2d' };
@@ -3262,13 +3310,14 @@
       suffix,
       saveCampaign,
     }),
-    select: (label, value, options, onChange, detail = '') => ({
+    select: (label, value, options, onChange, detail = '', saveCampaign = true) => ({
       kind: 'select',
       label,
       value,
       options,
       onChange,
       detail,
+      saveCampaign,
     }),
   });
   const menuHistory = [];
@@ -4761,8 +4810,8 @@
               read(
                 'Renderer profiling',
                 'Medir el renderizado',
-                'To investigate a slowdown, open Settings → Screen and performance → Show performance details → Start renderer profiling. Return to the game, reproduce the slowdown, then stop profiling and choose Export playtest report. The measurements indicate CPU work and slow frames; they do not measure actual displayed FPS. Keep profiling off during normal play.',
-                'Para investigar una pausa, abre Ajustes → Pantalla y rendimiento → Mostrar detalles de rendimiento → Iniciar medición del renderizado. Vuelve al juego, reproduce la pausa y luego detén la medición y exporta el informe. Los datos indican trabajo de CPU y fotogramas lentos; no miden directamente los fotogramas mostrados. Deja la medición desactivada al jugar normalmente.',
+                'To investigate a slowdown, open Settings → Screen and performance → Diagnostics → Start renderer profiling. Return to the game, reproduce the slowdown, then stop profiling and choose Export playtest report. The measurements indicate CPU work and slow frames; they do not measure actual displayed FPS. Keep profiling off during normal play.',
+                'Para investigar una pausa, abre Ajustes → Pantalla y rendimiento → Diagnósticos → Iniciar medición del renderizado. Vuelve al juego, reproduce la pausa y luego detén la medición y exporta el informe. Los datos indican trabajo de CPU y fotogramas lentos; no miden directamente los fotogramas mostrados. Deja la medición desactivada al jugar normalmente.',
                 advancedDiagnostics,
               ),
             'Record slow frames when requested.',
@@ -4772,8 +4821,8 @@
             read(
               'Navigation profiling',
               'Medir la navegación',
-              'Navigation profiling records selected movement and route-finding work. Find it under Settings → Screen and performance → Show performance details. Stop the recording after the problem, then export a playtest report. It is not needed for normal gameplay.',
-              'La medición de navegación registra parte del trabajo de movimiento y búsqueda de rutas. Está en Ajustes → Pantalla y rendimiento → Mostrar detalles de rendimiento. Detén la medición tras el problema y exporta un informe. No se necesita para jugar normalmente.',
+              'Navigation profiling records selected movement and route-finding work. Find it under Settings → Screen and performance → Diagnostics. Stop the recording after the problem, then export a playtest report. It is not needed for normal gameplay.',
+              'La medición de navegación registra parte del trabajo de movimiento y búsqueda de rutas. Está en Ajustes → Pantalla y rendimiento → Diagnósticos. Detén la medición tras el problema y exporta un informe. No se necesita para jugar normalmente.',
               advancedDiagnostics,
             ),
           ),
@@ -6159,313 +6208,384 @@
       { view: 'new-adventure' },
     );
   }
-  // Menu audit Step 2: one window for every display, renderer and frame option.
-  // This is a presentation-only reorganization; each setter is the existing one.
-  let performanceDetailsExpanded = false;
   let effectRecording = false;
-  function platformMenu(back = systemMenu) {
+  const performanceExport = () =>
+    action(
+      'Export playtest report',
+      exportPlaytestReport,
+      'Download a local JSON report to share yourself.',
+    );
+  const performanceSelect = (label, value, options, onChange, detail) =>
+    menuControls.select(label, value, options, onChange, detail, false);
+  function performancePage(page = 'Screen and performance') {
     const graphics = graphicsController.status();
-    // In a WebGL failure, Canvas is active even when Pixi remains preferred.
-    // Only expose Pixi-only quality controls when they affect the live scene.
     const pixiSettings = graphics.mode === 'webgl2';
-    const resolutions = [
-      ['auto', 'Automatic sharpness'],
-      ['native', 'Maximum sharpness'],
-      ['100', '100% · Standard'],
-      ['80', '80% · Balanced'],
-      ...(!pixiSettings || pixiResolution.preference === '60' ? [['60', '60% · Performance']] : []),
-      ...(!pixiSettings || pixiResolution.preference === '50'
-        ? [['50', '50% · Maximum speed']]
-        : []),
+    const active = pixiSettings
+      ? graphics.phase === 'trial'
+        ? 'PixiJS WebGL2 (trial)'
+        : 'PixiJS WebGL2'
+      : 'Canvas 2D';
+    const preferred = graphics.preferredRenderer === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D';
+    const fallback = !pixiSettings && (preferred === 'PixiJS WebGL2' || graphics.recoveryPaused);
+    const note = rendererFallbackMessage(graphics);
+    const density = resolutionStatus().ratio.toFixed(2) + '×';
+    const rendererState = [
+      menuControls.section('Active renderer', active),
+      menuControls.section('Preferred renderer', preferred),
+      ...(note ? [menuControls.section('Renderer status', note)] : []),
     ];
-    const frameRates = [
-      ['auto', 'Auto 20–30 FPS · Default'],
-      ...(fps.preference === 'auto60' ? [['auto60', 'Auto 30–60 FPS']] : []),
-      ['20', '20 FPS'],
-      ...(fps.preference === '30' ? [['30', '30 FPS']] : []),
-      ['60', '60 FPS'],
+    const summary = [
+      menuControls.section(
+        'Effective density',
+        density + ' · ' + canvas.width + ' × ' + canvas.height,
+      ),
+      menuControls.section('Active draw target', fps.target + ' FPS'),
     ];
     const choices = (values) => values.map(([value, label]) => ({ value, label }));
-    const items = [
-      menuControls.section('Display'),
-      menuControls.select(
-        'Screen layout',
-        platform.preference,
-        choices([
-          ['auto', 'Automatic screen'],
-          ['desktop', 'Chromebook / desktop screen'],
-          ['phone', 'Phone / touch screen'],
-        ]),
-        (value) => {
-          platform.select(value);
-          // Each screen type remembers its own camera zoom; update the
-          // adjacent selector without navigating away from this window.
-          const camera = Array.from($('modal-actions').querySelectorAll?.('select') || []).find(
-            (control) => control.getAttribute?.('aria-label') === tr('Camera zoom'),
-          );
-          if (camera) camera.value = String(platform.cameraZoom);
-        },
-        'Choose phone or desktop controls. Your save stays the same.',
-      ),
-      menuControls.select(
-        'Camera zoom',
-        String(platform.cameraZoom),
-        choices([
-          ['1', 'Camera 100%'],
-          ['1.5', 'Camera 150%'],
-          ['1.75', 'Camera 175%'],
-        ]),
-        (value) => {
-          clearInput();
-          platform.selectCameraZoom(Number(value));
-        },
-        'Zoom changes your view only.',
-      ),
-      menuControls.section('Graphics'),
-      ...(pixiSettings
-        ? [
-            menuControls.toggle(
-              'Optimization Mode',
-              pixiQuality.preset,
-              (enabled) => {
-                pixiQuality.preset = enabled;
-                applyPixiQuality();
-                platformMenu(back);
-              },
-              'Use the Pixi performance preset. Turn it off to restore custom settings.',
-              false,
-            ),
-            menuControls.toggle(
-              'Atmospheric particles',
-              pixiQuality.particles,
-              (enabled) => {
-                pixiQuality.particles = enabled;
-                applyPixiQuality();
-              },
-              'Decorative motes only. The performance preset hides them.',
-              false,
-            ),
-          ]
-        : [
-            menuControls.select(
-              'Optimization Mode',
-              optimizationPreference,
-              choices([
-                ['off', 'Off'],
-                ['auto', 'Auto · Recommended'],
-                ['on', 'On'],
-              ]),
-              (value) => {
-                if (!['off', 'auto', 'on'].includes(value)) return;
-                optimizationPreference = value;
-                try {
-                  localStorage.setItem(optimizationKey, value);
-                } catch (_) {}
-                autoOptimization.reset();
-                // Critical recovery is not an opt-out, even if Off is chosen now.
-                setOptimizationActive(
-                  value === 'on' || (!canvasQualityBeforePixi && frameSkip.emergency),
-                );
-              },
-              'Auto lowers graphics under sustained load. Emergencies can override Off.',
-            ),
-          ]),
-      menuControls.select(
-        'Rendering resolution',
-        (pixiSettings ? pixiResolution : renderResolution).preference,
-        choices(resolutions),
-        (value) => {
-          if (pixiSettings) {
-            pixiResolution.select(value);
-            applyPixiQuality();
-            platformMenu(back);
-            return;
-          }
-          renderResolution.select(value);
-          resize();
-          runtime.reset();
-          frameProfile.reset();
-          fps.suspend();
-        },
-        pixiSettings && pixiQuality.preset
-          ? 'Custom resolution. Optimization Mode applies the performance limit.'
-          : 'Choose world detail without changing screen size or controls.',
-      ),
-      menuControls.section('Frame rate', tr('Active draw target') + ': ' + fps.target + ' FPS'),
-      menuControls.select(
-        'Frame rate',
-        fps.preference,
-        choices(frameRates),
-        (value) => {
-          fps.select(value);
-          frameSkip.suspend();
-          runtime.reset();
-          frameProfile.reset();
-          platformMenu(back);
-        },
-        'Choose a target for smoother motion or lower graphics load.',
-      ),
-      menuControls.toggle(
-        'Adaptive frame skip',
-        frameSkip.enabled,
-        (enabled) => {
-          frameSkip.select(enabled);
-          fps.suspend();
-          runtime.reset();
-          frameProfile.reset();
-        },
-        'Off disables ordinary skips, not emergency combat protection.',
-      ),
-      menuControls.section(
-        'Graphics renderer',
-        (graphics.mode === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D') +
-          ' · ' +
-          tr('Effective density') +
-          ' ' +
-          resolutionStatus().ratio.toFixed(2) +
-          '× · ' +
-          canvas.width +
-          ' × ' +
-          canvas.height,
-      ),
-      menuControls.select(
-        'Graphics renderer',
-        graphicsController.status().preferredRenderer || graphicsController.status().mode,
-        choices([
-          ['canvas2d', 'Canvas 2D · Backup'],
-          ['webgl2', 'PixiJS WebGL2 · Default'],
-        ]),
-        (value) => {
-          if (value === 'canvas2d') {
-            graphicsController.revert();
-            closeMenu();
-            return;
-          }
-          // The existing independent 15-second Keep/Revert panel must be
-          // visible over the live game, never obscured by a settings dialog.
-          closeMenu();
-          status('Preparing real campaign artwork in PixiJS…');
-          graphicsController.requestWebGL().then((ready) => {
-            if (!ready) status('PixiJS unavailable; Canvas 2D remains active.');
-          });
-        },
-        graphicsController.status().preferredRenderer === 'webgl2' &&
-          graphicsController.status().mode === 'canvas2d'
-          ? rendererFallbackMessage(graphicsController.status())
-          : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
-      ),
-      ...(graphicsController.status().recoveryPaused
-        ? [
-            action('Retry PixiJS WebGL2', () => {
-              closeMenu();
-              status('Preparing PixiJS graphics…');
-              graphicsController.requestWebGL().then((ready) => {
-                if (!ready) status('WebGL2 unavailable. Canvas backup remains active.');
-              });
-            }),
-          ]
-        : []),
-      menuControls.section('Diagnostics'),
-      action(
-        'Export playtest report',
-        exportPlaytestReport,
-        'Download a local JSON report to share yourself.',
-      ),
-      action(
-        performanceDetailsExpanded ? 'Hide performance details' : 'Show performance details',
-        () => {
-          performanceDetailsExpanded = !performanceDetailsExpanded;
-          platformMenu(back);
-        },
-        'Local samples are diagnostic estimates, not verified display FPS.',
-      ),
-    ];
-    if (performanceDetailsExpanded) {
-      items.push(
-        action(
-          rendererRecording ? 'Stop renderer profiling' : 'Start renderer profiling',
-          () => {
-            if (rendererRecording) stopRendererRecording();
-            else beginRendererRecording();
-            platformMenu(back);
-          },
-          'Record bounded frame spikes and PR #518 cache activity while playing.',
-        ),
-        ...((lastRendererRecording || playtestJournal.capture?.state === 'stopped') && !rendererRecording
-          ? [
-              action('Clear renderer profiling', () => {
-                lastRendererRecording = null;
-                playtestJournal.capture = null;
-                playtestJournal.active = false;
-                playtestJournal.segments = [];
-                notePlaytestLifecycle('renderer-profiling-cleared');
-                platformMenu(back);
-              }),
-            ]
-          : []),
+    const drawPage = (title, items, description = '') =>
+      openMenu(title, description, items, platformMenu, { view: 'performance-' + page });
+    if (page === 'Display') {
+      drawPage(page, [
         menuControls.section(
-          'Performance details',
-          runtime.describe({
-            ...renderer.metrics(),
-            measuredLayer:
-              graphicsController.status().mode === 'webgl2'
-                ? 'canvas-combat-overlay'
-                : 'canvas-full-world',
-          }) +
-            '\n\n' +
-            frameProfile.describe() +
-            '\n\n' +
-            game.crowdDiagnosticsDescribe(),
+          'Active layout',
+          platform.mode === 'phone' ? 'Phone / touch screen' : 'Chromebook / desktop screen',
         ),
-        action(
-          game.crowdDiagnosticsReport().recording
-            ? 'Stop navigation profiling'
-            : 'Start navigation profiling',
-          () => {
-            if (game.crowdDiagnosticsReport().recording) game.stopCrowdDiagnostics();
-            else game.startCrowdDiagnostics();
-            platformMenu(back);
+        performanceSelect(
+          'Screen layout',
+          platform.preference,
+          choices([
+            ['auto', 'Automatic screen'],
+            ['desktop', 'Chromebook / desktop screen'],
+            ['phone', 'Phone / touch screen'],
+          ]),
+          (value) => {
+            platform.select(value);
+            performancePage('Display');
           },
-          'Capture navigation and terrain work, then export a playtest report.',
+          'Choose phone or desktop controls. Your save stays the same.',
         ),
-        ...(developerEnabled && game.s.mode === 'developer'
-          ? [
-              menuControls.section('Developer effect diagnostics'),
-              action(
-                effectRecording ? 'Stop effect recording' : 'Start effect recording',
-                () => {
-                  effectRecording = renderer.setEffectDiagnostics(!effectRecording);
-                  platformMenu(back);
-                },
-                'Bounded, in-memory recording. Export with the existing playtest report.',
-              ),
-              action('Clear effect recording', () => {
-                renderer.resetEffectDiagnostics();
-                effectRecording = false;
-                platformMenu(back);
-              }),
-              menuControls.section(
-                'Effect recording · ' +
-                  (effectRecording ? 'ON' : 'OFF') +
-                  ' · painter calls, not pixel verification',
-              ),
-            ]
+        performanceSelect(
+          'Camera zoom',
+          String(platform.cameraZoom),
+          choices([
+            ['1', 'Camera 100%'],
+            ['1.5', 'Camera 150%'],
+            ['1.75', 'Camera 175%'],
+          ]),
+          (value) => {
+            clearInput();
+            platform.selectCameraZoom(Number(value));
+          },
+          'Zoom changes how much you see and can affect graphics workload.',
+        ),
+      ]);
+      return;
+    }
+    if (page === 'Renderer and recovery') {
+      drawPage(page, [
+        ...rendererState,
+        performanceSelect(
+          'Graphics renderer',
+          graphics.preferredRenderer || graphics.mode,
+          choices([
+            ['webgl2', 'PixiJS WebGL2 · Default'],
+            ['canvas2d', 'Canvas 2D · Backup'],
+          ]),
+          (value) => {
+            if (value === 'canvas2d') {
+              graphicsController.revert();
+              performancePage(page);
+            } else {
+              requestPerformancePixi();
+            }
+          },
+          'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
+        ),
+        ...(!pixiSettings && preferred === 'PixiJS WebGL2'
+          ? [action('Retry PixiJS WebGL2', requestPerformancePixi)]
           : []),
-        action('Reset performance sample', () => {
-          runtime.reset();
-          frameProfile.reset();
-          frameProfile.clearSlowdowns();
-          platformMenu(back);
-        }),
+      ]);
+      return;
+    }
+    if (page === 'Graphics') {
+      const resolutions = [
+        ['auto', pixiSettings ? 'Device sharpness' : 'Automatic sharpness'],
+        ...(!pixiSettings ? [['native', 'Maximum sharpness']] : []),
+        ['100', '100% · Standard'],
+        ['80', '80% · Balanced'],
+        ...(!pixiSettings || pixiResolution.preference === '60'
+          ? [['60', '60% · Performance']]
+          : []),
+        ...(!pixiSettings || pixiResolution.preference === '50'
+          ? [['50', '50% · Maximum speed']]
+          : []),
+      ];
+      drawPage(
+        pixiSettings ? 'Pixi graphics' : 'Canvas graphics',
+        [
+          menuControls.section('Effective density', density),
+          ...(pixiSettings
+            ? [
+                menuControls.section(
+                  'Effective atmospheric particles',
+                  !pixiQuality.preset && pixiQuality.particles ? 'On' : 'Off',
+                ),
+              ]
+            : [menuControls.section('Effective optimization', optimizationMode ? 'On' : 'Off')]),
+          ...(pixiSettings
+            ? [
+                menuControls.toggle(
+                  'Optimization Mode',
+                  pixiQuality.preset,
+                  (enabled) => {
+                    pixiQuality.preset = enabled;
+                    applyPixiQuality();
+                    performancePage('Graphics');
+                  },
+                  'Use the Pixi performance preset. Turn it off to restore custom settings.',
+                  false,
+                ),
+                menuControls.toggle(
+                  'Atmospheric particles',
+                  pixiQuality.particles,
+                  (enabled) => {
+                    pixiQuality.particles = enabled;
+                    applyPixiQuality();
+                    performancePage('Graphics');
+                  },
+                  pixiQuality.preset
+                    ? 'Saved choice. The preset currently hides decorative particles.'
+                    : 'Decorative motes only.',
+                  false,
+                ),
+              ]
+            : [
+                performanceSelect(
+                  'Optimization Mode',
+                  optimizationPreference,
+                  choices([
+                    ['off', 'Off'],
+                    ['auto', 'Auto · Recommended'],
+                    ['on', 'On'],
+                  ]),
+                  (value) => {
+                    if (!['off', 'auto', 'on'].includes(value)) return;
+                    optimizationPreference = value;
+                    try {
+                      localStorage.setItem(optimizationKey, value);
+                    } catch (_) {}
+                    autoOptimization.reset();
+                    // Critical recovery is not an opt-out, even if Off is chosen now.
+                    setOptimizationActive(
+                      value === 'on' || (!canvasQualityBeforePixi && frameSkip.emergency),
+                    );
+                    performancePage('Graphics');
+                  },
+                  'Auto can reduce graphics detail and ambient audio under sustained load. Emergency protection still applies.',
+                ),
+              ]),
+          performanceSelect(
+            'Rendering resolution',
+            pixiSettings && pixiResolution.preference === 'native'
+              ? 'auto'
+              : (pixiSettings ? pixiResolution : renderResolution).preference,
+            choices(resolutions),
+            (value) => {
+              if (pixiSettings) {
+                pixiResolution.select(value);
+                applyPixiQuality();
+                performancePage('Graphics');
+                return;
+              }
+              renderResolution.select(value);
+              resize();
+              runtime.reset();
+              frameProfile.reset();
+              fps.suspend();
+              performancePage('Graphics');
+            },
+            pixiSettings && pixiQuality.preset
+              ? 'Custom resolution. Optimization Mode applies the performance limit.'
+              : pixiSettings
+                ? 'Device sharpness stays fixed during play.'
+                : 'Automatic sharpness can adapt during play.',
+          ),
+        ],
+        fallback ? 'Canvas controls apply during fallback. Your Pixi choices are kept.' : '',
       );
+      return;
+    }
+    if (page === 'Frame pacing') {
+      const frameRates = [
+        ['auto', 'Auto 20–30 FPS · Default'],
+        ...(fps.preference === 'auto60' ? [['auto60', 'Auto 30–60 FPS']] : []),
+        ['20', '20 FPS'],
+        ...(fps.preference === '30' ? [['30', '30 FPS']] : []),
+        ['60', '60 FPS'],
+      ];
+      drawPage(page, [
+        menuControls.section(
+          'Drawing target (FPS)',
+          tr('Active draw target') + ': ' + fps.target + ' FPS',
+        ),
+        performanceSelect(
+          'Drawing target (FPS)',
+          fps.preference,
+          choices(frameRates),
+          (value) => {
+            fps.select(value);
+            frameSkip.suspend();
+            runtime.reset();
+            frameProfile.reset();
+            performancePage('Frame pacing');
+          },
+          'Controls when the game draws. Displayed FPS can be lower. Simulation timing is independent.',
+        ),
+        menuControls.toggle(
+          'Adaptive frame skip',
+          frameSkip.enabled,
+          (enabled) => {
+            frameSkip.select(enabled);
+            fps.suspend();
+            runtime.reset();
+            frameProfile.reset();
+          },
+          'Off disables ordinary skips, not emergency combat protection.',
+          false,
+        ),
+      ]);
+      return;
+    }
+    if (page === 'Diagnostics') {
+      drawPage(
+        page,
+        [
+          performanceExport(),
+          action(
+            rendererRecording ? 'Stop renderer profiling' : 'Start renderer profiling',
+            () => {
+              if (rendererRecording) stopRendererRecording();
+              else beginRendererRecording();
+              performancePage('Diagnostics');
+            },
+            'Record frame spikes and renderer activity while playing.',
+          ),
+          ...((lastRendererRecording || playtestJournal.capture?.state === 'stopped') &&
+          !rendererRecording
+            ? [
+                action('Clear renderer profiling', () => {
+                  lastRendererRecording = null;
+                  playtestJournal.capture = null;
+                  playtestJournal.active = false;
+                  playtestJournal.segments = [];
+                  notePlaytestLifecycle('renderer-profiling-cleared');
+                  performancePage('Diagnostics');
+                }),
+              ]
+            : []),
+          menuControls.section(
+            'Performance details',
+            tr(pixiSettings ? 'Canvas combat overlay timing' : 'Canvas world timing') +
+              '\n' +
+              runtime.describe({
+                ...renderer.metrics(),
+                measuredLayer:
+                  graphicsController.status().mode === 'webgl2'
+                    ? 'canvas-combat-overlay'
+                    : 'canvas-full-world',
+              }) +
+              '\n\n' +
+              frameProfile.describe() +
+              '\n\n' +
+              game.crowdDiagnosticsDescribe(),
+          ),
+          action(
+            game.crowdDiagnosticsReport().recording
+              ? 'Stop navigation profiling'
+              : 'Start navigation profiling',
+            () => {
+              if (game.crowdDiagnosticsReport().recording) game.stopCrowdDiagnostics();
+              else game.startCrowdDiagnostics();
+              performancePage('Diagnostics');
+            },
+            'Capture navigation and terrain work, then export a playtest report.',
+          ),
+          ...(developerEnabled && game.s.mode === 'developer'
+            ? [
+                menuControls.section('Developer effect diagnostics'),
+                action(
+                  effectRecording ? 'Stop effect recording' : 'Start effect recording',
+                  () => {
+                    effectRecording = renderer.setEffectDiagnostics(!effectRecording);
+                    performancePage('Diagnostics');
+                  },
+                  'Bounded, in-memory recording. Export with the existing playtest report.',
+                ),
+                action('Clear effect recording', () => {
+                  renderer.resetEffectDiagnostics();
+                  effectRecording = false;
+                  performancePage('Diagnostics');
+                }),
+                menuControls.section(
+                  'Effect recording · ' +
+                    (effectRecording ? 'ON' : 'OFF') +
+                    ' · painter calls, not pixel verification',
+                ),
+              ]
+            : []),
+          action('Reset performance sample', confirmPerformanceReset),
+        ],
+        'Local samples are diagnostic estimates, not verified display FPS.',
+      );
+      return;
     }
     openMenu(
       'Screen and performance',
-      language === 'es'
-        ? 'Elige cómo se ve y funciona el juego. Los diagnósticos son opcionales.'
-        : 'Choose how the game looks and runs. Advanced diagnostics are optional.',
-      items,
-      back,
+      'Choose how the game looks and runs.',
+      [
+        ...rendererState,
+        ...summary,
+        action('Display', () => performancePage('Display')),
+        action('Renderer and recovery', () => performancePage('Renderer and recovery')),
+        action(pixiSettings ? 'Pixi graphics' : 'Canvas graphics', () =>
+          performancePage('Graphics'),
+        ),
+        action('Frame pacing', () => performancePage('Frame pacing')),
+        action('Diagnostics', () => performancePage('Diagnostics')),
+        performanceExport(),
+      ],
+      systemMenu,
+      { view: 'performance-Screen and performance' },
+    );
+  }
+  function platformMenu() {
+    performancePage();
+  }
+  function requestPerformancePixi() {
+    // The existing independent Keep/Revert panel owns focus during the trial.
+    closeMenu();
+    status('Preparing PixiJS graphics…');
+    graphicsController.requestWebGL().then((ready) => {
+      if (!ready) status('WebGL2 unavailable. Canvas backup remains active.');
+    });
+  }
+  function performanceDiagnostics() {
+    performancePage('Diagnostics');
+  }
+  function confirmPerformanceReset() {
+    openMenu(
+      'Reset performance sample',
+      'This clears local timings and slow-frame evidence. Export a report first if you want to keep them.',
+      [
+        performanceExport(),
+        action('Confirm sample reset', () => {
+          runtime.reset();
+          frameProfile.reset();
+          frameProfile.clearSlowdowns();
+          performanceDiagnostics();
+        }),
+      ],
+      performanceDiagnostics,
     );
   }
   function systemMenu() {
@@ -6480,7 +6600,7 @@
         ...(appRegistration && appUpdateReady
           ? [action('Install available game update', updateApp)]
           : []),
-        action('Screen and performance', () => platformMenu(systemMenu)),
+        action('Screen and performance', platformMenu),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
         action('Language · ' + (language === 'es' ? 'Español' : 'English'), () =>
@@ -10541,12 +10661,8 @@
   updateHUD();
   setLanguage(language, false);
   showTitleScreen();
-  if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
-    status(
-      performanceBaselineUpgraded
-        ? 'Performance settings updated to recommended defaults. You can change them in Settings.'
-        : 'Optimization Mode now defaults to Auto. You can change it in Settings.',
-    );
+  if (performanceBaselineUpgraded && !recoveredOnStartup)
+    status('Performance settings updated to recommended defaults. You can change them in Settings.');
   requestAnimationFrame(frame);
   startupEvent(writerGuard.pending ? 'ownership-start' : 'ownership-settled', {
     canWrite: writerGuard.canWrite(),
