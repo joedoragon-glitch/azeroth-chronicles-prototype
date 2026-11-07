@@ -3,6 +3,9 @@
   'use strict';
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js'),
     G = R.combatGeometry;
+  // Reuse read-only trap derivation only within a single renderer draw.
+  // Keep it separate from the existing attack-shape Map and its invariants.
+  const drawTraps = new WeakMap();
   function polygon(ctx, screen, points) {
     ctx.beginPath();
     points.forEach((q, j) => {
@@ -11,11 +14,22 @@
     });
     ctx.closePath();
   }
+  // Fixed-size angular lookup avoids repeated trig for the many static-circle
+  // footprints. Cache only bounded native subdivisions; allocate no new state
+  // in the gameplay/save model and preserve the source's exact vertex count.
+  const circleDirections = new Map();
   function circlePoints(center, radius, steps = 48) {
-    return Array.from({ length: steps }, (_, j) => {
-      const a = (j * Math.PI * 2) / steps;
-      return { x: center.x + Math.cos(a) * radius, y: center.y + Math.sin(a) * radius };
-    });
+    let directions = circleDirections.get(steps);
+    if (!directions) {
+      directions = Array.from({ length: steps }, (_, j) => {
+        const a = (j * Math.PI * 2) / steps;
+        return { x: Math.cos(a), y: Math.sin(a) };
+      });
+      if (steps >= 3 && steps <= 128) circleDirections.set(steps, directions);
+    }
+    return directions.map((d) => ({
+      x: center.x + d.x * radius, y: center.y + d.y * radius,
+    }));
   }
   function circlePath(ctx, screen, center, radius) {
     polygon(ctx, screen, circlePoints(center, Math.max(0, radius)));
@@ -261,6 +275,20 @@
   // Floating cast information is separate from floor warnings, so danger
   // geometry can sit beneath every actor/prop without burying the cast clock.
   function actorCues(ctx, screen, game, heightFor = null) {
+    // Most exploration frames have no cast: avoid three filtered rosters and
+    // layout reads until the combat engine has committed a pending warning.
+    let casts = null;
+    let hasCompactBar = false;
+    for (const e of game.zone().enemies) {
+      if (!pendingWarning(e.telegraph)) continue;
+      (casts ||= []).push(e);
+      if (e.telegraph.anonymousCast || e.telegraph.mobileRogueCast) hasCompactBar = true;
+    }
+    if (!casts) {
+      // Royal Taxation is a live status, not a pending cast. Keep it visible.
+      royalTaxStatus(ctx, screen, game);
+      return;
+    }
     const cueHeight = (e) =>
       Math.max(
         e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65,
@@ -268,16 +296,13 @@
       );
     // Read the real presentation obstacle once per cue pass. Headless Canvas
     // callers have no DOM; their full viewport remains available.
-    const hudRect = ctx.canvas?.ownerDocument?.getElementById?.('hud')?.getBoundingClientRect?.(),
-      canvasRect = ctx.canvas?.getBoundingClientRect?.();
+    const hudRect = hasCompactBar
+        ? ctx.canvas?.ownerDocument?.getElementById?.('hud')?.getBoundingClientRect?.()
+        : null,
+      canvasRect = hasCompactBar ? ctx.canvas?.getBoundingClientRect?.() : null;
     ctx.save();
-    for (const e of game
-      .zone()
-      .enemies.filter(
-        (e) =>
-          pendingWarning(e.telegraph) &&
-          (e.telegraph.anonymousCast || e.telegraph.mobileRogueCast),
-      )) {
+    for (const e of casts) {
+      if (!e.telegraph.anonymousCast && !e.telegraph.mobileRogueCast) continue;
       const a = e.telegraph,
         p = screen(e);
       const transform = ctx.getTransform?.(),
@@ -342,16 +367,9 @@
     // Ledger of Losses deliberately obscures Ridge's ground footprints,
     // including separate rogue moves. It must NEVER obscure the cast itself:
     // attach a high-contrast progress bar to the actual boss, not the terrain.
-    for (const e of game
-      .zone()
-      .enemies.filter(
-        (e) =>
-          e.family === 'ridge' &&
-          e.ledgerOpen &&
-          !e.telegraph?.mobileRogueCast &&
-          visibleWarning(e) &&
-          e.hp > 0,
-      )) {
+    for (const e of casts) {
+      if (!(e.family === 'ridge' && e.ledgerOpen &&
+        !e.telegraph.mobileRogueCast && visibleWarning(e) && e.hp > 0)) continue;
       const a = e.telegraph,
         p = screen(e),
         w = 84,
@@ -372,14 +390,9 @@
       ctx.fillStyle = '#fff4d7';
       ctx.fillText('LEDGER CAST', p.x, y - 8);
     }
-    for (const e of game
-      .zone()
-      .enemies.filter(
-        (e) =>
-          visibleWarning(e) &&
-          !e.telegraph?.mobileRogueCast &&
-          !(e.family === 'ridge' && e.ledgerOpen),
-      )) {
+    for (const e of casts) {
+      if (!(visibleWarning(e) && !e.telegraph.mobileRogueCast &&
+        !(e.family === 'ridge' && e.ledgerOpen))) continue;
       const a = e.telegraph;
       // The skill belongs to the caster, not the player's marked landing point.
       const p = screen(e);
@@ -455,7 +468,12 @@
     ctx.save();
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
-    for (const t of game.traps()) {
+    let traps = frameWarningShapes && drawTraps.get(frameWarningShapes);
+    if (!traps) {
+      traps = game.traps();
+      if (frameWarningShapes) drawTraps.set(frameWarningShapes, traps);
+    }
+    for (const t of traps) {
       // Both full Canvas and the Pixi cue overlay use this painter.
       // Cull before allocating polygons for distant, undiscovered traps.
       if (!trapCueNearHero(game, t)) continue;
@@ -631,7 +649,10 @@
         ctx.stroke();
       }
     }
-    for (const e of game
+    // One fine-grained presentation pass paints both the restrained interior
+    // and a stable outline. The old separate full-area fill + dashed outline
+    // prepared/projected the same polygon twice every permitted draw.
+    if (cue) for (const e of game
       .zone()
       .enemies.filter(
         (e) =>
@@ -649,27 +670,28 @@
       if (frameWarningShapes && !frameEntry) frameWarningShapes.set(a, { patches, shapes });
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
+      // Muted, coherent palette: a thin clear contour and low-alpha interior.
+      // No dashed-path stipple, glow, or second geometry traversal.
       ctx.strokeStyle = a.bossHeal
-        ? '#a9e7b0'
+        ? '#add9b7'
         : a.rogueSignature
-          ? '#9cf1f0'
+          ? '#91d9dc'
           : a.rogueMove
-            ? '#8ecde6'
-            : '#ffe09a';
+            ? '#a0c7d4'
+            : '#efd29b';
       ctx.fillStyle = a.bossHeal
-        ? '#4c9f6726'
+        ? '#82b99417'
         : a.rogueSignature
-          ? '#369ab332'
+          ? '#6cb9bb1a'
           : a.rogueMove
-            ? '#4b95c128'
-            : '#dc644c26';
-      ctx.lineWidth = a.rogueSignature ? 3.3 : 2.5;
-      ctx.setLineDash(cue ? (a.rogueSignature ? [10, 4] : [8, 5]) : []);
+            ? '#79b4bf17'
+            : '#d7a96b1c';
+      ctx.lineWidth = a.rogueSignature ? 2.2 : e.type === 'boss' ? 2 : 1.7;
       for (const points of shapes) {
         polygon(ctx, screen, points);
-        cue ? ctx.stroke() : a.kind !== 'ring' && ctx.fill();
+        if (a.kind !== 'ring') ctx.fill();
+        ctx.stroke();
       }
-      ctx.setLineDash([]);
       if (a.royalTerritory && a.kind === 'sector') {
         // Opposite geometry is safe from this sector strike, not from
         // all surrounding Crown soldiers or other attacks.
