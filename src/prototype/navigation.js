@@ -560,6 +560,12 @@
         let probes = Math.min(frame[probeKey],
             mode === 'thorn-retreat' ? cfg.thornRetreatProbesPerTick : cfg.terrainProbesPerSearch),
           nodes = Math.min(frame[nodeKey], cfg.routeNodesPerSearch);
+        // Collision is read-only during this synchronous planner advance.
+        // Reuse exact duplicate probes only until this invocation returns:
+        // no stale geometry across actors, ticks, phase changes or save/load.
+        // Every yielded request still consumes its ORIGINAL probe budget,
+        // preserving per-tick search completion and AI scheduling exactly.
+        const checked = new Map();
         while (true) {
           if (!plan.request) {
             const next = plan.generator.next(plan.reply);
@@ -576,7 +582,13 @@
             if (!probes) break;
             probes--;
             frame[probeKey]--;
-            plan.reply = this.blocked(...plan.request.args);
+            const args = plan.request.args;
+            const key = args.join(':');
+            if (checked.has(key)) plan.reply = checked.get(key);
+            else {
+              plan.reply = this.blocked(...args);
+              checked.set(key, plan.reply);
+            }
           } else throw Error('Unknown route planning step');
           plan.request = null;
         }
