@@ -15,7 +15,11 @@ for (const kind of ['spikes', 'seal']) {
     kind + ' is not warned from farther away');
   cueGame.hero.x = 0;
   assert.equal(trapCueNearHero(cueGame, t), true, kind + ' is visible inside its footprint');
-  cueGame.hero.x = 130;
+  cueGame.hero.x = 78; cueGame.hero.y = 104; // 78² + 104² = 130²
+  assert.equal(trapCueNearHero(cueGame, t), true, kind + ' diagonal boundary is included');
+  cueGame.hero.x = 79;
+  assert.equal(trapCueNearHero(cueGame, t), false, kind + ' diagonal just outside is hidden');
+  cueGame.hero.x = 130; cueGame.hero.y = 0;
 }
 const jetCue = { kind: 'jet', x: 0, y: 0, length: 140, halfWidth: 30 };
 cueGame.hero.x = 190; cueGame.hero.y = 0;
@@ -26,6 +30,10 @@ cueGame.hero.x = 0; cueGame.hero.y = 120;
 assert.equal(trapCueNearHero(cueGame, jetCue), true, 'jet side uses lane, not center distance');
 cueGame.hero.y = 121;
 assert.equal(trapCueNearHero(cueGame, jetCue), false, 'jet side hides beyond margin');
+cueGame.hero.x = 142; cueGame.hero.y = 96; // past the end: 72² + 96² = 120²
+assert.equal(trapCueNearHero(cueGame, jetCue), true, 'jet round endcap diagonal is included');
+cueGame.hero.x = 143;
+assert.equal(trapCueNearHero(cueGame, jetCue), false, 'jet diagonal beyond endcap hides');
 
 
 // Every authored trap placement is accounted for, including optional interiors
