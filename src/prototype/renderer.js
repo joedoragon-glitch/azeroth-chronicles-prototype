@@ -1004,23 +1004,50 @@
       if (!pairs.length || typeof document === 'undefined') return;
       for (const pair of pairs) {
         const size = outlineSize(pair.actor);
+        const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
+        const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
+        // Crop only known retained rasters. Four transparent pixels enclose
+        // the bilinear sampling fringe and the unchanged 1.35px outline ring.
+        // Integer origins preserve the original mask pixel grid exactly.
+        const fringe = 4;
+        let left = retained ? Math.max(0, Math.min(size, Math.floor(size / 2 + shown.x - pair.position.x + retained.dx) - fringe)) : 0;
+        let top = retained ? Math.max(0, Math.min(size, Math.floor((size === 384 ? 260 : 192) + shown.y - pair.position.y + retained.dy) - fringe)) : 0;
+        const right = retained ? Math.max(0, Math.min(size, Math.ceil(size / 2 + shown.x - pair.position.x + retained.dx + retained.width) + fringe)) : size;
+        const bottom = retained ? Math.max(0, Math.min(size, Math.ceil((size === 384 ? 260 : 192) + shown.y - pair.position.y + retained.dy + retained.height) + fringe)) : size;
+        if (right <= left || bottom <= top) continue;
+        // Quantized dimensions bound allocation churn; an eight-entry LRU
+        // bounds residency even when actors/poses have many different sizes.
+        const width = Math.min(size, Math.ceil((right - left) / 32) * 32);
+        const height = Math.min(size, Math.ceil((bottom - top) / 32) * 32);
+        left = Math.min(left, size - width);
+        top = Math.min(top, size - height);
+        const key = width + ':' + height;
         const buffersAt = detail ? now() : 0;
-        if (!outlineLayers.has(size)) {
+        if (!outlineLayers.has(key)) {
+          const bytes = () => [...outlineLayers.values()].reduce((sum, row) => sum + row[0].surface.width * row[0].surface.height * 16, 0);
+          while (outlineLayers.size && (outlineLayers.size >= 8 || bytes() + width * height * 16 > (384 * 384 + 256 * 256) * 16)) {
+            const oldest = outlineLayers.keys().next().value;
+            for (const layer of outlineLayers.get(oldest)) layer.surface.width = layer.surface.height = 0;
+            outlineLayers.delete(oldest);
+          }
           const layers = [];
           for (let i = 0; i < 4; i++) {
             const surface = document.createElement('canvas');
-            surface.width = surface.height = size;
+            surface.width = width;
+            surface.height = height;
             const brush = surface.getContext('2d');
             if (!brush) return;
             layers.push({ surface, brush });
           }
-          outlineLayers.set(size, layers);
+          outlineLayers.set(key, layers);
         }
-        const layers = outlineLayers.get(size);
+        const layers = outlineLayers.get(key);
+        outlineLayers.delete(key);
+        outlineLayers.set(key, layers);
         if (detail) detail.outlineBuffersMs += Math.max(0, now() - buffersAt);
         const [actorLayer, tintLayer, edgeLayer, coverLayer] = layers,
-          centerX = size / 2,
-          footY = size === 384 ? 260 : 192,
+          centerX = size / 2 - left,
+          footY = (size === 384 ? 260 : 192) - top,
           ring =
             optimized && compactOutlines
               ? [
@@ -1044,12 +1071,12 @@
                   [0.95, 0.95],
                 ];
         stats.outlineMasks++;
-        stats.outlineMaskPixels += size * size;
+        stats.outlineMaskPixels += width * height;
         const clearAt = detail ? now() : 0;
         for (const layer of layers) {
           layer.brush.globalCompositeOperation = 'source-over';
           layer.brush.globalAlpha = 1;
-          layer.brush.clearRect(0, 0, size, size);
+          layer.brush.clearRect(0, 0, width, height);
         }
         if (detail) detail.outlineClearMs += Math.max(0, now() - clearAt);
         // Pixi keeps its world/shadow foot still, but moves the retained
@@ -1058,8 +1085,6 @@
         // phase, collision and the final on-screen contour origin stay at
         // their original world points. Unretained Canvas bodies already
         // apply visualPosition inside sprite(), so never offset them twice.
-        const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
-        const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
         const actorAt = detail ? now() : 0;
         sprite(
           pair.actor,
@@ -1078,7 +1103,7 @@
         tint.drawImage(actorLayer.surface, 0, 0);
         tint.globalCompositeOperation = 'source-in';
         tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
-        tint.fillRect(0, 0, size, size);
+        tint.fillRect(0, 0, width, height);
         tint.globalCompositeOperation = 'source-over';
         if (detail) detail.outlineTintMs += Math.max(0, now() - tintAt);
 
@@ -3898,7 +3923,7 @@
         groundCache: groundCache?.status() || null,
         outlineBuffers: {
           surfaces: outlineLayers.size * 4,
-          bytes: [...outlineLayers.keys()].reduce((sum, size) => sum + size * size * 4 * 4, 0),
+          bytes: [...outlineLayers.values()].reduce((sum, layers) => sum + layers[0].surface.width * layers[0].surface.height * 4 * 4, 0),
         },
         phases: phaseReport(),
       }),

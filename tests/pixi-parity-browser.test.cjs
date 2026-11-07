@@ -362,18 +362,28 @@ async function main() {
               // Intercept the real retained-mask canvas translation in this
               // deterministic Pixi+Canvas composite, not the production path.
               const watchMask = fixture === 'occlusion-idle' && mode === 'pixi';
-              const maskMoves = [];
+              const maskMoves = [], maskDestinations = [];
+              const originalDrawImage = CanvasRenderingContext2D.prototype.drawImage;
+              if (watchMask) CanvasRenderingContext2D.prototype.drawImage = function(image, ...args) {
+                if (this.canvas === opts.canvas && image instanceof HTMLCanvasElement &&
+                    image.width <= 384 && image.height <= 384)
+                  maskDestinations.push({ x: args[0], y: args[1] });
+                return originalDrawImage.call(this, image, ...args);
+              };
               const originalTranslate = CanvasRenderingContext2D.prototype.translate;
               if (watchMask)
                 CanvasRenderingContext2D.prototype.translate = function (x, y) {
-                  if (this.canvas.width === 256 || this.canvas.width === 384)
+                  if (this.canvas !== opts.canvas && this.canvas.width <= 384 && this.canvas.height <= 384)
                     maskMoves.push({ x, y, canvasWidth: this.canvas.width });
                   return originalTranslate.call(this, x, y);
                 };
               try {
                 painter.draw();
               } finally {
-                if (watchMask) CanvasRenderingContext2D.prototype.translate = originalTranslate;
+                if (watchMask) {
+                  CanvasRenderingContext2D.prototype.translate = originalTranslate;
+                  CanvasRenderingContext2D.prototype.drawImage = originalDrawImage;
+                }
               }
               if (g !== originalCampaign || JSON.stringify(g.s) !== saved)
                 throw Error('Rendering mutated Campaign state');
@@ -388,7 +398,11 @@ async function main() {
                 canvas: painter.metrics(),
                 occlusion: watchMask
                   ? {
-                      mask: maskMoves[0] || null,
+                      mask: maskMoves[0] && maskDestinations[0] ? {
+                        ...maskMoves[0],
+                        x: maskMoves[0].x + maskDestinations[0].x,
+                        y: maskMoves[0].y + maskDestinations[0].y,
+                      } : null,
                       maskCount: maskMoves.length,
                       ground: painter.screen(g.hero),
                       body: painter.visualPositionFor(painter.presentEntity(g.hero, 'hero')),

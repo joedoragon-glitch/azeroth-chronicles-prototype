@@ -286,13 +286,20 @@ function retainedMaskPlacement(nowMs, flipX = false, sourceRect = null) {
   };
   scene.painter.setSilhouetteFrames(new WeakMap([[scene.actor, retained]]));
   const priorDocument = global.document,
-    translations = [];
+    translations = [], surfaces = [], composites = [];
+  const destination = scene.surface.getContext('2d');
+  const drawImage = destination.drawImage.bind(destination);
+  destination.drawImage = (image, ...args) => {
+    if (image === surfaces[2]) composites.push({ x: args[0], y: args[1] });
+    return drawImage(image, ...args);
+  };
   let firstMask = true;
   try {
     global.document = {
       createElement() {
         const surface = createCanvas(384, 384),
           getContext = surface.getContext.bind(surface);
+        surfaces.push(surface);
         surface.getContext = (...args) => {
           const ctx = getContext(...args);
           if (firstMask) {
@@ -317,7 +324,8 @@ function retainedMaskPlacement(nowMs, flipX = false, sourceRect = null) {
   assert.equal(translations.length, 1, 'one retained actor placement, not a re-bake or duplicate');
   const ground = scene.painter.screen(scene.actor),
     body = scene.painter.visualPositionFor(scene.actor);
-  return { position: translations[0], retained, ground, body };
+  assert.equal(composites.length, 1, 'one final outline submission');
+  return { position: translations[0], destination: composites[0], retained, ground, body };
 }
 const poseA = retainedMaskPlacement(1000),
   poseB = retainedMaskPlacement(7000),
@@ -325,9 +333,10 @@ const poseA = retainedMaskPlacement(1000),
 for (const pose of [poseA, poseB, flipped]) {
   const dx = pose.body.x - pose.ground.x,
     dy = pose.body.y - pose.ground.y;
-  const expectedX = pose.position.size / 2 + pose.retained.dx + dx +
-    (pose.retained.flipX ? pose.retained.width : 0);
-  const expectedY = (pose.position.size === 384 ? 260 : 192) + pose.retained.dy + dy;
+  // Compare the final screen placement, independent of offscreen crop origin.
+  const expectedX = Math.round(pose.ground.x - 128) + 128 + pose.retained.dx + dx +
+    (pose.retained.flipX ? pose.retained.width : 0) - pose.destination.x;
+  const expectedY = Math.round(pose.ground.y - 192) + 192 + pose.retained.dy + dy - pose.destination.y;
   assert(
     Math.abs(pose.position.x - expectedX) < 0.00001 &&
     Math.abs(pose.position.y - expectedY) < 0.00001,
