@@ -189,6 +189,132 @@
     // Canvas sorts the presented body, not a ferry's separate boarding location.
     return result.sort((a, b) => a.visual.x + a.visual.y - (b.visual.x + b.visual.y));
   }
+  // Observe conservative device-pixel bounds while the original artist paints.
+  // Curves stay within their control-point hull; clips only remove pixels.
+  // Unknown operations/effects fall back to the original alpha readback. No
+  // guessed sprite sizes, alternate artwork, or lower-resolution rasterization.
+  function proceduralBoundsContext(context) {
+    if (typeof context.getTransform !== 'function') return { ctx: context, bounds: () => null };
+    let matrix = context.getTransform(),
+      path = null,
+      painted = null,
+      pathScale = 1,
+      safe = true;
+    const methods = new Map();
+    const union = (a, b) =>
+      !a
+        ? b
+        : !b
+          ? a
+          : [Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[2], b[2]), Math.max(a[3], b[3])];
+    const scale = () => Math.hypot(matrix.a, matrix.b, matrix.c, matrix.d);
+    const point = (x, y) => {
+      const px = matrix.a * x + matrix.c * y + matrix.e,
+        py = matrix.b * x + matrix.d * y + matrix.f;
+      if (!Number.isFinite(px) || !Number.isFinite(py)) safe = false;
+      return [px, py, px, py];
+    };
+    const rectangle = (x, y, w, h) =>
+      union(union(point(x, y), point(x + w, y)), union(point(x, y + h), point(x + w, y + h)));
+    const addPath = (...coordinates) => {
+      for (let i = 0; i < coordinates.length; i += 2)
+        path = union(path, point(coordinates[i], coordinates[i + 1]));
+      pathScale = Math.max(pathScale, scale());
+    };
+    const paint = (bounds, stroke = false) => {
+      if (
+        (context.filter && context.filter !== 'none') ||
+        context.shadowBlur ||
+        context.shadowOffsetX ||
+        context.shadowOffsetY
+      )
+        safe = false;
+      if (!bounds) return;
+      const pad = stroke
+        ? context.lineWidth *
+          Math.max(pathScale, scale()) *
+          (context.lineJoin === 'miter' ? Math.max(1, context.miterLimit) : 1)
+        : 0;
+      painted = union(painted, [bounds[0] - pad, bounds[1] - pad, bounds[2] + pad, bounds[3] + pad]);
+    };
+    const transforms = new Set([
+      'setTransform',
+      'resetTransform',
+      'translate',
+      'scale',
+      'rotate',
+      'transform',
+      'restore',
+    ]);
+    const inert = new Set([
+      'save',
+      'closePath',
+      'clip',
+      'clearRect',
+      'createLinearGradient',
+      'createRadialGradient',
+      'createPattern',
+      'measureText',
+      'getTransform',
+      'setLineDash',
+      'getLineDash',
+    ]);
+    const ctx = new Proxy(context, {
+      get(object, key) {
+        const value = object[key];
+        if (key === 'canvas') safe = false; // another context could paint unseen
+        if (typeof value !== 'function') return value;
+        if (!methods.has(key))
+          methods.set(key, (...args) => {
+            if (key === 'beginPath') {
+              path = null;
+              pathScale = scale();
+            } else if (
+              key === 'moveTo' ||
+              key === 'lineTo' ||
+              key === 'quadraticCurveTo' ||
+              key === 'bezierCurveTo'
+            )
+              addPath(...args);
+            else if (key === 'rect' || key === 'roundRect') {
+              path = union(path, rectangle(...args.slice(0, 4)));
+              pathScale = Math.max(pathScale, scale());
+            } else if (key === 'arc' || key === 'ellipse') {
+              const [x, y, rx] = args,
+                ry = key === 'arc' ? rx : args[3];
+              // A full radius-square encloses any rotation and partial arc.
+              const r = Math.max(Math.abs(rx), Math.abs(ry));
+              path = union(path, rectangle(x - r, y - r, 2 * r, 2 * r));
+              pathScale = Math.max(pathScale, scale());
+            } else if (key === 'fill' || key === 'stroke') {
+              if (args.length && typeof args[0] !== 'string') safe = false; // external Path2D
+              paint(path, key === 'stroke');
+            } else if (key === 'fillRect' || key === 'strokeRect')
+              paint(rectangle(...args), key === 'strokeRect');
+            else if (key === 'drawImage') {
+              const image = args[0];
+              const r =
+                args.length === 3
+                  ? [args[1], args[2], image.videoWidth || image.naturalWidth || image.width, image.videoHeight || image.naturalHeight || image.height]
+                  : args.length === 5
+                    ? args.slice(1)
+                    : args.slice(5);
+              if (r.length !== 4) safe = false;
+              else paint(rectangle(...r));
+            } else if (!transforms.has(key) && !inert.has(key)) safe = false;
+            const result = value.apply(object, args);
+            if (transforms.has(key)) matrix = context.getTransform();
+            return result;
+          });
+        return methods.get(key);
+      },
+      set(object, key, value) {
+        object[key] = value;
+        return true;
+      },
+    });
+    return { ctx, bounds: () => (safe ? painted || [] : null) };
+  }
   function bake(visual, game, density = 1, trace = null, clock = null) {
     // Bake lives outside create(); the opt-in high-resolution clock is passed by its caller.
     const readClock = trace ? clock || Date.now : null;
@@ -196,7 +322,10 @@
     // density as Canvas (camera zoom × backing ratio), not a 1x bitmap.
     const width = Math.round(576 * density),
       work = makeCanvas(width, width),
-      c = work.getContext('2d');
+      raw = work.getContext('2d');
+    requireValue(raw, 'Original procedural artist is unavailable');
+    const tracked = proceduralBoundsContext(raw),
+      c = tracked.ctx;
     requireValue(c, 'Original procedural artist is unavailable');
     c.setTransform(density, 0, 0, density, 0, 0);
     const center = { x: 288, y: 460 };
@@ -216,27 +345,44 @@
         : null,
     );
     if (trace)
-      trace.proceduralPainterMs = (trace.proceduralPainterMs || 0) + Math.max(0, readClock() - painterAt);
+      trace.proceduralPainterMs =
+        (trace.proceduralPainterMs || 0) + Math.max(0, readClock() - painterAt);
+    const bounds = tracked.bounds();
+    // Read only the conservative painted rectangle, then retain the original
+    // exact alpha-tight crop. This avoids full-bitmap transfer/scan without
+    // trading cold stalls for larger resident CPU images and GPU textures.
+    const readLeft = bounds?.length ? Math.max(0, Math.min(width - 1, Math.floor(bounds[0]) - 2)) : 0;
+    const readTop = bounds?.length ? Math.max(0, Math.min(width - 1, Math.floor(bounds[1]) - 2)) : 0;
+    const readRight = bounds?.length
+      ? Math.max(readLeft + 1, Math.min(width, Math.ceil(bounds[2]) + 2))
+      : width;
+    const readBottom = bounds?.length
+      ? Math.max(readTop + 1, Math.min(width, Math.ceil(bounds[3]) + 2))
+      : width;
+    const readWidth = readRight - readLeft,
+      readHeight = readBottom - readTop;
     const readbackAt = trace ? readClock() : 0;
-    const { data } = c.getImageData(0, 0, work.width, work.height);
+    const { data } = raw.getImageData(readLeft, readTop, readWidth, readHeight);
     if (trace)
-      trace.proceduralReadbackMs = (trace.proceduralReadbackMs || 0) + Math.max(0, readClock() - readbackAt);
+      trace.proceduralReadbackMs =
+        (trace.proceduralReadbackMs || 0) + Math.max(0, readClock() - readbackAt);
     const alphaScanAt = trace ? readClock() : 0;
     let left = width,
       top = width,
       right = -1,
       bottom = -1;
-    for (let y = 0; y < width; y++)
-      for (let x = 0; x < width; x++) {
-        if (data[(y * width + x) * 4 + 3] > 0) {
-          left = Math.min(left, x);
-          right = Math.max(right, x);
-          top = Math.min(top, y);
-          bottom = Math.max(bottom, y);
+    for (let y = 0; y < readHeight; y++)
+      for (let x = 0; x < readWidth; x++) {
+        if (data[(y * readWidth + x) * 4 + 3] > 0) {
+          left = Math.min(left, x + readLeft);
+          right = Math.max(right, x + readLeft);
+          top = Math.min(top, y + readTop);
+          bottom = Math.max(bottom, y + readTop);
         }
       }
     if (trace)
-      trace.proceduralAlphaScanMs = (trace.proceduralAlphaScanMs || 0) + Math.max(0, readClock() - alphaScanAt);
+      trace.proceduralAlphaScanMs =
+        (trace.proceduralAlphaScanMs || 0) + Math.max(0, readClock() - alphaScanAt);
     if (right < left || bottom < top) {
       if (!ambientParts.length) return null;
       // Animal-only groups still need a tiny, transparent retained home node.
