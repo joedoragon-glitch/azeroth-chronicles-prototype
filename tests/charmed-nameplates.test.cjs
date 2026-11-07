@@ -74,8 +74,8 @@ assert.match(source, /if \(slot && namedCompanion\(e\)\)/,
 // Exercise the actual shared predicate, including the old boss exemption,
 // and confirm the Pixi overlay uses it instead of drawing every living enemy.
 const visibility = between('    function enemyHudVisible(e) {', '    function tileBounds(');
-const hostileHud = new Function('game', visibility +
-  '\nreturn { enemyHudVisible, worldLabelVisible };')({ hero: { x: 0, y: 0 } });
+const hostileHud = new Function('game', 'sceneryPlaceName', visibility +
+  '\nreturn { enemyHudVisible, worldLabelVisible };')({ hero: { x: 0, y: 0 } }, () => '');
 for (const kind of [
   { type: 'normal' }, { type: 'boss' }, { type: 'normal', captain: true },
   { type: 'normal', roomCaptain: true },
