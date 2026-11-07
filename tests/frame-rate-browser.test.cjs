@@ -110,7 +110,7 @@ const server = http.createServer((req, res) => {
         await page.locator('select[aria-label="Drawing target (FPS)"]').selectOption(value);
         assert.match(
           await page.locator('#modal').innerText(),
-          new RegExp('Active draw target\\s+' + (value === '60' ? 60 : value === '20' ? 20 : 30) + ' FPS'),
+          new RegExp('Active draw target:\\s+' + (value === '60' ? 60 : value === '20' ? 20 : 30) + ' FPS'),
           'Settings must show the effective draw target, not only the saved FPS preference',
         );
         assert.deepEqual(
