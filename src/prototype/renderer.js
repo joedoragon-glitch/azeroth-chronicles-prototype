@@ -731,7 +731,7 @@
     // Read-only presentation gate: a visible boss is not automatically
     // identified, and inactive hostiles must not generate labels or HP bars.
     function enemyHudVisible(e) {
-      return e.hp > 0 && !!e.aggro;
+      return e.hp > 0 && !!e.aggro && !e.returning;
     }
     function worldLabelVisible(e) {
       if (e.renderKind === 'enemy') return enemyHudVisible(e);

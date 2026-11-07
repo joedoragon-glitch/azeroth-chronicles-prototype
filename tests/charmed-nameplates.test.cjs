@@ -84,6 +84,9 @@ for (const kind of [
   assert.equal(hostileHud.worldLabelVisible(e), false, 'idle enemy, boss or captain stays undiscovered');
   e.aggro = true;
   assert.equal(hostileHud.worldLabelVisible(e), true, 'engagement reveals hostile HUD');
+  e.returning = 1;
+  assert.equal(hostileHud.worldLabelVisible(e), false, 'reset-to-home must hide enemy HUD before aggro clears');
+  e.returning = 0;
   e.aggro = false;
   assert.equal(hostileHud.worldLabelVisible(e), false, 'disengagement hides hostile HUD');
   e.aggro = true; e.hp = 0;
