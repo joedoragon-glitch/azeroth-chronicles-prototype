@@ -728,8 +728,13 @@
       // above the building. Canvas and Pixi use the same projected anchor.
       return sceneryPlaceName(e) ? 82 : spriteHeight(e);
     }
+    // Read-only presentation gate: a visible boss is not automatically
+    // identified, and inactive hostiles must not generate labels or HP bars.
+    function enemyHudVisible(e) {
+      return e.hp > 0 && !!e.aggro;
+    }
     function worldLabelVisible(e) {
-      if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
+      if (e.renderKind === 'enemy') return enemyHudVisible(e);
       if (e.renderKind === 'npc' || e.renderKind === 'building' || sceneryPlaceName(e))
         return Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 220;
       return true;
@@ -3163,13 +3168,16 @@
           const e = actors[index];
           if (e !== game.hero && e.hp <= 0) continue;
           if (e !== game.hero && e.neutral) continue;
-          const p = screen(e);
           const renderKind =
             index < enemies.length
               ? 'enemy'
               : index < enemies.length + allies.length
                 ? 'ally'
                 : 'hero';
+          // Match the full Canvas name/HP visibility contract; skip
+          // projection and paint entirely for a non-engaged enemy.
+          if (renderKind === 'enemy' && !enemyHudVisible(e)) continue;
+          const p = screen(e);
           if (p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120)
             healthPlate(e, p, renderKind);
         }
