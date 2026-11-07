@@ -73,3 +73,45 @@ test('opt-in overlay phases distinguish ground, nameplates, occlusion and cues',
   assert.match(app, /overlayDraws: \(stages\.overlayDraws \|\| \[\]\)/);
   assert.match(pixi, /bake\(painted, current, backingRatio \* zoom, trace, trace \? measureNow : null\)/);
 });
+
+
+test('all-draw overlay ledger preserves typical cost by zone and combat, not only worst frames', () => {
+  const start = app.indexOf('  const rendererHistogramBoundsMs = ');
+  const end = app.indexOf('  function rendererDiagnosticSnapshot()', start);
+  assert(start !== -1 && end > start, 'extract real production capture helpers');
+  const helpers = vm.runInNewContext(
+    '(function() { ' + app.slice(start, end) +
+    '; return { recordOverlaySubpasses, overlaySubpassReport }; })()',
+    {}, { timeout: 2000 }
+  );
+  const capture = { overlaySubpassByActivity: Object.create(null) };
+  const draw = {
+    groundAndClear: 2, healthPlates: 1, nameplates: 2,
+    occlusionCandidates: 3, occlusionMasks: 30,
+    remainingCombatCues: 1, totalDrawMs: 40,
+  };
+  // Ordinary 40ms overlay draws are below the global worst-frame cutoff in
+  // a session containing 300ms Pixi raster stalls; they still need counting.
+  for (let i = 0; i < 12; i++)
+    helpers.recordOverlaySubpasses(capture, 'march', false, [draw]);
+  helpers.recordOverlaySubpasses(capture, 'march', true, [{ ...draw, occlusionMasks: 8 }]);
+  helpers.recordOverlaySubpasses(capture, 'vale', false, [{ ...draw, occlusionMasks: 3 }]);
+  helpers.recordOverlaySubpasses(capture, 'march', false, null);
+  const report = helpers.overlaySubpassReport(capture);
+  const march = report.groups.find((row) => row.zoneAndEngagement === 'march:unengaged');
+  const fight = report.groups.find((row) => row.zoneAndEngagement === 'march:engaged');
+  const vale = report.groups.find((row) => row.zoneAndEngagement === 'vale:unengaged');
+  assert.equal(report.groups.length, 3);
+  assert.equal(march.drawnPasses, 12);
+  assert.equal(march.incompletePasses, 0);
+  assert.equal(march.stages.occlusionMasks.samples, 12);
+  assert.equal(march.stages.occlusionMasks.meanMs, 30);
+  assert.equal(march.stages.occlusionMasks.p95UpperMs, 33);
+  assert.equal(march.stages.totalDrawMs.meanMs, 40);
+  assert.equal(fight.stages.occlusionMasks.meanMs, 8);
+  assert.equal(vale.stages.occlusionMasks.meanMs, 3);
+  assert.match(app, /if \(drawn && stages\.overlayDraws\?\.length\)/);
+  assert.match(app, /overlaySubpassSummary: overlaySubpassReport\(capture\)/);
+  assert.match(app, /enemyAIMs: Math\.round\(stages\.enemyAIMs/);
+  assert.match(app, /companionAIMs: Math\.round\(stages\.companionAIMs/);
+});
