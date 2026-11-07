@@ -871,7 +871,7 @@
       actorFacingMemory.set(owner, { x: e.x, y: e.y, side });
       return side;
     }
-    function sprite(e, p, target = ctx, bodyOnly = false) {
+    function sprite(e, p, target = ctx, bodyOnly = false, stationary = false) {
       const retained = bodyOnly && silhouetteFrames?.get(e.spriteIdentity || e);
       if (retained) {
         // Use the exact currently composited GPU pose, including frame/pivot.
@@ -895,7 +895,7 @@
         target.restore();
         return;
       }
-      const q = visualPosition(e, p),
+      const q = stationary ? p : visualPosition(e, p),
         rescued = !!game.s.rescued[e.family];
       const facing = paintedFacing(e);
       // Mirror about the foot anchor, never about the canvas origin. This
@@ -1004,23 +1004,48 @@
       if (!pairs.length || typeof document === 'undefined') return;
       for (const pair of pairs) {
         const size = outlineSize(pair.actor);
+        const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
+        const actor = pair.actor;
+        const busy = (actor.renderKind === 'enemy' && (actor.aggro || actor.telegraph)) ||
+          (actor.renderKind === 'hero' && game.manaCombatActive());
+        const shown = retained && busy ? visualPosition(actor, pair.position) : pair.position;
+        // Keep ordinary masks on their shared 256px surface. Compact only
+        // known oversized masks whose entire sampling fringe fits.
+        let width = size, left = 0, top = 0;
+        if (size === 384 && retained) {
+          const x = size / 2 + shown.x - pair.position.x + retained.dx;
+          const y = 260 + shown.y - pair.position.y + retained.dy;
+          const fringe = 4;
+          const x0 = Math.max(0, Math.floor(x) - fringe);
+          const y0 = Math.max(0, Math.floor(y) - fringe);
+          const x1 = Math.min(size, Math.ceil(x + retained.width) + fringe);
+          const y1 = Math.min(size, Math.ceil(y + retained.height) + fringe);
+          if (x1 > x0 && y1 > y0 && x1 - x0 <= 192 && y1 - y0 <= 192) {
+            width = 192;
+            left = Math.min(x0, size - width);
+            top = Math.min(y0, size - width);
+          }
+        }
+        const height = width;
+        const key = width;
         const buffersAt = detail ? now() : 0;
-        if (!outlineLayers.has(size)) {
+        if (!outlineLayers.has(key)) {
           const layers = [];
           for (let i = 0; i < 4; i++) {
             const surface = document.createElement('canvas');
-            surface.width = surface.height = size;
+            surface.width = width;
+            surface.height = height;
             const brush = surface.getContext('2d');
             if (!brush) return;
             layers.push({ surface, brush });
           }
-          outlineLayers.set(size, layers);
+          outlineLayers.set(key, layers);
         }
-        const layers = outlineLayers.get(size);
+        const layers = outlineLayers.get(key);
         if (detail) detail.outlineBuffersMs += Math.max(0, now() - buffersAt);
         const [actorLayer, tintLayer, edgeLayer, coverLayer] = layers,
-          centerX = size / 2,
-          footY = size === 384 ? 260 : 192,
+          centerX = size / 2 - left,
+          footY = (size === 384 ? 260 : 192) - top,
           ring =
             optimized && compactOutlines
               ? [
@@ -1044,22 +1069,15 @@
                   [0.95, 0.95],
                 ];
         stats.outlineMasks++;
-        stats.outlineMaskPixels += size * size;
+        stats.outlineMaskPixels += width * height;
         const clearAt = detail ? now() : 0;
         for (const layer of layers) {
           layer.brush.globalCompositeOperation = 'source-over';
           layer.brush.globalAlpha = 1;
-          layer.brush.clearRect(0, 0, size, size);
+          layer.brush.clearRect(0, 0, width, height);
         }
         if (detail) detail.outlineClearMs += Math.max(0, now() - clearAt);
-        // Pixi keeps its world/shadow foot still, but moves the retained
-        // raster body by Canvas's identity-phase idle/busy animation. The
-        // mask must track that same presentation-only delta. Cover, broad
-        // phase, collision and the final on-screen contour origin stay at
-        // their original world points. Unretained Canvas bodies already
-        // apply visualPosition inside sprite(), so never offset them twice.
-        const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
-        const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
+        // Anchor idle outlines at the resting position. Combat motion still follows the body.
         const actorAt = detail ? now() : 0;
         sprite(
           pair.actor,
@@ -1069,6 +1087,7 @@
           },
           actorLayer.brush,
           true,
+          !busy,
         );
         if (detail) detail.outlineActorMs += Math.max(0, now() - actorAt);
 
@@ -1078,7 +1097,7 @@
         tint.drawImage(actorLayer.surface, 0, 0);
         tint.globalCompositeOperation = 'source-in';
         tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
-        tint.fillRect(0, 0, size, size);
+        tint.fillRect(0, 0, width, height);
         tint.globalCompositeOperation = 'source-over';
         if (detail) detail.outlineTintMs += Math.max(0, now() - tintAt);
 
@@ -3215,7 +3234,7 @@
         // Reuse the bounded alpha-mask painter: no GPU readback or new texture.
         const overlayVisible = collectVisibleEntities();
         if (overlayMark) overlayMark('occlusionCandidates');
-        drawOcclusionOutlines(overlayVisible, overlayStages);
+        if (!game.manaCombatActive()) drawOcclusionOutlines(overlayVisible, overlayStages);
         if (overlayMark) overlayMark('occlusionMasks');
         if (overlayStages) {
           // Per-draw denominators: an expensive zero-mask draw falsifies the
@@ -3709,7 +3728,7 @@
         ctx.restore();
       }
       PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
-      drawOcclusionOutlines(entities);
+      if (!game.manaCombatActive()) drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
       for (const p of game.s.projectiles) drawProjectile(p);
@@ -3898,7 +3917,7 @@
         groundCache: groundCache?.status() || null,
         outlineBuffers: {
           surfaces: outlineLayers.size * 4,
-          bytes: [...outlineLayers.keys()].reduce((sum, size) => sum + size * size * 4 * 4, 0),
+          bytes: [...outlineLayers.values()].reduce((sum, layers) => sum + layers[0].surface.width * layers[0].surface.height * 4 * 4, 0),
         },
         phases: phaseReport(),
       }),

@@ -1,0 +1,29 @@
+name: P0 bounded outline CPU and pixel acceptance (no deploy)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tests/outline-bounded-composite-browser.test.cjs'
+      - '.github/workflows/p0-outline-optimization.yml'
+permissions:
+  contents: read
+jobs:
+  outline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install chromium --with-deps
+      - run: node tests/outline-bounded-composite-browser.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p0-bounded-outline-evidence
+          path: test-results/outline-bounded-composite.json

@@ -1,3 +1,7 @@
+**7 November 2026 — #851 combat outline policy.** The Canvas occlusion outline pass is skipped during active combat in both full Canvas and the Pixi cue overlay. Hero, enemy and companion silhouettes return outside combat. Combat warning and targeting painters run independently.
+
+**7 November 2026 — #851 revised outline candidate dev.270.** One fixed-size compact buffer set serves eligible oversized poses. Ordinary 256px masks use their original shared buffers. Idle outlines use the resting anchor while sprites animate. Release depends on paired timing and visual checks.
+
 **7 November 2026 — #853 integrated with merged #852 at `863dcad3751ecba6be12d0f1ef4527efb824f253`.** Combined dev.269 validation precedes the authorized #853 merge. Earlier candidate checkpoints below are historical.
 
 **6 November 2026 — candidate reconciled with concurrent main art commit `5a7be00b68e640d51f5a8b9f493fb05695b4bf4a`.** The original Report #37 matched baseline remains `6ac2f4f3…`; this branch now also preserves the newer roof/art source from main. Renderer/navigation optimization algorithms are unchanged. Updated exact-head image/route/build checks use the new immutable baseline; earlier CI receipts below remain historical evidence for their recorded heads. NO player release.
@@ -208,8 +212,8 @@
 
 **Full-party wound treatment — dev.217 published 29 October 2026:** [merged PR #588](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/588) changed the Captain and completed Barracks **Treat wounds** service to fully heal the wounded hero and living companions for 30 crowns, while retaining separate 40-crown fallen recovery, safe-service checks, target-bound unpaid queues, v4 saves, and English/Spanish onboarding. [successful merged-main focused and Pages run #40823109435](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40823109435) verified publication; actual phone/Chromebook acceptance remains unverified.
 
-<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.269 -->
-**Current code/build version:** `0.9.1+snapshot.dev.269` — independent unmerged performance candidate, reconciled with main `5a7be00b68e640d51f5a8b9f493fb05695b4bf4a`. NOT published or owner-device accepted.
+<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.270 -->
+**Current code/build version:** `0.9.1+snapshot.dev.270` — independent unmerged performance candidate, reconciled with main `5a7be00b68e640d51f5a8b9f493fb05695b4bf4a`. NOT published or owner-device accepted.
 **Latest verified published code/build version:** `0.9.1+snapshot.dev.260` — [main `a174291`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/a17429102390c1b08dc2a4eb14e318a9df58210c), [focused validation and GitHub Pages #42019754434](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42019754434) **SUCCESS**; installed-PWA uptake is not device-verified.
 **Historical playable music update — dev.248 (31 October 2026), superseded by dev.249/250:** `0.9.1+snapshot.dev.248` merged in [PR #740](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/740) and [published #41242493774](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242493774). Its 65 new source-authored tracks and 18 preserved Crown recordings remain historical evidence; later dev.249 extended the audio catalog.
 
@@ -236,7 +240,7 @@ Owner-directed narrow save-system revision: keep the existing v4 primary snapsho
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
 | Source | **Dev.269 independent DRAFT on current art main** | Main integration base `5a7be00b68e640d51f5a8b9f493fb05695b4bf4a`; Report #37 baseline remains `6ac2f4f3…`. Candidate unmerged; main art inclusion is not a new publication claim. |
-| Build/cache version | **`0.9.1+snapshot.dev.269`** — independent unmerged route-probe candidate; no publication | Generated build-info/worker asset fingerprints and snapshot cache version updated together; not yet verified installed on the Chromebook. |
+| Build/cache version | **`0.9.1+snapshot.dev.270`** — independent unmerged route-probe candidate; no publication | Generated build-info/worker asset fingerprints and snapshot cache version updated together; not yet verified installed on the Chromebook. |
 | Focused automation | **Dev.266 exact-PR-head checks pending** | New narrow Pixi fixed-quality A/B regression plus previously selected frame-skip, renderer recovery, PWA and menu checks; no broad matrix. PR #843 must pass before merge and main must re-pass before Pages publication. |
 | GitHub Pages publication | **Dev.266 candidate NOT YET PUBLISHED** | After owner-authorized merge, verify the successful exact-`main` focused/deploy run and hosted build SHA; installed-device uptake remains separately unverified. Older published releases are retained in dated receipts above. |
 | An individual's open browser / installed PWA | **Local uptake unverified** | A browser/PWA can retain an older service worker; confirm the version on that device after accepting the update. |
