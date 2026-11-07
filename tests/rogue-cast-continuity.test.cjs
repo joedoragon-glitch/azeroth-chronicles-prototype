@@ -28,6 +28,11 @@ function arena(boss = false) {
   // encounter; bypassing that setup left this fixture unengaged and prevented
   // its already-committed attack clock from advancing. No game rule changes.
   c.admitOpeningHeroAttack(e);
+  // This fixture tests cast lifecycle, not Vale's authored obstacle map.
+  // Supply an unobstructed valid lane so both Rogue eligibility predicates
+  // can reach the committed-action path, then test cover separately below.
+  c.line = () => true;
+  c.enemyRangedLine = () => true;
   c.engage(e);
   assert.equal(e.aggro, true, 'fixture must enter native combat before testing cast continuity');
   Object.assign(e, { cd: 100, specialCd: 100, summonCd: 100 });
