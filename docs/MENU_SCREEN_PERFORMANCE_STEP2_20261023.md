@@ -35,13 +35,13 @@ Untested until a deliberately scoped later device check: real phone touch scroll
 
 Validation note: the initial focused run validated the Step 1 + Step 2 stack against the original main. After Step 1 merged, the diff against the updated main contains only five Step 2 files. The focused validation must still pass on the current proposed changes before Step 2 merges.
 
-## Pixi recovery follow-up, dev.271 candidate
+## Pixi recovery follow-up, dev.271 release
 
-Pixi preparation uses the explicit rendering density and optimization preference. Canvas backup retains its temporary adaptive density and optimization state while Pixi prepares or runs. A failed retry or return to Canvas restores that state. Playtest reports show the effective Pixi backing ratio while Pixi owns the presentation. Existing settings and controls remain available. This candidate is unmerged and unpublished.
+Pixi preparation uses the explicit rendering density and optimization preference. Canvas backup retains its temporary adaptive density and optimization state while Pixi prepares or runs. A failed retry or return to Canvas restores that state. Playtest reports show the effective Pixi backing ratio while Pixi owns the presentation. Existing settings and controls remain available. PR #854 merged into main as `23f6dcb9fa5057903727bbfd481698d35f147a97`; focused validation and Pages publication [#42409998499](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42409998499) succeeded on 7 November 2026. This is source/release verification, not evidence of owner-device installation or campaign-wide FPS.
 
 ## Pixi pacing follow-up candidate
 
-Routine Pixi frame skipping requires drawing to account for at least half of the measured callback work. The existing budget, consecutive-skip and frame-age limits still apply. Canvas and emergency protection retain their existing rules. This is a stacked, unpublished candidate. The selected FPS remains a draw target, separate from confirmed presentation and simulation timing.
+Routine Pixi frame skipping requires drawing to account for at least half of the measured callback work. The existing budget, consecutive-skip and frame-age limits still apply. Canvas and emergency protection retain their existing rules. This is included in unmerged PR #855, based directly on main following #854; not a player release. The selected FPS remains a draw target, separate from confirmed presentation and simulation timing.
 
 ## Pixi graphics settings reconciliation, dev.272 candidate
 
