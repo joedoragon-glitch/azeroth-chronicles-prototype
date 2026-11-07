@@ -48,6 +48,22 @@
   // A warning belongs only to the pending cast. Once the native release
   // clock expires, impact/travel/hazard art takes over; no stale floor mark,
   // cast bar or aiming line should survive even for one presentation frame.
+  // Presentation gate only. The engine continues to simulate every trap.
+  // Distance is to the true capsule/round hazard edge, not to its center.
+  function nearbyTrap(t, hero) {
+    if (!hero || !Number.isFinite(hero.x) || !Number.isFinite(hero.y)) return true;
+    if (!Number.isFinite(t.x) || !Number.isFinite(t.y)) return true;
+    if (t.kind === 'jet') {
+      if (!Number.isFinite(t.length) || !Number.isFinite(t.halfWidth)) return true;
+      const dx = Math.max(0, Math.abs(hero.x - t.x) - t.length / 2),
+        dy = hero.y - t.y,
+        range = Math.max(0, t.halfWidth) + 40;
+      return dx * dx + dy * dy <= range * range;
+    }
+    if (!Number.isFinite(t.radius)) return true;
+    const dx = hero.x - t.x, dy = hero.y - t.y, range = Math.max(0, t.radius) + 40;
+    return dx * dx + dy * dy <= range * range;
+  }
   function pendingWarning(a) {
     return !!a && Number.isFinite(a.timer) && a.timer > 0;
   }
@@ -446,6 +462,8 @@
       if (frameWarningShapes) drawTraps.set(frameWarningShapes, traps);
     }
     for (const t of traps) {
+      // No projection, polygon creation or Canvas work for remote traps.
+      if (!nearbyTrap(t, game.hero)) continue;
       const active = t.phase >= t.warningTime && t.phase < t.warningTime + t.activeTime,
         warning = t.phase < t.warningTime,
         p = screen(t);
