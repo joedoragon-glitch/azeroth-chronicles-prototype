@@ -728,8 +728,13 @@
       // above the building. Canvas and Pixi use the same projected anchor.
       return sceneryPlaceName(e) ? 82 : spriteHeight(e);
     }
+    // Read-only presentation gate: a visible boss is not automatically
+    // identified, and inactive hostiles must not generate labels or HP bars.
+    function enemyHudVisible(e) {
+      return e.hp > 0 && !!e.aggro && !e.returning;
+    }
     function worldLabelVisible(e) {
-      if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
+      if (e.renderKind === 'enemy') return enemyHudVisible(e);
       if (e.renderKind === 'npc' || e.renderKind === 'building' || sceneryPlaceName(e))
         return Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 220;
       return true;
@@ -2955,7 +2960,9 @@
         records = [];
       const add = (list, kind) => {
         for (const entity of list || []) {
-          if (entity.interactionOnly || (kind === 'enemy' && entity.hp <= 0)) continue;
+          // Avoid creating a presented actor and a projected nameplate
+          // for idle hostiles, including undiscovered bosses.
+          if (entity.interactionOnly || (kind === 'enemy' && !enemyHudVisible(entity))) continue;
           const e = presentEntity(entity, kind);
           if (e.presentation === 'scout-tracks' || !worldLabelVisible(e)) continue;
           const p = screen(e);
@@ -3183,20 +3190,22 @@
         // The Pixi cue layer receives raw Campaign actors, unlike Canvas's
         // presented entities. Pass the actor kind explicitly so hostile bars
         // and the position-derived fortress shield use the shared drawing path.
-        const enemies = z.enemies.filter((u) => u.hp > 0);
+        // The overlay only needs engaged hostiles for HP drawing. Filter
+        // before screen projection, not inside the paint loop.
+        const enemies = z.enemies.filter((u) => enemyHudVisible(u));
         const allies = game.activeLivingParty();
         const actors = [...enemies, ...allies, game.hero];
         for (let index = 0; index < actors.length; index++) {
           const e = actors[index];
           if (e !== game.hero && e.hp <= 0) continue;
           if (e !== game.hero && e.neutral) continue;
-          const p = screen(e);
           const renderKind =
             index < enemies.length
               ? 'enemy'
               : index < enemies.length + allies.length
                 ? 'ally'
                 : 'hero';
+          const p = screen(e);
           if (p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120)
             healthPlate(e, p, renderKind);
         }
