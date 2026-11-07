@@ -2238,7 +2238,7 @@
       poly(
         [
           [-60, -63],
-          [-29, -99],
+          [-14, -98],
           [31, -45],
         ],
         '#9b7b56',
@@ -2284,24 +2284,9 @@
         beam,
         5,
       );
-      // Original high grain hatch and side ventilation retain farm identity.
-      poly(
-        [
-          [-24, -74],
-          [-9, -83],
-          [5, -68],
-          [-9, -63],
-        ],
-        '#493e30',
-      );
-      stroke(
-        [
-          [-21, -73],
-          [2, -68],
-        ],
-        '#b29a72',
-        2,
-      );
+      // Keep the reused granary's front gable solid and legible. The old
+      // dark diamond grain hatch overlapped the pitched roof as a false hole.
+      // Small side ventilation below remains sufficient farm-building detail.
       for (let j = 0; j < 3; j++)
         stroke(
           [
@@ -2311,14 +2296,15 @@
           '#302d28',
           2,
         );
-      // A single common ridge and parallel depth edges keep the farm-barn
-      // roof joined to its real gable rather than looking like folded panels.
-      const roofFrontLeft = [-67, -68],
-        roofFrontRidge = [-29, -105],
-        roofFrontRight = [38, -49],
-        roofRearLeft = [-15, -86],
-        roofRearRidge = [23, -123],
-        roofRearRight = [90, -67];
+      // Clean two-plane pitched roof: matching depth vectors and one
+      // front gable, with restrained weathering rather than overlapping
+      // diagonal shingles along the visible left eave.
+      const roofFrontLeft = [-64, -67],
+        roofFrontRidge = [-14, -98],
+        roofFrontRight = [36, -50],
+        roofRearLeft = [-16, -83],
+        roofRearRidge = [34, -114],
+        roofRearRight = [84, -66];
       poly(
         [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
         '#94734f',
@@ -2327,39 +2313,15 @@
         [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
         '#624c38',
       );
-      // Continuous paired fascia follows the actual wall/eave line.
-      poly(
-        [roofFrontLeft, roofFrontRidge, [-29, -99], [-67, -62]],
-        '#4f3f30',
-      );
-      poly(
-        [roofFrontRidge, roofFrontRight, [38, -43], [-29, -99]],
-        '#47382d',
-      );
-      stroke(
-        [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearRight, roofFrontRight],
-        edge,
-        3,
-      );
-      stroke([roofFrontLeft, roofRearLeft], edge, 2);
-      // A few quiet, aligned board joints replace the distracting stack of
-      // bright near-parallel streaks on the foreshortened left roof face.
-      for (let j = 1; j < 4; j++) {
-        const t = j / 5;
-        stroke(
-          [
-            [
-              roofFrontLeft[0] + (roofFrontRidge[0] - roofFrontLeft[0]) * t,
-              roofFrontLeft[1] + (roofFrontRidge[1] - roofFrontLeft[1]) * t,
-            ],
-            [
-              roofRearLeft[0] + (roofRearRidge[0] - roofRearLeft[0]) * t,
-              roofRearLeft[1] + (roofRearRidge[1] - roofRearLeft[1]) * t,
-            ],
-          ],
-          '#987b58',
-          0.8,
-        );
+      // Close the overhanging right eave onto the real side wall. Without
+      // this narrow fascia, the backdrop shows through as a green wedge.
+      poly([roofFrontRight, roofRearRight, [84, -63], [31, -45]], '#4b3b2d');
+      stroke([roofFrontLeft, roofFrontRidge, roofFrontRight], edge, 2.5);
+      stroke([roofFrontRidge, roofRearRidge], '#b6956a', 2);
+      stroke([roofFrontLeft, roofRearLeft], '#a98c64', 1.6);
+      stroke([roofFrontRight, roofRearRight], '#a98c64', 1.6);
+      // Only two faint aligned board seams on the long visible pitch.
+      for (const t of [1 / 3, 2 / 3]) {
         stroke(
           [
             [
@@ -2371,8 +2333,8 @@
               roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
             ],
           ],
-          '#8f7151',
-          1,
+          '#876b4e',
+          0.9,
         );
       }
       stroke(

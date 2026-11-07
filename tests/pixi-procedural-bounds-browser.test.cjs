@@ -4,7 +4,7 @@ const fs = require('node:fs'),
   assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 const Campaign = require('../src/prototype/engine');
-const base = process.env.PERF_BASE_SHA || '6ac2f4f3dd4e6f8e34075971f653ee5d8b069692';
+const base = process.env.PERF_BASE_SHA || '5a7be00b68e640d51f5a8b9f493fb05695b4bf4a';
 const source = fs.readFileSync('src/prototype/pixi-experimental.js', 'utf8');
 const baseline = cp.execFileSync('git', ['show', base + ':src/prototype/pixi-experimental.js'], {
   encoding: 'utf8',
