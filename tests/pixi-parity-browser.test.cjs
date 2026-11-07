@@ -11,7 +11,7 @@ const root = path.resolve(__dirname, '..');
 const out = path.resolve(process.env.PARITY_OUT || path.join(root, 'test-artifacts/parity-748'));
 const scripts = require('../scripts/site-assets.cjs').scripts.filter((p) => !p.endsWith('/app.js'));
 const html =
-  '<meta charset="utf-8"><style>body{margin:0;background:#000}canvas{position:fixed;inset:0}#world{z-index:2}</style><canvas id="world" width="912" height="600"></canvas>' +
+  '<meta charset="utf-8"><style>body{margin:0;background:#000}canvas{position:fixed;inset:0}#world{z-index:2;width:100vw;height:100vh}</style><canvas id="world" width="912" height="600"></canvas>' +
   scripts.map((p) => '<script src="/' + p + '"></script>').join('');
 const server = http.createServer((req, res) => {
   const rel = new URL(req.url, 'http://local').pathname;
@@ -524,9 +524,9 @@ async function main() {
           const expectedX = ((b.body.x - b.ground.x) - (a.body.x - a.ground.x)) / zoom,
             expectedY = ((b.body.y - b.ground.y) - (a.body.y - a.ground.y)) / zoom;
           assert(
-            Math.abs(b.mask.x - a.mask.x - expectedX) < 0.001 &&
-            Math.abs(b.mask.y - a.mask.y - expectedY) < 0.001,
-            'real Pixi contour must inherit the exact Canvas body idle offset: ' +
+            Math.abs(b.mask.x - a.mask.x) < 0.001 &&
+            Math.abs(b.mask.y - a.mask.y) < 0.001,
+            'real Pixi contour must stay anchored during cosmetic idle motion: ' +
               JSON.stringify({ a, b, expectedX, expectedY, measuredX: b.mask.x - a.mask.x, measuredY: b.mask.y - a.mask.y }),
           );
           assert(
@@ -546,7 +546,7 @@ async function main() {
               crop,
             );
             assert(pixels > 5, mode + ' retains real visible idle motion behind cover');
-            lifecycle.push({ fixture, mode, pixels, crop, maskShift: mode === 'pixi' ? { x: expectedX, y: expectedY } : null });
+            lifecycle.push({ fixture, mode, pixels, crop, maskShift: mode === 'pixi' ? { x: b.mask.x - a.mask.x, y: b.mask.y - a.mask.y } : null });
           }
         }
         if (fixture === 'idle') {

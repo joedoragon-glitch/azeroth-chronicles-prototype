@@ -43,7 +43,7 @@ function closure(text) {
           brush.beginPath();
           brush.ellipse(39, 55, 31, 51, 0.18, 0, Math.PI * 2);
           brush.fill();
-          const actor = { renderKind: 'enemy' };
+          const actor = { renderKind: 'enemy', aggro: true };
           const retained = {
             image: art,
             dx: -40 + fraction,

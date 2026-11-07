@@ -871,7 +871,7 @@
       actorFacingMemory.set(owner, { x: e.x, y: e.y, side });
       return side;
     }
-    function sprite(e, p, target = ctx, bodyOnly = false) {
+    function sprite(e, p, target = ctx, bodyOnly = false, stationary = false) {
       const retained = bodyOnly && silhouetteFrames?.get(e.spriteIdentity || e);
       if (retained) {
         // Use the exact currently composited GPU pose, including frame/pivot.
@@ -895,7 +895,7 @@
         target.restore();
         return;
       }
-      const q = visualPosition(e, p),
+      const q = stationary ? p : visualPosition(e, p),
         rescued = !!game.s.rescued[e.family];
       const facing = paintedFacing(e);
       // Mirror about the foot anchor, never about the canvas origin. This
@@ -1005,7 +1005,10 @@
       for (const pair of pairs) {
         const size = outlineSize(pair.actor);
         const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
-        const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
+        const actor = pair.actor;
+        const busy = (actor.renderKind === 'enemy' && (actor.aggro || actor.telegraph)) ||
+          (actor.renderKind === 'hero' && game.manaCombatActive());
+        const shown = retained && busy ? visualPosition(actor, pair.position) : pair.position;
         // Crop only known retained rasters. Four transparent pixels enclose
         // the bilinear sampling fringe and the unchanged 1.35px outline ring.
         // Integer origins preserve the original mask pixel grid exactly.
@@ -1015,21 +1018,15 @@
         const right = retained ? Math.max(0, Math.min(size, Math.ceil(size / 2 + shown.x - pair.position.x + retained.dx + retained.width) + fringe)) : size;
         const bottom = retained ? Math.max(0, Math.min(size, Math.ceil((size === 384 ? 260 : 192) + shown.y - pair.position.y + retained.dy + retained.height) + fringe)) : size;
         if (right <= left || bottom <= top) continue;
-        // Quantized dimensions bound allocation churn; an eight-entry LRU
-        // bounds residency even when actors/poses have many different sizes.
-        const width = Math.min(size, Math.ceil((right - left) / 32) * 32);
-        const height = Math.min(size, Math.ceil((bottom - top) / 32) * 32);
+        // Share one compact mask across poses that fit with the sampling fringe.
+        const compact = right - left <= 192 && bottom - top <= 192;
+        const width = compact ? 192 : size;
+        const height = width;
         left = Math.min(left, size - width);
         top = Math.min(top, size - height);
-        const key = width + ':' + height;
+        const key = width;
         const buffersAt = detail ? now() : 0;
         if (!outlineLayers.has(key)) {
-          const bytes = () => [...outlineLayers.values()].reduce((sum, row) => sum + row[0].surface.width * row[0].surface.height * 16, 0);
-          while (outlineLayers.size && (outlineLayers.size >= 8 || bytes() + width * height * 16 > (384 * 384 + 256 * 256) * 16)) {
-            const oldest = outlineLayers.keys().next().value;
-            for (const layer of outlineLayers.get(oldest)) layer.surface.width = layer.surface.height = 0;
-            outlineLayers.delete(oldest);
-          }
           const layers = [];
           for (let i = 0; i < 4; i++) {
             const surface = document.createElement('canvas');
@@ -1042,8 +1039,6 @@
           outlineLayers.set(key, layers);
         }
         const layers = outlineLayers.get(key);
-        outlineLayers.delete(key);
-        outlineLayers.set(key, layers);
         if (detail) detail.outlineBuffersMs += Math.max(0, now() - buffersAt);
         const [actorLayer, tintLayer, edgeLayer, coverLayer] = layers,
           centerX = size / 2 - left,
@@ -1079,12 +1074,7 @@
           layer.brush.clearRect(0, 0, width, height);
         }
         if (detail) detail.outlineClearMs += Math.max(0, now() - clearAt);
-        // Pixi keeps its world/shadow foot still, but moves the retained
-        // raster body by Canvas's identity-phase idle/busy animation. The
-        // mask must track that same presentation-only delta. Cover, broad
-        // phase, collision and the final on-screen contour origin stay at
-        // their original world points. Unretained Canvas bodies already
-        // apply visualPosition inside sprite(), so never offset them twice.
+        // Anchor idle outlines at the resting position. Combat motion still follows the body.
         const actorAt = detail ? now() : 0;
         sprite(
           pair.actor,
@@ -1094,6 +1084,7 @@
           },
           actorLayer.brush,
           true,
+          !busy,
         );
         if (detail) detail.outlineActorMs += Math.max(0, now() - actorAt);
 

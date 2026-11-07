@@ -331,8 +331,7 @@ const poseA = retainedMaskPlacement(1000),
   poseB = retainedMaskPlacement(7000),
   flipped = retainedMaskPlacement(7000, true, [0, 0, 32, 48]);
 for (const pose of [poseA, poseB, flipped]) {
-  const dx = pose.body.x - pose.ground.x,
-    dy = pose.body.y - pose.ground.y;
+  const dx = 0, dy = 0;
   // Compare the final screen placement, independent of offscreen crop origin.
   const expectedX = Math.round(pose.ground.x - 128) + 128 + pose.retained.dx + dx +
     (pose.retained.flipX ? pose.retained.width : 0) - pose.destination.x;
@@ -340,16 +339,17 @@ for (const pose of [poseA, poseB, flipped]) {
   assert(
     Math.abs(pose.position.x - expectedX) < 0.00001 &&
     Math.abs(pose.position.y - expectedY) < 0.00001,
-    'Pixi silhouette mask must follow live bobbing body pose, including flip/crop: ' +
+    'Pixi silhouette mask must stay at the resting anchor, including flip/crop: ' +
       JSON.stringify({ position: pose.position, expectedX, expectedY, body: pose.body, ground: pose.ground }),
   );
 }
 assert(
-  Math.abs(poseA.position.y - poseB.position.y) > 0.1,
-  'frozen-world mask must move across idle presentation phases without moving gameplay feet',
+  Math.abs(poseA.body.y - poseB.body.y) > 0.1 &&
+  Math.abs(poseA.position.y + poseA.destination.y - poseB.position.y - poseB.destination.y) < 0.00001,
+  'idle body moves while the outline stays anchored',
 );
 assert.deepEqual(poseA.ground, poseB.ground, 'ground and interaction anchor stay fixed');
-console.log('PASS retained Pixi occlusion masks follow original actor idle pose, facing and crop.');
+console.log('PASS retained Pixi occlusion masks stay anchored during idle motion, facing and crop.');
 
 for (const renderLayer of ['full', 'overlay']) {
   assert(pixelsWithAndWithoutHelper({ renderLayer, actorKind: 'hero' }) > 25);
