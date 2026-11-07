@@ -433,12 +433,28 @@
     }
     ctx.restore();
   }
+  // A close-range discovery cue, measured outside the actual harmful edge.
+  // Jet traps are long horizontal lanes, so their nearest segment matters,
+  // not the center of the installation. This never changes trap mechanics.
+  const trapRevealMargin = 90;
+  function trapCueNearHero(game, t) {
+    const hero = game.hero;
+    if (!hero) return false;
+    if (t.kind === 'jet') {
+      const nearX = Math.max(t.x - t.length / 2, Math.min(t.x + t.length / 2, hero.x));
+      return Math.hypot(hero.x - nearX, hero.y - t.y) <= (t.halfWidth || 28) + trapRevealMargin;
+    }
+    return Math.hypot(hero.x - t.x, hero.y - t.y) <= (t.radius || 0) + trapRevealMargin;
+  }
   function ground(ctx, screen, game, pass = 'fill', time = 0, frameWarningShapes = null) {
     const cue = pass === 'cue' || pass === 'underlay-cue';
     ctx.save();
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
     for (const t of game.traps()) {
+      // Both full Canvas and the Pixi cue overlay use this painter.
+      // Cull before allocating polygons for distant, undiscovered traps.
+      if (!trapCueNearHero(game, t)) continue;
       const active = t.phase >= t.warningTime && t.phase < t.warningTime + t.activeTime,
         warning = t.phase < t.warningTime,
         p = screen(t);
@@ -1475,6 +1491,7 @@
     pendingWarning,
     visibleWarning,
     royalTaxStatus,
+    trapCueNearHero,
     ground,
     actorCues,
     enemySupportHeal,
