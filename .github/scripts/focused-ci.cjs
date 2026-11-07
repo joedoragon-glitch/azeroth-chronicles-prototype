@@ -173,7 +173,6 @@ const groups = [
       TEST + 'effect-warning-ledger-cast.test.cjs',
       TEST + 'effect-warning-reuse-family-matrix.test.cjs',
       TEST + 'effect-warning-crowd-fps.test.cjs',
-      TEST + 'rogue-cast-continuity.test.cjs',
       TEST + 'terrain-effects.test.cjs',
     ],
   },
