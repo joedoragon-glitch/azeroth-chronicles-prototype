@@ -91,8 +91,11 @@ for (const kind of [
 }
 const pixiHealthPass = between('        const actors = [...enemies, ...allies, game.hero];',
   "        if (overlayMark) overlayMark('healthPlates');");
-assert.match(pixiHealthPass, /renderKind === 'enemy' && !enemyHudVisible\(e\)/,
-  'Pixi overlay HP drawing must honor the same combat-only guard as Canvas');
+assert.match(pixiHealthPass, /z\.enemies\.filter\(\(u\) => enemyHudVisible\(u\)\)/,
+  'Pixi overlay must filter idle hostiles before HP projection and painting');
+const pixiLabels = between('    function drawPixiNameplates() {', '    function drawArenaBoundary() {');
+assert.match(pixiLabels, /kind === 'enemy' && !enemyHudVisible\(entity\)/,
+  'Pixi overlay must skip idle enemy label preparation');
 assert.equal(hostileHud.worldLabelVisible({ renderKind: 'ally', hp: 100 }), true,
   'friendly labels retain their independent behavior');
 console.log('PASS Charmed nickname, stable Canvas/Pixi position, tint, compact style, enemy combat-only HUD parity');
