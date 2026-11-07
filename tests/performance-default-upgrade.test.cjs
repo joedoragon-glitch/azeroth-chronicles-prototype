@@ -24,6 +24,9 @@ for (const language of ['en', 'es']) {
   storage.set('azeroth-pixi-quality-v1', '{"preset":true,"particles":false}');
   const first = shell(language, 'paladin', { storage });
   assert.equal(storage.get(migrationKey), 'applied', 'Upgrade is recorded once');
+  assert.equal(first.elements.get('startup-update-notice').hidden, false, 'reset notice is visible on the title');
+  assert.match(first.elements.get('startup-update-notice').textContent,
+    language === 'en' ? /Performance settings updated/ : /rendimiento/i);
   assert.equal(first.scope.Prototype.fps.preference, 'auto');
   assert.equal(first.scope.Prototype.fps.target, 30);
   assert.equal(first.scope.Prototype.frameSkip.enabled, true);
@@ -66,6 +69,8 @@ for (const language of ['en', 'es']) {
   // Simulate a clean previous shutdown, not the unrelated crash-rescue path.
   storage.delete('azeroth-active-play-recovery-v1');
   const second = shell(language, 'paladin', { storage });
+  assert.doesNotMatch(second.elements.get('startup-update-notice').textContent,
+    language === 'en' ? /Performance settings updated/ : /rendimiento/i);
   assert.equal(second.scope.Prototype.fps.preference, '60');
   assert.equal(second.scope.Prototype.frameSkip.enabled, false);
   assert.equal(second.scope.Prototype.renderResolution.preference, '80');
