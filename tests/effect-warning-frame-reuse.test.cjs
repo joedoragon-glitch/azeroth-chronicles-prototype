@@ -1,7 +1,7 @@
 'use strict';
-// Stage 5.3: within-one-draw telegraph geometry reuse. This verifies byte
-// equality of actual Canvas pixels against original two-pass rendering and
-// counts gameplay-derived patch reconstructions. No timing/FPS claims.
+// #849: committed warning polygons are painted once in the cue pass, with
+// both subtle fill and contour. Compare cached/uncached pixels and counts.
+// This is native Canvas behavior, not a hardware FPS measurement.
 const assert = require('node:assert/strict');
 const { createCanvas } = require('@napi-rs/canvas');
 const fs = require('node:fs');
@@ -53,9 +53,10 @@ for (const id of ['thorn', 'citadel', 'cindermaw']) {
   assert(boss.telegraph, id + ' did not create actual warning geometry');
   const original = measure(game, false);
   const reused = measure(game, true);
-  assert(original.calls >= 2, id + ' failed to traverse both original warning passes');
+  assert.equal(original.calls, 1,
+    id + ' created duplicate attack patches despite single-pass warning paint');
   assert.equal(reused.calls, 1,
-    id + ' repeated attackPatches despite per-draw geometry reuse');
+    id + ' repeated attackPatches despite single-pass warning paint');
   assert.deepEqual(reused.pixels, original.pixels,
     id + ' optimized warning coverage or outline differs from original Canvas pixels');
   // A second frame MUST use a fresh scope: mutated telegraph geometry is
@@ -67,8 +68,8 @@ for (const id of ['thorn', 'citadel', 'cindermaw']) {
   assert.equal(nextReused.calls, 1);
   assert.deepEqual(nextReused.pixels, nextOriginal.pixels,
     id + ' changed attack position produced stale warnings');
-  console.log('STAGE5.3 ' + id + ' attackPatches per fill+cue: ' +
-    original.calls + ' -> ' + reused.calls + '; pixels identical, changed-geometry fresh frame identical');
+  console.log('ISSUE849 ' + id + ' attackPatches per fill+cue: ' +
+    original.calls + ' (single-pass) / ' + reused.calls + ' (draw cache); pixels identical, changed-frame fresh');
 }
-console.log('PASS Stage 5.3 one-draw geometry reuse on real cone/canister/ring warnings; ' +
+console.log('PASS #849 single-pass presentation on real cone/canister/ring warnings; 
   'same Canvas pixels and campaign snapshots, no unbounded cache or gameplay changes');
