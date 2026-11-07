@@ -90,26 +90,30 @@ for (const language of ['en', 'es']) {
     assert(control, 'missing control ' + en);
     control.value = value;
     control.onchange();
-    title('Screen and performance', 'Pantalla y rendimiento');
-    assert(!e.get('modal').hidden, 'setting should not close the unified window');
+    assert(!e.get('modal').hidden, 'setting should leave its page open');
   };
   const section = (en, es = en) => {
     assert(rows().some((node) => node.className === 'menu-section' && node.textContent === t(en, es)));
   };
-  section('Display', 'Pantalla');
-  section('Graphics', 'Gráficos');
-  section('Frame rate', 'Fotogramas por segundo');
-  section('Graphics renderer', 'Motor gráfico');
-  section('Diagnostics', 'Diagnósticos');
+  section('Active renderer', 'Motor gráfico activo');
+  section('Preferred renderer', 'Motor gráfico preferido');
   assert(rows().some((node) => node.textContent.startsWith(
-    t('Export playtest report', 'Exportar informe de prueba'))),
-    'playtest report export belongs in Performance settings');
-  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 6);
+    t('Export playtest report', 'Exportar informe de prueba'))));
+  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 0);
+  const writes = [];
+  const originalSet = storage.set.bind(storage);
+  storage.set = (key, value) => {
+    writes.push(key);
+    return originalSet(key, value);
+  };
+  click(t('Renderer and recovery', 'Motor gráfico y recuperación'));
   const canvas = setting('Graphics renderer', 'Motor gráfico');
   assert(canvas.children.some((o) => o.value === 'canvas2d'));
   assert(canvas.children.some((o) => o.value === 'webgl2'));
   assert.equal(s.Prototype.experimentalGraphics.mode, 'canvas2d');
 
+  back();
+  click(t('Display', 'Pantalla'));
   selectSetting('Screen layout', 'Disposición de pantalla', 'phone');
   assert.equal(s.Prototype.platform.mode, 'phone');
   assert.equal(storage.get(s.PrototypePlatform.preferenceKey), 'phone');
@@ -117,6 +121,8 @@ for (const language of ['en', 'es']) {
   assert.equal(s.Prototype.platform.cameraZoom, 1.5);
   assert.equal(JSON.parse(storage.get(s.PrototypePlatform.cameraPreferenceKey)).phone, 1.5);
 
+  back();
+  click(t('Canvas graphics', 'Gráficos de Canvas'));
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'auto');
   selectSetting('Optimization Mode', 'Modo de optimización', 'on');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'on');
@@ -131,10 +137,12 @@ for (const language of ['en', 'es']) {
   selectSetting('Optimization Mode', 'Modo de optimización', 'auto');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'auto');
 
+  back();
+  click(t('Frame pacing', 'Ritmo de fotogramas'));
   assert.equal(s.Prototype.fps.preference, 'auto');
   assert.equal(s.Prototype.fps.target, 30);
-  for (const value of ['60', '30', '20', 'auto60', 'auto']) {
-    selectSetting('Frame rate', 'Fotogramas por segundo', value);
+  for (const value of ['60', '20', 'auto']) {
+    selectSetting('Drawing target (FPS)', 'Objetivo de dibujo (FPS)', value);
     assert.equal(s.Prototype.fps.preference, value);
     assert.equal(storage.get(s.PrototypeRuntime.fpsPreferenceKey), value);
     if (value === '20') assert.equal(s.Prototype.fps.target, 20);
@@ -147,33 +155,29 @@ for (const language of ['en', 'es']) {
   assert.equal(s.Prototype.frameSkip.enabled, true);
   assert.equal(storage.get(s.PrototypeRuntime.frameSkipPreferenceKey), 'on');
 
-  click(t('Show performance details', 'Mostrar detalles de rendimiento'));
-  title('Screen and performance', 'Pantalla y rendimiento');
-  assert(rows().some((node) => node.textContent === t('Performance details', 'Detalles de rendimiento')));
+  assert(!writes.some((key) => key.startsWith('azeroth-v4-')), 'device settings write no campaign saves');
+  back();
+  click(t('Diagnostics', 'Diagnósticos'));
+  section('Performance details', 'Detalles de rendimiento');
   click(t('Start renderer profiling', 'Iniciar registro del renderizador'));
-  assert(rows().some((node) => node.textContent.startsWith(
-    t('Stop renderer profiling', 'Detener registro del renderizador'))),
-    'opt-in renderer recording stays inside expanded Performance details');
   click(t('Stop renderer profiling', 'Detener registro del renderizador'));
-  assert(rows().some((node) => node.textContent.startsWith(
-    t('Clear renderer profiling', 'Borrar registro del renderizador'))));
   click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
+  title('Reset performance sample', 'Reiniciar muestra de rendimiento');
+  back();
+  title('Diagnostics', 'Diagnósticos');
+  click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
+  click(t('Confirm sample reset', 'Confirmar reinicio de la muestra'));
+  title('Diagnostics', 'Diagnósticos');
+  back();
   title('Screen and performance', 'Pantalla y rendimiento');
-  click(t('Hide performance details', 'Ocultar detalles de rendimiento'));
-  assert(!rows().some((node) => node.textContent === t('Performance details', 'Detalles de rendimiento')));
   back();
   title('Game and settings', 'Juego y ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
   title('Music and sound', 'Música y sonido');
+  writes.length = 0;
   short();
   // Instrument the actual shell's localStorage adapter. Audio already persists
   // to its profile; dragging should never rewrite the entire campaign save.
-  const writes = [];
-  const originalSet = storage.set.bind(storage);
-  storage.set = (key, value) => {
-    writes.push(key);
-    return originalSet(key, value);
-  };
   const soundRows = () => e.get('modal-actions').children;
   const channels = [
     ['master', 'Master volume', 'Volumen general'],
