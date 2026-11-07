@@ -5,34 +5,34 @@ const R = Campaign.rules;
 const kinds = ['spikes', 'jet', 'seal'];
 const regions = ['vale', 'march', 'highlands', 'frontier', 'crown'];
 const { trapCueNearHero } = require('../src/prototype/combat-visuals.js');
-const cueGame = { hero: { x: 130, y: 0 } };
+const cueGame = { hero: { x: 80, y: 0 } };
 for (const kind of ['spikes', 'seal']) {
   const t = { kind, x: 0, y: 0, radius: 40 };
   assert.equal(trapCueNearHero(cueGame, t), true,
-    kind + ' cue starts 90 world units outside its dangerous edge');
-  cueGame.hero.x = 131;
+    kind + ' cue starts 40 world units outside its dangerous edge');
+  cueGame.hero.x = 81;
   assert.equal(trapCueNearHero(cueGame, t), false,
     kind + ' is not warned from farther away');
   cueGame.hero.x = 0;
   assert.equal(trapCueNearHero(cueGame, t), true, kind + ' is visible inside its footprint');
-  cueGame.hero.x = 78; cueGame.hero.y = 104; // 78² + 104² = 130²
+  cueGame.hero.x = 48; cueGame.hero.y = 64; // 48² + 64² = 80²
   assert.equal(trapCueNearHero(cueGame, t), true, kind + ' diagonal boundary is included');
-  cueGame.hero.x = 79;
+  cueGame.hero.x = 49;
   assert.equal(trapCueNearHero(cueGame, t), false, kind + ' diagonal just outside is hidden');
-  cueGame.hero.x = 130; cueGame.hero.y = 0;
+  cueGame.hero.x = 80; cueGame.hero.y = 0;
 }
 const jetCue = { kind: 'jet', x: 0, y: 0, length: 140, halfWidth: 30 };
-cueGame.hero.x = 190; cueGame.hero.y = 0;
+cueGame.hero.x = 140; cueGame.hero.y = 0;
 assert.equal(trapCueNearHero(cueGame, jetCue), true, 'jet end is within its edge margin');
-cueGame.hero.x = 191;
+cueGame.hero.x = 141;
 assert.equal(trapCueNearHero(cueGame, jetCue), false, 'jet end is too far');
-cueGame.hero.x = 0; cueGame.hero.y = 120;
+cueGame.hero.x = 0; cueGame.hero.y = 70;
 assert.equal(trapCueNearHero(cueGame, jetCue), true, 'jet side uses lane, not center distance');
-cueGame.hero.y = 121;
+cueGame.hero.y = 71;
 assert.equal(trapCueNearHero(cueGame, jetCue), false, 'jet side hides beyond margin');
-cueGame.hero.x = 142; cueGame.hero.y = 96; // past the end: 72² + 96² = 120²
+cueGame.hero.x = 112; cueGame.hero.y = 56; // past the end: 42² + 56² = 70²
 assert.equal(trapCueNearHero(cueGame, jetCue), true, 'jet round endcap diagonal is included');
-cueGame.hero.x = 143;
+cueGame.hero.x = 113;
 assert.equal(trapCueNearHero(cueGame, jetCue), false, 'jet diagonal beyond endcap hides');
 
 
