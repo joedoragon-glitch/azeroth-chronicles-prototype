@@ -23,6 +23,10 @@ const mime = {
   '.mp3': 'audio/mpeg',
   '.webmanifest': 'application/manifest+json',
 };
+// The phone PWA's /phone.html is an outer orientation/iframe shell. FPS
+// assertions must use the actual same-origin game document (phone-game.html),
+// just as the live shell does inside its iframe; PWA/phone framing is tested
+// separately by the release and startup browser suites.
 // Keep this Canvas/frame-cadence fixture independent of Pixi startup and migration.
 const startCanvas = () => {
   if (localStorage.getItem('azeroth-renderer-webgl-primary-v1') !== 'applied') {
@@ -86,7 +90,7 @@ const server = http.createServer((req, res) => {
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
       await page.goto(
-        'http://127.0.0.1:' + server.address().port + (phone ? '/phone.html' : '/index.html'),
+        'http://127.0.0.1:' + server.address().port + (phone ? '/phone-game.html' : '/index.html'),
       );
       await enterPlayableGame(page);
       const openSettings = async () => {
@@ -193,7 +197,7 @@ const server = http.createServer((req, res) => {
         }
       });
       await hi.goto(
-        'http://127.0.0.1:' + server.address().port + (phone ? '/phone.html' : '/index.html'),
+        'http://127.0.0.1:' + server.address().port + (phone ? '/phone-game.html' : '/index.html'),
       );
       await hi.waitForFunction(() => !!window.Prototype);
       const optimized = await hi.evaluate(() => ({
