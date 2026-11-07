@@ -1,5 +1,7 @@
 # Combat conditions and secondary effects · current consolidated source
 
+> **Owner-directed presentation candidate — Issue #846, 6 November 2026 (NOT MERGED OR RELEASED):** Enemy, captain and boss world-space HP bars and nameplates should display only during live engagement (`aggro`) in both full Canvas2D and the Canvas cue overlay above PixiJS/WebGL2; there is no idle boss reveal exemption. Trap footprints, phase cues and inactive markers should appear only when the hero approaches within 90 world units outside each trap's actual hazardous edge (the closest part of a jet lane, not merely its center). These are paint-only disclosure rules: existing enemy AI, targeting, status, warning phases, trap contact damage/Slow and saves remain authoritative and unchanged. The distance is a provisional close-reveal parameter, subject to actual playtest fairness and matched-renderer FPS verification. Do not describe this candidate as installed until a separate authorized merge/release and loaded-build verification.
+
 > **28 October 2026 — PT-007 ground-AoE implementation contract (PR #571):**
 > Ordinary boss/captain circular ground blasts and parallel non-projectile ground lanes keep
 > their authored, target-centered warning and damage footprints even when terrain or scenery
