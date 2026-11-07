@@ -71,5 +71,5 @@ for (const id of ['thorn', 'citadel', 'cindermaw']) {
   console.log('ISSUE849 ' + id + ' attackPatches per fill+cue: ' +
     original.calls + ' (single-pass) / ' + reused.calls + ' (draw cache); pixels identical, changed-frame fresh');
 }
-console.log('PASS #849 single-pass presentation on real cone/canister/ring warnings; 
+console.log('PASS #849 single-pass presentation on real cone/canister/ring warnings; ' +
   'same Canvas pixels and campaign snapshots, no unbounded cache or gameplay changes');
