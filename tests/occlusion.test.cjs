@@ -123,6 +123,7 @@ function rasterScene({
   foreground = true,
   renderLayer = 'full',
   nowMs = 1000,
+  inCombat = false,
 } = {}) {
   const surface = createCanvas(400, 330);
   const actor = obj(actorKind, 200, 200, {
@@ -162,7 +163,8 @@ function rasterScene({
     visibleResourceNodes: () => [],
     activeLivingParty: () => (actorKind === 'ally' ? [actor] : []),
     night: () => false,
-    manaCombatActive: () => false,
+    manaCombatActive: () => inCombat,
+    companionDisplayName: (unit) => unit.name,
     selectedHeroTarget: () => null,
     peace: false,
   };
@@ -238,6 +240,19 @@ assert(
   pixelsWithAndWithoutHelper({ actorKind: 'hero', structure: 'sapling' }) > 25,
   'a character behind an authored tree canopy receives the bounded contour',
 );
+for (const renderLayer of ['full', 'overlay']) {
+  for (const actorKind of ['hero', 'enemy', 'ally']) {
+    assert(
+      pixelsWithAndWithoutHelper({ actorKind, renderLayer }) > 25,
+      'peaceful ' + actorKind + ' keeps its outline in ' + renderLayer,
+    );
+    assert.equal(
+      pixelsWithAndWithoutHelper({ actorKind, renderLayer, inCombat: true }),
+      0,
+      'combat suppresses ' + actorKind + ' outline in ' + renderLayer,
+    );
+  }
+}
 const behindHouse = pixelsWithAndWithoutHelper({ actorKind: 'hero' });
 assert(behindHouse > 25, 'actual painted hero contour must be visible behind a house');
 assert(behindHouse < 650, 'outline may touch edges but must not fill the character');

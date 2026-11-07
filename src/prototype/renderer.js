@@ -3234,7 +3234,7 @@
         // Reuse the bounded alpha-mask painter: no GPU readback or new texture.
         const overlayVisible = collectVisibleEntities();
         if (overlayMark) overlayMark('occlusionCandidates');
-        drawOcclusionOutlines(overlayVisible, overlayStages);
+        if (!game.manaCombatActive()) drawOcclusionOutlines(overlayVisible, overlayStages);
         if (overlayMark) overlayMark('occlusionMasks');
         if (overlayStages) {
           // Per-draw denominators: an expensive zero-mask draw falsifies the
@@ -3728,7 +3728,7 @@
         ctx.restore();
       }
       PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
-      drawOcclusionOutlines(entities);
+      if (!game.manaCombatActive()) drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
       for (const p of game.s.projectiles) drawProjectile(p);
