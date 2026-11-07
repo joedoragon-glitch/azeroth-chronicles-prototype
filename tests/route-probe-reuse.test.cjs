@@ -129,7 +129,13 @@ function encounter(K) {
   const enemies = g
     .zone()
     .enemies.filter(
-      (e) => e.hp > 0 && !e.neutral && e.type !== 'boss' && !e.captain && !e.roomCaptain,
+      (e) =>
+        e.hp > 0 &&
+        !e.neutral &&
+        !g.enemyRanged(e) &&
+        e.type !== 'boss' &&
+        !e.captain &&
+        !e.roomCaptain,
     )
     .slice(0, 7);
   assert.equal(enemies.length, 7);
@@ -143,22 +149,45 @@ function encounter(K) {
       q = g.safe(p.a.x + (i % 3) * 16, p.a.y + Math.floor(i / 3) * 16);
     e.x = q.x;
     e.y = q.y;
-    e.aggro = true;
+    // A staged spawn keeps its native leash anchored at the staged home.
+    // Leaving the old home across the map makes the engine immediately reset.
+    e.home = { ...q };
     e.path = [];
+    g.engage(e, true, false);
+    assert(e.aggro, 'native engagement admitted the staged melee enemy');
   }
   return g;
 }
 const originalEncounter = encounter(Baseline),
   nextEncounter = encounter(Candidate);
+function countPursuit(g) {
+  const advance = g.advanceBudgetedRoute;
+  let count = 0;
+  g.advanceBudgetedRoute = function (...args) {
+    if (args[2] === 'pursuit') count++;
+    return advance.apply(this, args);
+  };
+  return () => count;
+}
+const oldPursuit = countPursuit(originalEncounter),
+  newPursuit = countPursuit(nextEncounter);
+let peakSimultaneousPursuit = 0;
 for (let tick = 0; tick < 120; tick++) {
+  const before = newPursuit();
   originalEncounter.tick(0.05);
   nextEncounter.tick(0.05);
+  assert.equal(newPursuit(), oldPursuit(), 'native pursuit scheduling at tick ' + tick);
+  peakSimultaneousPursuit = Math.max(peakSimultaneousPursuit, newPursuit() - before);
   assert.equal(
     JSON.stringify(nextEncounter.s),
     JSON.stringify(originalEncounter.s),
     'native combat/AI/save state after tick ' + tick,
   );
 }
+assert(
+  peakSimultaneousPursuit >= 2,
+  'the real encounter must exercise overlapping budgeted pursuit',
+);
 assert.deepEqual(
   C.restore(nextEncounter.snapshot(), () => 0.73).snapshot(),
   C.restore(originalEncounter.snapshot(), () => 0.73).snapshot(),
@@ -179,6 +208,8 @@ const report = {
   base,
   results,
   nativeCombatTicks: 120,
+  nativePursuitCalls: newPursuit(),
+  peakSimultaneousPursuit,
   saveRoundTrip: true,
   timing: { baseline: summary(times.baseline), candidate: summary(times.candidate) },
   note: 'Native authored-geometry planner CPU; identical yielded budgets/completion ticks; not device FPS or encounter certification',
