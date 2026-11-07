@@ -89,7 +89,7 @@ for (const kind of [
   e.aggro = true; e.hp = 0;
   assert.equal(hostileHud.worldLabelVisible(e), false, 'dead hostile has no HUD');
 }
-const pixiHealthPass = between('        const actors = [...enemies, ...allies, game.hero];',
+const pixiHealthPass = between('        const enemies = z.enemies.filter',
   "        if (overlayMark) overlayMark('healthPlates');");
 assert.match(pixiHealthPass, /z\.enemies\.filter\(\(u\) => enemyHudVisible\(u\)\)/,
   'Pixi overlay must filter idle hostiles before HP projection and painting');
