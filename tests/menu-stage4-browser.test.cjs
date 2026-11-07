@@ -125,6 +125,7 @@ function contrast(item) {
       });
       await context.addInitScript((lang) => {
         localStorage.setItem('azeroth-display-language-v1', lang);
+        localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
         localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
         localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
       }, language);
