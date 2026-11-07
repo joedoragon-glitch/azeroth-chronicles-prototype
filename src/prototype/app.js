@@ -2291,6 +2291,18 @@
   const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
   const autoOptimization = PrototypeRuntime.createAutoOptimization();
+  let canvasQualityBeforePixi = null;
+  let pixiResolutionMaximum = 1;
+  function resolutionStatus() {
+    const state = renderResolution.status();
+    if (!canvasQualityBeforePixi) return state;
+    return {
+      ...state,
+      ratio: canvas.width / Math.max(1, viewport.width),
+      maximum: pixiResolutionMaximum,
+      changes: 0,
+    };
+  }
   function setOptimizationActive(enabled, reason = 'unspecified') {
     const next = !!enabled;
     if (optimizationMode === next) return false;
@@ -2502,7 +2514,16 @@
     ? graphicsGuard.create({
         storage: localStorage,
         startupDecision: previousRendererChoice,
-        prepareWebGL: () => pixiGame.prepare(),
+        prepareWebGL: () => {
+          canvasQualityBeforePixi = {
+            optimizationMode,
+            preference: optimizationPreference,
+          };
+          // Select explicit quality before Pixi creates its backing surfaces.
+          if (!setOptimizationActive(optimizationPreference === 'on', 'pixi-prepare'))
+            resize('pixi-prepare');
+          return pixiGame.prepare();
+        },
         getFailureDetails: () => pixiGame.failureDetails?.() || null,
         // Do not rebuild a GPU scene while the player is moving or enemies
         // could immediately engage. A recovery happens when the scene is
@@ -2539,6 +2560,15 @@
         showCanvas: () => {
           pixiGame.deactivate();
           renderer.setRenderLayer('full');
+          if (canvasQualityBeforePixi) {
+            const previous = canvasQualityBeforePixi;
+            canvasQualityBeforePixi = null;
+            const optimized = previous.preference === optimizationPreference
+              ? previous.optimizationMode
+              : optimizationPreference === 'on';
+            if (!setOptimizationActive(optimized, 'canvas-fallback'))
+              resize('canvas-fallback');
+          }
           renderer.draw();
           // Only release GPU resources after the reliable Canvas is visible.
           pixiGame.release();
@@ -2766,6 +2796,7 @@
     // viewport-sized Pixi scene layers on the next draw. This allows a
     // backgrounded iPhone PWA to resume after normal viewport changes.
     if (
+      canvasQualityBeforePixi &&
       graphicsController?.status().phase === 'trial' &&
       (viewport.width !== innerWidth || viewport.height !== innerHeight)
     ) {
@@ -2804,10 +2835,15 @@
             Math.sqrt(3000000 / (innerWidth * innerHeight)),
           ),
         );
-    renderResolution.configure(maximumRatio);
+    // Pixi uses the chosen density without consuming Canvas adaptation history.
+    if (canvasQualityBeforePixi) pixiResolutionMaximum = maximumRatio;
+    else renderResolution.configure(maximumRatio);
+    const chosenRatio = canvasQualityBeforePixi
+      ? renderResolution.selectedRatio(maximumRatio)
+      : renderResolution.ratio;
     // Arena only: hard-cap world pixels without saving a preference.
     const ratio =
-      game?.s?.mode === 'arena' ? Math.min(renderResolution.ratio, 0.5) : renderResolution.ratio;
+      game?.s?.mode === 'arena' ? Math.min(chosenRatio, 0.5) : chosenRatio;
     const backingWidth = Math.round(innerWidth * ratio),
       backingHeight = Math.round(innerHeight * ratio),
       widthChanged = canvas.width !== backingWidth,
@@ -5597,7 +5633,7 @@
       backingRatio: +(canvas.width / Math.max(1, viewport.width)).toFixed(3),
       optimizationMode,
       emergency: frameSkip.emergency,
-      resolution: renderResolution.status(),
+      resolution: resolutionStatus(),
     };
   }
   function beginRendererRecording(retainPreviousSegments = false) {
@@ -5954,7 +5990,7 @@
           frameRatePreference: fps.preference,
           frameRateTarget: fps.target,
           frameSkip: frameSkip.status(),
-          renderResolution: renderResolution.status(),
+          renderResolution: resolutionStatus(),
           optimizationMode: optimizationMode ? 'on' : 'off',
           optimizationPreference,
           emergencyGraphicsOverride: optimizationMode && optimizationPreference === 'off',
@@ -6154,7 +6190,7 @@
           } catch (_) {}
           autoOptimization.reset();
           // Critical recovery is not an opt-out, even if Off is chosen now.
-          setOptimizationActive(value === 'on' || frameSkip.emergency);
+          setOptimizationActive(value === 'on' || (!canvasQualityBeforePixi && frameSkip.emergency));
         },
         'Auto lowers graphics under sustained load. Emergencies can override Off.',
       ),

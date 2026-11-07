@@ -69,6 +69,41 @@ function choose(app, label) {
       assert.equal(panel.hidden, true);
       assert.equal(Guard.startupChoice(app.scope.localStorage).renderer, 'canvas2d');
     }
+  for (const successful of [false, true]) {
+    let preparedWidth;
+    let active = false;
+    const storage = new Map([
+      [Guard.PREFERENCE_KEY, 'webgl2'],
+      [Guard.PRIMARY_DEFAULT_MIGRATION_KEY, 'applied'],
+      [Guard.RECOVERY_HOLD_KEY, 'repeated-failures'],
+    ]);
+    const app = shell('en', 'mage', {
+      storage, graphicsGuard: Guard, devicePixelRatio: 1.5,
+      pixi: {
+        create: ({ worldCanvas }) => ({
+          prepare: async () => { preparedWidth = worldCanvas.width; return successful; },
+          status: () => ({ active }),
+          activate: () => { active = true; },
+          deactivate: () => { active = false; },
+          noteEvents() {}, draw() {}, release() {},
+        }),
+      },
+    });
+    const { renderResolution, game } = app.scope.Prototype;
+    for (let i = 0; i <= 140; i++) renderResolution.observe(i * 50, 62, 20, 4);
+    assert(renderResolution.ratio < 1.5);
+    app.events.resize[0]();
+    const canvas = app.elements.get('world');
+    const previousWidth = canvas.width;
+    const saved = JSON.stringify(game.snapshot());
+    const panel = app.scope.document.body.children.find((x) => x.id === 'gpu-renderer-trial');
+    await panel.children[2].children[0].onclick();
+    assert.equal(preparedWidth, Math.round(393 * 1.5));
+    assert.equal(active, successful);
+    if (successful) panel.children[2].children[1].onclick();
+    assert.equal(canvas.width, previousWidth, 'fallback restores Canvas relief');
+    assert.equal(JSON.stringify(game.snapshot()), saved);
+  }
   console.log(
     'PASS EN/ES quarantined Continue, visible reason, real JSON export, save integrity and explicit Canvas',
   );

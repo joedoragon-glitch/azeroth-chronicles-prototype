@@ -445,8 +445,8 @@
       checkAt = null,
       changedAt = null,
       changes = 0;
-    function selectedRatio() {
-      return Object.hasOwn(fixedRatios, preference) ? fixedRatios[preference] : maximum;
+    function selectedRatio(ceiling = maximum) {
+      return Object.hasOwn(fixedRatios, preference) ? fixedRatios[preference] : ceiling;
     }
     function suspend() {
       samples = [];
@@ -459,6 +459,7 @@
       get ratio() {
         return ratio;
       },
+      selectedRatio,
       configure(value) {
         if (!Number.isFinite(value) || value <= 0) return;
         // The shell resizes immediately after adaptation. Reapplying the same
