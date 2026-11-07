@@ -1,10 +1,18 @@
 /* Browser shell. Saved campaign rules are independent of this UI. */
 (function () {
   'use strict';
+  const startup =
+    typeof PrototypeStartupDiagnostics === 'undefined' ? null : PrototypeStartupDiagnostics.journal;
+  const startupEvent = (stage, detail) => startup?.record(stage, detail);
+  let nextStartupEntry = 'continue',
+    startupObservedFailure = null;
+  startupEvent('app-entered', typeof PrototypeBuild === 'undefined' ? {} : PrototypeBuild);
   const $ = (id) => document.getElementById(id),
-    canvas = $('world'),
-    ctx = canvas.getContext('2d'),
-    D = Campaign.data,
+    canvas = $('world');
+  startupEvent('canvas-context-start');
+  const ctx = canvas.getContext('2d');
+  startupEvent('canvas-context-ready', { ready: !!ctx });
+  const D = Campaign.data,
     manaEnabled = PrototypeRules.resourceMode.manaEnabled,
     developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || ''),
     // Unlisted low-spec test route. A query link is not authentication.
@@ -983,6 +991,17 @@
     'PixiJS WebGL2 · Default': 'PixiJS WebGL2 · Predeterminado',
     'PixiJS WebGL2 · 15-second trial': 'PixiJS WebGL2 · Prueba de 15 segundos',
     'Keep WebGL2': 'Conservar WebGL2',
+    'Retry PixiJS WebGL2': 'Reintentar PixiJS WebGL2',
+    'Use Canvas 2D': 'Usar Canvas 2D',
+    'Canvas backup is active because a previous WebGL2 startup did not finish. Automatic retries are paused. You can retry PixiJS or use Canvas.':
+      'Canvas está activo porque un inicio anterior de WebGL2 no terminó. Los reintentos automáticos están pausados. Puedes reintentar PixiJS o usar Canvas.',
+    'Canvas backup is active after repeated WebGL2 failures. Automatic retries are paused. You can retry PixiJS or use Canvas.':
+      'Canvas está activo tras varios fallos de WebGL2. Los reintentos automáticos están pausados. Puedes reintentar PixiJS o usar Canvas.',
+    'Canvas backup is active because a saved graphics safety hold paused automatic retries. The earlier cause is unknown. You can retry PixiJS or use Canvas.':
+      'Canvas está activo porque una protección gráfica guardada pausó los reintentos automáticos. La causa anterior se desconoce. Puedes reintentar PixiJS o usar Canvas.',
+    'WebGL2 was interrupted. Canvas backup is active; recovery will retry when safe.':
+      'WebGL2 se interrumpió. Canvas está activo como respaldo; se reintentará cuando sea seguro.',
+
     'Revert to Canvas': 'Volver a Canvas',
     'Frame rate': 'Fotogramas por segundo',
     'Adaptive frame skip': 'Salto adaptativo de fotogramas',
@@ -1929,6 +1948,7 @@
     });
   }
   function finishStartupUpdate() {
+    startupEvent('update-gate-finished', { reason: startupUpdateNotice || 'complete' });
     if (!startupUpdatePending) return;
     startupUpdatePending = false;
     $('startup-update').hidden = true;
@@ -1936,6 +1956,7 @@
     showTitleScreen();
   }
   async function initializeStartupUpdate() {
+    startupEvent('update-check-start', { ready: !!navigator.serviceWorker?.controller });
     const supported =
       'serviceWorker' in navigator &&
       (location.protocol === 'https:' ||
@@ -2127,6 +2148,7 @@
     game = activateLiveCritical(restored);
     return true;
   }
+  startupEvent('save-load-start');
   let recoveredOnStartup = false;
   let loaded = combatDiagnosticsEnabled
     ? load('arena')
@@ -2145,6 +2167,11 @@
       persistence.writeCandidate(game);
     } else game = activateLiveCritical(new Campaign());
   }
+  startupEvent('save-load-finished', {
+    loaded,
+    canWrite: writerGuard.canWrite(),
+    zone: game?.zoneId,
+  });
   // An unclean active-session marker indicates the previous browser stopped
   // before its normal shutdown. Keep validated campaign progress, but never
   // restart inside the potentially frozen encounter.
@@ -2369,20 +2396,69 @@
             );
           },
         });
+  // P0 #839 DRAFT EXPERIMENT: keep the existing Pixi density stable through
+  // combat, rather than re-baking cached artwork when Auto reacts to lag.
+  // This does not affect player-chosen settings, frame-skip emergency protection,
+  // WebGL failure classification, or the Canvas backup.
+  function pixiFixedQualityPilotActive() {
+    return PrototypeRuntime.pixiFixedQualityExperimentActive(
+      graphicsController?.status().mode,
+      pixiGame.status().active,
+    );
+  }
   // Fan out presentation events without editing the protected simulation loop.
   const queueOriginalVisuals = renderer.queue;
   renderer.queue = (events) => {
     queueOriginalVisuals(events);
     pixiGame.noteEvents(events);
   };
+  function rendererFallbackMessage(snapshot) {
+    if (snapshot.recoveryPaused) {
+      if (snapshot.recoveryHoldReason === 'interrupted-restore')
+        return 'Canvas backup is active because a previous WebGL2 startup did not finish. Automatic retries are paused. You can retry PixiJS or use Canvas.';
+      if (snapshot.recoveryHoldReason === 'repeated-failures')
+        return 'Canvas backup is active after repeated WebGL2 failures. Automatic retries are paused. You can retry PixiJS or use Canvas.';
+      return 'Canvas backup is active because a saved graphics safety hold paused automatic retries. The earlier cause is unknown. You can retry PixiJS or use Canvas.';
+    }
+    return 'WebGL2 was interrupted. Canvas backup is active; recovery will retry when safe.';
+  }
   function updateGpuTrial(snapshot) {
+    const startupFailure =
+      snapshot.reason !== 'canvas-default' && snapshot.lastFailure !== startupObservedFailure
+        ? snapshot.lastFailure
+        : null;
+    startupObservedFailure = snapshot.lastFailure || startupObservedFailure;
+    startupEvent('graphics-state', {
+      renderer: snapshot.mode,
+      phase: snapshot.phase,
+      reason: snapshot.reason || snapshot.lastFallbackReason,
+      preferredRenderer: snapshot.preferredRenderer,
+      hold: snapshot.recoveryHoldReason,
+      recoveryPaused: snapshot.recoveryPaused,
+      recoveryPending: snapshot.recoveryPending,
+      failureType: startupFailure?.type,
+      failureStage: startupFailure?.stage,
+      failureMessage: startupFailure?.message,
+    });
     const trial = snapshot.phase === 'trial';
     const preparing = snapshot.phase === 'preparing';
+    const held =
+      snapshot.phase === 'canvas' &&
+      snapshot.recoveryPaused &&
+      snapshot.preferredRenderer === 'webgl2' &&
+      started;
+    gpuTrialHint.hidden = held;
     // A launch remains one visible title-screen preparation, including
     // Pixi initialization and the actual saved arrival's GPU uploads.
     // Manual renderer changes outside startup retain the Keep/Revert panel.
-    gpuTrialPanel.hidden = (!trial && !preparing) || (preparing && titleLoading);
-    gpuTrialActions.style.display = trial ? 'grid' : 'none';
+    gpuTrialPanel.hidden = (!trial && !preparing && !held) || (preparing && titleLoading);
+    gpuTrialActions.style.display = trial || held ? 'grid' : 'none';
+    if (held) {
+      gpuTrialMessage.textContent = tr(rendererFallbackMessage(snapshot));
+      gpuKeep.textContent = tr('Retry PixiJS WebGL2');
+      gpuRevert.textContent = tr('Use Canvas 2D');
+      return;
+    }
     if (preparing) {
       gpuTrialMessage.textContent = tr('Preparing PixiJS graphics…');
       return;
@@ -2425,6 +2501,7 @@
   graphicsController = graphicsGuard
     ? graphicsGuard.create({
         storage: localStorage,
+        startupDecision: previousRendererChoice,
         prepareWebGL: () => pixiGame.prepare(),
         getFailureDetails: () => pixiGame.failureDetails?.() || null,
         // Do not rebuild a GPU scene while the player is moving or enemies
@@ -2469,7 +2546,27 @@
         notify: updateGpuTrial,
       })
     : fallbackController;
-  gpuKeep.onclick = () => graphicsController.confirm();
+  function startupGraphics() {
+    const state = graphicsController.status();
+    return {
+      renderer: state.mode,
+      preferredRenderer: state.preferredRenderer,
+      phase: state.phase,
+      hold: state.recoveryHoldReason,
+      recoveryAttempts: state.recoveryAttempts,
+      viewportWidth: viewport.width,
+      viewportHeight: viewport.height,
+      backingWidth: canvas.width,
+      backingHeight: canvas.height,
+      recoveryPaused: state.recoveryPaused,
+      recoveryPending: state.recoveryPending,
+    };
+  }
+  startupEvent('graphics-choice', { ...startupGraphics(), reason: previousRendererChoice.reason });
+  gpuKeep.onclick = () =>
+    graphicsController.status().phase === 'canvas'
+      ? graphicsController.requestWebGL()
+      : graphicsController.confirm();
   gpuRevert.onclick = () => graphicsController.revert();
   // iOS Home Screen PWAs dispatch visibilitychange on document, not window.
   document.addEventListener('visibilitychange', () =>
@@ -2513,6 +2610,12 @@
     const canvasStartedAt = performance.now();
     renderer.draw();
     const canvasMs = Math.max(0, performance.now() - canvasStartedAt);
+    if (overlay && rendererDiagnosticActive) {
+      const overlayPhases = renderer.consumeOverlaySubpassProfile();
+      // Include the matching real draw duration: subpass clocks need not sum
+      // exactly to it because setup/teardown and timer calls have a cost.
+      if (overlayPhases) timing.overlayPhases = { ...overlayPhases, totalDrawMs: canvasMs };
+    }
     if (overlay) {
       timing.canvasOverlayMs = canvasMs;
       timing.canvasOverlayDrawn = true;
@@ -2520,6 +2623,8 @@
       timing.canvasWorldMs = canvasMs;
       timing.canvasWorldDrawn = true;
     }
+    if (started && !titleLoading && !sceneTransition && startup?.needsLiveDraw())
+      startupEvent('first-live-draw', startupGraphics());
     return timing;
   }
   function addRenderStageTimes(stageTimes, timing) {
@@ -2528,6 +2633,8 @@
     for (const key of ['pixiAttempted', 'canvasOverlayDrawn', 'canvasWorldDrawn'])
       stageTimes[key] ||= timing[key];
     if (stageTimes.pixiDraws && timing.pixiDraw) stageTimes.pixiDraws.push(timing.pixiDraw);
+    if (stageTimes.overlayDraws && timing.overlayPhases)
+      stageTimes.overlayDraws.push(timing.overlayPhases);
   }
 
   const {
@@ -3924,17 +4031,28 @@
       .catch(() => false);
   }
   function drawReadyScene() {
+    if (titleLoading) startupEvent('scene-draw-start', startupGraphics());
     try {
       drawWorld();
+      if (titleLoading) startupEvent('scene-draw-completed', startupGraphics());
       return true;
-    } catch (_) {
+    } catch (error) {
+      if (titleLoading)
+        startupEvent('scene-draw-failed', {
+          failureType: 'scene-render-failed',
+          failureStage: 'first-scene',
+          failureMessage: error?.message,
+        });
       // A first-use WebGL exception must not strand the player behind loading.
       try {
         graphicsController.revert();
         renderer.setRenderLayer('full');
         renderer.draw();
+        if (titleLoading)
+          startupEvent('scene-draw-completed', { ...startupGraphics(), reason: 'canvas-fallback' });
         return true;
       } catch (_) {
+        if (titleLoading) startupEvent('scene-draw-failed', startupGraphics());
         return false;
       }
     }
@@ -4174,6 +4292,7 @@
     }
   }
   function showTitleScreen(reason = 'internal') {
+    if (titleLoading) startup?.interrupt(reason);
     if (started || titleLoading) notePlaytestLifecycle('return-to-title', { reason });
     titleBackupNotice = null;
     ++titleEpoch;
@@ -4182,6 +4301,7 @@
     titleLoading = false;
     cancelSceneTransition();
     started = false;
+    updateGpuTrial(graphicsController.status());
     paused = false;
     clearInput();
     // Title stops gameplay simulation, not its own theme's audio clock.
@@ -4195,6 +4315,7 @@
     }
     const showWelcome = !startupUpdatePending && firstLanguageChoice;
     titleScreen.hidden = startupUpdatePending || showWelcome;
+    if (!titleScreen.hidden) startupEvent('title-shown', { reason, ready: true });
     if (languageWelcome) languageWelcome.hidden = !showWelcome;
     $('startup-update').hidden = !startupUpdatePending;
     document.body.classList.add('title-active');
@@ -4217,6 +4338,9 @@
     if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite())
       return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
+    startup?.entry(nextStartupEntry);
+    nextStartupEntry = 'continue';
+    startupEvent('sprites-start', { zone: game.zoneId });
     // Continue is already a browser gesture. Unlock before asynchronous warmup.
     const entryUnlock = audio.unlock();
     titleLoading = true;
@@ -4245,8 +4369,11 @@
         refreshTitleScreen();
         return;
       }
+      startupEvent('sprites-settled', { zone: game.zoneId, skipped: !!titleSkipGraphics?.skipped });
+      startupEvent('save-recovery-start');
       // Only Continue authorizes abnormal-session recovery.
       recoverLoadedSession();
+      startupEvent('save-recovery-finished', { zone: game.zoneId });
       // Crash recovery may replace the Campaign object with a safe-location
       // clone. Continue's readiness guards must track that validated recovery,
       // not silently abandon the title in its disabled loading state.
@@ -4269,6 +4396,7 @@
         // A missing audio device must never defer campaign activation.
         if (!entryAudioAttempted && audio.ctx) {
           entryAudioAttempted = true;
+          startupEvent('audio-start');
           $('title-loading').textContent =
             language === 'es' ? 'Preparando la música…' : 'Preparing soundtrack…';
           // Start the destination score before movement is enabled. Missing
@@ -4293,8 +4421,11 @@
               return audio.productionPending || true;
             })
             .catch(() => false);
-          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))]).then(() =>
-            requestAnimationFrame(finish),
+          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))]).then(
+            () => {
+              if (epoch === titleEpoch) startupEvent('audio-settled');
+              requestAnimationFrame(finish);
+            },
           );
           return;
         }
@@ -4302,6 +4433,7 @@
         titleSkipGraphics = null;
         titleCanvasContinue.hidden = true;
         started = true;
+        updateGpuTrial(graphicsController.status());
         titleScreen.hidden = true;
         document.body.classList.remove('title-active');
         paused = false;
@@ -4314,6 +4446,8 @@
         updateHUD();
         audio.setPaused(false);
         $('menu-button').focus?.({ preventScroll: true });
+        startupEvent('scene-revealed', { ...startupGraphics(), zone: game.zoneId });
+        startupEvent('controls-ready', startupGraphics());
       };
       const paint = () => {
         if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
@@ -4335,14 +4469,19 @@
             refreshTitleScreen();
             return;
           }
+          startupEvent('arrival-start', startupGraphics());
           const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
           if (gpuWarmup)
             void Promise.race([gpuWarmup, skipPromise.then(() => false)]).then((ready) => {
               if (epoch !== titleEpoch) return;
+              startupEvent('arrival-settled', { ready: ready === true, ...startupGraphics() });
               if (!ready) graphicsController.revert();
               requestAnimationFrame(finish);
             });
-          else requestAnimationFrame(finish);
+          else {
+            startupEvent('arrival-settled', { ready: true, ...startupGraphics() });
+            requestAnimationFrame(finish);
+          }
         };
         // The save supplies the actual zone/hero/party. Only after recovery
         // and that scene's sprite warmup do we initialize confirmed Pixi,
@@ -4357,8 +4496,14 @@
         if (!shouldRestorePixi) return showReadyFrame();
         $('title-loading').textContent =
           language === 'es' ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
+        startupEvent('gpu-start', startupGraphics());
         const restoration = graphicsController.resumeConfirmedWebGL();
-        void Promise.race([restoration, skipPromise]).then(showReadyFrame, showReadyFrame);
+        const observedReadyFrame = (ready) => {
+          if (epoch === titleEpoch)
+            startupEvent('gpu-settled', { ready: ready === true, ...startupGraphics() });
+          showReadyFrame();
+        };
+        void Promise.race([restoration, skipPromise]).then(observedReadyFrame, observedReadyFrame);
       };
       // Recovering an unclean save can change the spawn after title warmup.
       const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
@@ -4755,6 +4900,7 @@
     if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
     persistProfile();
     showTitleScreen();
+    nextStartupEntry = 'new-game';
     enterPreparedScene();
   }
   function savedRunRecoveryMenu() {
@@ -5310,22 +5456,131 @@
   // Constant-memory distributions cover the entire opt-in capture, unlike the
   // short rolling frame profiler. Quantiles are bucket ceilings, not exact FPS.
   const rendererHistogramBoundsMs = [4, 8, 12, 16, 20, 24, 33, 50, 75, 100, 150, 250, 500, 1000];
-  function rendererHistogramAdd(histogram, value) {
+  function rendererHistogramAdd(histogram, value, bounds = rendererHistogramBoundsMs) {
     let bucket = 0;
-    while (bucket < rendererHistogramBoundsMs.length && value > rendererHistogramBoundsMs[bucket])
-      bucket++;
+    while (bucket < bounds.length && value > bounds[bucket]) bucket++;
     histogram[bucket]++;
   }
-  function rendererHistogramQuantile(histogram, q) {
+  function rendererHistogramQuantile(histogram, q, bounds = rendererHistogramBoundsMs) {
     const total = histogram.reduce((sum, count) => sum + count, 0);
     if (!total) return null;
     const target = Math.ceil(total * q);
     let observed = 0;
     for (let i = 0; i < histogram.length; i++) {
       observed += histogram[i];
-      if (observed >= target) return rendererHistogramBoundsMs[i] ?? null;
+      if (observed >= target) return bounds[i] ?? null;
     }
     return null;
+  }
+  // Every opt-in Canvas-overlay draw contributes, not just the globally worst
+  // 32 callbacks. Short per-zone / engagement summaries distinguish chronic
+  // scene cost from exceptional bakes and combat; never mix their populations.
+  const overlaySubpassStageNames = [
+    'groundAndClear', 'healthPlates', 'nameplates',
+    'occlusionCandidates', 'occlusionMasks', 'remainingCombatCues',
+    'totalDrawMs',
+    // Nested under occlusionMasks, not additional whole-overlay time.
+    'outlinePairMs', 'outlineBuffersMs', 'outlineClearMs', 'outlineActorMs',
+    'outlineTintMs', 'outlineEdgeMs', 'outlineCoverMs', 'outlineCompositeMs',
+  ];
+  const overlaySubpassBoundsMs = [0.5, 1, 2, 4, 8, 12, 16, 24, 33, 50, 75, 100, 150, 250, 500];
+  function recordOverlaySubpasses(capture, zone, engaged, overlayDraws) {
+    if (!capture || !Array.isArray(overlayDraws) || !overlayDraws.length) return;
+    const zoneName = typeof zone === 'string' && /^[a-z0-9-]{1,40}$/.test(zone)
+      ? zone : 'unknown';
+    const activity = engaged ? 'engaged' : 'unengaged';
+    let key = zoneName + ':' + activity;
+    if (!Object.hasOwn(capture.overlaySubpassByActivity, key) &&
+        Object.keys(capture.overlaySubpassByActivity).length >= 24)
+      key = 'other:' + activity;
+    const summaries = capture.overlaySubpassByActivity;
+    if (!summaries[key]) {
+      summaries[key] = {
+        drawnPasses: 0,
+        incompletePasses: 0,
+        // Counters come directly from the already-reset per-draw Canvas
+        // renderer, not a new entity/cover scan inside the diagnostics.
+        outlineWork: {
+          samples: 0, maskCount: 0, maskPixels: 0, zeroMaskPasses: 0,
+          maxMasksPerDraw: 0, maxVisibleEntities: 0,
+          coverSpriteDraws: 0, sampledCoverPasses: 0, pairCount: 0,
+        },
+        stages: Object.fromEntries(overlaySubpassStageNames.map((name) => [
+          name, { samples: 0, sumMs: 0, maxMs: 0, histogram: Array(overlaySubpassBoundsMs.length + 1).fill(0) },
+        ])),
+      };
+    }
+    const summary = summaries[key];
+    for (const stages of overlayDraws) {
+      if (!stages || typeof stages !== 'object') continue;
+      summary.drawnPasses++;
+      let missing = false;
+      for (const name of overlaySubpassStageNames) {
+        const ms = stages[name];
+        if (!Number.isFinite(ms) || ms < 0) { missing = true; continue; }
+        const record = summary.stages[name];
+        record.samples++;
+        record.sumMs += ms;
+        record.maxMs = Math.max(record.maxMs, ms);
+        rendererHistogramAdd(record.histogram, ms, overlaySubpassBoundsMs);
+      }
+      if (missing) summary.incompletePasses++;
+      const masks = stages.occlusionMasksDrawn,
+        pixels = stages.occlusionMaskPixels,
+        visible = stages.occlusionVisibleEntities;
+      if (
+        Number.isSafeInteger(masks) && masks >= 0 &&
+        Number.isSafeInteger(pixels) && pixels >= 0 &&
+        Number.isSafeInteger(visible) && visible >= 0
+      ) {
+        const work = summary.outlineWork;
+        work.samples++;
+        work.maskCount += masks;
+        work.maskPixels += pixels;
+        if (masks === 0) work.zeroMaskPasses++;
+        work.maxMasksPerDraw = Math.max(work.maxMasksPerDraw, masks);
+        work.maxVisibleEntities = Math.max(work.maxVisibleEntities, visible);
+        if (Number.isSafeInteger(stages.outlineCoverSprites) && stages.outlineCoverSprites >= 0 &&
+            Number.isSafeInteger(stages.outlinePairs) && stages.outlinePairs >= 0) {
+          work.sampledCoverPasses++;
+          work.coverSpriteDraws += stages.outlineCoverSprites;
+          work.pairCount += stages.outlinePairs;
+        }
+      }
+    }
+  }
+  function overlaySubpassReport(capture) {
+    return {
+      scope: 'All completed opt-in Canvas-overlay passes in this renderer-recording segment, including normal draws and at most two same-callback draws; separated by zone and engagement state observed at callback completion. Timed JS only, added opt-in overhead, no GPU/presented FPS. outline*Ms are nested within occlusionMasks, not extra time; per-mask timestamps add profiler overhead. Independent p95 values are not additive.',
+      bucketUpperBoundsMs: overlaySubpassBoundsMs,
+      groups: Object.entries(capture.overlaySubpassByActivity || {}).map(([key, group]) => ({
+        zoneAndEngagement: key,
+        drawnPasses: group.drawnPasses,
+        incompletePasses: group.incompletePasses,
+        outlineWork: {
+          sampledPasses: group.outlineWork.samples,
+          totalMasksDrawn: group.outlineWork.maskCount,
+          totalMaskPixels: group.outlineWork.maskPixels,
+          zeroMaskPasses: group.outlineWork.zeroMaskPasses,
+          meanMasksPerDraw: group.outlineWork.samples
+            ? +(group.outlineWork.maskCount / group.outlineWork.samples).toFixed(2) : null,
+          maxMasksPerDraw: group.outlineWork.maxMasksPerDraw,
+          maxVisibleEntities: group.outlineWork.maxVisibleEntities,
+          sampledCoverPasses: group.outlineWork.sampledCoverPasses,
+          totalCoverSpriteDraws: group.outlineWork.coverSpriteDraws,
+          totalOcclusionPairs: group.outlineWork.pairCount,
+        },
+        stages: Object.fromEntries(Object.entries(group.stages).map(([name, row]) => [
+          name, {
+            samples: row.samples,
+            meanMs: row.samples ? +(row.sumMs / row.samples).toFixed(2) : null,
+            maxMs: +row.maxMs.toFixed(2),
+            p95UpperMs: rendererHistogramQuantile(row.histogram, 0.95, overlaySubpassBoundsMs),
+            histogram: row.histogram,
+          },
+        ])),
+      })),
+    };
   }
   function rendererDiagnosticSnapshot() {
     const pixi = pixiGame.status();
@@ -5365,9 +5620,11 @@
       droppedGraphicsTransitions: 0,
       frameWorkHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
       callbackIntervalHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
+      overlaySubpassByActivity: Object.create(null),
     };
     lastRendererRecording = null;
     rendererDiagnosticActive = true;
+    renderer.setOverlaySubpassProfiling(true);
     notePlaytestLifecycle(retainPreviousSegments ? 'renderer-profiling-restored' : 'renderer-profiling-started');
   }
   // Recent graphics-policy timeline, separate from the original arrival log.
@@ -5404,6 +5661,10 @@
     if (drawn) capture.draws++;
     rendererHistogramAdd(capture.frameWorkHistogram, workMs);
     rendererHistogramAdd(capture.callbackIntervalHistogram, intervalMs);
+    // An outlier-only recorder would miss March's steady ~31-36ms overlay
+    // pressure. Aggregate every measured draw before filtering severe frames.
+    if (drawn && stages.overlayDraws?.length)
+      recordOverlaySubpasses(capture, game.zoneId, !!game.s.squadEngagement, stages.overlayDraws);
     if (workMs < 34 && intervalMs < 50) return;
     capture.slowFrames++;
     const point = {
@@ -5412,6 +5673,23 @@
       intervalMs: Math.round(intervalMs * 10) / 10,
       renderMs: Math.round(stages.renderMs * 10) / 10,
       simulationMs: Math.round(stages.simulationMs * 10) / 10,
+      // These are nested parts of simulation, NOT additional CPU work.
+      companionAIMs: Math.round(stages.companionAIMs * 10) / 10,
+      enemyAIMs: Math.round(stages.enemyAIMs * 10) / 10,
+      otherSimulationMs: Math.round(stages.otherSimulationMs * 10) / 10,
+      enemyDetail: stages.enemyDetail
+        ? Object.fromEntries(Object.entries(stages.enemyDetail.phases).map(([name, row]) => [
+            name, {
+              completed: row.completed,
+              ms: row.completed ? +row.elapsedMs.toFixed(2) : null,
+              routeCalls: row.routeCalls,
+              routeMs: +row.routeMs.toFixed(2),
+              maxRouteMs: +row.maxRouteMs.toFixed(2),
+              budgetedCalls: row.budgetedCalls,
+              budgetedMs: +row.budgetedMs.toFixed(2),
+              maxBudgetedMs: +row.maxBudgetedMs.toFixed(2),
+            },
+          ])) : null,
       pixiMs: Math.round(stages.pixiMs * 10) / 10,
       canvasOverlayMs: Math.round(stages.canvasOverlayMs * 10) / 10,
       canvasWorldMs: Math.round(stages.canvasWorldMs * 10) / 10,
@@ -5420,6 +5698,11 @@
       adaptiveSkipped: !!skipped,
       frameId: rendererRecordingFrameId,
       graphicsTransitions: rendererRecordingFrameEvents?.slice() || [],
+      overlayDraws: (stages.overlayDraws || []).slice(0, 2).map((stages) =>
+        Object.fromEntries(
+          Object.entries(stages).map(([name, ms]) => [name, +ms.toFixed(2)]),
+        ),
+      ),
       pixiDraws: (stages.pixiDraws || []).slice(0, 2).map((trace) => ({
         elapsedStartMs: +(trace.startedAtMs - capture.startedClockMs).toFixed(2),
         totalMs: +trace.totalMs.toFixed(2),
@@ -5507,6 +5790,7 @@
         callbackInterval: percentile(capture.callbackIntervalHistogram),
       },
       worstFrames: [...capture.worstFrames].sort((a, b) => a.elapsedMs - b.elapsedMs),
+      overlaySubpassSummary: overlaySubpassReport(capture),
       events: capture.events,
       counterDeltas: Object.fromEntries(
         [...keys].map((key) => [
@@ -5529,6 +5813,7 @@
     lastRendererRecording = rendererRecording;
     rendererRecording = null;
     rendererDiagnosticActive = false;
+    renderer.setOverlaySubpassProfiling(false);
     rendererRecordingFrameId = null;
     rendererRecordingFrameEvents = null;
     notePlaytestLifecycle('renderer-profiling-stopped');
@@ -5542,10 +5827,80 @@
   }, 12000);
   addEventListener('error', () => notePlaytestLifecycle('uncaught-page-error'));
   addEventListener('unhandledrejection', () => notePlaytestLifecycle('unhandled-rejection'));
+  function playtestSettings() {
+    // Reuse the canonical sound/performance sections instead of duplicating
+    // their values. Snapshot only player options, never arbitrary storage.
+    return {
+      version: 1,
+      capturedAt: new Date().toISOString(),
+      references: { performance: 'performance', sound: 'audio.settings' },
+      display: {
+        language,
+        screenPreference: platform.preference,
+        activeScreen: platform.mode,
+        cameraZoom: platform.cameraZoom,
+      },
+      controls: { ...input.preferences, bindings: { ...input.preferences.bindings } },
+      accessibility: {
+        reducedMotion: !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,
+      },
+      gameplay: {
+        succession: game.s.challenge?.succession === true,
+        squadDoctrine: game.s.squadDoctrine || null,
+        fallenCharmSlotPolicy: game.s.rogueFallenCharmSlotPolicy || null,
+      },
+      note: 'One English-only settings snapshot at export. Canonical sound levels/mute are in audio.settings; chosen and effective graphics, FPS, resolution and emergency overrides are in performance. No settings are changed by reporting.',
+    };
+  }
+  function playtestDevice() {
+    const number = (value) => (Number.isFinite(value) && value >= 0 ? value : null);
+    const text = (value) => (typeof value === 'string' ? value.slice(0, 160) : null);
+    const hints = navigator.userAgentData;
+    const memory = performance.memory;
+    return {
+      platform: text(navigator.platform),
+      browserHints: hints
+        ? {
+            platform: text(hints.platform),
+            mobile: !!hints.mobile,
+            brands: Array.isArray(hints.brands)
+              ? hints.brands
+                  .slice(0, 5)
+                  .map((x) => ({ brand: text(x.brand), version: text(x.version) }))
+              : [],
+          }
+        : null,
+      maxTouchPoints: number(navigator.maxTouchPoints),
+      screen: {
+        cssWidth: number(window.screen?.width),
+        cssHeight: number(window.screen?.height),
+        availableCssWidth: number(window.screen?.availWidth),
+        availableCssHeight: number(window.screen?.availHeight),
+        colorDepth: number(window.screen?.colorDepth),
+      },
+      jsHeapEstimate: memory
+        ? {
+            usedBytes: number(memory.usedJSHeapSize),
+            allocatedBytes: number(memory.totalJSHeapSize),
+            limitBytes: number(memory.jsHeapSizeLimit),
+          }
+        : null,
+      exactDeviceModel: null,
+      exactCpuModel: null,
+      note: 'Browser-reported, potentially reduced/spoofed/coarse capabilities; null means unavailable, not unsupported. Existing userAgent, CPU concurrency and coarse RAM estimate are in this environment section. GPU details, when an actual game context existed, are graphicsRenderer.deviceGraphics. Heap estimates exclude browser/GPU/driver memory. No extra GPU probe, hardware scan, permission prompt, identifier or upload.',
+    };
+  }
   function exportPlaytestReport() {
     exportJSON(
       {
         version: PrototypeBuild.version,
+        // Provenance is embedded in the actual packaged script, not inferred
+        // from the current GitHub main or another server response.
+        buildCommit: /^[a-f0-9]{40}$/.test(PrototypeBuild.commit || '')
+          ? PrototypeBuild.commit
+          : null,
+        analysisGuide: PrototypePlaytestReportGuide.create(),
+        settings: playtestSettings(),
         performance: {
           ...runtime.report(
             {
@@ -5570,6 +5925,7 @@
           },
           frameProfile: frameProfile.report(),
           rendererDiagnostics: rendererRecordingReport(),
+          startupDiagnostics: startup?.report() || null,
           diagnosticContinuity: {
             documentId: playtestDocumentId,
             navigationType: playtestNavigationType,
@@ -5589,6 +5945,7 @@
               : null,
             viewportWidth: viewport.width,
             viewportHeight: viewport.height,
+            device: playtestDevice(),
           },
           crowdDiagnostics: game.crowdDiagnosticsReport(),
           ...(developerEnabled && game.s.mode === 'developer'
@@ -5862,7 +6219,7 @@
         },
         graphicsController.status().preferredRenderer === 'webgl2' &&
           graphicsController.status().mode === 'canvas2d'
-          ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
+          ? rendererFallbackMessage(graphicsController.status())
           : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(graphicsController.status().recoveryPaused
@@ -6799,6 +7156,7 @@
 
   // prettier-ignore
   function showMap(back = closeMenu) {
+    startupEvent('map-opened', {zone:game.zoneId});
     if (game.s.mode === 'arena') return arenaDestinations();
     const zone = game.zone();
     const room = game.supplyRoom();
@@ -8322,8 +8680,18 @@
       graphics.recoveryPending === true ||
       (graphics.mode === 'webgl2' && !['confirmed', 'trial'].includes(graphics.phase));
     const mustUseTitle = hiddenDurationMs >= backgroundTitleGraceMs || needsGraphicsGate;
-    const canResume = pending.saved && writerGuard.canWrite() &&
-      !persistence.conflicted(game.s.mode);
+    const canResume =
+      pending.saved && writerGuard.canWrite() && !persistence.conflicted(game.s.mode);
+    startupEvent('background-return-classified', {
+      hiddenDurationMs,
+      decision: !canResume
+        ? 'save-or-ownership-pause'
+        : mustUseTitle
+          ? 'guarded-continue'
+          : 'live-resume',
+      ...startupGraphics(),
+      canWrite: writerGuard.canWrite(),
+    });
     notePlaytestLifecycle('background-return-classified', {
       source, hiddenDurationMs: Math.round(hiddenDurationMs),
       decision: !canResume ? 'save-or-ownership-pause'
@@ -8343,6 +8711,8 @@
     }
     // Short benign visibility glitches do not close a menu, change a campaign
     // or reset the opted-in profiler. Preserve an intentional pre-hide pause.
+    startupEvent('scene-revealed', { ...startupGraphics(), reason: 'live-resume' });
+    if (!pending.wasPaused && !menu) startupEvent('controls-ready', startupGraphics());
     paused = pending.wasPaused;
     audio.setPaused(paused || !focused);
     if (!paused && focused) restartGuard.arm(game);
@@ -8432,6 +8802,7 @@
       notePlaytestLifecycle('back-forward-cache-restore');
       // A page restored from BFCache has already released its writer lock.
       // Reload to acquire ownership again; ordinary app minimize uses no reload.
+      startupEvent('update-reload-requested', { reason: 'bfcache-writer-reacquisition' });
       location.reload();
       return;
     }
@@ -9549,7 +9920,7 @@
       crashRecoveryPending = true;
       // Act before further expensive rendering; never require the player to
       // reach Settings while hostile simulation is critically stalled.
-      if (!optimizationMode) {
+      if (!optimizationMode && !pixiFixedQualityPilotActive()) {
         const override = autoOptimization.observe(now, {
           activePlay: true,
           emergency: true,
@@ -9602,6 +9973,8 @@
           canvasOverlayDrawn: false,
           canvasWorldDrawn: false,
           pixiDraws: rendererDiagnosticActive ? [] : null,
+          overlayDraws: rendererDiagnosticActive ? [] : null,
+          enemyDetail: rendererDiagnosticActive ? { phase: null, phases: Object.create(null) } : null,
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
@@ -9634,15 +10007,57 @@
       const simulationAt = performance.now(),
         marks = {};
       game.crowdDiagnosticsBeginFrame();
-      game.tick(dt, {
-        x,
-        y,
-        speedFactor,
-        performanceMark: (stage) => {
-          marks[stage] = performance.now();
-        },
-      });
+      try {
+        game.tick(dt, {
+          x,
+          y,
+          speedFactor,
+          performanceMark: (stage) => {
+            marks[stage] = performance.now();
+          },
+          performanceEnemyMark: stageTimes.enemyDetail
+            ? (mark) => {
+                const trace = stageTimes.enemyDetail;
+                const begin = mark.endsWith('Start');
+                const phase = mark.slice(0, begin ? -5 : -3);
+                const at = performance.now();
+                if (begin) {
+                  trace.phase = phase;
+                  trace.phases[phase] = {
+                    startedAtMs: at, elapsedMs: null, completed: false,
+                    routeCalls: 0, routeMs: 0, maxRouteMs: 0,
+                    budgetedCalls: 0, budgetedMs: 0, maxBudgetedMs: 0,
+                  };
+                  game.setEnemyRouteTrace(trace);
+                } else {
+                  game.setEnemyRouteTrace(null);
+                  const row = trace.phases[phase];
+                  if (row) {
+                    row.elapsedMs = Math.max(0, at - row.startedAtMs);
+                    row.completed = true;
+                  }
+                  trace.phase = null;
+                }
+              }
+            : null,
+        });
+      } finally {
+        // Never retain a live observer across an exception, return-to-title
+        // transition or another unprofiled simulation tick.
+        if (stageTimes.enemyDetail) game.setEnemyRouteTrace(null);
+      }
+      // Preserve the existing crowd recorder contract: only *completed*
+      // native simulation ticks become retained navigation samples.
       game.crowdDiagnosticsEndFrame();
+      if (
+        startup?.needsMovement() &&
+        game.hero === movingHero &&
+        game.zoneId === was.zone &&
+        game.s.statistics.deaths === was.deaths &&
+        (x || y || was.order) &&
+        Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.1
+      )
+        startupEvent('first-movement-observed', startupGraphics());
       game.partyDiagnosticsObserveTick();
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
@@ -9778,7 +10193,10 @@
         stageTimes.renderMs += sample.renderMs;
         addRenderStageTimes(stageTimes, drawTiming);
         const priorRatio = rendererDiagnosticActive ? renderResolution.ratio : null;
-        if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
+        if (
+          !pixiFixedQualityPilotActive() &&
+          renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)
+        ) {
           if (rendererDiagnosticActive)
             recordRendererTransition('adaptive-resolution-change', {
               fromRatio: priorRatio,
@@ -9817,16 +10235,18 @@
           frameSkip.emergency ? 'emergency-enter-after-draw' : 'emergency-exit-after-draw',
           { frameWorkMs: +frameWorkMs.toFixed(2), renderMs: +stageTimes.renderMs.toFixed(2) },
         );
-      const optimizationDecision = autoOptimization.observe(now, {
-        activePlay: simulating || recovering,
-        emergency: recovering || frameSkip.emergency,
-        preference: optimizationPreference,
-        optimized: optimizationMode,
-        intervalMs,
-        workMs: frameWorkMs,
-        adaptiveSkipped,
-        target: fps.target,
-      });
+      const optimizationDecision = pixiFixedQualityPilotActive()
+        ? null
+        : autoOptimization.observe(now, {
+            activePlay: simulating || recovering,
+            emergency: recovering || frameSkip.emergency,
+            preference: optimizationPreference,
+            optimized: optimizationMode,
+            intervalMs,
+            workMs: frameWorkMs,
+            adaptiveSkipped,
+            target: fps.target,
+          });
       if (game.s.mode === 'arena') {
         if (!optimizationMode) setOptimizationActive(true);
       } else if (optimizationDecision !== null)
@@ -9995,9 +10415,13 @@
         : 'Optimization Mode now defaults to Auto. You can change it in Settings.',
     );
   requestAnimationFrame(frame);
+  startupEvent(writerGuard.pending ? 'ownership-start' : 'ownership-settled', {
+    canWrite: writerGuard.canWrite(),
+  });
   if (writerGuard.pending)
     writerGuard.ready
       .then((state) => {
+        startupEvent('ownership-settled', { canWrite: state === 'owner' });
         if (state !== 'owner') {
           savedRunConflictMenu();
           return;
@@ -10071,6 +10495,7 @@
       if (hadServiceWorkerController) {
         appReloadRequested = false;
         appControllerReloaded = true;
+        startupEvent('update-reload-requested', { reason: 'service-worker-controller-change' });
         notePlaytestLifecycle('service-worker-controller-change');
         if (started && writerGuard.canWrite() && !save()) {
           appControllerReloaded = false;

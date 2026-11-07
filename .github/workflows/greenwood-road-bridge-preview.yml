@@ -9,8 +9,6 @@ on:
       - 'tools/greenwood-layout/pixi-road-bridge-review.cjs'
       - 'src/prototype/greenwood-landscape.js'
       - 'src/prototype/visuals.js'
-      - 'src/prototype/engine.js'
-      - 'tests/greenwood-owner-architecture-feedback.test.cjs'
       - 'src/prototype/renderer.js'
   workflow_dispatch:
 permissions:
@@ -34,12 +32,6 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --ignore-scripts
-      - name: Verify roof topology, v4 open-yard migration and yellow world label
-        if: matrix.mode == 'canvas'
-        run: |
-          node tests/greenwood-owner-architecture-feedback.test.cjs
-          node tests/greenwood-environment-quality.test.cjs
-          node tests/greenwood-winter-estate.test.cjs
       - run: npx playwright install chromium --with-deps
       - name: Resolve exact local Chromium
         run: echo "CHROMIUM_EXECUTABLE=$(node -e 'console.log(require("playwright").chromium.executablePath())')" >> "$GITHUB_ENV"
@@ -65,14 +57,12 @@ jobs:
         if: matrix.mode == 'canvas'
         uses: actions/upload-artifact@v4
         with:
-          name: greenwood-architecture-owner-feedback-native
+          name: greenwood-architecture-pr832-native
           path: |
             test-artifacts/greenwood-environment/scenes/homestead-day.png
             test-artifacts/greenwood-environment/scenes/homestead-night.png
             test-artifacts/greenwood-environment/scenes/treasury-day.png
             test-artifacts/greenwood-environment/scenes/treasury-night.png
-            test-artifacts/greenwood-environment/scenes/estate-day.png
-            test-artifacts/greenwood-environment/scenes/estate-night.png
             test-artifacts/greenwood-environment/scenes/receipt.json
           retention-days: 30
           if-no-files-found: error

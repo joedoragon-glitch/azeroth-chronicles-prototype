@@ -15,6 +15,11 @@ const {
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
+  {
+    match:
+      /^src\/prototype\/(?:startup-diagnostics|playtest-report-guide)\.js$|^src\/prototype\/app\.js$|^scripts\/site-assets\.cjs$|^templates\/game\.html$/,
+    tests: [TEST + 'startup-diagnostics.test.cjs'],
+  },
   // #755: future comparator edits must exercise the positive-control guard.
   {
     match: /^scripts\/pixi-755-compare\.cjs$|^tests\/pixi-755-acceptance\.test\.cjs$/,
@@ -158,6 +163,20 @@ const groups = [
     ],
   },
   {
+    // Changes to the shared Canvas/Pixi combat-cue painter can violate
+    // attack/hazard timing, Rogue/Ledger cast exceptions and native pixels.
+    // Keep this focused: no full browser or complete campaign test matrix.
+    match: /^src\/prototype\/combat-visuals\.js$/,
+    tests: [
+      TEST + 'warning-effect-handoff.test.cjs',
+      TEST + 'effect-warning-anonymous-cast.test.cjs',
+      TEST + 'effect-warning-ledger-cast.test.cjs',
+      TEST + 'effect-warning-reuse-family-matrix.test.cjs',
+      TEST + 'effect-warning-crowd-fps.test.cjs',
+      TEST + 'terrain-effects.test.cjs',
+    ],
+  },
+  {
     match: /^src\/prototype\/(?:visuals|hero-presentation)\.js$/,
     tests: [
       TEST + 'world-proportions.test.cjs',
@@ -297,7 +316,8 @@ const groups = [
     // #727 Stage 2–6 source ledgers are the production truth for the isolated
     // preview importer; its own source preflight must not fall through to a
     // generic architecture test.
-    match: /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies|production-routing)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
+    match:
+      /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies|production-routing)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
     tests: [TEST + 'environment-727-stage6-source.test.cjs'],
   },
   {

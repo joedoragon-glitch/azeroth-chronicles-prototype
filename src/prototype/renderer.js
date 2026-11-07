@@ -622,6 +622,9 @@
     let cacheGround = true,
       optimized = false;
     const phaseSamples = [];
+    // Only the existing opt-in renderer recording activates these subpass clocks.
+    let overlaySubpassEnabled = false,
+      overlaySubpassLast = null;
     let drawCount = 0,
       phaseSample = null,
       phaseAt = 0;
@@ -709,25 +712,30 @@
       ctx.fillText(name, slot.x, slot.y, slot.width);
       ctx.restore();
     }
-    // Thornfang's existing painted granary is a decorative facility prop,
-    // not an NPC. Give only that building the same proximity nameplate policy
-    // as real named locations, without changing save data or spawning a marker.
-    const thornHomesteadName = "Thornfang's Homestead";
-    function thornHomestead(e) {
+    // Thornfang's homestead is a world prop rather than an NPC. It deserves
+    // the same nearby golden label as existing named locations, not a toast,
+    // discovery marker or new actor.
+    function sceneryPlaceName(e) {
       return e.renderKind === 'prop' &&
         e.id === 'greenwood-thorn-homestead-lodge' &&
-        e.greenwoodFacility === 'thorn-lodge' &&
-        e.structure === 'thorn-homestead-lodge';
+        e.greenwoodFacility === 'thorn-lodge'
+        ? "Thornfang's Homestead"
+        : '';
     }
-    // The authored roof rises ~118 drawing units above its foot. Its older
-    // generic 180-unit occlusion height would put a nameplate off the phone
-    // viewport, so anchor this one site label just above the actual ridge.
-    function worldLabelHeight(e) {
-      return thornHomestead(e) ? 124 : spriteHeight(e);
+    function labelHeight(e) {
+      // This long, pitched granary fills the upper native phone viewport.
+      // Place its name *on* the roof instead of pushing the label offscreen
+      // above the building. Canvas and Pixi use the same projected anchor.
+      return sceneryPlaceName(e) ? 82 : spriteHeight(e);
+    }
+    // Read-only presentation gate: a visible boss is not automatically
+    // identified, and inactive hostiles must not generate labels or HP bars.
+    function enemyHudVisible(e) {
+      return e.hp > 0 && !!e.aggro && !e.returning;
     }
     function worldLabelVisible(e) {
-      if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
-      if (e.renderKind === 'npc' || e.renderKind === 'building' || thornHomestead(e))
+      if (e.renderKind === 'enemy') return enemyHudVisible(e);
+      if (e.renderKind === 'npc' || e.renderKind === 'building' || sceneryPlaceName(e))
         return Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 220;
       return true;
     }
@@ -979,11 +987,24 @@
       }
       return 256;
     }
-    function drawOcclusionOutlines(entities) {
+    function drawOcclusionOutlines(entities, detail = null) {
+      const pairsAt = detail ? now() : 0;
       const pairs = occlusionPairs(entities, screen, spriteHeight);
+      if (detail) {
+        // Nested opt-in timings belong to occlusionMasks, not additional work.
+        // The mask painter still follows the identical sequence when disabled.
+        detail.outlinePairs = pairs.length;
+        detail.outlineCoverSprites = 0;
+        detail.outlinePairMs = Math.max(0, now() - pairsAt);
+        for (const name of [
+          'outlineBuffersMs', 'outlineClearMs', 'outlineActorMs',
+          'outlineTintMs', 'outlineEdgeMs', 'outlineCoverMs', 'outlineCompositeMs',
+        ]) detail[name] = 0;
+      }
       if (!pairs.length || typeof document === 'undefined') return;
       for (const pair of pairs) {
         const size = outlineSize(pair.actor);
+        const buffersAt = detail ? now() : 0;
         if (!outlineLayers.has(size)) {
           const layers = [];
           for (let i = 0; i < 4; i++) {
@@ -996,6 +1017,7 @@
           outlineLayers.set(size, layers);
         }
         const layers = outlineLayers.get(size);
+        if (detail) detail.outlineBuffersMs += Math.max(0, now() - buffersAt);
         const [actorLayer, tintLayer, edgeLayer, coverLayer] = layers,
           centerX = size / 2,
           footY = size === 384 ? 260 : 192,
@@ -1023,11 +1045,13 @@
                 ];
         stats.outlineMasks++;
         stats.outlineMaskPixels += size * size;
+        const clearAt = detail ? now() : 0;
         for (const layer of layers) {
           layer.brush.globalCompositeOperation = 'source-over';
           layer.brush.globalAlpha = 1;
           layer.brush.clearRect(0, 0, size, size);
         }
+        if (detail) detail.outlineClearMs += Math.max(0, now() - clearAt);
         // Pixi keeps its world/shadow foot still, but moves the retained
         // raster body by Canvas's identity-phase idle/busy animation. The
         // mask must track that same presentation-only delta. Cover, broad
@@ -1036,6 +1060,7 @@
         // apply visualPosition inside sprite(), so never offset them twice.
         const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
         const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
+        const actorAt = detail ? now() : 0;
         sprite(
           pair.actor,
           {
@@ -1045,24 +1070,31 @@
           actorLayer.brush,
           true,
         );
+        if (detail) detail.outlineActorMs += Math.max(0, now() - actorAt);
 
         // Color the real actor alpha, not a rectangle or an ellipse.
+        const tintAt = detail ? now() : 0;
         const tint = tintLayer.brush;
         tint.drawImage(actorLayer.surface, 0, 0);
         tint.globalCompositeOperation = 'source-in';
         tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
         tint.fillRect(0, 0, size, size);
         tint.globalCompositeOperation = 'source-over';
+        if (detail) detail.outlineTintMs += Math.max(0, now() - tintAt);
 
+        const edgeAt = detail ? now() : 0;
         const edge = edgeLayer.brush;
         for (const [dx, dy] of ring) edge.drawImage(tintLayer.surface, dx, dy);
         edge.globalCompositeOperation = 'destination-out';
         edge.drawImage(actorLayer.surface, 0, 0);
         edge.globalCompositeOperation = 'source-over';
+        if (detail) detail.outlineEdgeMs += Math.max(0, now() - edgeAt);
 
         // Union the actual foreground artwork. The contour is erased wherever
         // the actor is visible rather than showing a permanent character glow.
+        const coverAt = detail ? now() : 0;
         const cover = coverLayer.brush;
+        if (detail) detail.outlineCoverSprites += pair.front.length;
         for (const obstacle of pair.front)
           sprite(
             obstacle.entity,
@@ -1073,6 +1105,8 @@
             cover,
             true,
           );
+        if (detail) detail.outlineCoverMs += Math.max(0, now() - coverAt);
+        const compositeAt = detail ? now() : 0;
         edge.globalCompositeOperation = 'destination-in';
         edge.drawImage(coverLayer.surface, 0, 0);
         edge.globalCompositeOperation = 'source-over';
@@ -1084,6 +1118,7 @@
           Math.round(pair.position.y - footY),
         );
         ctx.restore();
+        if (detail) detail.outlineCompositeMs += Math.max(0, now() - compositeAt);
       }
     }
     // Shared Canvas/Pixi presentation geometry. A GPU actor uses these same
@@ -2925,15 +2960,19 @@
         records = [];
       const add = (list, kind) => {
         for (const entity of list || []) {
-          if (entity.interactionOnly || (kind === 'enemy' && entity.hp <= 0)) continue;
+          // Avoid creating a presented actor and a projected nameplate
+          // for idle hostiles, including undiscovered bosses.
+          if (entity.interactionOnly || (kind === 'enemy' && !enemyHudVisible(entity))) continue;
           const e = presentEntity(entity, kind);
           if (e.presentation === 'scout-tracks' || !worldLabelVisible(e)) continue;
           const p = screen(e);
           if (p.x < -40 || p.x > canvas.width + 40 || p.y < -100 || p.y > canvas.height + 100)
             continue;
           const name =
-            kind === 'npc'
-              ? e.kind === 'mini'
+            kind === 'prop'
+              ? sceneryPlaceName(e)
+              : kind === 'npc'
+                ? e.kind === 'mini'
                 ? e.name +
                   (game.peace
                     ? ' · Peaceful'
@@ -2947,11 +2986,9 @@
                       ? 'Vera · repairing defenses'
                       : 'Vera · captive field engineer'
                     : e.name || ''
-              : kind === 'prop' && thornHomestead(e)
-                ? thornHomesteadName
-                : kind === 'ally'
-                  ? companionWorldLabel(e)
-                  : kind === 'building'
+              : kind === 'ally'
+                ? companionWorldLabel(e)
+                : kind === 'building'
                   ? e.name || 'Barracks'
                   : kind === 'node'
                     ? 'Dark Lord Tribute'
@@ -2959,24 +2996,23 @@
           records.push({ e, kind, p, name });
         }
       };
+      // Add the single authored homestead label through the existing
+      // Canvas/Pixi nameplate pass, without turning the building into an NPC.
+      if (game.zoneId === 'vale') {
+        const home = zone.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
+        if (home) add([home], 'prop');
+      }
       add(game.visibleNPCs(), 'npc');
-      // Reuse the shared yellow NPC nameplate painter for the one authored
-      // homestead prop. No notice queue, discovery event or extra entity.
-      const homestead =
-        game.zoneId === 'vale' &&
-        zone.props.find((p) =>
-          p.id === 'greenwood-thorn-homestead-lodge' &&
-          p.greenwoodFacility === 'thorn-lodge' &&
-          p.structure === 'thorn-homestead-lodge');
-      if (homestead) add([homestead], 'prop');
       add(game.visibleResourceNodes(), 'node');
       add(zone.buildings, 'building');
       add(zone.enemies, 'enemy');
       add(game.activeLivingParty(), 'ally');
       const priority = (r) =>
-        r.kind === 'npc' || (r.kind === 'prop' && thornHomestead(r.e))
+        r.kind === 'npc'
           ? 0
-          : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain)
+          : r.kind === 'prop'
+            ? 0.5
+            : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain)
             ? 1
             : r.kind === 'ally' && namedCompanion(r.e)
               ? 1.5
@@ -2992,7 +3028,7 @@
       ctx.textAlign = 'center';
       for (const { e, kind, p, name } of records.sort((a, b) => priority(a) - priority(b))) {
         const width = worldLabelWidth(name, e);
-        const baseY = kind === 'node' ? p.y - 25 : p.y - worldLabelHeight(e) - 5;
+        const baseY = kind === 'node' ? p.y - 25 : p.y - labelHeight(e) - 5;
         let slot = null;
         if (name && charmedCompanion(e)) {
           // The nickname follows its creature exactly. Never search alternate
@@ -3028,7 +3064,7 @@
         if (slot) {
           ctx.shadowColor = '#07140e';
           ctx.shadowBlur = kind === 'enemy' ? 3 : 4;
-          if (kind === 'npc' || (kind === 'prop' && thornHomestead(e))) {
+          if (kind === 'npc' || kind === 'prop') {
             ctx.font = 'bold 11px system-ui';
             ctx.fillStyle = '#ffe4a2';
             ctx.fillText(name, slot.x, slot.y, slot.width);
@@ -3123,6 +3159,17 @@
       // between simulation steps or change warning/damage geometry.
       const warningFrameShapes = new Map();
       if (renderLayer === 'overlay') {
+        // Do not time ordinary frames or create an opt-in sample unless requested.
+        overlaySubpassLast = null;
+        const overlayStages = overlaySubpassEnabled ? {} : null;
+        let overlayMarkAt = overlayStages ? now() : 0;
+        const overlayMark = overlayStages
+          ? (name) => {
+              const next = now();
+              overlayStages[name] = Math.max(0, next - overlayMarkAt);
+              overlayMarkAt = next;
+            }
+          : null;
         // On the experimental PixiJS path, keep essential native combat cues
         // above the independent GPU world instead of hiding player warnings.
         // The full normal Canvas path below is unchanged.
@@ -3139,29 +3186,45 @@
           warningFrameShapes,
         );
         PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
+        if (overlayMark) overlayMark('groundAndClear');
         // The Pixi cue layer receives raw Campaign actors, unlike Canvas's
         // presented entities. Pass the actor kind explicitly so hostile bars
         // and the position-derived fortress shield use the shared drawing path.
-        const enemies = z.enemies.filter((u) => u.hp > 0);
+        // The overlay only needs engaged hostiles for HP drawing. Filter
+        // before screen projection, not inside the paint loop.
+        const enemies = z.enemies.filter((u) => enemyHudVisible(u));
         const allies = game.activeLivingParty();
         const actors = [...enemies, ...allies, game.hero];
         for (let index = 0; index < actors.length; index++) {
           const e = actors[index];
           if (e !== game.hero && e.hp <= 0) continue;
           if (e !== game.hero && e.neutral) continue;
-          const p = screen(e);
           const renderKind =
             index < enemies.length
               ? 'enemy'
               : index < enemies.length + allies.length
                 ? 'ally'
                 : 'hero';
+          const p = screen(e);
           if (p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120)
             healthPlate(e, p, renderKind);
         }
+        if (overlayMark) overlayMark('healthPlates');
         drawPixiNameplates();
+        if (overlayMark) overlayMark('nameplates');
         // Reuse the bounded alpha-mask painter: no GPU readback or new texture.
-        drawOcclusionOutlines(collectVisibleEntities());
+        const overlayVisible = collectVisibleEntities();
+        if (overlayMark) overlayMark('occlusionCandidates');
+        drawOcclusionOutlines(overlayVisible, overlayStages);
+        if (overlayMark) overlayMark('occlusionMasks');
+        if (overlayStages) {
+          // Per-draw denominators: an expensive zero-mask draw falsifies the
+          // hypothesis that outline compositing alone explains its cost.
+          // These existing counters reset at draw entry; no extra scan.
+          overlayStages.occlusionMasksDrawn = stats.outlineMasks;
+          overlayStages.occlusionMaskPixels = stats.outlineMaskPixels;
+          overlayStages.occlusionVisibleEntities = overlayVisible.length;
+        }
         PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
         for (const projectile of game.s.projectiles) drawProjectile(projectile);
         drawVisualFx();
@@ -3175,6 +3238,10 @@
         targetGuidance();
         drawNavigationRoute();
         drawPausePresentation();
+        if (overlayMark) {
+          overlayMark('remainingCombatCues');
+          overlaySubpassLast = overlayStages;
+        }
         finishPhase('effects');
         return;
       }
@@ -3333,7 +3400,7 @@
       const labelSlots = new Map();
       const claimedLabels = [];
       const labelText = (e) => {
-        if (thornHomestead(e)) return thornHomesteadName;
+        if (e.renderKind === 'prop') return sceneryPlaceName(e);
         if (e.renderKind === 'npc')
           return e.presentation === 'mobile-captive'
             ? 'Mira · captive'
@@ -3347,9 +3414,11 @@
         return '';
       };
       const labelPriority = (e) =>
-        e.renderKind === 'npc' || thornHomestead(e)
+        e.renderKind === 'npc'
           ? 0
-          : e.renderKind === 'enemy' && e.type === 'boss'
+          : sceneryPlaceName(e)
+            ? 0.5
+            : e.renderKind === 'enemy' && e.type === 'boss'
             ? 1
             : e.renderKind === 'enemy' && (e.captain || e.roomCaptain)
               ? 1.5
@@ -3365,7 +3434,7 @@
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
           (!['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) &&
-            !thornHomestead(e)) ||
+            !sceneryPlaceName(e)) ||
           e.presentation === 'scout-tracks' ||
           !worldLabelVisible(e)
         )
@@ -3382,7 +3451,7 @@
           continue;
         const w = worldLabelWidth(name, e);
         const h = namedCompanion(e) ? 20 : 17;
-        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - worldLabelHeight(e) - 5;
+        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - labelHeight(e) - 5;
         let slot = null;
         if (charmedCompanion(e)) {
           // A Charmed nickname stays above the actor, even in a crowd.
@@ -3470,13 +3539,11 @@
             drawCombatName(ctx, e, p, labelSlots.get(e));
           }
         }
-        if (e.renderKind === 'npc' || thornHomestead(e)) {
+        if (e.renderKind === 'npc') {
           const label = !e.thornFootprint && worldLabelVisible(e),
             name =
-              thornHomestead(e)
-                ? thornHomesteadName
-                : e.kind === 'mini'
-                  ? e.name +
+              e.kind === 'mini'
+                ? e.name +
                   (game.peace
                     ? ' · Peaceful'
                     : game.miniCleared(e.mini)
@@ -3522,6 +3589,17 @@
             ctx.fillStyle = '#19291e';
             ctx.font = 'bold 23px system-ui';
             ctx.fillText(cue, p.x, p.y - 72);
+          }
+        }
+        if (sceneryPlaceName(e) && worldLabelVisible(e)) {
+          const slot = labelSlots.get(e);
+          if (slot) {
+            ctx.font = 'bold 11px system-ui';
+            ctx.fillStyle = '#ffe4a2';
+            ctx.shadowColor = '#07140e';
+            ctx.shadowBlur = 4;
+            ctx.fillText(sceneryPlaceName(e), slot.x, slot.y, slot.width);
+            ctx.shadowBlur = 0;
           }
         }
         if (e.renderKind === 'building' && worldLabelVisible(e)) {
@@ -3650,6 +3728,15 @@
     }
     return {
       draw,
+      setOverlaySubpassProfiling(enabled) {
+        overlaySubpassEnabled = !!enabled;
+        if (!overlaySubpassEnabled) overlaySubpassLast = null;
+      },
+      consumeOverlaySubpassProfile() {
+        const profile = overlaySubpassLast;
+        overlaySubpassLast = null;
+        return profile;
+      },
       // No diagnostic object is constructed outside an explicit developer opt-in.
       setEffectDiagnostics(enabled) {
         if (enabled && getGame().s.mode === 'developer') {

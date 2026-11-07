@@ -1,8 +1,10 @@
+**6 November 2026 — owner-requested roof correction PR #836, MAIN-INTEGRATED CANDIDATE (not yet released at this record):** Two previously merged passes #832/#837 left Scornfang's Treasury and Thornfang's personal granary roof silhouettes awkward in the owner's view. The currently staged visual-only source correction uses a simpler common-depth roof/gable, less facade hatching and no redundant painted crate/desk or mat over the Treasury threshold; it also offers a symmetrical shallow slate center on the Forest Crypt winter estate. Existing nearby golden homestead label, nonowned yard cleanup, road junctions, v4 save migrations, #846 enemy combat-name visibility and newer Pixi/performance code remain intact. No gameplay, doors, collision, props, service positions, AI, input, saved campaign or renderer policy is altered. Exact-head focused geometry/native saves and Canvas/Pixi evidence are release gates; physical-device visual acceptance is not assumed. Older status paragraphs are historical.
+
+
+## Post-publication visual follow-up — 5 November 2026 (draft only)
+
+The owner has inspected the actual installed estate and rejected the central roof silhouette as asymmetric and poorly joined. The separately authored correction branch `fix/greenwood-owner-roofs-homestead-wagon-road-20261105` revises just the facade's roof planes to a centered, straight central ridge with matching projection on both slopes, corrects the left occupied wing roof joins, and aligns the unfinished right-wing gable framing. The original dark door and crypt arch, construction stage, scenery work props, roadway, scenery migration and quest remain untouched. These source changes are a **draft candidate only**, not merged/published, tested end-to-end, visually accepted or device-verified. The merged #833 and dev.263 verification above remain historical evidence for the older appearance.
 # Greenwood Forest Crypt — winter-estate exterior redesign
-
-
-> **5 November 2026 — post-release owner roof review (separate draft, not shipped):** The owner inspected the new dev.263 facade on the phone and identified the central roof as visibly skewed, with an inconsistent eastern timber gable. Draft branch `fix/greenwood-owner-roof-yard-name-20261105` now proposes a deliberately symmetrical, shallow slate hip roof with a short level ridge and matched eaves—superseding the first skewed perspective attempt—plus a centered frame on the unfinished east bay. Original masonry doorway, left occupied wing, entry anchor, cartway, four work props and all gameplay remain unchanged. This is a *new corrective candidate* and does not revise the verified #833 merge/publication receipt below. Focused validation and owner aesthetic review remain outstanding; it is not merged, deployed or device-verified as a correction.
-
 
 **5 November 2026 · SIBDLP · Merged via PR #833, commit `74f2e27b66712bbff10597525ba213d380c3aa2d` · Hosted in verified dev.263 Pages release**
 

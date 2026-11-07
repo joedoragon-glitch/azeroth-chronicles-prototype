@@ -64,7 +64,7 @@ for (const [width, height, zoom] of [
   const plain = paint(width, height, zoom, false);
   const reused = paint(width, height, zoom, true);
   assert(plain.visible > 0, 'no native Canvas warning pixels in combined scene');
-  assert.equal(plain.calls, 6, 'uncached three bosses require two patch builds each');
+  assert.equal(plain.calls, 3, 'three active bosses require one patch build each');
   assert.equal(reused.calls, 3, 'shared draw should construct three patch sets once');
   assert.equal(reused.cacheSize, 3, 'each active telegraph requires its own Map entry');
   assert.deepEqual(reused.pixels, plain.pixels,

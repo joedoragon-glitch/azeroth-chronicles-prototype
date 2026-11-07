@@ -350,3 +350,36 @@ for (const renderLayer of ['full', 'overlay']) {
 console.log(
   'PASS identical cover eligibility and real alpha contours on full Canvas and Pixi cue overlay',
 );
+
+// P0 #839: opt-in subpass timestamps must not alter a single output pixel.
+// Use the actual four-layer contour painter, not a synthetic stand-in.
+{
+  const priorDocument = global.document;
+  try {
+    global.document = { createElement: () => createCanvas(384, 384) };
+    const paint = (record) => {
+      const scene = rasterScene({ renderLayer: 'overlay', actorKind: 'hero' });
+      if (record) scene.painter.setOverlaySubpassProfiling(true);
+      scene.painter.draw();
+      return {
+        pixels: Buffer.from(scene.surface.getContext('2d').getImageData(0, 0, 400, 330).data),
+        trace: scene.painter.consumeOverlaySubpassProfile(),
+      };
+    };
+    const ordinary = paint(false);
+    const profiled = paint(true);
+    assert.deepEqual(profiled.pixels, ordinary.pixels, 'opt-in outline sampling changes no painted pixels');
+    assert.equal(ordinary.trace, null, 'no per-mask trace outside opt-in recording');
+    assert.equal(profiled.trace.occlusionMasksDrawn, 1);
+    assert.equal(profiled.trace.outlinePairs, 1);
+    assert(profiled.trace.outlineCoverSprites > 0);
+    for (const name of [
+      'outlinePairMs', 'outlineBuffersMs', 'outlineClearMs', 'outlineActorMs',
+      'outlineTintMs', 'outlineEdgeMs', 'outlineCoverMs', 'outlineCompositeMs',
+    ]) assert(Number.isFinite(profiled.trace[name]) && profiled.trace[name] >= 0, name);
+  } finally {
+    if (priorDocument === undefined) delete global.document;
+    else global.document = priorDocument;
+  }
+}
+console.log('PASS opt-in overlay attribution preserves pixel-identical silhouettes.');

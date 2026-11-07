@@ -521,10 +521,9 @@
         const layouts = [
           ['lodge', 2690, 1170, 55],
           ['rest-bay', 2830, 1245, 23],
-          ['gear', 2570, 1225, 0],
-          ['training', 2630, 1345, 0],
-          ['rear-rail', 2640, 1065, 0],
-          ['east-rail', 2885, 1340, 0],
+          // The former loose gear/training props and two partial rail lengths
+          // cluttered this small yard. Existing surrounding farm equipment,
+          // shelter and Crown standard already communicate its occupation.
         ];
         const chosen = alternatives.find(([dx, dy]) =>
           layouts.slice(0, 2).every(([, x, y, radius]) => clean(point(x + dx, y + dy), radius)),
@@ -578,22 +577,6 @@
         z.greenwoodHomesteadVersion = 1;
       }
       greenwoodOwnerCompoundFinish(z) {
-        // The homestead's two short decorative rails read as an unfinished
-        // perimeter. Keep the yard open instead of inventing fortification.
-        // Run separately from the older compound migration so restored v4
-        // campaigns also lose only these two unowned authored decorations.
-        if (z.id === 'vale' && z.greenwoodThornOpenYardVersion !== 1) {
-          const rails = new Set([
-            'greenwood-thorn-homestead-rear-rail',
-            'greenwood-thorn-homestead-east-rail',
-          ]);
-          z.props = z.props.filter(
-            (p) => !rails.has(p.id) || p.owned || p.playerOwned || p.custom ||
-              !p.greenwoodAuthored ||
-              !['thorn-homestead-rear-rail', 'thorn-homestead-east-rail'].includes(p.structure),
-          );
-          z.greenwoodThornOpenYardVersion = 1;
-        }
         if (z.id === 'vale' && z.greenwoodDepartureClearanceVersion !== 1) {
           const a = R.greenwoodLayout.anchors.wagon,
             b = { x: 3200, y: 80 };
@@ -662,6 +645,21 @@
           }
           z.greenwoodTreasuryYardLayoutAudit = { grouped, skipped };
           z.greenwoodTreasuryYardLayoutVersion = 1;
+        }
+        // Cosmetic-only correction for existing v4 campaigns: remove exactly
+        // the four redundant authored homestead decorations. Preserve paid,
+        // custom and player-owned objects even if they reuse one of these IDs.
+        if (z.id === 'vale' && z.greenwoodHomesteadPresentationVersion !== 1 &&
+            z.greenwoodRedesignScene === R.greenwoodLayout?.sceneVersion) {
+          const obsolete = new Set([
+            'greenwood-thorn-homestead-gear',
+            'greenwood-thorn-homestead-training',
+            'greenwood-thorn-homestead-rear-rail',
+            'greenwood-thorn-homestead-east-rail',
+          ]);
+          z.props = z.props.filter((p) =>
+            !obsolete.has(p.id) || p.playerOwned || p.owned || p.custom);
+          z.greenwoodHomesteadPresentationVersion = 1;
         }
         if (
           z.id !== 'vale' ||
@@ -2240,7 +2238,7 @@
       poly(
         [
           [-60, -63],
-          [-15, -94],
+          [-29, -99],
           [31, -45],
         ],
         '#9b7b56',
@@ -3049,13 +3047,36 @@
       kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
       points: smoothRoad(points, kinds[i] === 'cart' || i === 0 ? 'cart' : 'farm'),
     }));
-    // The departing merchant wagon needs a visibly continuing carriage
-    // route to the eastern map edge. This is scenery only: the transport
-    // interaction remains at its established position and no saved path,
-    // region transition or collision is changed.
-    if (wide[0]?.kind === 'cart') {
-      const end = wide[0].points.at(-1);
-      if (end?.x >= 2800 && end?.y <= 400) wide[0].points.push({ x: 3200, y: 80 });
+    // The previously appended merchant exit made the cart road bend sharply
+    // right toward the wagon. Keep the main carriageway moving through to the
+    // NORTH map boundary, and let the existing wagon stop branch off as a
+    // narrower, gently joined service lane. These are presentation-only
+    // centerlines; z.roads, NPC travel, saves and collision remain unchanged.
+    // The shape check avoids altering older/unrecognized road layouts.
+    const source = roads?.[0],
+      destination = source?.at(-1),
+      scale = destination?.x / 2880;
+    if (wide[0]?.kind === 'cart' && source?.length >= 3 &&
+        Number.isFinite(scale) && scale >= 1 && scale <= 1.25 &&
+        Math.abs(destination.y - 280 * scale) < 1 &&
+        Math.abs(source.at(-2).x - 2480 * scale) < 1 &&
+        Math.abs(source.at(-2).y - 650 * scale) < 1) {
+      const fork = { x: 2480 * scale, y: 650 * scale };
+      wide[0].points = smoothRoad([
+        ...source.slice(0, -1),
+        { x: 2450 * scale, y: 490 * scale },
+        { x: 2350 * scale, y: 240 * scale },
+        { x: 2270 * scale, y: -35 * scale },
+      ], 'cart');
+      wide.push({
+        kind: 'farm',
+        points: smoothRoad([
+          fork,
+          { x: 2630 * scale, y: 495 * scale },
+          { x: 2800 * scale, y: 345 * scale },
+          { ...destination },
+        ], 'farm'),
+      });
     }
     const fragments = [];
     for (const path of footpaths || []) {

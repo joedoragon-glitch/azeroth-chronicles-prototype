@@ -14,6 +14,32 @@ const standard = z.props.find((p) => p.id === 'greenwood-thorn-homestead-standar
 assert(standard && standard.structure === 'crown-banner');
 const lodge = z.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
 assert.equal(lodge.r, 40);
+assert.equal(z.greenwoodHomesteadPresentationVersion, 1,
+  'obsolete homestead decorations cleaned with their own save-safe marker');
+for (const suffix of ['gear', 'training', 'rear-rail', 'east-rail'])
+  assert(!z.props.some((p) => p.id === 'greenwood-thorn-homestead-' + suffix),
+    'redundant homestead courtyard piece removed: ' + suffix);
+// A nearby golden in-world nameplate is not a discovery notice, NPC, or
+// one-time narrative message. The same saved state remains unmodified by art.
+const arrival = new C('normal', 'paladin', rng(0x47564103));
+const arrivalLodge = arrival.zone().props.find((p) =>
+  p.id === 'greenwood-thorn-homestead-lodge');
+assert(arrivalLodge, 'named in-world homestead retains its native prop');
+Object.assign(arrival.hero, { x: arrivalLodge.x + 65, y: arrivalLodge.y + 65 });
+arrival.tick(0.016);
+assert(!arrival.notices.some((n) => /Thornfang.*Homestead/.test(n.text)),
+  'approaching the homestead must not create an unsolicited popup');
+assert(!arrival.messages.some((n) => /Discovered Thornfang/.test(n)),
+  'no discovery chat message');
+assert.equal(arrival.s.discovered['vale:thornfang-homestead'], undefined,
+  'no new persistent discovery key or saving scheme');
+const rendererNames = fs.readFileSync('src/prototype/renderer.js', 'utf8');
+assert(rendererNames.includes('function sceneryPlaceName(e)'),
+  'in-world homestead label is authored in the shared renderer');
+assert(rendererNames.includes("if (home) add([home], 'prop');"),
+  'Pixi overlay uses the shared native nameplate pass');
+assert(rendererNames.includes('if (sceneryPlaceName(e) && worldLabelVisible(e))'),
+  'Canvas draws the same gold label over the actual homestead prop');
 const shape = (zone) =>
   zone.props
     .filter((p) => p.greenwoodGoblinShelter || p.greenwoodWall || p.id.includes('thorn-homestead'))
@@ -149,6 +175,25 @@ for (const path of [
   assert(source.includes('[roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge]'),
     path + ': far slope uses the exact shared ridge');
 }
+// Owner's follow-up: preserve the two shared-depth pitched roofs and remove
+// only repeated painted threshold props; saved yard equipment is untouched.
+const repairedRoofArt = fs.readFileSync('src/prototype/visuals.js', 'utf8');
+assert(repairedRoofArt.includes('const roofHalfEave = 54,') &&
+  repairedRoofArt.includes('roofHalfRidge = 23,'),
+  'winter estate uses a centered shallow slate hip roof');
+const treasuryPitch = repairedRoofArt.slice(repairedRoofArt.indexOf('// Properly joined agricultural roof'),
+  repairedRoofArt.indexOf('// Loading doors remain visible beneath added iron straps and lock.'));
+assert(treasuryPitch.includes('roofRearRight = [71, -55]'),
+  'Treasury has one consistent 42,-16 roof-depth vector');
+const treasuryApron = repairedRoofArt.slice(
+  repairedRoofArt.indexOf('// A shallow former loading apron'),
+  repairedRoofArt.indexOf('return true;', repairedRoofArt.indexOf('// A shallow former loading apron')));
+assert(!treasuryApron.includes("craftedDecoration('crate')") &&
+  !treasuryApron.includes("craftedDecoration('scribe-desk')"),
+  'no duplicate painted props in Treasury doorway');
+assert(landscapeSource.includes('roofRearRight = [84, -66]'),
+  'homestead roof uses common 48,-16 depth vector');
+
 console.log(
   'PASS native compounds, roof topology, Crown standard, fixture anchor and repeat v4 restore',
 );

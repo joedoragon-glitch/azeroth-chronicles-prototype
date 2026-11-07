@@ -189,7 +189,9 @@
     // Canvas sorts the presented body, not a ferry's separate boarding location.
     return result.sort((a, b) => a.visual.x + a.visual.y - (b.visual.x + b.visual.y));
   }
-  function bake(visual, game, density = 1) {
+  function bake(visual, game, density = 1, trace = null, clock = null) {
+    // Bake lives outside create(); the opt-in high-resolution clock is passed by its caller.
+    const readClock = trace ? clock || Date.now : null;
     // The procedural artist draws vectors. Bake at the same final display
     // density as Canvas (camera zoom × backing ratio), not a 1x bitmap.
     const width = Math.round(576 * density),
@@ -199,6 +201,7 @@
     c.setTransform(density, 0, 0, density, 0, 0);
     const center = { x: 288, y: 460 };
     const ambientParts = [];
+    const painterAt = trace ? readClock() : 0;
     const ambient = root.Campaign?.rules?.ambientLife?.[visual.structure || visual.id];
     root.PrototypeVisuals.draw(
       c,
@@ -212,7 +215,13 @@
           : { mode: 'static', onPart: (part) => ambientParts.push(part) }
         : null,
     );
+    if (trace)
+      trace.proceduralPainterMs = (trace.proceduralPainterMs || 0) + Math.max(0, readClock() - painterAt);
+    const readbackAt = trace ? readClock() : 0;
     const { data } = c.getImageData(0, 0, work.width, work.height);
+    if (trace)
+      trace.proceduralReadbackMs = (trace.proceduralReadbackMs || 0) + Math.max(0, readClock() - readbackAt);
+    const alphaScanAt = trace ? readClock() : 0;
     let left = width,
       top = width,
       right = -1,
@@ -226,6 +235,8 @@
           bottom = Math.max(bottom, y);
         }
       }
+    if (trace)
+      trace.proceduralAlphaScanMs = (trace.proceduralAlphaScanMs || 0) + Math.max(0, readClock() - alphaScanAt);
     if (right < left || bottom < top) {
       if (!ambientParts.length) return null;
       // Animal-only groups still need a tiny, transparent retained home node.
@@ -238,6 +249,7 @@
         ambientParts,
       };
     }
+    const cropAt = trace ? readClock() : 0;
     left = Math.max(0, left - 2);
     top = Math.max(0, top - 2);
     right = Math.min(width - 1, right + 2);
@@ -246,6 +258,8 @@
     image
       .getContext('2d')
       .drawImage(work, left, top, image.width, image.height, 0, 0, image.width, image.height);
+    if (trace)
+      trace.proceduralCropMs = (trace.proceduralCropMs || 0) + Math.max(0, readClock() - cropAt);
     return {
       image,
       dx: left / density - center.x,
@@ -335,7 +349,8 @@
       proceduralGpuPrepared = 0,
       gpuPreparationMs = 0,
       gpuPreparationBatches = 0;
-    let cancelGpuPreparation = null;
+    let cancelGpuPreparation = null,
+      deviceGraphics = null;
     // One portrait-stamped Crown coin texture, reused for every visible drop.
     const crownLootTextureId = 'pixi-world-crown-loot';
     let crownLootTexture = null,
@@ -1059,7 +1074,7 @@
         return baked.get(revision);
       }
       const started = measureNow();
-      const body = bake(painted, current, backingRatio * zoom);
+      const body = bake(painted, current, backingRatio * zoom, trace, trace ? measureNow : null);
       if (trace) {
         trace.proceduralRasterMs =
           (trace.proceduralRasterMs || 0) + Math.max(0, measureNow() - started);
@@ -1712,6 +1727,39 @@
       scene.syncMotes(motes, zoom);
       scene.setVignette({ darkness, optimized: !!options.getOptimizationMode() });
     }
+    function readDeviceGraphics(gl) {
+      if (typeof gl?.getParameter !== 'function') return null;
+      const read = (token) => {
+        try {
+          if (token === undefined) return null;
+          const value = gl.getParameter(token);
+          return typeof value === 'string'
+            ? value.slice(0, 240)
+            : Number.isFinite(value)
+              ? value
+              : null;
+        } catch (_) {
+          return null;
+        }
+      };
+      let debug = null;
+      try {
+        debug = gl.getExtension?.('WEBGL_debug_renderer_info');
+      } catch (_) {}
+      return Object.freeze({
+        source: 'existing-game-webgl2-context',
+        observedAt: new Date().toISOString(),
+        version: read(gl.VERSION),
+        renderer: read(gl.RENDERER),
+        vendor: read(gl.VENDOR),
+        shaderVersion: read(gl.SHADING_LANGUAGE_VERSION),
+        unmaskedRenderer: read(debug?.UNMASKED_RENDERER_WEBGL),
+        unmaskedVendor: read(debug?.UNMASKED_VENDOR_WEBGL),
+        maxTextureSize: read(gl.MAX_TEXTURE_SIZE),
+        maxRenderbufferSize: read(gl.MAX_RENDERBUFFER_SIZE),
+        note: 'Last observed actual game context, not a new probe. May describe software rendering; values can be masked/unavailable. This does not certify device speed or current context health.',
+      });
+    }
     async function prepare() {
       if (disposed) throw Error('Experimental renderer disposed');
       // A previous WebGL context can dispatch an asynchronous contextlost
@@ -1754,7 +1802,9 @@
           background: 0x0c1913,
         });
         stage = 'webgl2-context';
-        requireValue(app.canvas.getContext('webgl2'), 'WebGL2 context not available');
+        const actualContext = app.canvas.getContext('webgl2');
+        requireValue(actualContext, 'WebGL2 context not available');
+        deviceGraphics = readDeviceGraphics(actualContext);
         requireValue(
           typeof app.renderer.prepare?.upload === 'function',
           'PixiJS GPU preparation system not installed',
@@ -1972,7 +2022,7 @@
       active = false;
       canvasRenderer.setSilhouetteFrames?.(null);
       silhouetteFrames = null;
-      if (app?.canvas) app.canvas.style.display = 'none';
+      if (app?.renderer && app.canvas) app.canvas.style.display = 'none';
     }
     function disposeResources() {
       dropBackgroundLookahead(true);
@@ -1990,10 +2040,16 @@
       backing?.destroy?.(false);
       backing = null;
       if (app) {
-        const node = app.canvas;
-        app.destroy(true);
-        node?.remove();
+        // Pixi's canvas getter dereferences renderer.canvas. If init rejected
+        // before a renderer existed, calling it (or destroy) masks the root
+        // startup error and strands the next retry on a half-created app.
+        const previous = app;
         app = null;
+        if (previous.renderer) {
+          const node = previous.canvas;
+          previous.destroy(true);
+          node?.remove();
+        }
       }
       backgroundRenderer = null;
       backdrop = null;
@@ -2025,6 +2081,7 @@
       status: () => ({
         active,
         lastError,
+        deviceGraphics,
         // Actual Pixi scene counters; Canvas overlay counters are separate.
         sceneMetrics: scene?.metrics?.() || null,
         drawCpuProfile: drawCpuReport(),

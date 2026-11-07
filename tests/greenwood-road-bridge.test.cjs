@@ -52,9 +52,18 @@ assert(g.clearSegment(
   {x:1530,y:2297}, {x:1940,y:2297}, 15, true,
 ), 'southern footbridge has body clearance even with modest off-center walking');
 const prepared = Landscape.prepareRoadPaint(z.roads, z.footpaths, z.greenwoodRoadKinds);
-// Renderer-only trade exit carries the visual main road to the region edge;
-// actual wagon transport, authored routes and save data remain untouched.
-assert.deepEqual(prepared.wide[0].points.at(-1), { x: 3200, y: 80 });
+// The principal road now continues across the north boundary instead of
+// turning toward the merchant stop. A modest farm-width branch still serves
+// the original wagon anchor without changing the underlying authored route.
+assert.deepEqual(prepared.wide[0].points.at(-1), { x: 2270, y: -35 });
+const wagonSpur = prepared.wide.find((road) =>
+  road.kind === 'farm' &&
+  Math.abs(road.points[0].x - 2480) < 1 &&
+  Math.abs(road.points[0].y - 650) < 1);
+assert(wagonSpur, 'merchant access visibly forks from the main road');
+assert.deepEqual(wagonSpur.points.at(-1), { x: 2880, y: 280 });
+assert.deepEqual(z.roads[0].at(-1), { x: 2880, y: 280 },
+  'saved authoritative merchant travel anchor remains unchanged');
 assert(prepared.wide.some((road) => road.kind === 'path'),
   'short maintained Millhaven side lanes share cart/farm earth painting');
 const southPaint = prepared.wide.find((road) =>

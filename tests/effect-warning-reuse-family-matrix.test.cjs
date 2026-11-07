@@ -11,7 +11,8 @@ const families = ['thorn', 'crypt', 'mire', 'archive', 'ridge', 'mine',
   'warlord', 'abyss', 'citadel', 'cindermaw', 'darklord'];
 const viewports = [{ w: 900, h: 600, zoom: 1 },
   { w: 393, h: 852, zoom: 1.5 }];
-let compared = 0, cachedReductions = 0, inkCases = 0;
+let compared = 0, singlePassChecks = 0, inkCases = 0;
+const checkedKinds = new Set();
 
 function scenario(id) {
   const game = new Campaign('developer', 'paladin', () => 0.5);
@@ -76,10 +77,13 @@ for (const id of families) {
         id + ': caching altered live warning fill/outline pixels');
       assert(after.calls <= before.calls,
         id + ': cache created extra gameplay attackPatch calls');
-      if (before.calls >= 2) {
-        assert(after.calls < before.calls,
-          id + ': duplicate projection path failed to reuse real warning geometry');
-        cachedReductions++;
+      // One-pass presentation already constructs each attack once even
+      // without the per-draw cache. Its correctness is identical in both modes.
+      assert(before.calls <= 1 && after.calls <= 1,
+        id + ': one active warning reconstructed attack patches more than once');
+      if (before.calls === 1) {
+        singlePassChecks++;
+        checkedKinds.add(boss.telegraph.kind);
       }
       if (before.visible > 0) inkCases++;
       compared++;
@@ -92,10 +96,10 @@ for (const id of families) {
 }
 assert.equal(compared, 44);
 assert(inkCases > 0, 'no actual warning pixels across all boss families');
-assert(cachedReductions >= 3,
-  'did not exercise the already-confirmed cone/canister/ring reuse');
+for (const kind of ['cone', 'canister', 'ring'])
+  assert(checkedKinds.has(kind), 'single-pass warning coverage missing ' + kind);
 console.log('PASS Stage 5.3 all 11 first-boss warning families, ' +
   compared + ' same-state native Canvas comparisons across desktop/phone viewport ' +
-  'and fresh moved-warning draws; ' + cachedReductions +
-  ' duplicate attackPatch reconstructions reduced; 0 gameplay writes by painting. ' +
+  'and fresh moved-warning draws; ' + singlePassChecks +
+  ' single-pass warnings with no duplicate patch work; 0 gameplay writes by painting. ' +
   'No natural crowd, Pixi GPU parity or hardware FPS claim.');
