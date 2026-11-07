@@ -7,6 +7,9 @@
     // Opt-in and unsaved. Navigation/terrain diagnostics no longer inspect actors.
     // Disabled diagnostics add zero runtime instrumentation overhead.
     const diagnosticSessions = new WeakMap();
+    // Renderer-recording-only, per-update route attribution. Never saved and
+    // never enabled by ordinary gameplay or by the separate crowd recorder.
+    const enemyRouteTraces = new WeakMap();
     const diagnosticMetrics = [
       'moveCalls',
       'moveMs',
@@ -1826,6 +1829,33 @@
         }
       };
     }
+    // The native route implementation is untouched; observe only calls made
+    // while the app explicitly brackets a recorded enemy-update substage.
+    const originalRoute = methods.route.value;
+    methods.route.value = function (...args) {
+      const trace = enemyRouteTraces.get(this);
+      if (!trace) return originalRoute.apply(this, args);
+      const started = performance.now();
+      try {
+        return originalRoute.apply(this, args);
+      } finally {
+        const row = trace.phases[trace.phase];
+        if (row) {
+          const ms = Math.max(0, performance.now() - started);
+          row.routeCalls++;
+          row.routeMs += ms;
+          row.maxRouteMs = Math.max(row.maxRouteMs, ms);
+        }
+      }
+    };
+    methods.setEnemyRouteTrace = {
+      configurable: true,
+      writable: true,
+      value(trace) {
+        if (trace) enemyRouteTraces.set(this, trace);
+        else enemyRouteTraces.delete(this);
+      },
+    };
     delete methods.constructor;
     Object.defineProperties(Campaign.prototype, methods);
   }
