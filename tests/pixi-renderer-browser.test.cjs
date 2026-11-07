@@ -63,18 +63,18 @@ async function selectPixi(page) {
 // Drive the actual modern title-screen flow. Earlier graphics tests relied
 // on automatic gameplay startup and could silently skip preloading entirely.
 async function enterPlayableGame(page) {
-  await page.waitForFunction(() => !!window.Prototype?.renderer);
-  await require('./helpers/language-browser.cjs').selectEnglish(page);
+  await page.waitForFunction(() =>
+    !!window.Prototype?.renderer && document.querySelector('#startup-update')?.hidden);
+  // Real first-use UI: language welcome precedes the title and new-game hero cards.
+  if (await page.locator('#language-welcome').isVisible())
+    await page.locator('#language-welcome [data-language="en"]').click();
   const title = page.locator('#title-screen');
   if (await title.evaluate((el) => !el.hidden)) {
-    if (!(await page.locator('#title-continue').isDisabled())) {
+    if (await page.locator('#title-continue').isEnabled()) {
       await page.locator('#title-continue').click();
     } else {
       await page.locator('#title-new').click();
-      await page.getByRole('button', {name:'New Normal game', exact:true}).click();
-      await page.getByRole('button', {name:/^English(?: ✓)?$/}).click();
-      await page.getByRole('button',
-        {name:'Standard death and refuge recovery', exact:true}).click();
+      await page.getByRole('button', {name:/^Choose Hero/}).click();
       await page.getByRole('button', {name:/Paladin/}).first().click();
     }
   }
