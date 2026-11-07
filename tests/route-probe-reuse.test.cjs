@@ -6,7 +6,7 @@ const { performance } = require('node:perf_hooks');
 const C = require('../src/prototype/engine'),
   D = require('../src/prototype/data'),
   R = require('../src/prototype/rules');
-const base = process.env.PERF_BASE_SHA || '6ac2f4f3dd4e6f8e34075971f653ee5d8b069692';
+const base = process.env.PERF_BASE_SHA || '5a7be00b68e640d51f5a8b9f493fb05695b4bf4a';
 const original = cp.execFileSync('git', ['show', base + ':src/prototype/navigation.js'], {
   encoding: 'utf8',
 });
