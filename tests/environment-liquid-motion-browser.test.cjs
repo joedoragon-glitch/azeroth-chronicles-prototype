@@ -99,6 +99,11 @@ async function main(){
           'WebGL2 fell back before testing liquid parity');
         await page.locator('#gpu-renderer-trial button').first().click({timeout:8000});
         await page.waitForFunction(()=>Prototype.experimentalGraphics.phase==='confirmed');
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+        await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+        await page.getByRole('button', { name: 'Pixi graphics', exact: true }).click();
+        await page.getByRole('switch', { name: /^Optimization Mode/ }).click();
       }
       await page.evaluate(()=>Prototype.closeMenu());
     }
@@ -123,7 +128,7 @@ async function main(){
       const first=await page.evaluate(s=>({
         renderer:Prototype.experimentalGraphics.mode,
         effective:Prototype.renderer.metrics().optimizationMode,
-        pixiEffective:Prototype.experimentalGraphics.backgroundOptimized,
+        pixiPreset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1')).preset,
         liquidStrokes:Prototype.experimentalGraphics.sceneMetrics?.liquidStrokes,
         hero:{x:Prototype.game.hero.x,y:Prototype.game.hero.y},
         hazardScreen:Prototype.renderer.screen(s.hazard),
@@ -134,7 +139,7 @@ async function main(){
       const last=await page.evaluate(s=>({
         renderer:Prototype.experimentalGraphics.mode,
         effective:Prototype.renderer.metrics().optimizationMode,
-        pixiEffective:Prototype.experimentalGraphics.backgroundOptimized,
+        pixiPreset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1')).preset,
         liquidStrokes:Prototype.experimentalGraphics.sceneMetrics?.liquidStrokes,
         hero:{x:Prototype.game.hero.x,y:Prototype.game.hero.y},
         hazardScreen:Prototype.renderer.screen(s.hazard),
@@ -155,11 +160,12 @@ async function main(){
         'Hazard must remain inside measured screenshot crop');
       assert.equal(first.renderer,mode,'unexpected renderer or silent fallback');
       assert.equal(last.renderer,mode,'late renderer fallback');
-      assert.equal(first.effective,'on','Matched effective On required');
-      assert.equal(last.effective,'on','Stable effective On required');
-      if(mode==='webgl2'){
-        assert.equal(first.pixiEffective,true);
-        assert.equal(last.pixiEffective,true);
+      if(mode==='canvas2d'){
+        assert.equal(first.effective,'on','Canvas optimization must be On');
+        assert.equal(last.effective,'on','Canvas optimization must stay On');
+      } else {
+        assert.equal(first.pixiPreset,true);
+        assert.equal(last.pixiPreset,true);
         assert(first.liquidStrokes>0&&last.liquidStrokes>0,
           'GPU scene must contain live glints at BOTH stationary capture times');
       }
