@@ -24,7 +24,11 @@ function arena(boss = false) {
     level: e.level + 1,
     immune: 0,
   });
-  c.engage(e);
+  // Vale's real first-contact protection requires the hero to initiate the
+  // encounter; bypassing that setup left this fixture unengaged and prevented
+  // its already-committed attack clock from advancing. No game rule changes.
+  c.admitOpeningHeroAttack(e);
+  assert.equal(c.engage(e), true, 'fixture must enter native combat before testing cast continuity');
   Object.assign(e, { cd: 100, specialCd: 100, summonCd: 100 });
   return { c, e };
 }
