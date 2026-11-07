@@ -32,17 +32,16 @@ function executable(){
   return null;
 }
 async function enterGame(page){
-  await page.waitForFunction(()=>!!window.Prototype?.renderer);
-  await require('./helpers/language-browser.cjs').selectEnglish(page);
+  await page.waitForFunction(()=>!!window.Prototype?.renderer && document.querySelector('#startup-update')?.hidden);
+  if (await page.locator('#language-welcome').isVisible())
+    await page.locator('#language-welcome [data-language="en"]').click();
   const title=page.locator('#title-screen');
   if(await title.evaluate(el=>!el.hidden)){
     if(!(await page.locator('#title-continue').isDisabled()))
       await page.locator('#title-continue').click();
     else{
       await page.locator('#title-new').click();
-      await page.getByRole('button',{name:'New Normal game',exact:true}).click();
-      await page.getByRole('button',{name:/^English(?: ✓)?$/}).click();
-      await page.getByRole('button',{name:'Standard death and refuge recovery',exact:true}).click();
+      await page.getByRole('button', { name: /^Choose Hero/ }).click();
       await page.getByRole('button',{name:/Paladin/}).first().click();
     }
   }
