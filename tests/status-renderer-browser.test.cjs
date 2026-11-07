@@ -382,10 +382,15 @@ async function run() {
         isMobile: phone, hasTouch: phone,
       });
       try {
+        await context.addInitScript(() => {
+          localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
+          localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+          localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+        });
         const page = await context.newPage();
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
-        await page.goto(host + (phone ? 'phone.html' : 'index.html'));
+        await page.goto(host + (phone ? 'phone-game.html' : 'index.html'));
         await page.waitForFunction(() => !!window.Prototype?.renderer);
         await enterPlayableGame(page);
         await page.waitForFunction(() => document.querySelector('#modal').hidden);
