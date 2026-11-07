@@ -32,6 +32,7 @@ const quick = new Set([
   'enemy-vfx-inventory',
   'enemy-support-healing',
   'terrain-effects',
+  'occlusion-three-surface-composition',
   'first-boss-balance',
   'dungeon-pressure',
   'abyss-flight-project',

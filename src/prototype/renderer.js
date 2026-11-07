@@ -986,7 +986,7 @@
         const size = outlineSize(pair.actor);
         if (!outlineLayers.has(size)) {
           const layers = [];
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < 3; i++) {
             const surface = document.createElement('canvas');
             surface.width = surface.height = size;
             const brush = surface.getContext('2d');
@@ -996,7 +996,7 @@
           outlineLayers.set(size, layers);
         }
         const layers = outlineLayers.get(size);
-        const [actorLayer, tintLayer, edgeLayer, coverLayer] = layers,
+        const [actorLayer, edgeLayer, coverLayer] = layers,
           centerX = size / 2,
           footY = size === 384 ? 260 : 192,
           ring =
@@ -1046,16 +1046,13 @@
           true,
         );
 
-        // Color the real actor alpha, not a rectangle or an ellipse.
-        const tint = tintLayer.brush;
-        tint.drawImage(actorLayer.surface, 0, 0);
-        tint.globalCompositeOperation = 'source-in';
-        tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
-        tint.fillRect(0, 0, size, size);
-        tint.globalCompositeOperation = 'source-over';
-
+        // Alpha-union first, color last. Drawing the raw actor alpha into
+        // the ring and applying the same solid tint after clipping is
+        // equivalent to tinting before the ring, but avoids a fourth
+        // full-size offscreen surface and one actor bitmap copy per mask.
+        // Keep both subtraction and foreground-alpha intersection exact.
         const edge = edgeLayer.brush;
-        for (const [dx, dy] of ring) edge.drawImage(tintLayer.surface, dx, dy);
+        for (const [dx, dy] of ring) edge.drawImage(actorLayer.surface, dx, dy);
         edge.globalCompositeOperation = 'destination-out';
         edge.drawImage(actorLayer.surface, 0, 0);
         edge.globalCompositeOperation = 'source-over';
@@ -1075,6 +1072,9 @@
           );
         edge.globalCompositeOperation = 'destination-in';
         edge.drawImage(coverLayer.surface, 0, 0);
+        edge.globalCompositeOperation = 'source-in';
+        edge.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
+        edge.fillRect(0, 0, size, size);
         edge.globalCompositeOperation = 'source-over';
         ctx.save();
         ctx.globalAlpha = 0.46;
@@ -3820,8 +3820,8 @@
         enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
         groundCache: groundCache?.status() || null,
         outlineBuffers: {
-          surfaces: outlineLayers.size * 4,
-          bytes: [...outlineLayers.keys()].reduce((sum, size) => sum + size * size * 4 * 4, 0),
+          surfaces: outlineLayers.size * 3,
+          bytes: [...outlineLayers.keys()].reduce((sum, size) => sum + size * size * 4 * 3, 0),
         },
         phases: phaseReport(),
       }),
