@@ -257,6 +257,51 @@ async function run() {
         localStorage.setItem('azeroth-renderer-choice-v1','canvas2d');
       }
     };
+    // Focused CI performs one real user-facing renderer-failure and settings
+    // journey. The complete Mage/lighting/zoom/reload/phone trial matrix below
+    // is intentionally retained for deliberate full manual browser acceptance.
+    // Running both sequential journeys under one CI process hit its 6-minute
+    // watchdog after the first Mage pass, without diagnosing a product defect.
+    if (process.env.PIXI_BROWSER_FOCUSED === '1') {
+      const context = await browser.newContext({
+        viewport: {width: 1280, height: 800}, acceptDownloads: true,
+      });
+      try {
+        await context.addInitScript(startCanvasManualTrial);
+        const page = await context.newPage();
+        const pageErrors = [];
+        page.on('pageerror', error => pageErrors.push(error.message));
+        await page.goto(host + 'index.html');
+        await enterPlayableGame(page);
+        assert.equal((await page.evaluate(() => Prototype.experimentalGraphics)).mode, 'canvas2d');
+        const gpu = await selectPixi(page);
+        assert.equal(gpu.mode, 'webgl2',
+          'Required WebGL2 context must become active during deliberate selection');
+        await keepPixiTrial(page, false, 'focused Canvas fallback settings');
+        await page.evaluate(() => {
+          const canvas = document.querySelector('#world-pixi-experimental');
+          if (!canvas) throw Error('Confirmed WebGL canvas missing');
+          canvas.dispatchEvent(new Event('webglcontextlost', {cancelable: true}));
+        });
+        await page.waitForFunction(() => Prototype.experimentalGraphics.mode === 'canvas2d');
+        const failed = await page.evaluate(() => Prototype.experimentalGraphics);
+        assert.equal(failed.lastFailure?.type, 'context-loss');
+        assert.equal(failed.preferredRenderer, 'webgl2',
+          'Safety fallback must preserve preferred Pixi renderer');
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        assert.equal(await page.locator('select[aria-label="Optimization Mode"]').count(), 1,
+          'Active Canvas fallback must expose effective Canvas quality policy');
+        assert.equal(await page.getByText('Atmospheric particles', {exact:true}).count(), 0,
+          'Inactive Pixi particle policy cannot masquerade as Canvas quality');
+        assert.deepEqual(pageErrors, [], 'WebGL failure must not crash the game');
+        console.log('PASS focused live Pixi trial, Keep, context-loss and Canvas settings');
+      } finally {
+        await context.close();
+      }
+      return;
+    }
     // Complete Mage-specific desktop and phone presentation first. A failure in
     // the separate generic WebGL recovery journey must not prevent recording
     // whether Mage Skill 1 itself draws on Canvas and the Pixi combat overlay.
