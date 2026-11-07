@@ -4,6 +4,29 @@ const Campaign = require('../src/prototype/engine.js');
 const R = Campaign.rules;
 const kinds = ['spikes', 'jet', 'seal'];
 const regions = ['vale', 'march', 'highlands', 'frontier', 'crown'];
+const { trapCueNearHero } = require('../src/prototype/combat-visuals.js');
+const cueGame = { hero: { x: 130, y: 0 } };
+for (const kind of ['spikes', 'seal']) {
+  const t = { kind, x: 0, y: 0, radius: 40 };
+  assert.equal(trapCueNearHero(cueGame, t), true,
+    kind + ' cue starts 90 world units outside its dangerous edge');
+  cueGame.hero.x = 131;
+  assert.equal(trapCueNearHero(cueGame, t), false,
+    kind + ' is not warned from farther away');
+  cueGame.hero.x = 0;
+  assert.equal(trapCueNearHero(cueGame, t), true, kind + ' is visible inside its footprint');
+  cueGame.hero.x = 130;
+}
+const jetCue = { kind: 'jet', x: 0, y: 0, length: 140, halfWidth: 30 };
+cueGame.hero.x = 190; cueGame.hero.y = 0;
+assert.equal(trapCueNearHero(cueGame, jetCue), true, 'jet end is within its edge margin');
+cueGame.hero.x = 191;
+assert.equal(trapCueNearHero(cueGame, jetCue), false, 'jet end is too far');
+cueGame.hero.x = 0; cueGame.hero.y = 120;
+assert.equal(trapCueNearHero(cueGame, jetCue), true, 'jet side uses lane, not center distance');
+cueGame.hero.y = 121;
+assert.equal(trapCueNearHero(cueGame, jetCue), false, 'jet side hides beyond margin');
+
 
 // Every authored trap placement is accounted for, including optional interiors
 // and outdoor mini encounters. Names alone never imply secondary conditions.
