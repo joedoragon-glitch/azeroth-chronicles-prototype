@@ -30,7 +30,7 @@ const { shell } = require('./helpers/production-shell.cjs');
     openPerformance();
     assert(actions().some((item) => item.textContent.startsWith(
       label('Export playtest report', 'Exportar informe de prueba'))));
-    click(label('Show performance details', 'Mostrar detalles de rendimiento'));
+    click(label('Diagnostics', 'Diagnósticos'));
     click(label('Start renderer profiling', 'Iniciar registro del renderizador'));
     assert(actions().some((item) => item.textContent.startsWith(
       label('Stop renderer profiling', 'Detener registro del renderizador'))));
@@ -67,6 +67,7 @@ const { shell } = require('./helpers/production-shell.cjs');
     elements.get('title-continue').click();
     app.frame(1360);
     openPerformance();
+    click(label('Diagnostics', 'Diagnósticos'));
     click(label('Stop renderer profiling', 'Detener registro del renderizador'));
     click(label('Export playtest report', 'Exportar informe de prueba'));
     assert(exported, 'the player receives the standard local JSON download');
@@ -179,7 +180,7 @@ const { shell } = require('./helpers/production-shell.cjs');
       entry.click();
     };
     settingsClick(label('Screen and performance', 'Pantalla y rendimiento'));
-    settingsClick(label('Show performance details', 'Mostrar detalles de rendimiento'));
+    settingsClick(label('Diagnostics', 'Diagnósticos'));
     assert(settingsActions().some((item) => item.textContent.startsWith(
       label('Stop renderer profiling', 'Detener registro del renderizador'))),
       'profiler remains opt-in active after document restart');
