@@ -31,6 +31,7 @@ async function selectPixi(page) {
   await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
   await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
+  await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
   try {
     // A complete current-region atlas can legitimately take much longer than
