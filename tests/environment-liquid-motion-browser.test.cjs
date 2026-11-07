@@ -59,6 +59,11 @@ async function main(){
         '--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'],
     });
     const context=await browser.newContext({viewport:{width:1180,height:750}});
+    await context.addInitScript(() => {
+      localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
+      localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+      localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+    });
     const page=await context.newPage(), errors=[];
     page.on('pageerror',error=>errors.push(String(error)));
     await page.goto('http://127.0.0.1:'+server.address().port+'/index.html');
