@@ -364,49 +364,28 @@ async function run() {
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        // Settings intentionally pauses world drawing. A preference change must
-        // be observed only after normal gameplay resumes, not while the menu is open.
-        // Preserve the existing 15-second WebGL2 Keep/Revert trial unchanged.
-        await page.locator('select[aria-label="Optimization Mode"]').selectOption('on');
-        assert.equal(await page.evaluate(() =>
-          localStorage.getItem('azeroth-optimization-mode-v1')), 'on');
-        await page.evaluate(() => Prototype.closeMenu());
+        const preset = page.getByRole('switch', { name: /^Optimization Mode/ });
+        const density = page.getByRole('combobox', { name: 'Rendering resolution' });
+        await density.selectOption('100');
+        const beforePreset = await page.evaluate(() => ({
+          campaign: JSON.stringify(Prototype.game.snapshot()),
+          canvasMode: localStorage.getItem('azeroth-optimization-mode-v1'),
+        }));
+        await preset.click();
         await page.waitForFunction(() =>
-          Prototype.experimentalGraphics.backgroundOptimized === true,
-          null, {timeout:15000});
-        assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2');
-
-        await page.locator('#menu-button').click();
-        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
-        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        await page.locator('select[aria-label="Optimization Mode"]').selectOption('off');
+          Prototype.experimentalGraphics.mode === 'webgl2' &&
+          Math.abs(Prototype.experimentalGraphics.pixelRatio - 0.8) < 0.001 &&
+          Prototype.experimentalGraphics.sceneMetrics.atmosphereMotes === 0);
+        assert.equal(await density.inputValue(), '100', 'Preset preserves custom density');
+        assert.deepEqual(await page.evaluate(() => ({
+          campaign: JSON.stringify(Prototype.game.snapshot()),
+          canvasMode: localStorage.getItem('azeroth-optimization-mode-v1'),
+        })), beforePreset, 'Preset leaves campaign and Canvas preference intact');
+        await preset.click();
+        await page.waitForFunction(() => Prototype.experimentalGraphics.pixelRatio === 1);
         assert.equal(await page.evaluate(() =>
-          localStorage.getItem('azeroth-optimization-mode-v1')), 'off');
+          JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1')).preset), false);
         await page.evaluate(() => Prototype.closeMenu());
-        await page.waitForFunction(() =>
-          Prototype.experimentalGraphics.backgroundOptimized === false,
-          null, {timeout:15000});
-
-        await page.locator('#menu-button').click();
-        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
-        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        await page.locator('select[aria-label="Optimization Mode"]').selectOption('auto');
-        assert.equal(await page.evaluate(() =>
-          localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
-        await page.evaluate(() => Prototype.closeMenu());
-        assert.equal(await page.evaluate(() => localStorage.getItem('azeroth-renderer-choice-v1')),
-          'webgl2');
-        // Auto may legitimately change the active optimization tier under a
-        // loaded headless runner, resetting the bounded timing buffer.
-        // Profile in a fixed user-selectable tier, after testing Auto itself.
-        await page.locator('#menu-button').click();
-        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
-        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        await page.locator('select[aria-label="Optimization Mode"]').selectOption('on');
-        await page.evaluate(() => Prototype.closeMenu());
-        await page.waitForFunction(() =>
-          Prototype.experimentalGraphics.backgroundOptimized === true &&
-          Prototype.experimentalGraphics.mode === 'webgl2', null, {timeout:15000});
         await page.waitForFunction(() => {
           const r=Prototype.frameProfile.report();
           return r.stages.pixiMs.samples>0 && r.stages.canvasOverlayMs.samples>0;

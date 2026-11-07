@@ -42,3 +42,7 @@ Pixi preparation uses the explicit rendering density and optimization preference
 ## Pixi pacing follow-up candidate
 
 Routine Pixi frame skipping requires drawing to account for at least half of the measured callback work. The existing budget, consecutive-skip and frame-age limits still apply. Canvas and emergency protection retain their existing rules. This is a stacked, unpublished candidate. The selected FPS remains a draw target, separate from confirmed presentation and simulation timing.
+
+## Pixi graphics settings reconciliation, dev.272 candidate
+
+Pixi keeps its own resolution, atmospheric-particle preference, and Optimization Mode state. The preset caps resolution at the tested 80% candidate and hides decorative motes. A previously selected lower custom resolution is respected. Turning the preset off restores custom choices. Changes draw while the settings screen pauses the campaign, so density preparation happens before gameplay resumes. Canvas retains its own automatic and manual preferences. Pixi keeps the normal terrain, audio, warning, and input behavior. New FPS choices are Auto, 20 and 60. An existing legacy 30 or Auto 30–60 choice stays selectable until the player chooses a new target. Existing explicit 60% or 50% resolution choices likewise carry forward until changed. The preset is opt-in. Software-browser evidence and actual owner hardware acceptance are separate.

@@ -1860,16 +1860,19 @@
       // They continue drifting even when the player/camera is stationary.
       const zoomedWidth = viewport.width / zoom,
         zoomedHeight = viewport.height / zoom;
-      const motes = root.PrototypeVisuals.atmosphereMotes({
-        width: zoomedWidth,
-        height: zoomedHeight,
-        region,
-        darkness,
-        dungeon: !!current.isDungeon(),
-        room: !!current.supplyRoom(),
-        optimized: !!options.getOptimizationMode(),
-        time: (typeof performance !== 'undefined' ? performance.now() : 0) / 1000,
-      });
+      const motes =
+        options.getAtmosphericParticles?.() === false
+          ? []
+          : root.PrototypeVisuals.atmosphereMotes({
+              width: zoomedWidth,
+              height: zoomedHeight,
+              region,
+              darkness,
+              dungeon: !!current.isDungeon(),
+              room: !!current.supplyRoom(),
+              optimized: !!options.getOptimizationMode(),
+              time: (typeof performance !== 'undefined' ? performance.now() : 0) / 1000,
+            });
       scene.syncMotes(motes, zoom);
       scene.setVignette({ darkness, optimized: !!options.getOptimizationMode() });
     }

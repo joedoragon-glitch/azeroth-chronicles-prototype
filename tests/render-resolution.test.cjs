@@ -200,3 +200,16 @@ for (const [preference, skipping] of [
 console.log(
   'PASS adaptive density: 20/30/60 FPS, live resize/recovery, Auto FPS and skip coupling, cadence, fixed preferences and existing guards',
 );
+
+// First Pixi launch migrates a manual Canvas choice once, including Auto.
+for (const legacy of ['auto', '80']) {
+  const values = new Map();
+  const store = { getItem: key => values.get(key), setItem: (key, value) => values.set(key, value) };
+  const key = 'pixi-resolution-test';
+  const first = Runtime.createResolution(store, key, legacy);
+  assert.equal(first.preference, legacy);
+  assert.equal(values.get(key), legacy);
+  assert.equal(Runtime.createResolution(store, key, '50').preference, legacy);
+  first.select('100');
+  assert.equal(Runtime.createResolution(store, key, '50').preference, '100');
+}

@@ -947,6 +947,13 @@
       'Elige la disposición y los controles de movimiento.',
     'Tap reachable ground to move.': 'Toca terreno accesible para moverte.',
     'Optimization Mode': 'Modo de optimización',
+    'Atmospheric particles': 'Partículas ambientales',
+    'Custom resolution. Optimization Mode applies the performance limit.':
+      'Resolución personalizada. El modo de optimización aplica el límite de rendimiento.',
+    'Use the Pixi performance preset. Turn it off to restore custom settings.':
+      'Usa el perfil de rendimiento de Pixi. Desactívalo para restaurar tus ajustes.',
+    'Decorative motes only. The performance preset hides them.':
+      'Solo partículas decorativas. El perfil de rendimiento las oculta.',
     'Auto · Recommended': 'Auto · Recomendado',
     'Auto lowers graphics under sustained load. Emergencies can override Off.':
       'Auto reduce los gráficos cuando hay mucha carga. Las emergencias pueden anular Desactivado.',
@@ -2290,6 +2297,35 @@
   const fps = PrototypeRuntime.createFrameRate(localStorage);
   const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
+  const pixiResolution = PrototypeRuntime.createResolution(
+    localStorage,
+    'azeroth-pixi-resolution-v1',
+    renderResolution.preference,
+  );
+  const pixiQualityKey = 'azeroth-pixi-quality-v1';
+  const pixiQuality = { preset: false, particles: true };
+  try {
+    const saved = JSON.parse(localStorage.getItem(pixiQualityKey));
+    if (typeof saved?.preset === 'boolean') pixiQuality.preset = saved.preset;
+    if (typeof saved?.particles === 'boolean') pixiQuality.particles = saved.particles;
+  } catch (_) {}
+  const pixiMinimumScale = 0.8;
+  function pixiScale() {
+    const custom = pixiResolution.selectedRatio(pixiResolutionMaximum);
+    return pixiQuality.preset ? Math.min(custom, pixiMinimumScale) : custom;
+  }
+  function applyPixiQuality() {
+    try {
+      localStorage.setItem(pixiQualityKey, JSON.stringify(pixiQuality));
+    } catch (_) {}
+    if (!canvasQualityBeforePixi) return;
+    resize('pixi-quality');
+    // Rebuild while the settings menu still pauses the campaign.
+    if (started && menu && graphicsController.status().mode === 'webgl2') drawWorld();
+    runtime.reset();
+    frameProfile.reset();
+    fps.suspend();
+  }
   const autoOptimization = PrototypeRuntime.createAutoOptimization();
   let canvasQualityBeforePixi = null;
   let pixiResolutionMaximum = 1;
@@ -2297,7 +2333,7 @@
     const state = renderResolution.status();
     if (!canvasQualityBeforePixi) return state;
     return {
-      ...state,
+      ...pixiResolution.status(),
       ratio: canvas.width / Math.max(1, viewport.width),
       maximum: pixiResolutionMaximum,
       changes: 0,
@@ -2385,7 +2421,8 @@
           getGame: () => game,
           canvasRenderer: renderer,
           getRendererOptions: () => rendererSetup,
-          getOptimizationMode: () => optimizationMode,
+          getOptimizationMode: () => false,
+          getAtmosphericParticles: () => !pixiQuality.preset && pixiQuality.particles,
           getDiagnosticRecording: () => rendererDiagnosticActive,
           onPreparationProgress: ({ prepared, total }) => {
             // One loading surface throughout decode, terrain tiles and GPU
@@ -2520,8 +2557,7 @@
             preference: optimizationPreference,
           };
           // Select explicit quality before Pixi creates its backing surfaces.
-          if (!setOptimizationActive(optimizationPreference === 'on', 'pixi-prepare'))
-            resize('pixi-prepare');
+          if (!setOptimizationActive(false, 'pixi-prepare')) resize('pixi-prepare');
           return pixiGame.prepare();
         },
         getFailureDetails: () => pixiGame.failureDetails?.() || null,
@@ -2838,12 +2874,9 @@
     // Pixi uses the chosen density without consuming Canvas adaptation history.
     if (canvasQualityBeforePixi) pixiResolutionMaximum = maximumRatio;
     else renderResolution.configure(maximumRatio);
-    const chosenRatio = canvasQualityBeforePixi
-      ? renderResolution.selectedRatio(maximumRatio)
-      : renderResolution.ratio;
+    const chosenRatio = canvasQualityBeforePixi ? pixiScale() : renderResolution.ratio;
     // Arena only: hard-cap world pixels without saving a preference.
-    const ratio =
-      game?.s?.mode === 'arena' ? Math.min(chosenRatio, 0.5) : chosenRatio;
+    const ratio = game?.s?.mode === 'arena' ? Math.min(chosenRatio, 0.5) : chosenRatio;
     const backingWidth = Math.round(innerWidth * ratio),
       backingHeight = Math.round(innerHeight * ratio),
       widthChanged = canvas.width !== backingWidth,
@@ -4929,7 +4962,7 @@
       graphicsController.revert();
       setOptimizationActive(true);
       resize();
-    } else setOptimizationActive(optimizationPreference === 'on');
+    } else setOptimizationActive(!canvasQualityBeforePixi && optimizationPreference === 'on');
     loaded = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
@@ -5991,6 +6024,13 @@
           frameRateTarget: fps.target,
           frameSkip: frameSkip.status(),
           renderResolution: resolutionStatus(),
+          pixiQuality: {
+            ...pixiQuality,
+            requestedResolution: pixiResolution.preference,
+            effectiveParticles: canvasQualityBeforePixi
+              ? !pixiQuality.preset && pixiQuality.particles
+              : null,
+          },
           optimizationMode: optimizationMode ? 'on' : 'off',
           optimizationPreference,
           emergencyGraphicsOverride: optimizationMode && optimizationPreference === 'off',
@@ -6122,19 +6162,23 @@
   let performanceDetailsExpanded = false;
   let effectRecording = false;
   function platformMenu(back = systemMenu) {
+    const graphics = graphicsController.status();
+    const pixiSettings = (graphics.preferredRenderer || graphics.mode) === 'webgl2';
     const resolutions = [
       ['auto', 'Automatic sharpness'],
       ['native', 'Maximum sharpness'],
       ['100', '100% · Standard'],
       ['80', '80% · Balanced'],
-      ['60', '60% · Performance'],
-      ['50', '50% · Maximum speed'],
+      ...(!pixiSettings || pixiResolution.preference === '60' ? [['60', '60% · Performance']] : []),
+      ...(!pixiSettings || pixiResolution.preference === '50'
+        ? [['50', '50% · Maximum speed']]
+        : []),
     ];
     const frameRates = [
       ['auto', 'Auto 20–30 FPS · Default'],
-      ['auto60', 'Auto 30–60 FPS'],
+      ...(fps.preference === 'auto60' ? [['auto60', 'Auto 30–60 FPS']] : []),
       ['20', '20 FPS'],
-      ['30', '30 FPS'],
+      ...(fps.preference === '30' ? [['30', '30 FPS']] : []),
       ['60', '60 FPS'],
     ];
     const choices = (values) => values.map(([value, label]) => ({ value, label }));
@@ -6174,38 +6218,74 @@
         'Zoom changes your view only.',
       ),
       menuControls.section('Graphics'),
-      menuControls.select(
-        'Optimization Mode',
-        optimizationPreference,
-        choices([
-          ['off', 'Off'],
-          ['auto', 'Auto · Recommended'],
-          ['on', 'On'],
-        ]),
-        (value) => {
-          if (!['off', 'auto', 'on'].includes(value)) return;
-          optimizationPreference = value;
-          try {
-            localStorage.setItem(optimizationKey, value);
-          } catch (_) {}
-          autoOptimization.reset();
-          // Critical recovery is not an opt-out, even if Off is chosen now.
-          setOptimizationActive(value === 'on' || (!canvasQualityBeforePixi && frameSkip.emergency));
-        },
-        'Auto lowers graphics under sustained load. Emergencies can override Off.',
-      ),
+      ...(pixiSettings
+        ? [
+            menuControls.toggle(
+              'Optimization Mode',
+              pixiQuality.preset,
+              (enabled) => {
+                pixiQuality.preset = enabled;
+                applyPixiQuality();
+                platformMenu(back);
+              },
+              'Use the Pixi performance preset. Turn it off to restore custom settings.',
+              false,
+            ),
+            menuControls.toggle(
+              'Atmospheric particles',
+              pixiQuality.particles,
+              (enabled) => {
+                pixiQuality.particles = enabled;
+                applyPixiQuality();
+              },
+              'Decorative motes only. The performance preset hides them.',
+              false,
+            ),
+          ]
+        : [
+            menuControls.select(
+              'Optimization Mode',
+              optimizationPreference,
+              choices([
+                ['off', 'Off'],
+                ['auto', 'Auto · Recommended'],
+                ['on', 'On'],
+              ]),
+              (value) => {
+                if (!['off', 'auto', 'on'].includes(value)) return;
+                optimizationPreference = value;
+                try {
+                  localStorage.setItem(optimizationKey, value);
+                } catch (_) {}
+                autoOptimization.reset();
+                // Critical recovery is not an opt-out, even if Off is chosen now.
+                setOptimizationActive(
+                  value === 'on' || (!canvasQualityBeforePixi && frameSkip.emergency),
+                );
+              },
+              'Auto lowers graphics under sustained load. Emergencies can override Off.',
+            ),
+          ]),
       menuControls.select(
         'Rendering resolution',
-        renderResolution.preference,
+        (pixiSettings ? pixiResolution : renderResolution).preference,
         choices(resolutions),
         (value) => {
+          if (pixiSettings) {
+            pixiResolution.select(value);
+            applyPixiQuality();
+            platformMenu(back);
+            return;
+          }
           renderResolution.select(value);
           resize();
           runtime.reset();
           frameProfile.reset();
           fps.suspend();
         },
-        'Choose world detail without changing screen size or controls.',
+        pixiSettings && pixiQuality.preset
+          ? 'Custom resolution. Optimization Mode applies the performance limit.'
+          : 'Choose world detail without changing screen size or controls.',
       ),
       menuControls.section('Frame rate'),
       menuControls.select(
@@ -6231,7 +6311,14 @@
         },
         'Off disables ordinary skips, not emergency combat protection.',
       ),
-      menuControls.section('Graphics renderer'),
+      menuControls.section(
+        'Graphics renderer',
+        (graphics.mode === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D') +
+          ' · ' +
+          canvas.width +
+          ' × ' +
+          canvas.height,
+      ),
       menuControls.select(
         'Graphics renderer',
         graphicsController.status().preferredRenderer || graphicsController.status().mode,
@@ -6683,7 +6770,7 @@
       graphicsController.revert();
       setOptimizationActive(true);
       resize();
-    } else setOptimizationActive(optimizationPreference === 'on');
+    } else setOptimizationActive(!canvasQualityBeforePixi && optimizationPreference === 'on');
     loaded = true;
     started = false;
     if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;

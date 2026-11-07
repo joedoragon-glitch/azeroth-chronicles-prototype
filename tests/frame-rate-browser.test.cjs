@@ -71,9 +71,7 @@ const server = http.createServer((req, res) => {
       await openSettings();
       for (const [value] of [
         ['20', '20 FPS'],
-        ['30', '30 FPS'],
         ['60', '60 FPS'],
-        ['auto60', 'Auto 30–60 FPS'],
         ['auto', 'Auto 20–30 FPS'],
       ]) {
         const before = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
@@ -102,7 +100,7 @@ const server = http.createServer((req, res) => {
       );
       await page.evaluate(() => Prototype.closeMenu());
       await openSettings();
-      await page.locator('select[aria-label="Frame rate"]').selectOption('30');
+      await page.locator('select[aria-label="Frame rate"]').selectOption('20');
       await page.evaluate(() => {
         Prototype.closeMenu();
         window.__fpsCounts = { ticks: 0, updates: 0, observations: 0, draws: 0 };
