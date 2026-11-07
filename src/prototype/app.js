@@ -5495,6 +5495,12 @@
       summaries[key] = {
         drawnPasses: 0,
         incompletePasses: 0,
+        // Counters come directly from the already-reset per-draw Canvas
+        // renderer, not a new entity/cover scan inside the diagnostics.
+        outlineWork: {
+          samples: 0, maskCount: 0, maskPixels: 0, zeroMaskPasses: 0,
+          maxMasksPerDraw: 0, maxVisibleEntities: 0,
+        },
         stages: Object.fromEntries(overlaySubpassStageNames.map((name) => [
           name, { samples: 0, sumMs: 0, maxMs: 0, histogram: Array(overlaySubpassBoundsMs.length + 1).fill(0) },
         ])),
@@ -5515,6 +5521,22 @@
         rendererHistogramAdd(record.histogram, ms, overlaySubpassBoundsMs);
       }
       if (missing) summary.incompletePasses++;
+      const masks = stages.occlusionMasksDrawn,
+        pixels = stages.occlusionMaskPixels,
+        visible = stages.occlusionVisibleEntities;
+      if (
+        Number.isSafeInteger(masks) && masks >= 0 &&
+        Number.isSafeInteger(pixels) && pixels >= 0 &&
+        Number.isSafeInteger(visible) && visible >= 0
+      ) {
+        const work = summary.outlineWork;
+        work.samples++;
+        work.maskCount += masks;
+        work.maskPixels += pixels;
+        if (masks === 0) work.zeroMaskPasses++;
+        work.maxMasksPerDraw = Math.max(work.maxMasksPerDraw, masks);
+        work.maxVisibleEntities = Math.max(work.maxVisibleEntities, visible);
+      }
     }
   }
   function overlaySubpassReport(capture) {
@@ -5525,6 +5547,16 @@
         zoneAndEngagement: key,
         drawnPasses: group.drawnPasses,
         incompletePasses: group.incompletePasses,
+        outlineWork: {
+          sampledPasses: group.outlineWork.samples,
+          totalMasksDrawn: group.outlineWork.maskCount,
+          totalMaskPixels: group.outlineWork.maskPixels,
+          zeroMaskPasses: group.outlineWork.zeroMaskPasses,
+          meanMasksPerDraw: group.outlineWork.samples
+            ? +(group.outlineWork.maskCount / group.outlineWork.samples).toFixed(2) : null,
+          maxMasksPerDraw: group.outlineWork.maxMasksPerDraw,
+          maxVisibleEntities: group.outlineWork.maxVisibleEntities,
+        },
         stages: Object.fromEntries(Object.entries(group.stages).map(([name, row]) => [
           name, {
             samples: row.samples,
