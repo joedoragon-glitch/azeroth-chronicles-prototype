@@ -14,11 +14,22 @@
     });
     ctx.closePath();
   }
+  // Fixed-size angular lookup avoids repeated trig for the many static-circle
+  // footprints. Cache only bounded native subdivisions; allocate no new state
+  // in the gameplay/save model and preserve the source's exact vertex count.
+  const circleDirections = new Map();
   function circlePoints(center, radius, steps = 48) {
-    return Array.from({ length: steps }, (_, j) => {
-      const a = (j * Math.PI * 2) / steps;
-      return { x: center.x + Math.cos(a) * radius, y: center.y + Math.sin(a) * radius };
-    });
+    let directions = circleDirections.get(steps);
+    if (!directions) {
+      directions = Array.from({ length: steps }, (_, j) => {
+        const a = (j * Math.PI * 2) / steps;
+        return { x: Math.cos(a), y: Math.sin(a) };
+      });
+      if (steps >= 3 && steps <= 128) circleDirections.set(steps, directions);
+    }
+    return directions.map((d) => ({
+      x: center.x + d.x * radius, y: center.y + d.y * radius,
+    }));
   }
   function circlePath(ctx, screen, center, radius) {
     polygon(ctx, screen, circlePoints(center, Math.max(0, radius)));
@@ -636,7 +647,10 @@
         ctx.stroke();
       }
     }
-    for (const e of game
+    // One fine-grained presentation pass paints both the restrained interior
+    // and a stable outline. The old separate full-area fill + dashed outline
+    // prepared/projected the same polygon twice every permitted draw.
+    if (cue) for (const e of game
       .zone()
       .enemies.filter(
         (e) =>
@@ -654,27 +668,28 @@
       if (frameWarningShapes && !frameEntry) frameWarningShapes.set(a, { patches, shapes });
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
+      // Muted, coherent palette: a thin clear contour and low-alpha interior.
+      // No dashed-path stipple, glow, or second geometry traversal.
       ctx.strokeStyle = a.bossHeal
-        ? '#a9e7b0'
+        ? '#add9b7'
         : a.rogueSignature
-          ? '#9cf1f0'
+          ? '#91d9dc'
           : a.rogueMove
-            ? '#8ecde6'
-            : '#ffe09a';
+            ? '#a0c7d4'
+            : '#efd29b';
       ctx.fillStyle = a.bossHeal
-        ? '#4c9f6726'
+        ? '#82b99417'
         : a.rogueSignature
-          ? '#369ab332'
+          ? '#6cb9bb1a'
           : a.rogueMove
-            ? '#4b95c128'
-            : '#dc644c26';
-      ctx.lineWidth = a.rogueSignature ? 3.3 : 2.5;
-      ctx.setLineDash(cue ? (a.rogueSignature ? [10, 4] : [8, 5]) : []);
+            ? '#79b4bf17'
+            : '#d7a96b1c';
+      ctx.lineWidth = a.rogueSignature ? 2.2 : e.type === 'boss' ? 2 : 1.7;
       for (const points of shapes) {
         polygon(ctx, screen, points);
-        cue ? ctx.stroke() : a.kind !== 'ring' && ctx.fill();
+        if (a.kind !== 'ring') ctx.fill();
+        ctx.stroke();
       }
-      ctx.setLineDash([]);
       if (a.royalTerritory && a.kind === 'sector') {
         // Opposite geometry is safe from this sector strike, not from
         // all surrounding Crown soldiers or other attacks.
