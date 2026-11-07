@@ -1,4 +1,4 @@
-**7 November 2026 — #851 revised outline candidate dev.270.** One fixed-size compact buffer set serves eligible poses. Idle outlines use the resting anchor while sprites animate. Release depends on paired timing and visual checks.
+**7 November 2026 — #851 revised outline candidate dev.270.** One fixed-size compact buffer set serves eligible oversized poses. Ordinary 256px masks use their original shared buffers. Idle outlines use the resting anchor while sprites animate. Release depends on paired timing and visual checks.
 
 **7 November 2026 — #853 integrated with merged #852 at `863dcad3751ecba6be12d0f1ef4527efb824f253`.** Combined dev.269 validation precedes the authorized #853 merge. Earlier candidate checkpoints below are historical.
 

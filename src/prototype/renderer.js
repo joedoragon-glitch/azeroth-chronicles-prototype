@@ -1009,21 +1009,24 @@
         const busy = (actor.renderKind === 'enemy' && (actor.aggro || actor.telegraph)) ||
           (actor.renderKind === 'hero' && game.manaCombatActive());
         const shown = retained && busy ? visualPosition(actor, pair.position) : pair.position;
-        // Crop only known retained rasters. Four transparent pixels enclose
-        // the bilinear sampling fringe and the unchanged 1.35px outline ring.
-        // Integer origins preserve the original mask pixel grid exactly.
-        const fringe = 4;
-        let left = retained ? Math.max(0, Math.min(size, Math.floor(size / 2 + shown.x - pair.position.x + retained.dx) - fringe)) : 0;
-        let top = retained ? Math.max(0, Math.min(size, Math.floor((size === 384 ? 260 : 192) + shown.y - pair.position.y + retained.dy) - fringe)) : 0;
-        const right = retained ? Math.max(0, Math.min(size, Math.ceil(size / 2 + shown.x - pair.position.x + retained.dx + retained.width) + fringe)) : size;
-        const bottom = retained ? Math.max(0, Math.min(size, Math.ceil((size === 384 ? 260 : 192) + shown.y - pair.position.y + retained.dy + retained.height) + fringe)) : size;
-        if (right <= left || bottom <= top) continue;
-        // Share one compact mask across poses that fit with the sampling fringe.
-        const compact = right - left <= 192 && bottom - top <= 192;
-        const width = compact ? 192 : size;
+        // Keep ordinary masks on their shared 256px surface. Compact only
+        // known oversized masks whose entire sampling fringe fits.
+        let width = size, left = 0, top = 0;
+        if (size === 384 && retained) {
+          const x = size / 2 + shown.x - pair.position.x + retained.dx;
+          const y = 260 + shown.y - pair.position.y + retained.dy;
+          const fringe = 4;
+          const x0 = Math.max(0, Math.floor(x) - fringe);
+          const y0 = Math.max(0, Math.floor(y) - fringe);
+          const x1 = Math.min(size, Math.ceil(x + retained.width) + fringe);
+          const y1 = Math.min(size, Math.ceil(y + retained.height) + fringe);
+          if (x1 > x0 && y1 > y0 && x1 - x0 <= 192 && y1 - y0 <= 192) {
+            width = 192;
+            left = Math.min(x0, size - width);
+            top = Math.min(y0, size - width);
+          }
+        }
         const height = width;
-        left = Math.min(left, size - width);
-        top = Math.min(top, size - height);
         const key = width;
         const buffersAt = detail ? now() : 0;
         if (!outlineLayers.has(key)) {
