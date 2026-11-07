@@ -102,6 +102,11 @@ const server = http.createServer((req, res) => {
       ]) {
         const before = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
         await page.locator('select[aria-label="Frame rate"]').selectOption(value);
+        assert.match(
+          await page.locator('#modal').innerText(),
+          new RegExp('Active draw target: ' + (value === '60' ? 60 : value === '20' ? 20 : 30) + ' FPS'),
+          'Settings must show the effective draw target, not only the saved FPS preference',
+        );
         assert.deepEqual(
           await page.evaluate(() => ({
             preference: Prototype.fps.preference,
