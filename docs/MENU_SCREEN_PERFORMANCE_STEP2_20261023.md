@@ -22,7 +22,7 @@ The landing shows active and preferred renderers, fallback status when applicabl
 
 The versioned migration runs before settings controllers. It resets display and camera, both renderers’ quality, draw target and routine skip. It defaults to Pixi when safe. An interrupted trial is resolved by the existing startup guard, including retaining Canvas where the trial was unconfirmed. An existing recovery hold remains in force. The migration is allowlisted, its completion marker is written last, and a later successful retry completes a partially written migration. Device-only changes do not serialize a campaign save.
 
-Local shell checks passed for bilingual navigation, save-write isolation, migration and recovery storage, diagnostics/export, frame skip and resolution. The browser acceptance and exact GitHub check results are tracked in #856.
+Local shell checks passed for bilingual navigation, save-write isolation, migration and recovery storage, diagnostics/export, frame skip and resolution. Software Chromium 153 passed the focused Pixi trial → Keep → preset → context loss → live Canvas menu journey, FPS preference/ungated simulation on desktop and the phone game document, and EN/ES phone-frame menu geometry, contrast, touch, Back and Escape. The generated offline package and release documentation consistency checks passed. GitHub runs for the exact candidate head are tracked in #856. Local software Chromium does not verify WebKit, assistive-technology speech output, installed builds or hardware FPS.
 
 ## Historical Step 2 record
 
