@@ -5,7 +5,9 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     // Runtime collision applies to terrain and scenery only, not other actors.
     // Opt-in and unsaved. Navigation/terrain diagnostics no longer inspect actors.
-    // Disabled diagnostics add zero runtime instrumentation overhead.
+    // Crowd diagnostics are disabled without their per-call wrappers.
+    // The separate opt-in enemy route observer below adds only a cheap
+    // WeakMap guard to native route/planner calls when not recording.
     const diagnosticSessions = new WeakMap();
     // Renderer-recording-only, per-update route attribution. Never saved and
     // never enabled by ordinary gameplay or by the separate crowd recorder.
@@ -1845,6 +1847,25 @@
           row.routeCalls++;
           row.routeMs += ms;
           row.maxRouteMs = Math.max(row.maxRouteMs, ms);
+        }
+      }
+    };
+    // The incremental planner has a separate cost: zero full-route calls must
+    // not be mistaken for zero enemy pathfinding. This is also observer-only.
+    const originalBudgetedRoute = methods.advanceBudgetedRoute.value;
+    methods.advanceBudgetedRoute.value = function (...args) {
+      const trace = enemyRouteTraces.get(this);
+      if (!trace) return originalBudgetedRoute.apply(this, args);
+      const started = performance.now();
+      try {
+        return originalBudgetedRoute.apply(this, args);
+      } finally {
+        const row = trace.phases[trace.phase];
+        if (row) {
+          const ms = Math.max(0, performance.now() - started);
+          row.budgetedCalls++;
+          row.budgetedMs += ms;
+          row.maxBudgetedMs = Math.max(row.maxBudgetedMs, ms);
         }
       }
     };
