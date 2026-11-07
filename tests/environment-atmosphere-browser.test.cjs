@@ -56,6 +56,7 @@ async function setOptimizationMode(page,mode) {
   await page.locator('#menu-button').click();
   await page.getByRole('button',{name:'Game and settings',exact:true}).click();
   await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+  await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
   await page.locator('select[aria-label="Optimization Mode"]').selectOption(mode);
   await page.evaluate(()=>Prototype.closeMenu());
 }
@@ -63,7 +64,10 @@ async function switchPixi(page){
   await page.locator('#menu-button').click();
   await page.getByRole('button',{name:'Game and settings',exact:true}).click();
   await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+  await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
   await page.locator('select[aria-label="Optimization Mode"]').selectOption('off');
+  await page.locator('#close-button').click();
+  await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
   await page.waitForFunction(()=>{
     const r=Prototype.experimentalGraphics;
