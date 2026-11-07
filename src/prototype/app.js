@@ -2610,8 +2610,12 @@
     const canvasStartedAt = performance.now();
     renderer.draw();
     const canvasMs = Math.max(0, performance.now() - canvasStartedAt);
-    if (overlay && rendererDiagnosticActive)
-      timing.overlayPhases = renderer.consumeOverlaySubpassProfile();
+    if (overlay && rendererDiagnosticActive) {
+      const overlayPhases = renderer.consumeOverlaySubpassProfile();
+      // Include the matching real draw duration: subpass clocks need not sum
+      // exactly to it because setup/teardown and timer calls have a cost.
+      if (overlayPhases) timing.overlayPhases = { ...overlayPhases, totalDrawMs: canvasMs };
+    }
     if (overlay) {
       timing.canvasOverlayMs = canvasMs;
       timing.canvasOverlayDrawn = true;
@@ -5452,22 +5456,86 @@
   // Constant-memory distributions cover the entire opt-in capture, unlike the
   // short rolling frame profiler. Quantiles are bucket ceilings, not exact FPS.
   const rendererHistogramBoundsMs = [4, 8, 12, 16, 20, 24, 33, 50, 75, 100, 150, 250, 500, 1000];
-  function rendererHistogramAdd(histogram, value) {
+  function rendererHistogramAdd(histogram, value, bounds = rendererHistogramBoundsMs) {
     let bucket = 0;
-    while (bucket < rendererHistogramBoundsMs.length && value > rendererHistogramBoundsMs[bucket])
-      bucket++;
+    while (bucket < bounds.length && value > bounds[bucket]) bucket++;
     histogram[bucket]++;
   }
-  function rendererHistogramQuantile(histogram, q) {
+  function rendererHistogramQuantile(histogram, q, bounds = rendererHistogramBoundsMs) {
     const total = histogram.reduce((sum, count) => sum + count, 0);
     if (!total) return null;
     const target = Math.ceil(total * q);
     let observed = 0;
     for (let i = 0; i < histogram.length; i++) {
       observed += histogram[i];
-      if (observed >= target) return rendererHistogramBoundsMs[i] ?? null;
+      if (observed >= target) return bounds[i] ?? null;
     }
     return null;
+  }
+  // Every opt-in Canvas-overlay draw contributes, not just the globally worst
+  // 32 callbacks. Short per-zone / engagement summaries distinguish chronic
+  // scene cost from exceptional bakes and combat; never mix their populations.
+  const overlaySubpassStageNames = [
+    'groundAndClear', 'healthPlates', 'nameplates',
+    'occlusionCandidates', 'occlusionMasks', 'remainingCombatCues',
+    'totalDrawMs',
+  ];
+  const overlaySubpassBoundsMs = [0.5, 1, 2, 4, 8, 12, 16, 24, 33, 50, 75, 100, 150, 250, 500];
+  function recordOverlaySubpasses(capture, zone, engaged, overlayDraws) {
+    if (!capture || !Array.isArray(overlayDraws) || !overlayDraws.length) return;
+    const zoneName = typeof zone === 'string' && /^[a-z0-9-]{1,40}$/.test(zone)
+      ? zone : 'unknown';
+    const activity = engaged ? 'engaged' : 'unengaged';
+    let key = zoneName + ':' + activity;
+    if (!Object.hasOwn(capture.overlaySubpassByActivity, key) &&
+        Object.keys(capture.overlaySubpassByActivity).length >= 24)
+      key = 'other:' + activity;
+    const summaries = capture.overlaySubpassByActivity;
+    if (!summaries[key]) {
+      summaries[key] = {
+        drawnPasses: 0,
+        incompletePasses: 0,
+        stages: Object.fromEntries(overlaySubpassStageNames.map((name) => [
+          name, { samples: 0, sumMs: 0, maxMs: 0, histogram: Array(overlaySubpassBoundsMs.length + 1).fill(0) },
+        ])),
+      };
+    }
+    const summary = summaries[key];
+    for (const stages of overlayDraws) {
+      if (!stages || typeof stages !== 'object') continue;
+      summary.drawnPasses++;
+      let missing = false;
+      for (const name of overlaySubpassStageNames) {
+        const ms = stages[name];
+        if (!Number.isFinite(ms) || ms < 0) { missing = true; continue; }
+        const record = summary.stages[name];
+        record.samples++;
+        record.sumMs += ms;
+        record.maxMs = Math.max(record.maxMs, ms);
+        rendererHistogramAdd(record.histogram, ms, overlaySubpassBoundsMs);
+      }
+      if (missing) summary.incompletePasses++;
+    }
+  }
+  function overlaySubpassReport(capture) {
+    return {
+      scope: 'All completed opt-in Canvas-overlay passes in this renderer-recording segment, including normal draws and at most two same-callback draws; separated by export-time zone and engagement state at callback completion. Timed JS only, added opt-in overhead, no GPU/presented FPS. Stages are sequential within a draw; do not add their independent p95 values.',
+      bucketUpperBoundsMs: overlaySubpassBoundsMs,
+      groups: Object.entries(capture.overlaySubpassByActivity || {}).map(([key, group]) => ({
+        zoneAndEngagement: key,
+        drawnPasses: group.drawnPasses,
+        incompletePasses: group.incompletePasses,
+        stages: Object.fromEntries(Object.entries(group.stages).map(([name, row]) => [
+          name, {
+            samples: row.samples,
+            meanMs: row.samples ? +(row.sumMs / row.samples).toFixed(2) : null,
+            maxMs: +row.maxMs.toFixed(2),
+            p95UpperMs: rendererHistogramQuantile(row.histogram, 0.95, overlaySubpassBoundsMs),
+            histogram: row.histogram,
+          },
+        ])),
+      })),
+    };
   }
   function rendererDiagnosticSnapshot() {
     const pixi = pixiGame.status();
@@ -5507,6 +5575,7 @@
       droppedGraphicsTransitions: 0,
       frameWorkHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
       callbackIntervalHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
+      overlaySubpassByActivity: Object.create(null),
     };
     lastRendererRecording = null;
     rendererDiagnosticActive = true;
@@ -5547,6 +5616,10 @@
     if (drawn) capture.draws++;
     rendererHistogramAdd(capture.frameWorkHistogram, workMs);
     rendererHistogramAdd(capture.callbackIntervalHistogram, intervalMs);
+    // An outlier-only recorder would miss March's steady ~31-36ms overlay
+    // pressure. Aggregate every measured draw before filtering severe frames.
+    if (drawn && stages.overlayDraws?.length)
+      recordOverlaySubpasses(capture, game.zoneId, !!game.s.squadEngagement, stages.overlayDraws);
     if (workMs < 34 && intervalMs < 50) return;
     capture.slowFrames++;
     const point = {
@@ -5555,6 +5628,10 @@
       intervalMs: Math.round(intervalMs * 10) / 10,
       renderMs: Math.round(stages.renderMs * 10) / 10,
       simulationMs: Math.round(stages.simulationMs * 10) / 10,
+      // These are nested parts of simulation, NOT additional CPU work.
+      companionAIMs: Math.round(stages.companionAIMs * 10) / 10,
+      enemyAIMs: Math.round(stages.enemyAIMs * 10) / 10,
+      otherSimulationMs: Math.round(stages.otherSimulationMs * 10) / 10,
       pixiMs: Math.round(stages.pixiMs * 10) / 10,
       canvasOverlayMs: Math.round(stages.canvasOverlayMs * 10) / 10,
       canvasWorldMs: Math.round(stages.canvasWorldMs * 10) / 10,
@@ -5655,6 +5732,7 @@
         callbackInterval: percentile(capture.callbackIntervalHistogram),
       },
       worstFrames: [...capture.worstFrames].sort((a, b) => a.elapsedMs - b.elapsedMs),
+      overlaySubpassSummary: overlaySubpassReport(capture),
       events: capture.events,
       counterDeltas: Object.fromEntries(
         [...keys].map((key) => [
