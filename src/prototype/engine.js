@@ -4700,8 +4700,16 @@
       performanceMark?.('partyStart');
       this.updateParty(dt, performanceMark);
       performanceMark?.('partyEnd');
+      // Only the optional renderer recorder supplies the detailed callback.
+      // These markers never alter which simulation methods execute or in what order.
+      const enemyMark = typeof input.performanceEnemyMark === 'function'
+        ? input.performanceEnemyMark : null;
+      enemyMark?.('rosterStart');
       this.updateEnemies(dt);
+      enemyMark?.('rosterEnd');
+      enemyMark?.('rogueStationsStart');
       this.tickRogueStations();
+      enemyMark?.('rogueStationsEnd');
       // Scripted charges, pulls and teleports can bypass ordinary path collision.
       // Keep every arena combatant inside the same marked, walkable perimeter.
       if (this.s.mode === 'arena') this.arenaContainActors();
@@ -4724,9 +4732,15 @@
       )
         return;
       performanceMark?.('enemyExtraStart');
+      enemyMark?.('elitesStart');
       this.updateElites(dt);
+      enemyMark?.('elitesEnd');
+      enemyMark?.('packsStart');
       this.updatePacks(dt);
+      enemyMark?.('packsEnd');
+      enemyMark?.('reinforcementsStart');
       this.updateGuardianReinforcements(dt);
+      enemyMark?.('reinforcementsEnd');
       performanceMark?.('enemyExtraEnd');
       this.updateTraps(dt);
       if (
