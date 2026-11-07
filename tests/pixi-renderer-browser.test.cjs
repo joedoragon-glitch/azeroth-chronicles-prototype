@@ -302,7 +302,7 @@ async function run() {
       }
       return;
     }
-    // Complete Mage-specific desktop and phone presentation first. A failure in
+    // The phone shell embeds phone-game.html; exercise that real document directly.\n    // Complete Mage-specific desktop and phone presentation first. A failure in
     // the separate generic WebGL recovery journey must not prevent recording
     // whether Mage Skill 1 itself draws on Canvas and the Pixi combat overlay.
     // The original recovery journey below remains unchanged and is not waived.
@@ -316,7 +316,7 @@ async function run() {
       try {
         await beamContext.addInitScript(startCanvasManualTrial);
         const beamPage = await beamContext.newPage();
-        await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
+        await beamPage.goto(host + (phone ? 'phone-game.html' : 'index.html'));
         await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
         await enterPlayableGame(beamPage);
         await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
@@ -339,7 +339,7 @@ async function run() {
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
 
-      await page.goto(host + (phone ? 'phone.html' : 'index.html'));
+      await page.goto(host + (phone ? 'phone-game.html' : 'index.html'));
       await page.waitForFunction(() => !!window.Prototype && !!window.Prototype.renderer);
       assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
       await enterPlayableGame(page);
