@@ -240,7 +240,7 @@ assert(simulationCalls > recoveredCalls, 'Live combat resumes on the next normal
 // The actual app must protect combat and turn on temporary simplified
 // presentation during a hard stall, even with both preferences stored Off.
 const overrideStorage = new Map([
-  ['azeroth-performance-defaults-dev170-v1', 'applied'],
+  ['azeroth-pixi-settings-baseline-v1', 'applied'],
   ['azeroth-optimization-auto-default-v1', 'applied'],
   ['azeroth-adaptive-frame-skip-v1', 'off'],
   ['azeroth-optimization-mode-v1', 'off'],
