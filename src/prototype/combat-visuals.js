@@ -436,7 +436,7 @@
   // Cheap paint-only proximity check for each authored trap, never per
   // enemy/companion. No square roots or polygon construction for distant traps.
   // A jet's hazardous footprint is a horizontal capsule, not a center point.
-  const trapRevealMargin = 90;
+  const trapRevealMargin = 40;
   function trapCueNearHero(game, t) {
     const hero = game.hero;
     if (!hero) return false;
