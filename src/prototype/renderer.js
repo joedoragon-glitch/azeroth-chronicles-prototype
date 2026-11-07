@@ -982,11 +982,24 @@
       }
       return 256;
     }
-    function drawOcclusionOutlines(entities) {
+    function drawOcclusionOutlines(entities, detail = null) {
+      const pairsAt = detail ? now() : 0;
       const pairs = occlusionPairs(entities, screen, spriteHeight);
+      if (detail) {
+        // Nested opt-in timings belong to occlusionMasks, not additional work.
+        // The mask painter still follows the identical sequence when disabled.
+        detail.outlinePairs = pairs.length;
+        detail.outlineCoverSprites = 0;
+        detail.outlinePairMs = Math.max(0, now() - pairsAt);
+        for (const name of [
+          'outlineBuffersMs', 'outlineClearMs', 'outlineActorMs',
+          'outlineTintMs', 'outlineEdgeMs', 'outlineCoverMs', 'outlineCompositeMs',
+        ]) detail[name] = 0;
+      }
       if (!pairs.length || typeof document === 'undefined') return;
       for (const pair of pairs) {
         const size = outlineSize(pair.actor);
+        const buffersAt = detail ? now() : 0;
         if (!outlineLayers.has(size)) {
           const layers = [];
           for (let i = 0; i < 4; i++) {
@@ -999,6 +1012,7 @@
           outlineLayers.set(size, layers);
         }
         const layers = outlineLayers.get(size);
+        if (detail) detail.outlineBuffersMs += Math.max(0, now() - buffersAt);
         const [actorLayer, tintLayer, edgeLayer, coverLayer] = layers,
           centerX = size / 2,
           footY = size === 384 ? 260 : 192,
@@ -1026,11 +1040,13 @@
                 ];
         stats.outlineMasks++;
         stats.outlineMaskPixels += size * size;
+        const clearAt = detail ? now() : 0;
         for (const layer of layers) {
           layer.brush.globalCompositeOperation = 'source-over';
           layer.brush.globalAlpha = 1;
           layer.brush.clearRect(0, 0, size, size);
         }
+        if (detail) detail.outlineClearMs += Math.max(0, now() - clearAt);
         // Pixi keeps its world/shadow foot still, but moves the retained
         // raster body by Canvas's identity-phase idle/busy animation. The
         // mask must track that same presentation-only delta. Cover, broad
@@ -1039,6 +1055,7 @@
         // apply visualPosition inside sprite(), so never offset them twice.
         const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
         const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
+        const actorAt = detail ? now() : 0;
         sprite(
           pair.actor,
           {
@@ -1048,24 +1065,31 @@
           actorLayer.brush,
           true,
         );
+        if (detail) detail.outlineActorMs += Math.max(0, now() - actorAt);
 
         // Color the real actor alpha, not a rectangle or an ellipse.
+        const tintAt = detail ? now() : 0;
         const tint = tintLayer.brush;
         tint.drawImage(actorLayer.surface, 0, 0);
         tint.globalCompositeOperation = 'source-in';
         tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
         tint.fillRect(0, 0, size, size);
         tint.globalCompositeOperation = 'source-over';
+        if (detail) detail.outlineTintMs += Math.max(0, now() - tintAt);
 
+        const edgeAt = detail ? now() : 0;
         const edge = edgeLayer.brush;
         for (const [dx, dy] of ring) edge.drawImage(tintLayer.surface, dx, dy);
         edge.globalCompositeOperation = 'destination-out';
         edge.drawImage(actorLayer.surface, 0, 0);
         edge.globalCompositeOperation = 'source-over';
+        if (detail) detail.outlineEdgeMs += Math.max(0, now() - edgeAt);
 
         // Union the actual foreground artwork. The contour is erased wherever
         // the actor is visible rather than showing a permanent character glow.
+        const coverAt = detail ? now() : 0;
         const cover = coverLayer.brush;
+        if (detail) detail.outlineCoverSprites += pair.front.length;
         for (const obstacle of pair.front)
           sprite(
             obstacle.entity,
@@ -1076,6 +1100,8 @@
             cover,
             true,
           );
+        if (detail) detail.outlineCoverMs += Math.max(0, now() - coverAt);
+        const compositeAt = detail ? now() : 0;
         edge.globalCompositeOperation = 'destination-in';
         edge.drawImage(coverLayer.surface, 0, 0);
         edge.globalCompositeOperation = 'source-over';
@@ -1087,6 +1113,7 @@
           Math.round(pair.position.y - footY),
         );
         ctx.restore();
+        if (detail) detail.outlineCompositeMs += Math.max(0, now() - compositeAt);
       }
     }
     // Shared Canvas/Pixi presentation geometry. A GPU actor uses these same
@@ -3179,7 +3206,7 @@
         // Reuse the bounded alpha-mask painter: no GPU readback or new texture.
         const overlayVisible = collectVisibleEntities();
         if (overlayMark) overlayMark('occlusionCandidates');
-        drawOcclusionOutlines(overlayVisible);
+        drawOcclusionOutlines(overlayVisible, overlayStages);
         if (overlayMark) overlayMark('occlusionMasks');
         if (overlayStages) {
           // Per-draw denominators: an expensive zero-mask draw falsifies the
