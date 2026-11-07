@@ -3181,6 +3181,14 @@
         if (overlayMark) overlayMark('occlusionCandidates');
         drawOcclusionOutlines(overlayVisible);
         if (overlayMark) overlayMark('occlusionMasks');
+        if (overlayStages) {
+          // Per-draw denominators: an expensive zero-mask draw falsifies the
+          // hypothesis that outline compositing alone explains its cost.
+          // These existing counters reset at draw entry; no extra scan.
+          overlayStages.occlusionMasksDrawn = stats.outlineMasks;
+          overlayStages.occlusionMaskPixels = stats.outlineMaskPixels;
+          overlayStages.occlusionVisibleEntities = overlayVisible.length;
+        }
         PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
         for (const projectile of game.s.projectiles) drawProjectile(projectile);
         drawVisualFx();
