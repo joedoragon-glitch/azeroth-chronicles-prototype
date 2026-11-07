@@ -10218,7 +10218,8 @@
     if (!frozen) {
       // Combat cues keep advancing; drawing eligibility never depends on warnings.
       const eligibleDraw = fps.shouldDraw(now);
-      const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
+      const adaptiveSkipped =
+        eligibleDraw && frameSkip.shouldSkip(now, fps.target, canvasQualityBeforePixi !== null);
       const draw = eligibleDraw && !adaptiveSkipped;
       if (effectRecording) renderer.noteEffectDrawDecision(eligibleDraw, adaptiveSkipped);
       if (draw) {

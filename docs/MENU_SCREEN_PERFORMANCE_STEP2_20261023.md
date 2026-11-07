@@ -38,3 +38,7 @@ Validation note: the initial focused run validated the Step 1 + Step 2 stack aga
 ## Pixi recovery follow-up, dev.271 candidate
 
 Pixi preparation uses the explicit rendering density and optimization preference. Canvas backup retains its temporary adaptive density and optimization state while Pixi prepares or runs. A failed retry or return to Canvas restores that state. Playtest reports show the effective Pixi backing ratio while Pixi owns the presentation. Existing settings and controls remain available. This candidate is unmerged and unpublished.
+
+## Pixi pacing follow-up candidate
+
+Routine Pixi frame skipping requires drawing to account for at least half of the measured callback work. The existing budget, consecutive-skip and frame-age limits still apply. Canvas and emergency protection retain their existing rules. This is a stacked, unpublished candidate. The selected FPS remains a draw target, separate from confirmed presentation and simulation timing.

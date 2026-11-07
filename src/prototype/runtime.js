@@ -295,13 +295,15 @@
       },
       // Called only for a drawing already permitted by the regular FPS limiter.
       // Applies at every valid FPS target; warnings have no special exemption.
-      shouldSkip(now, target) {
+      shouldSkip(now, target, requireRenderDominance = false) {
         if ((!enabled && !emergency) || !Number.isFinite(now) ||
           !Number.isFinite(target) || target <= 0) return false;
         const stressed =
           drawnSamples >= 6 &&
           drawWork > (1000 / target) * 1.12 &&
-          renderWork >= 5;
+          renderWork >= 5 &&
+          // Ordinary Pixi skips should pay for a meaningful share of the callback.
+          (!requireRenderDominance || renderWork * 2 >= drawWork);
         const drawAge = lastDrawAt === null ? Infinity : now - lastDrawAt;
         const skip = (emergency || stressed) &&
           consecutiveSkips < (emergency ? 5 : 2) &&
