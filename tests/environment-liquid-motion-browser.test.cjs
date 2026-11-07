@@ -80,8 +80,13 @@ async function main(){
       await page.locator('#menu-button').click();
       await page.getByRole('button',{name:'Game and settings',exact:true}).click();
       await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+      await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
       await page.locator('select[aria-label="Optimization Mode"]').selectOption('on');
-      if(renderer) await page.locator('select[aria-label="Graphics renderer"]').selectOption(renderer);
+      if(renderer) {
+        await page.locator('#close-button').click();
+        await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
+        await page.locator('select[aria-label="Graphics renderer"]').selectOption(renderer);
+      }
       if(renderer==='webgl2'){
         await page.waitForFunction(()=>Prototype.experimentalGraphics.phase==='trial' ||
           (Prototype.experimentalGraphics.phase==='canvas'&&!!Prototype.experimentalGraphics.lastError),
