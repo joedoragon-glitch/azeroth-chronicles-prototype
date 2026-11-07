@@ -10045,8 +10045,10 @@
         // Never retain a live observer across an exception, return-to-title
         // transition or another unprofiled simulation tick.
         if (stageTimes.enemyDetail) game.setEnemyRouteTrace(null);
-        game.crowdDiagnosticsEndFrame();
       }
+      // Preserve the existing crowd recorder contract: only *completed*
+      // native simulation ticks become retained navigation samples.
+      game.crowdDiagnosticsEndFrame();
       if (
         startup?.needsMovement() &&
         game.hero === movingHero &&
