@@ -34,9 +34,9 @@ assert(names.worldLabelWidth('♫ Stinkums', charm) <
 // These branch bodies are taken verbatim from the two production nameplate
 // allocators. A collision must not shift a Charmed label in either renderer.
 const canvasBranch = between('        if (charmedCompanion(e)) {\n          // A Charmed nickname',
-  '        } else for (const dy of [0, -20, -40, -60');
+  '        } else\n          for (const dy of [0, -20, -40, -60');
 const pixiBranch = between('        if (name && charmedCompanion(e)) {\n          // The nickname',
-  '        } else if (name) for (const dy of [0,-20,-40');
+  '        } else if (name)\n          for (const dy of [0, -20, -40, -60');
 const canvasSlot = new Function('e', 'anchor', 'baseY', 'w', 'h', 'canvas',
   'claimedLabels', 'charmedCompanion', 'let slot = null;\n' + canvasBranch +
   '        }\nreturn slot;');
