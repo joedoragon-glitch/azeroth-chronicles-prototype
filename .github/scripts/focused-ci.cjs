@@ -434,7 +434,8 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
       if (exists(file)) chosen.add(file);
       covered = true;
     }
-    if (file.startsWith('tests/') && file.endsWith('-browser.test.cjs') && !covered) {
+    if ((file.endsWith('-browser.test.cjs') || file === TEST + 'helpers/camera-browser.cjs') &&
+        file.startsWith('tests/') && !covered) {
       manualBrowser.push(file);
       covered = true; // Deferred to owner-approved browser acceptance, not architecture coverage.
     }
