@@ -1,4 +1,22 @@
-# Menu usability overhaul — Step 2: one Screen & Performance window
+# Screen & Performance settings
+
+## November 7 follow-up — Pixi-first settings audit (#839)
+
+Baseline: published dev.272 (`0a7397bfb39e456f1d88584bca8f71c8fbe0c114`). The October consolidation and dev.271–272 candidate notes below are historical. The follow-up belongs in one PR.
+
+| Gate | Audit findings | Observable result |
+| --- | --- | --- |
+| Settings hierarchy and renderer state | F01–F02 | Landing identifies active and preferred renderer before any settings. Display, renderer/recovery, active graphics, pacing and diagnostics have separate destinations. Deliberate Canvas and GPU fallback are distinguishable. |
+| Effective controls | F03–F04, F09–F10 | Pixi device sharpness is fixed during play; Canvas Auto can adapt. Preset reports applied density/particles and retained choices. Zoom mentions rendering load and the FPS label describes a draw target. |
+| Device preferences and recovery | F05–F08 | Returning devices receive the reset once, partial writes remain retryable, fresh installs use defaults, and post-reset edits persist. Trial interruption and safety holds still reach Canvas. Device-only selections produce zero campaign writes. |
+| Diagnostics and accessibility | F11–F13 | EN/ES menu and recovery flows have clear focus/back navigation. Local export stays one click from the landing. Sample deletion requires confirmation and describes the evidence cleared. |
+| Build and acceptance | F14 | Record candidate SHA and focused shell, renderer, migration, packaging and browser results. Physical installed buildCommit and full-campaign performance are separate acceptance evidence. |
+
+Resume in order: verify main and the open PR, finish the preference/safety contract, complete the player-facing pages, then run targeted shell and browser journeys and reconcile this document and the development ledger. Candidate acceptance requires the exact branch head and concrete pass/fail evidence. Publication requires separate owner authorization.
+
+Checkpoint: plan and source ownership confirmed. Runtime changes and focused verification are pending.
+
+## Historical Step 2 record
 
 **Status:** Review candidate; not deployed.  
 **Base reconciled:** Step 1 PR #413 merged into `main` as `3ad37c961d06c0b9b9339361df796deb8cd06041`. The merged commit's file tree matches the Step 1 head exactly (`e230841c04ee97b80a024fce2997813b267e97ca`).  
