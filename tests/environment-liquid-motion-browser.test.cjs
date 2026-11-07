@@ -67,13 +67,12 @@ async function main(){
     const page=await context.newPage(), errors=[];
     page.on('pageerror',error=>errors.push(String(error)));
     await page.goto('http://127.0.0.1:'+server.address().port+'/index.html');
-    await page.waitForFunction(()=>!!window.Prototype?.renderer);
-    await require('./helpers/language-browser.cjs').selectEnglish(page);
+    await page.waitForFunction(()=>!!window.Prototype?.renderer && document.querySelector('#startup-update')?.hidden);
+    if (await page.locator('#language-welcome').isVisible())
+    await page.locator('#language-welcome [data-language="en"]').click();
     if(await page.locator('#title-screen').evaluate(el=>!el.hidden)){
       await page.locator('#title-new').click();
-      await page.getByRole('button',{name:'New Normal game',exact:true}).click();
-      await page.getByRole('button',{name:/^English(?: ✓)?$/}).click();
-      await page.getByRole('button',{name:'Standard death and refuge recovery',exact:true}).click();
+      await page.getByRole('button', { name: /^Choose Hero/ }).click();
       await page.getByRole('button',{name:/Paladin/}).first().click();
     }
     await page.waitForFunction(()=>!!window.Prototype?.started&&
