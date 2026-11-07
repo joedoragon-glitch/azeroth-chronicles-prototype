@@ -5519,7 +5519,7 @@
   }
   function overlaySubpassReport(capture) {
     return {
-      scope: 'All completed opt-in Canvas-overlay passes in this renderer-recording segment, including normal draws and at most two same-callback draws; separated by export-time zone and engagement state at callback completion. Timed JS only, added opt-in overhead, no GPU/presented FPS. Stages are sequential within a draw; do not add their independent p95 values.',
+      scope: 'All completed opt-in Canvas-overlay passes in this renderer-recording segment, including normal draws and at most two same-callback draws; separated by zone and engagement state observed at callback completion. Timed JS only, added opt-in overhead, no GPU/presented FPS. Stages are sequential within a draw; do not add their independent p95 values.',
       bucketUpperBoundsMs: overlaySubpassBoundsMs,
       groups: Object.entries(capture.overlaySubpassByActivity || {}).map(([key, group]) => ({
         zoneAndEngagement: key,
