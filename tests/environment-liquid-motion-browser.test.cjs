@@ -128,7 +128,7 @@ async function main(){
       const first=await page.evaluate(s=>({
         renderer:Prototype.experimentalGraphics.mode,
         effective:Prototype.renderer.metrics().optimizationMode,
-        pixiPreset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1')).preset,
+        pixiPreset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1'))?.preset ?? false,
         liquidStrokes:Prototype.experimentalGraphics.sceneMetrics?.liquidStrokes,
         hero:{x:Prototype.game.hero.x,y:Prototype.game.hero.y},
         hazardScreen:Prototype.renderer.screen(s.hazard),
@@ -139,7 +139,7 @@ async function main(){
       const last=await page.evaluate(s=>({
         renderer:Prototype.experimentalGraphics.mode,
         effective:Prototype.renderer.metrics().optimizationMode,
-        pixiPreset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1')).preset,
+        pixiPreset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1'))?.preset ?? false,
         liquidStrokes:Prototype.experimentalGraphics.sceneMetrics?.liquidStrokes,
         hero:{x:Prototype.game.hero.x,y:Prototype.game.hero.y},
         hazardScreen:Prototype.renderer.screen(s.hazard),
