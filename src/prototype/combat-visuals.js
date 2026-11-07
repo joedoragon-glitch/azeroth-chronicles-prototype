@@ -3,6 +3,9 @@
   'use strict';
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js'),
     G = R.combatGeometry;
+  // Reuse read-only trap derivation only within a single renderer draw.
+  // Keep it separate from the existing attack-shape Map and its invariants.
+  const drawTraps = new WeakMap();
   function polygon(ctx, screen, points) {
     ctx.beginPath();
     points.forEach((q, j) => {
@@ -261,6 +264,20 @@
   // Floating cast information is separate from floor warnings, so danger
   // geometry can sit beneath every actor/prop without burying the cast clock.
   function actorCues(ctx, screen, game, heightFor = null) {
+    // Most exploration frames have no cast: avoid three filtered rosters and
+    // layout reads until the combat engine has committed a pending warning.
+    let casts = null;
+    let hasCompactBar = false;
+    for (const e of game.zone().enemies) {
+      if (!pendingWarning(e.telegraph)) continue;
+      (casts ||= []).push(e);
+      if (e.telegraph.anonymousCast || e.telegraph.mobileRogueCast) hasCompactBar = true;
+    }
+    if (!casts) {
+      // Royal Taxation is a live status, not a pending cast. Keep it visible.
+      royalTaxStatus(ctx, screen, game);
+      return;
+    }
     const cueHeight = (e) =>
       Math.max(
         e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65,
@@ -268,16 +285,13 @@
       );
     // Read the real presentation obstacle once per cue pass. Headless Canvas
     // callers have no DOM; their full viewport remains available.
-    const hudRect = ctx.canvas?.ownerDocument?.getElementById?.('hud')?.getBoundingClientRect?.(),
-      canvasRect = ctx.canvas?.getBoundingClientRect?.();
+    const hudRect = hasCompactBar
+        ? ctx.canvas?.ownerDocument?.getElementById?.('hud')?.getBoundingClientRect?.()
+        : null,
+      canvasRect = hasCompactBar ? ctx.canvas?.getBoundingClientRect?.() : null;
     ctx.save();
-    for (const e of game
-      .zone()
-      .enemies.filter(
-        (e) =>
-          pendingWarning(e.telegraph) &&
-          (e.telegraph.anonymousCast || e.telegraph.mobileRogueCast),
-      )) {
+    for (const e of casts) {
+      if (!e.telegraph.anonymousCast && !e.telegraph.mobileRogueCast) continue;
       const a = e.telegraph,
         p = screen(e);
       const transform = ctx.getTransform?.(),
@@ -342,16 +356,9 @@
     // Ledger of Losses deliberately obscures Ridge's ground footprints,
     // including separate rogue moves. It must NEVER obscure the cast itself:
     // attach a high-contrast progress bar to the actual boss, not the terrain.
-    for (const e of game
-      .zone()
-      .enemies.filter(
-        (e) =>
-          e.family === 'ridge' &&
-          e.ledgerOpen &&
-          !e.telegraph?.mobileRogueCast &&
-          visibleWarning(e) &&
-          e.hp > 0,
-      )) {
+    for (const e of casts) {
+      if (!(e.family === 'ridge' && e.ledgerOpen &&
+        !e.telegraph.mobileRogueCast && visibleWarning(e) && e.hp > 0)) continue;
       const a = e.telegraph,
         p = screen(e),
         w = 84,
@@ -372,14 +379,9 @@
       ctx.fillStyle = '#fff4d7';
       ctx.fillText('LEDGER CAST', p.x, y - 8);
     }
-    for (const e of game
-      .zone()
-      .enemies.filter(
-        (e) =>
-          visibleWarning(e) &&
-          !e.telegraph?.mobileRogueCast &&
-          !(e.family === 'ridge' && e.ledgerOpen),
-      )) {
+    for (const e of casts) {
+      if (!(visibleWarning(e) && !e.telegraph.mobileRogueCast &&
+        !(e.family === 'ridge' && e.ledgerOpen))) continue;
       const a = e.telegraph;
       // The skill belongs to the caster, not the player's marked landing point.
       const p = screen(e);
@@ -438,7 +440,12 @@
     ctx.save();
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
-    for (const t of game.traps()) {
+    let traps = frameWarningShapes && drawTraps.get(frameWarningShapes);
+    if (!traps) {
+      traps = game.traps();
+      if (frameWarningShapes) drawTraps.set(frameWarningShapes, traps);
+    }
+    for (const t of traps) {
       const active = t.phase >= t.warningTime && t.phase < t.warningTime + t.activeTime,
         warning = t.phase < t.warningTime,
         p = screen(t);
