@@ -433,18 +433,22 @@
     }
     ctx.restore();
   }
-  // A close-range discovery cue, measured outside the actual harmful edge.
-  // Jet traps are long horizontal lanes, so their nearest segment matters,
-  // not the center of the installation. This never changes trap mechanics.
+  // Cheap paint-only proximity check for each authored trap, never per
+  // enemy/companion. No square roots or polygon construction for distant traps.
+  // A jet's hazardous footprint is a horizontal capsule, not a center point.
   const trapRevealMargin = 90;
   function trapCueNearHero(game, t) {
     const hero = game.hero;
     if (!hero) return false;
+    let dx = hero.x - t.x;
+    const dy = hero.y - t.y;
+    let dangerRadius = t.radius || 0;
     if (t.kind === 'jet') {
-      const nearX = Math.max(t.x - t.length / 2, Math.min(t.x + t.length / 2, hero.x));
-      return Math.hypot(hero.x - nearX, hero.y - t.y) <= (t.halfWidth || 28) + trapRevealMargin;
+      dx = Math.max(0, Math.abs(dx) - t.length / 2);
+      dangerRadius = t.halfWidth || 28;
     }
-    return Math.hypot(hero.x - t.x, hero.y - t.y) <= (t.radius || 0) + trapRevealMargin;
+    const reach = dangerRadius + trapRevealMargin;
+    return dx * dx + dy * dy <= reach * reach;
   }
   function ground(ctx, screen, game, pass = 'fill', time = 0, frameWarningShapes = null) {
     const cue = pass === 'cue' || pass === 'underlay-cue';
