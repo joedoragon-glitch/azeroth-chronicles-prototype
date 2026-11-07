@@ -175,6 +175,35 @@ for (const path of [
   assert(source.includes('[roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge]'),
     path + ': far slope uses the exact shared ridge');
 }
+// Owner's follow-up: preserve the two shared-depth pitched roofs and remove
+// only repeated painted threshold props; saved yard equipment is untouched.
+const repairedRoofArt = fs.readFileSync('src/prototype/visuals.js', 'utf8');
+assert(repairedRoofArt.includes('const roofHalfEave = 54,') &&
+  repairedRoofArt.includes('roofHalfRidge = 23,'),
+  'winter estate uses a centered shallow slate hip roof');
+const treasuryPitch = repairedRoofArt.slice(repairedRoofArt.indexOf('// Properly joined agricultural roof'),
+  repairedRoofArt.indexOf('// Loading doors remain visible beneath added iron straps and lock.'));
+assert(treasuryPitch.includes('roofRearRight = [71, -55]'),
+  'Treasury has one consistent 42,-16 roof-depth vector');
+const treasuryApron = repairedRoofArt.slice(
+  repairedRoofArt.indexOf('// A shallow former loading apron'),
+  repairedRoofArt.indexOf('return true;', repairedRoofArt.indexOf('// A shallow former loading apron')));
+assert(!treasuryApron.includes("craftedDecoration('crate')") &&
+  !treasuryApron.includes("craftedDecoration('scribe-desk')"),
+  'no duplicate painted props in Treasury doorway');
+assert(landscapeSource.includes('roofRearRight = [84, -66]'),
+  'homestead roof uses common 48,-16 depth vector');
+
+
+assert(landscapeSource.includes('[-14, -98],\n          [31, -45]'),
+  'homestead gable rises to the pitched roof ridge, with no protruding peak');
+assert(landscapeSource.includes('poly([roofFrontRight, roofRearRight, [84, -63], [31, -45]]'),
+  'homestead right eave fascia closes against the actual wall');
+assert(repairedRoofArt.includes('[-12, -79],\n            [22, -34]'),
+  'Treasury gable aligns with its roof ridge');
+assert(repairedRoofArt.includes('softPoly([roofFrontRight, roofRearRight, [62, -48], [22, -34]]'),
+  'Treasury wall-to-roof overhang is enclosed');
+
 console.log(
   'PASS native compounds, roof topology, Crown standard, fixture anchor and repeat v4 restore',
 );

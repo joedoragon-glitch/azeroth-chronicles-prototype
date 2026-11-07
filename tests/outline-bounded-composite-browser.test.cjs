@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const cp = require('node:child_process');
 const { chromium } = require('playwright');
-const base = process.env.PERF_BASE_SHA || '6ac2f4f3dd4e6f8e34075971f653ee5d8b069692';
+const base = process.env.PERF_BASE_SHA || '5a7be00b68e640d51f5a8b9f493fb05695b4bf4a';
 const source = fs.readFileSync('src/prototype/renderer.js', 'utf8');
 const original = cp.execFileSync('git', ['show', base + ':src/prototype/renderer.js'], {
   encoding: 'utf8',
