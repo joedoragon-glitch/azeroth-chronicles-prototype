@@ -142,7 +142,7 @@ async function main(){
         sourceCount:g.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length,
         lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
         motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
-        preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1')).preset,
+        preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1'))?.preset ?? false,
         time:g.s.clock
       };
     });
@@ -167,7 +167,7 @@ async function main(){
     const withWraithOn=await page.evaluate(()=>({
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
       motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
-      preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1')).preset,
+      preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1'))?.preset ?? false,
       wraithCount:Prototype.game.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length
     }));
     assert((await gpu.screenshot({path:path.join(out,'marches-wraith-pixi-opt-on.png')})).length>1024);
@@ -185,7 +185,7 @@ async function main(){
     const withoutWraith=await page.evaluate(()=>({
       mode:Prototype.experimentalGraphics.mode,
       zone:Prototype.game.zoneId,
-      preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1')).preset,
+      preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1'))?.preset ?? false,
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
       motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
       sourceCount:Prototype.game.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length
