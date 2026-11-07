@@ -5685,6 +5685,9 @@
               routeCalls: row.routeCalls,
               routeMs: +row.routeMs.toFixed(2),
               maxRouteMs: +row.maxRouteMs.toFixed(2),
+              budgetedCalls: row.budgetedCalls,
+              budgetedMs: +row.budgetedMs.toFixed(2),
+              maxBudgetedMs: +row.maxBudgetedMs.toFixed(2),
             },
           ])) : null,
       pixiMs: Math.round(stages.pixiMs * 10) / 10,
@@ -10023,6 +10026,7 @@
                   trace.phases[phase] = {
                     startedAtMs: at, elapsedMs: null, completed: false,
                     routeCalls: 0, routeMs: 0, maxRouteMs: 0,
+                    budgetedCalls: 0, budgetedMs: 0, maxBudgetedMs: 0,
                   };
                   game.setEnemyRouteTrace(trace);
                 } else {
