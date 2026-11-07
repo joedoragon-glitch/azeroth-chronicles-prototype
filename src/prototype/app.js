@@ -1928,8 +1928,7 @@
   // never replaces the previous offline game or its save storage.
   function refreshStartupUpdateNotice() {
     const notice = $('startup-update-notice');
-    notice.hidden = !startupUpdateNotice;
-    notice.textContent =
+    const updateMessage =
       startupUpdateNotice === 'offline'
         ? language === 'es'
           ? 'Sin conexión. No se pudieron buscar actualizaciones; jugarás con la última versión instalada.'
@@ -1939,6 +1938,11 @@
             ? 'No se pudieron buscar actualizaciones. Puedes jugar con la última versión instalada.'
             : 'Could not check for updates. You can play the last installed version.'
           : '';
+    const resetMessage = performanceBaselineUpgraded
+      ? tr('Performance settings updated to recommended defaults. You can change them in Settings.')
+      : '';
+    notice.textContent = [updateMessage, resetMessage].filter(Boolean).join(' ');
+    notice.hidden = !notice.textContent;
   }
   function startupUpdateText(english, spanish) {
     $('startup-update-text').textContent = language === 'es' ? spanish : english;
@@ -2194,7 +2198,6 @@
     return true;
   }
   startupEvent('save-load-start');
-  let recoveredOnStartup = false;
   let loaded = combatDiagnosticsEnabled
     ? load('arena')
     : (developerEnabled && load('developer')) || load(profile.activeMode);
@@ -2240,7 +2243,6 @@
     if (!loaded || !writerGuard.canWrite()) return;
     const recovered = restartGuard.recover(game);
     if (recovered) {
-      recoveredOnStartup = true;
       game = activateLiveCritical(recovered);
       persistence.save(game, profile);
       status(
@@ -10665,8 +10667,6 @@
   updateHUD();
   setLanguage(language, false);
   showTitleScreen();
-  if (performanceBaselineUpgraded && !recoveredOnStartup)
-    status('Performance settings updated to recommended defaults. You can change them in Settings.');
   requestAnimationFrame(frame);
   startupEvent(writerGuard.pending ? 'ownership-start' : 'ownership-settled', {
     canWrite: writerGuard.canWrite(),
