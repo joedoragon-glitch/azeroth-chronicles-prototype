@@ -204,7 +204,10 @@ function contrast(item) {
         await frame.locator('#title-settings').tap();
         const settingsFit = await assertDialogGeometry(frame, 'Settings', { noScroll: true });
         await frame.getByRole('button', { name: language === 'es' ? /Pantalla y rendimiento/ : /Screen and performance/ }).tap();
-        const graphicsFit = await assertDialogGeometry(frame, 'Graphics settings');
+        await assertDialogGeometry(frame, 'Screen and performance');
+        await frame.getByRole('button', { name: language === 'es' ? 'Gráficos de Canvas' : 'Canvas graphics', exact: true }).tap();
+        const graphicsFit = await assertDialogGeometry(frame, 'Canvas graphics');
+        await frame.locator('#close-button').tap();
         await frame.locator('#close-button').tap();
         await frame.locator('#close-button').tap();
         await frame.locator('#title-help').tap();
