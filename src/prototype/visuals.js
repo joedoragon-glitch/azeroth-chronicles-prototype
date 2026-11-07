@@ -9302,42 +9302,50 @@
       skull(0, -68, 3.2); // subdued retained keystone; no new burial symbolism
       poly([[-28, 14], [28, 14], [38, 21], [-38, 21]], '#c0b69b');
       line([[-34, 22], [35, 22]], '#797d6b', 2);
-      // Each gable is centered on its own walls. The completed slate roof has
-      // paired planar slopes and a continuous straight ridge, not a lopsided
-      // six-corner panel across the surviving crypt arch.
-      poly([[-105, -43], [-75, -69], [-60, -79], [-90, -53]], '#778071');
-      poly([[-75, -69], [-41, -43], [-26, -53], [-60, -79]], '#59675d');
-      line([[-105, -43], [-75, -69], [-60, -79], [-26, -53]], '#b5ac92', 1.4);
-      const estateFrontLeft = [-54, -65],
-        estateFrontRidge = [-1, -103],
-        estateFrontRight = [52, -65],
-        estateRearLeft = [-34, -80],
-        estateRearRidge = [19, -118],
-        estateRearRight = [72, -80];
-      poly([estateFrontLeft, estateFrontRidge, estateRearRidge, estateRearLeft], '#747c70');
-      poly([estateFrontRidge, estateFrontRight, estateRearRight, estateRearRidge], '#5c695f');
-      poly([estateFrontLeft, estateFrontRidge, [-1, -97], [-54, -59]], '#56645b');
-      poly([estateFrontRidge, estateFrontRight, [52, -59], [-1, -97]], '#4f6058');
-      line([estateFrontLeft, estateFrontRidge, estateRearRidge, estateRearRight, estateFrontRight], '#bcb7a0', 1.5);
-      line([estateFrontLeft, estateRearLeft], '#a6b09f', 1.2);
-      for (let j = 1; j <= 2; j++) {
-        const t = j / 3;
-        line([
-          [estateFrontRidge[0] + (estateFrontRight[0] - estateFrontRidge[0]) * t,
-           estateFrontRidge[1] + (estateFrontRight[1] - estateFrontRidge[1]) * t],
-          [estateRearRidge[0] + (estateRearRight[0] - estateRearRidge[0]) * t,
-           estateRearRidge[1] + (estateRearRight[1] - estateRearRidge[1]) * t],
-        ], '#849186', 0.65);
+      // One calm, symmetrical slate hip roof sits squarely over the old
+      // masonry heart. A flat short upper ridge and matching eaves avoid
+      // twisted projected planes reaching into the adjacent wings.
+      poly([[-101, -43], [-82, -69], [-59, -69], [-40, -43]], '#707361');
+      line([[-99, -43], [-82, -67], [-59, -67]], '#b3a487', 1.3);
+      const roofHalfEave = 54,
+        roofHalfRidge = 23,
+        roofEaveY = -64,
+        roofRidgeY = -101;
+      poly([
+        [-roofHalfEave, roofEaveY],
+        [-roofHalfRidge, roofRidgeY],
+        [roofHalfRidge, roofRidgeY],
+        [roofHalfEave, roofEaveY],
+      ], '#707a70');
+      // Symmetrical front fascia hides the original flat stone-wall top.
+      poly([
+        [-roofHalfEave, roofEaveY],
+        [roofHalfEave, roofEaveY],
+        [roofHalfEave, roofEaveY + 5],
+        [-roofHalfEave, roofEaveY + 5],
+      ], '#526358');
+      line([
+        [-roofHalfEave, roofEaveY],
+        [-roofHalfRidge, roofRidgeY],
+        [roofHalfRidge, roofRidgeY],
+        [roofHalfEave, roofEaveY],
+      ], '#b8b7a8', 1.8);
+      line([[-roofHalfEave, roofEaveY + 5], [roofHalfEave, roofEaveY + 5]],
+        '#929a8e', 1.2);
+      for (const y of [-73, -82, -91]) {
+        const half = roofHalfEave -
+          (roofHalfEave - roofHalfRidge) * ((roofEaveY - y) / (roofEaveY - roofRidgeY));
+        line([[-half + 7, y], [half - 7, y]], '#869188', 0.8);
       }
-      // The unfinished right bay shares one centered front gable; its rafters
-      // remain exposed without producing a third accidental roof angle.
-      poly([[44, -49], [70, -78], [96, -49]], '#786b56');
-      timber([44, -49], [70, -78], 3, '#a78c66');
-      timber([70, -78], [96, -49], 3, '#a78c66');
+      // The eastern addition stays visibly under construction: a centered
+      // front roof frame, not an asymmetric extra closed roof volume.
+      poly([[45, -48], [70, -75], [96, -48], [96, -44], [45, -44]], '#796a52');
+      timber([46, -49], [70, -75], 3, '#a78c66');
+      timber([70, -75], [95, -49], 3, '#a78c66');
       timber([54, -54], [54, 17], 3, '#ad936d');
       timber([93, -51], [93, 18], 3, '#ad936d');
       timber([54, -52], [94, -52], 3, '#ad936d');
-      timber([72, -68], [72, -52], 2, '#c6aa7d');
+      timber([70, -74], [70, -52], 2, '#c6aa7d');
       // A small maintained sill and a partly prepared wing tell the story
       // without covering the approach with unrelated stacks of loot.
       poly([[49, 13], [94, 13], [99, 19], [45, 19]], '#a7a38d');
@@ -9662,19 +9670,19 @@
         softPoly(
           [
             [-46, -48],
-            [-23, -87],
+            [-12, -79],
             [22, -34],
           ],
           '#9c7c56',
         );
-        // Two roof slopes use one front ridge and the same building-depth
-        // vector. Reusing their exact corners prevents a twisted roof seam.
-        const roofFrontLeft = [-53, -53],
-          roofFrontRidge = [-23, -93],
+        // Properly joined agricultural roof: matching slopes share a single
+        // front gable and the same 42,-16 depth vector on every corner.
+        const roofFrontLeft = [-52, -52],
+          roofFrontRidge = [-12, -79],
           roofFrontRight = [29, -39],
-          roofRearLeft = [-13, -67],
-          roofRearRidge = [17, -107],
-          roofRearRight = [69, -53];
+          roofRearLeft = [-10, -68],
+          roofRearRidge = [30, -95],
+          roofRearRight = [71, -55];
         softPoly(
           [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
           '#97714d',
@@ -9683,52 +9691,23 @@
           [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
           '#604735',
         );
-        // A continuous front fascia closes both pitched planes onto the
-        // existing gable/wall. Keep the high grain hatch below the roof.
-        softPoly(
-          [roofFrontLeft, roofFrontRidge, [-23, -87], [-53, -47]],
-          '#4e3e30',
-        );
-        softPoly(
-          [roofFrontRidge, roofFrontRight, [29, -33], [-23, -87]],
-          '#493a2c',
-        );
-        line(
-          [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearRight, roofFrontRight],
-          '#b5986e',
-          3,
-        );
-        line([roofFrontLeft, roofRearLeft], '#a78a66', 2);
-        for (let j = 1; j < 5; j++) {
-          const t = j / 5;
-          line(
-            [
-              [
-                roofFrontLeft[0] + (roofFrontRidge[0] - roofFrontLeft[0]) * t,
-                roofFrontLeft[1] + (roofFrontRidge[1] - roofFrontLeft[1]) * t,
-              ],
-              [
-                roofRearLeft[0] + (roofRearRidge[0] - roofRearLeft[0]) * t,
-                roofRearLeft[1] + (roofRearRidge[1] - roofRearLeft[1]) * t,
-              ],
-            ],
-            '#b19369',
-            1,
-          );
-          line(
-            [
-              [
-                roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
-                roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t,
-              ],
-              [
-                roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
-                roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
-              ],
-            ],
-            '#8b6d4d',
-            1,
-          );
+        // Seal the small eave overhang to the existing storehouse walls,
+        // instead of exposing a green background wedge at the roof junction.
+        softPoly([roofFrontRight, roofRearRight, [62, -48], [22, -34]], '#493a2c');
+        softPoly([roofFrontRidge, roofFrontRight, [22, -34], [-12, -75]], '#493a2c');
+        // A single narrow fascia, without a second bulky or fractured
+        // roof below the actual eaves.
+        line([roofFrontLeft, roofFrontRidge, roofFrontRight], '#b5986e', 2.4);
+        line([roofFrontRidge, roofRearRidge], '#b5986e', 2);
+        line([roofFrontLeft, roofRearLeft], '#a78a66', 1.5);
+        line([roofFrontRight, roofRearRight], '#a78a66', 1.5);
+        for (const t of [1 / 3, 2 / 3]) {
+          line([
+            [roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
+              roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t],
+            [roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
+              roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t],
+          ], '#83664a', 0.85);
         }
         // Loading doors remain visible beneath added iron straps and lock.
         softRect(-29, -37, 37, 43, '#534635', 2);
@@ -9764,21 +9743,9 @@
           ],
           '#82745a',
         );
-        softPoly(
-          [
-            [-19, 8],
-            [8, 14],
-            [24, 7],
-            [-3, 0],
-          ],
-          '#b09970',
-        );
-        for (const x of [-10, 0, 10])
-          line([[x, 4], [x + 4, 12]], '#80694c', 1.2);
-        // The loose courtyard ledger and barrel now stand together outside;
-        // these small near-wall details keep the frontage from being empty.
-        craftAt(40, 7, 0.36, () => craftedDecoration('crate'));
-        craftAt(-38, 8, 0.31, () => craftedDecoration('scribe-desk'));
+        // No oversized loose pallet/mat painted into the same tiny apron.
+        // Keep the actual exterior yard props; do not duplicate them on the
+        // entrance apron where they crowd the loading threshold.
         return true;
       }
       const key =

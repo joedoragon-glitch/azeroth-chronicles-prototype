@@ -1,3 +1,5 @@
+**6 November 2026 — owner-requested roof correction PR #836, MAIN-INTEGRATED CANDIDATE (not yet released at this record):** Two previously merged passes #832/#837 left Scornfang's Treasury and Thornfang's personal granary roof silhouettes awkward in the owner's view. The currently staged visual-only source correction uses a simpler common-depth roof/gable, less facade hatching and no redundant painted crate/desk or mat over the Treasury threshold; it also offers a symmetrical shallow slate center on the Forest Crypt winter estate. Existing nearby golden homestead label, nonowned yard cleanup, road junctions, v4 save migrations, #846 enemy combat-name visibility and newer Pixi/performance code remain intact. No gameplay, doors, collision, props, service positions, AI, input, saved campaign or renderer policy is altered. Exact-head focused geometry/native saves and Canvas/Pixi evidence are release gates; physical-device visual acceptance is not assumed. Older status paragraphs are historical.
+
 
 ## Post-publication visual follow-up — 5 November 2026 (draft only)
 
