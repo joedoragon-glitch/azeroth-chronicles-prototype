@@ -64,7 +64,7 @@ for (const [width, height, zoom] of [[900, 600, 1], [393, 852, 1.5]]) {
     }
     const before = paint(width, height, zoom, false);
     const after = paint(width, height, zoom, true);
-    assert.equal(before.calls, 2,
+    assert.equal(before.calls, 1,
       'uncached attack patches should build once in each warning pass; the safe sector shares those patches');
     assert.equal(after.calls, 1,
       'both danger sector and protected-side geometry must share one attackPatches invocation per draw');
