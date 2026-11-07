@@ -14,7 +14,15 @@ Baseline: published dev.272 (`0a7397bfb39e456f1d88584bca8f71c8fbe0c114`). The Oc
 
 Resume in order: verify main and the open PR, finish the preference/safety contract, complete the player-facing pages, then run targeted shell and browser journeys and reconcile this document and the development ledger. Candidate acceptance requires the exact branch head and concrete pass/fail evidence. Publication requires separate owner authorization.
 
-Checkpoint: plan and source ownership confirmed. Runtime changes and focused verification are pending.
+Checkpoint: initial runtime implementation is in draft [PR #856](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/856). It splits the settings pages, uses the live renderer for graphics controls, separates saved and effective values, and adds a pre-controller settings migration. An interrupted trial preserves the guard’s Canvas decision rather than being retried by the migration. Current checks and remaining acceptance are tracked in the PR.
+
+### Candidate controls and recovery
+
+The landing shows active and preferred renderers, fallback status when applicable, effective backing resolution and the current draw target. Export remains on the landing. The Display page shows resolved layout and camera zoom. Renderer and recovery keeps Canvas as a selectable backup and closes the menu for a deliberate Pixi trial. Graphics follows the active backend, including after a context loss while the menu is open. Frame pacing and Diagnostics each have a dedicated page.
+
+The versioned migration runs before settings controllers. It resets display and camera, both renderers’ quality, draw target and routine skip. It defaults to Pixi when safe. An interrupted trial is resolved by the existing startup guard, including retaining Canvas where the trial was unconfirmed. An existing recovery hold remains in force. The migration is allowlisted, its completion marker is written last, and a later successful retry completes a partially written migration. Device-only changes do not serialize a campaign save.
+
+Local shell checks passed for bilingual navigation, save-write isolation, migration and recovery storage, diagnostics/export, frame skip and resolution. The browser acceptance and exact GitHub check results are tracked in #856.
 
 ## Historical Step 2 record
 
