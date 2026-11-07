@@ -46,6 +46,7 @@ async function selectPixi(page) {
   await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
   await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
+  await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
   try {
     // A complete current-region atlas can legitimately take much longer than
@@ -311,6 +312,7 @@ async function startupCase(browser, host, scenario) {
           sessionStorage.setItem('841-seeded', 'yes');
           if (scenario === 'interrupted' || scenario === 'repeated') {
             localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+            localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
             localStorage.setItem('azeroth-renderer-choice-v1', 'webgl2');
             if (scenario === 'interrupted')
               localStorage.setItem('azeroth-renderer-trial-pending-v1', 'pending');
@@ -498,7 +500,7 @@ async function startupCase(browser, host, scenario) {
           await page.locator('#menu-button').click();
           await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
           await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
-          const details = page.getByRole('button', { name: /^Show performance details/ });
+          const details = page.getByRole('button', { name: /^Diagnostics/ });
           if (await details.isVisible()) await details.click();
           await page.getByRole('button', { name: /^Start renderer profiling/ }).click();
           await page.getByRole('button', { name: /^Start effect recording/ }).click();
@@ -517,6 +519,7 @@ async function startupCase(browser, host, scenario) {
           await page.locator('#menu-button').click();
           await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
           await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+          await page.getByRole('button', { name: 'Diagnostics', exact: true }).click();
           await page.getByRole('button', { name: /^Stop renderer profiling/ }).click();
           await page.getByRole('button', { name: /^Stop effect recording/ }).click();
           await page.getByRole('button', { name: /^Stop navigation profiling/ }).click();
@@ -764,6 +767,7 @@ async function run() {
           await migrationPage
             .getByRole('button', { name: 'Screen and performance', exact: true })
             .click();
+          await migrationPage.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
           await migrationPage
             .locator('select[aria-label="Graphics renderer"]')
             .selectOption('canvas2d');
