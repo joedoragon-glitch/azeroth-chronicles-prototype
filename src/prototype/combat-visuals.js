@@ -59,22 +59,6 @@
   // A warning belongs only to the pending cast. Once the native release
   // clock expires, impact/travel/hazard art takes over; no stale floor mark,
   // cast bar or aiming line should survive even for one presentation frame.
-  // Presentation gate only. The engine continues to simulate every trap.
-  // Distance is to the true capsule/round hazard edge, not to its center.
-  function nearbyTrap(t, hero) {
-    if (!hero || !Number.isFinite(hero.x) || !Number.isFinite(hero.y)) return true;
-    if (!Number.isFinite(t.x) || !Number.isFinite(t.y)) return true;
-    if (t.kind === 'jet') {
-      if (!Number.isFinite(t.length) || !Number.isFinite(t.halfWidth)) return true;
-      const dx = Math.max(0, Math.abs(hero.x - t.x) - t.length / 2),
-        dy = hero.y - t.y,
-        range = Math.max(0, t.halfWidth) + 40;
-      return dx * dx + dy * dy <= range * range;
-    }
-    if (!Number.isFinite(t.radius)) return true;
-    const dx = hero.x - t.x, dy = hero.y - t.y, range = Math.max(0, t.radius) + 40;
-    return dx * dx + dy * dy <= range * range;
-  }
   function pendingWarning(a) {
     return !!a && Number.isFinite(a.timer) && a.timer > 0;
   }
@@ -462,6 +446,23 @@
     }
     ctx.restore();
   }
+  // Cheap paint-only proximity check for each authored trap, never per
+  // enemy/companion. No square roots or polygon construction for distant traps.
+  // A jet's hazardous footprint is a horizontal capsule, not a center point.
+  const trapRevealMargin = 40;
+  function trapCueNearHero(game, t) {
+    const hero = game.hero;
+    if (!hero) return false;
+    let dx = hero.x - t.x;
+    const dy = hero.y - t.y;
+    let dangerRadius = t.radius || 0;
+    if (t.kind === 'jet') {
+      dx = Math.max(0, Math.abs(dx) - t.length / 2);
+      dangerRadius = t.halfWidth || 28;
+    }
+    const reach = dangerRadius + trapRevealMargin;
+    return dx * dx + dy * dy <= reach * reach;
+  }
   function ground(ctx, screen, game, pass = 'fill', time = 0, frameWarningShapes = null) {
     const cue = pass === 'cue' || pass === 'underlay-cue';
     ctx.save();
@@ -473,8 +474,9 @@
       if (frameWarningShapes) drawTraps.set(frameWarningShapes, traps);
     }
     for (const t of traps) {
-      // No projection, polygon creation or Canvas work for remote traps.
-      if (!nearbyTrap(t, game.hero)) continue;
+      // Both full Canvas and the Pixi cue overlay use this painter.
+      // Cull before allocating polygons for distant, undiscovered traps.
+      if (!trapCueNearHero(game, t)) continue;
       const active = t.phase >= t.warningTime && t.phase < t.warningTime + t.activeTime,
         warning = t.phase < t.warningTime,
         p = screen(t);
@@ -1515,6 +1517,7 @@
     pendingWarning,
     visibleWarning,
     royalTaxStatus,
+    trapCueNearHero,
     ground,
     actorCues,
     enemySupportHeal,
