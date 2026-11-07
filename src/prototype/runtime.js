@@ -295,13 +295,15 @@
       },
       // Called only for a drawing already permitted by the regular FPS limiter.
       // Applies at every valid FPS target; warnings have no special exemption.
-      shouldSkip(now, target) {
+      shouldSkip(now, target, requireRenderDominance = false) {
         if ((!enabled && !emergency) || !Number.isFinite(now) ||
           !Number.isFinite(target) || target <= 0) return false;
         const stressed =
           drawnSamples >= 6 &&
           drawWork > (1000 / target) * 1.12 &&
-          renderWork >= 5;
+          renderWork >= 5 &&
+          // Ordinary Pixi skips should pay for a meaningful share of the callback.
+          (!requireRenderDominance || renderWork * 2 >= drawWork);
         const drawAge = lastDrawAt === null ? Infinity : now - lastDrawAt;
         const skip = (emergency || stressed) &&
           consecutiveSkips < (emergency ? 5 : 2) &&
@@ -431,13 +433,16 @@
   // Adapt only the backing-store density. CSS coordinates, camera, input and
   // simulation remain independent of this device-local presentation policy.
   const resolutionPreferenceKey = 'azeroth-render-resolution-v1';
-  function createResolution(storage) {
+  function createResolution(storage, preferenceKey = resolutionPreferenceKey, legacyPreference) {
     // Manual density is relative to CSS viewport size, never device resolution.
     const fixedRatios = Object.freeze({ '100': 1, '80': 0.8, '60': 0.6, '50': 0.5 });
     let preference = 'auto';
     try {
-      const saved = storage?.getItem(resolutionPreferenceKey);
+      const stored = storage?.getItem(preferenceKey);
+      const saved = stored ?? legacyPreference;
       if (saved === 'native' || Object.hasOwn(fixedRatios, saved)) preference = saved;
+      if (stored == null && legacyPreference !== undefined)
+        storage?.setItem(preferenceKey, preference);
     } catch (_) {}
     let maximum = 1,
       ratio = selectedRatio(),
@@ -477,7 +482,7 @@
         changedAt = null;
         suspend();
         try {
-          storage?.setItem(resolutionPreferenceKey, value);
+          storage?.setItem(preferenceKey, value);
         } catch (_) {}
         return true;
       },

@@ -74,7 +74,7 @@ assert.equal(isolated.target, 30, 'Default Auto never increases past 30');
 const app = fs.readFileSync(path.join(__dirname, '../src/prototype/app.js'), 'utf8');
 assert(app.includes('fps.observe(now, performance.now() - frameStart, draw, adaptiveSkipped);'),
   'Live frame loop supplies explicit adaptive-skip evidence');
-assert(app.includes('frameSkip.shouldSkip(now, fps.target)'));
+assert(app.includes('frameSkip.shouldSkip(now, fps.target,'));
 
 // Both independent runtime controllers still support manual Off, which must
 // not suppress Auto FPS behavior or force false pressure flags.

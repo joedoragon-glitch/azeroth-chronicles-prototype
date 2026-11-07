@@ -61,6 +61,17 @@ for (let i = 0; i < 40; i++) {
   cpu.observe(now, 70, 2, true);
 }
 
+const pixiSkip = createFrameSkip();
+for (let i = 0; i < 6; i++) pixiSkip.observe(i * 50, 58, 6, true);
+assert.equal(pixiSkip.shouldSkip(300, 20, true), false, 'Pixi keeps simulation-heavy drawings');
+assert.equal(pixiSkip.shouldSkip(300, 20), true, 'Canvas keeps its existing policy');
+for (let i = 6; i < 20; i++) pixiSkip.observe(i * 50, 57, 52, true);
+assert.equal(pixiSkip.shouldSkip(1000, 20, true), true, 'Pixi still skips render-heavy drawings');
+for (let i = 20; i < 30; i++) pixiSkip.observe(i * 50, 19, 6, true);
+assert.equal(pixiSkip.shouldSkip(1500, 20, true), false, 'Transient stress clears');
+assert.equal(pixiSkip.beginFrame(1510, 700), true);
+assert.equal(pixiSkip.shouldSkip(1510, 20, true), true, 'Emergency overrides the render-cost gate');
+
 const recovery = createFrameSkip();
 let recoveredSkips = 0;
 for (let i = 0; i < 20; i++) {
@@ -98,7 +109,7 @@ const app = fs.readFileSync(path.join(__dirname, '../src/prototype/app.js'), 'ut
 const frame = app.slice(app.indexOf('  function frame(now) {'));
 const simulation = frame.indexOf('game.tick(dt,');
 const effectUpdate = frame.indexOf('renderer.update(simulating ? dt : 0)');
-const drawGate = frame.indexOf('frameSkip.shouldSkip(now, fps.target)');
+const drawGate = frame.indexOf('frameSkip.shouldSkip(now, fps.target,');
 assert(simulation >= 0 && simulation < drawGate, 'Simulation precedes any adaptive skip');
 assert(effectUpdate >= 0 && effectUpdate < drawGate,
   'Combat effects advance before the adaptive drawing decision');

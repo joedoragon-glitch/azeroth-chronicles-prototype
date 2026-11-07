@@ -19,7 +19,7 @@ assert.match(app, /if \(!optimizationMode && !pixiFixedQualityPilotActive\(\)\)/
 assert.match(app, /!pixiFixedQualityPilotActive\(\) &&\s*renderResolution\.observe\(/);
 assert.match(app, /const optimizationDecision = pixiFixedQualityPilotActive\(\)\s*\? null\s*: autoOptimization\.observe\(/);
 assert.match(app, /graphicsController\?\.status\(\)\.mode,[\s\S]*?pixiGame\.status\(\)\.active/);
-assert.match(app, /const adaptiveSkipped = eligibleDraw && frameSkip\.shouldSkip\(/);
+assert.match(app, /const adaptiveSkipped =\s*eligibleDraw && frameSkip\.shouldSkip\(now, fps.target, canvasQualityBeforePixi !== null\)/);
 assert.match(app, /graphicsController\?\.webglFailed\(failure\)/);
 // Controlled A/B policy stress: the identical 62-ms per-draw load would have
 // caused automatic scaling with the original path; live Pixi must not invoke
