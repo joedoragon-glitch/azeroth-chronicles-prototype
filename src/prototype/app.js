@@ -6163,7 +6163,9 @@
   let effectRecording = false;
   function platformMenu(back = systemMenu) {
     const graphics = graphicsController.status();
-    const pixiSettings = (graphics.preferredRenderer || graphics.mode) === 'webgl2';
+    // In a WebGL failure, Canvas is active even when Pixi remains preferred.
+    // Only expose Pixi-only quality controls when they affect the live scene.
+    const pixiSettings = graphics.mode === 'webgl2';
     const resolutions = [
       ['auto', 'Automatic sharpness'],
       ['native', 'Maximum sharpness'],
