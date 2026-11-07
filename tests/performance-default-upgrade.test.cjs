@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
 const { shell } = require('./helpers/production-shell.cjs');
 
-const migrationKey = 'azeroth-performance-defaults-dev170-v1';
-const optimizationMigrationKey = 'azeroth-optimization-auto-default-v1';
+const migrationKey = 'azeroth-pixi-settings-baseline-v1';
+const guard = require('../tools/webgl-pilot/renderer-switch-guard.js');
 for (const language of ['en', 'es']) {
   const storage = new Map();
   const original = new Campaign('normal', 'mage', () => 0.5).snapshot();
@@ -18,16 +18,21 @@ for (const language of ['en', 'es']) {
   storage.set('azeroth-screen-v1', 'phone');
   storage.set('unrelated-device-preference', 'keep-me');
 
+  storage.set('azeroth-performance-defaults-dev170-v1', 'applied');
+  storage.set('azeroth-optimization-auto-default-v1', 'applied');
+  storage.set('azeroth-pixi-resolution-v1', '50');
+  storage.set('azeroth-pixi-quality-v1', '{"preset":true,"particles":false}');
   const first = shell(language, 'paladin', { storage });
   assert.equal(storage.get(migrationKey), 'applied', 'Upgrade is recorded once');
-  assert.equal(storage.get(optimizationMigrationKey), 'applied', 'Optimization upgrade runs once');
   assert.equal(first.scope.Prototype.fps.preference, 'auto');
   assert.equal(first.scope.Prototype.fps.target, 30);
   assert.equal(first.scope.Prototype.frameSkip.enabled, true);
   assert.equal(first.scope.Prototype.renderResolution.preference, 'auto');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'auto',
     'Optimization Auto supersedes older stored On/Off on this update');
-  assert.equal(first.scope.Prototype.platform.preference, 'phone');
+  assert.equal(first.scope.Prototype.platform.preference, 'auto');
+  assert.equal(storage.get('azeroth-pixi-resolution-v1'), 'auto');
+  assert.deepEqual(JSON.parse(storage.get('azeroth-pixi-quality-v1')), { preset: false, particles: true });
   assert.equal(first.scope.Prototype.platform.cameraZoom, 1.5);
   first.scope.Prototype.platform.select('desktop');
   assert.equal(first.scope.Prototype.platform.cameraZoom, 1.5);
@@ -70,26 +75,39 @@ for (const language of ['en', 'es']) {
   assert.equal(second.scope.Prototype.platform.cameraZoom, 1);
   assert.equal(storage.get('azeroth-v4-normal'), savedCampaign);
   assert.equal(storage.get(migrationKey), 'applied');
-  assert.equal(storage.get(optimizationMigrationKey), 'applied');
 }
 
-// A returning dev.170 user already has the old migration marker. Only
-// Optimization Mode changes on the next update; other preferences survive.
-const returning = new Map([
-  [migrationKey, 'applied'],
-  ['azeroth-optimization-mode-v1', 'off'],
-  ['azeroth-fps-v1', '60'],
-  ['azeroth-adaptive-frame-skip-v1', 'off'],
-  ['azeroth-render-resolution-v1', 'native'],
+const interrupted = new Map([
+  [guard.PREFERENCE_KEY, 'canvas2d'],
+  [guard.PENDING_KEY, 'pending'],
 ]);
-const reloaded = shell('en', 'paladin', { storage: returning });
-assert.equal(returning.get(optimizationMigrationKey), 'applied');
-assert.equal(returning.get('azeroth-optimization-mode-v1'), 'auto');
-assert.equal(reloaded.scope.Prototype.fps.preference, '60');
-assert.equal(reloaded.scope.Prototype.frameSkip.enabled, false);
-assert.equal(reloaded.scope.Prototype.renderResolution.preference, 'native');
-returning.set('azeroth-optimization-mode-v1', 'off');
-shell('en', 'paladin', { storage: returning });
-assert.equal(returning.get('azeroth-optimization-mode-v1'), 'off',
-  'Post-upgrade explicit Off must persist through relaunch');
-console.log('PASS one-time returning-player performance baseline, v4 save safety and WebGL2 trial touch layout');
+shell('en', 'paladin', { storage: interrupted, graphicsGuard: guard });
+assert.equal(interrupted.get(migrationKey), 'applied');
+assert.equal(interrupted.get(guard.PREFERENCE_KEY), 'canvas2d');
+assert.equal(interrupted.has(guard.PENDING_KEY), false, 'the existing guard consumes the trial');
+assert.equal(interrupted.has(guard.RECOVERY_HOLD_KEY), false, 'trial was never confirmed');
+
+const held = new Map([
+  [guard.PREFERENCE_KEY, 'webgl2'],
+  [guard.RECOVERY_HOLD_KEY, 'repeated-failures'],
+  [guard.RECOVERY_EVIDENCE_KEY, '{"version":1}'],
+]);
+const heldShell = shell('en', 'paladin', { storage: held, graphicsGuard: guard });
+assert.equal(heldShell.scope.Prototype.experimentalGraphics.mode, 'canvas2d');
+assert.equal(held.get(guard.RECOVERY_HOLD_KEY), 'repeated-failures');
+assert.equal(held.get(guard.RECOVERY_EVIDENCE_KEY), '{"version":1}');
+
+const partial = new Map([['azeroth-fps-v1', '60'], ['azeroth-pixi-resolution-v1', '50']]);
+const persist = partial.set.bind(partial);
+partial.set = (key, value) => {
+  if (key === 'azeroth-pixi-resolution-v1') throw Error('storage blocked');
+  return persist(key, value);
+};
+shell('en', 'paladin', { storage: partial });
+assert.equal(partial.has(migrationKey), false, 'incomplete writes never mark the migration applied');
+partial.set = persist;
+shell('en', 'paladin', { storage: partial });
+assert.equal(partial.get(migrationKey), 'applied');
+assert.equal(partial.get('azeroth-pixi-resolution-v1'), 'auto');
+
+console.log('PASS one-time settings migration, retry, recovery, v4 save safety and WebGL2 trial touch layout');
