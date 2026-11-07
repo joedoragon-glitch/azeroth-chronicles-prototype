@@ -5479,6 +5479,9 @@
     'groundAndClear', 'healthPlates', 'nameplates',
     'occlusionCandidates', 'occlusionMasks', 'remainingCombatCues',
     'totalDrawMs',
+    // Nested under occlusionMasks, not additional whole-overlay time.
+    'outlinePairMs', 'outlineBuffersMs', 'outlineClearMs', 'outlineActorMs',
+    'outlineTintMs', 'outlineEdgeMs', 'outlineCoverMs', 'outlineCompositeMs',
   ];
   const overlaySubpassBoundsMs = [0.5, 1, 2, 4, 8, 12, 16, 24, 33, 50, 75, 100, 150, 250, 500];
   function recordOverlaySubpasses(capture, zone, engaged, overlayDraws) {
@@ -5500,6 +5503,7 @@
         outlineWork: {
           samples: 0, maskCount: 0, maskPixels: 0, zeroMaskPasses: 0,
           maxMasksPerDraw: 0, maxVisibleEntities: 0,
+          coverSpriteDraws: 0, sampledCoverPasses: 0, pairCount: 0,
         },
         stages: Object.fromEntries(overlaySubpassStageNames.map((name) => [
           name, { samples: 0, sumMs: 0, maxMs: 0, histogram: Array(overlaySubpassBoundsMs.length + 1).fill(0) },
@@ -5536,12 +5540,18 @@
         if (masks === 0) work.zeroMaskPasses++;
         work.maxMasksPerDraw = Math.max(work.maxMasksPerDraw, masks);
         work.maxVisibleEntities = Math.max(work.maxVisibleEntities, visible);
+        if (Number.isSafeInteger(stages.outlineCoverSprites) && stages.outlineCoverSprites >= 0 &&
+            Number.isSafeInteger(stages.outlinePairs) && stages.outlinePairs >= 0) {
+          work.sampledCoverPasses++;
+          work.coverSpriteDraws += stages.outlineCoverSprites;
+          work.pairCount += stages.outlinePairs;
+        }
       }
     }
   }
   function overlaySubpassReport(capture) {
     return {
-      scope: 'All completed opt-in Canvas-overlay passes in this renderer-recording segment, including normal draws and at most two same-callback draws; separated by zone and engagement state observed at callback completion. Timed JS only, added opt-in overhead, no GPU/presented FPS. Stages are sequential within a draw; do not add their independent p95 values.',
+      scope: 'All completed opt-in Canvas-overlay passes in this renderer-recording segment, including normal draws and at most two same-callback draws; separated by zone and engagement state observed at callback completion. Timed JS only, added opt-in overhead, no GPU/presented FPS. outline*Ms are nested within occlusionMasks, not extra time; per-mask timestamps add profiler overhead. Independent p95 values are not additive.',
       bucketUpperBoundsMs: overlaySubpassBoundsMs,
       groups: Object.entries(capture.overlaySubpassByActivity || {}).map(([key, group]) => ({
         zoneAndEngagement: key,
@@ -5556,6 +5566,9 @@
             ? +(group.outlineWork.maskCount / group.outlineWork.samples).toFixed(2) : null,
           maxMasksPerDraw: group.outlineWork.maxMasksPerDraw,
           maxVisibleEntities: group.outlineWork.maxVisibleEntities,
+          sampledCoverPasses: group.outlineWork.sampledCoverPasses,
+          totalCoverSpriteDraws: group.outlineWork.coverSpriteDraws,
+          totalOcclusionPairs: group.outlineWork.pairCount,
         },
         stages: Object.fromEntries(Object.entries(group.stages).map(([name, row]) => [
           name, {
@@ -5664,6 +5677,16 @@
       companionAIMs: Math.round(stages.companionAIMs * 10) / 10,
       enemyAIMs: Math.round(stages.enemyAIMs * 10) / 10,
       otherSimulationMs: Math.round(stages.otherSimulationMs * 10) / 10,
+      enemyDetail: stages.enemyDetail
+        ? Object.fromEntries(Object.entries(stages.enemyDetail.phases).map(([name, row]) => [
+            name, {
+              completed: row.completed,
+              ms: row.completed ? +row.elapsedMs.toFixed(2) : null,
+              routeCalls: row.routeCalls,
+              routeMs: +row.routeMs.toFixed(2),
+              maxRouteMs: +row.maxRouteMs.toFixed(2),
+            },
+          ])) : null,
       pixiMs: Math.round(stages.pixiMs * 10) / 10,
       canvasOverlayMs: Math.round(stages.canvasOverlayMs * 10) / 10,
       canvasWorldMs: Math.round(stages.canvasWorldMs * 10) / 10,
@@ -9948,6 +9971,7 @@
           canvasWorldDrawn: false,
           pixiDraws: rendererDiagnosticActive ? [] : null,
           overlayDraws: rendererDiagnosticActive ? [] : null,
+          enemyDetail: rendererDiagnosticActive ? { phase: null, phases: Object.create(null) } : null,
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
@@ -9980,15 +10004,45 @@
       const simulationAt = performance.now(),
         marks = {};
       game.crowdDiagnosticsBeginFrame();
-      game.tick(dt, {
-        x,
-        y,
-        speedFactor,
-        performanceMark: (stage) => {
-          marks[stage] = performance.now();
-        },
-      });
-      game.crowdDiagnosticsEndFrame();
+      try {
+        game.tick(dt, {
+          x,
+          y,
+          speedFactor,
+          performanceMark: (stage) => {
+            marks[stage] = performance.now();
+          },
+          performanceEnemyMark: stageTimes.enemyDetail
+            ? (mark) => {
+                const trace = stageTimes.enemyDetail;
+                const begin = mark.endsWith('Start');
+                const phase = mark.slice(0, begin ? -5 : -3);
+                const at = performance.now();
+                if (begin) {
+                  trace.phase = phase;
+                  trace.phases[phase] = {
+                    startedAtMs: at, elapsedMs: null, completed: false,
+                    routeCalls: 0, routeMs: 0, maxRouteMs: 0,
+                  };
+                  game.setEnemyRouteTrace(trace);
+                } else {
+                  game.setEnemyRouteTrace(null);
+                  const row = trace.phases[phase];
+                  if (row) {
+                    row.elapsedMs = Math.max(0, at - row.startedAtMs);
+                    row.completed = true;
+                  }
+                  trace.phase = null;
+                }
+              }
+            : null,
+        });
+      } finally {
+        // Never retain a live observer across an exception, return-to-title
+        // transition or another unprofiled simulation tick.
+        if (stageTimes.enemyDetail) game.setEnemyRouteTrace(null);
+        game.crowdDiagnosticsEndFrame();
+      }
       if (
         startup?.needsMovement() &&
         game.hero === movingHero &&
