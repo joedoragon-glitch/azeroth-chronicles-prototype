@@ -50,6 +50,12 @@
             'Optional Start/Stop renderer profiling recording. state distinguishes not-recorded, recording and stopped; interrupted segments can appear in diagnosticContinuity. Initial/final renderer are endpoints, not proof of one renderer throughout: inspect graphicsTransitions and worstFrames too. Histograms yield approximate percentile bucket ceilings in milliseconds; null upper bound can mean overflow, not zero. worstFrames retains severe incidents, not every frame. counterDeltas with counterResetKeys cannot be treated as continuous totals. Extra Pixi stage timing runs only during active recording and adds observation overhead.',
         },
         {
+          path: 'performance.rendererDiagnostics.overlaySubpassSummary',
+          optional: true,
+          meaning:
+            'Opt-in renderer-recorder evidence of every completed Canvas combat overlay pass, not just exceptional callbacks. Bounded by recording segment and grouped by zone + observed squad engagement at callback completion (up to 24 distinct groups; extra cohorts merge into other:engaged/unengaged). Each subpass and the enclosing totalDrawMs reports samples, mean, max and a p95 histogram bucket ceiling; independent p95s are not additive, and the parent duration must not be added to its component stages. outlineWork reports actual number and size of alpha contour masks per measured draw (including zero-mask draws), plus candidate entity count. A slow draw with zero masks rules out contour painting as the cause of that draw; a positive association alone does not prove causality. Multiple overlay draws in one callback each count once as passes, not frames. It measures synchronous JavaScript only, includes optional profiler overhead and does not reveal GPU presentation, per-monster AI costs, or an old report retroactively.',
+        },
+        {
           path: 'performance.effectDiagnostics',
           optional: true,
           meaning:
