@@ -70,6 +70,10 @@ test('opt-in overlay phases distinguish ground, nameplates, occlusion and cues',
   assert.match(canvas, /overlayStages\.occlusionMasksDrawn = stats\.outlineMasks/);
   assert.match(canvas, /overlayStages\.occlusionMaskPixels = stats\.outlineMaskPixels/);
   assert.match(canvas, /overlayStages\.occlusionVisibleEntities = overlayVisible\.length/);
+  assert.match(canvas, /drawOcclusionOutlines\(overlayVisible, overlayStages\)/);
+  assert.match(canvas, /detail\.outlineActorMs \+=/);
+  assert.match(canvas, /detail\.outlineCoverMs \+=/);
+  assert.match(canvas, /detail\.outlineCompositeMs \+=/);
   assert.match(app, /renderer\.setOverlaySubpassProfiling\(true\)/);
   assert.match(app, /renderer\.setOverlaySubpassProfiling\(false\)/);
   assert.match(app, /if \(overlay && rendererDiagnosticActive\)/);
@@ -93,7 +97,10 @@ test('all-draw overlay ledger preserves typical cost by zone and combat, not onl
     occlusionCandidates: 3, occlusionMasks: 30,
     remainingCombatCues: 1, totalDrawMs: 40,
     occlusionMasksDrawn: 5, occlusionMaskPixels: 5 * 256 * 256,
-    occlusionVisibleEntities: 85,
+    occlusionVisibleEntities: 85, outlinePairs: 5, outlineCoverSprites: 11,
+    outlinePairMs: 1, outlineBuffersMs: 0.2, outlineClearMs: 2,
+    outlineActorMs: 3, outlineTintMs: 4, outlineEdgeMs: 6,
+    outlineCoverMs: 9, outlineCompositeMs: 3,
   };
   // Ordinary 40ms overlay draws are below the global worst-frame cutoff in
   // a session containing 300ms Pixi raster stalls; they still need counting.
@@ -125,6 +132,12 @@ test('all-draw overlay ledger preserves typical cost by zone and combat, not onl
   assert.equal(march.outlineWork.meanMasksPerDraw, 5);
   assert.equal(march.outlineWork.maxVisibleEntities, 85);
   assert.equal(march.outlineWork.zeroMaskPasses, 0);
+  assert.equal(march.stages.outlineCoverMs.meanMs, 9);
+  assert.equal(march.stages.outlineEdgeMs.meanMs, 6);
+  assert.equal(march.outlineWork.totalCoverSpriteDraws, 132);
+  assert.equal(march.outlineWork.totalOcclusionPairs, 60);
+  assert.equal(march.outlineWork.sampledCoverPasses, 12);
+  assert.match(report.scope, /nested within occlusionMasks/);
   assert.equal(fight.stages.occlusionMasks.meanMs, 8);
   assert.equal(fight.outlineWork.totalMasksDrawn, 2);
   assert.equal(vale.stages.occlusionMasks.meanMs, 3);
