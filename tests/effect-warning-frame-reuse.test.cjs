@@ -13,8 +13,8 @@ assert(rendererSource.includes("const warningFrameShapes = new Map();\n      if 
   'warning shape lifetime must be one renderer draw');
 assert.equal(rendererSource.split("PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000, warningFrameShapes);").length - 1, 2,
   'warning fill must reuse frame geometry in Canvas and Pixi overlay');
-assert.equal(rendererSource.split("PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time, warningFrameShapes);").length - 1, 2,
-  'warning outline must reuse frame geometry in Canvas and Pixi overlay');
+assert.equal(rendererSource.split("PrototypeCombatVisuals.ground(\n          ctx,\n          screen,\n          game,\n          'underlay-cue',\n          game.s.time,\n          warningFrameShapes,\n        );").length - 1, 2,
+  'warning outline must share draw-local cache in both Canvas and Pixi overlay');
 const Campaign = require('../src/prototype/engine.js');
 const Combat = require('../src/prototype/combat-visuals.js');
 
