@@ -61,7 +61,7 @@ test('renderer opt-in and exception cleanup are explicit and bounded', () => {
   assert.match(app, /performanceEnemyMark: stageTimes\.enemyDetail/);
   assert.match(app, /finally \{[\s\S]*?if \(stageTimes\.enemyDetail\) game\.setEnemyRouteTrace\(null\)/);
   assert.match(app, /enemyDetail: stages\.enemyDetail/);
-  assert.match(app, /game\\.setEnemyRouteTrace\\(null\\);\\s*\\}\\s*\\/\\/ Preserve the existing crowd recorder contract:[\\s\\S]*?game\\.crowdDiagnosticsEndFrame\\(\\)/);
+  assert.match(app, /game\.setEnemyRouteTrace\(null\);\s*\}\s*\/\/ Preserve the existing crowd recorder contract:[\s\S]*?game\.crowdDiagnosticsEndFrame\(\)/);
   assert.match(engine, /const enemyMark = typeof input\.performanceEnemyMark === 'function'/);
   assert.match(navigation, /const trace = enemyRouteTraces\.get\(this\)/);
   assert.match(navigation, /if \(!trace\) return originalRoute\.apply\(this, args\)/);
