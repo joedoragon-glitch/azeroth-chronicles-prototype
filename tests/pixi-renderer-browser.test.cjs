@@ -540,6 +540,16 @@ async function run() {
             'A confirmed GPU failure should schedule a bounded restoration');
           assert.equal(await page.evaluate(() =>
             getComputedStyle(document.getElementById('world')).display !== 'none'), true);
+          // A saved Pixi preference must not make the active Canvas backup
+          // display controls that only change a non-rendering Pixi scene.
+          await page.locator('#menu-button').click();
+          await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+          await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+          assert.equal(await page.locator('select[aria-label="Optimization Mode"]').count(), 1,
+            'Active Canvas fallback must offer its effective quality selector');
+          assert.equal(await page.getByText('Atmospheric particles', {exact:true}).count(), 0,
+            'Pixi-only particles must not be presented as Canvas controls');
+          await page.evaluate(() => Prototype.closeMenu());
         }
       } else {
         assert.equal(outcome.mode, 'canvas2d', 'Failed WebGL initialization must retain Canvas');
