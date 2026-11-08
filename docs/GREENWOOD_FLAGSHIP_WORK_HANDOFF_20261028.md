@@ -1,3 +1,5 @@
+**Dev.276 artwork draft.** The shared merchant wagon uses timber framing, a layered canvas hood, cargo and visible harness traces. Thornfang’s lodge has timber framing and a stone sill, and Scornfang’s Treasury has a braced, iron-bound loading face. Both retain their established roof planes and gain shingle courses. Crown banners use the same crowned profile as the coin. The Old Orchard Cellars use weathered vault masonry and stone steps, while the newer working cellar has dressed stone, an air vent and a produce crate.
+
 **Map and witness (dev.276 draft).** The Western road observer can send the player to the landmark in the current report. The route ends at the reported area even if Thornfang moves. Scout tracks remain discoverable on the ground. The regional map shows travel, camps, entrances, major threats and selected story sites.
 
 **Greenwood site interactions (dev.276 draft).** Approach Thornfang’s Homestead to inspect the scout’s lodge and read about his patrol and Mira’s work. The Old Orchard Cellars preserves inspection is represented by an unarmed Goblin resident beside the shelf in a clear aisle. Existing v4 saves move the same inspection point.

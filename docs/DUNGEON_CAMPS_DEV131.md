@@ -1,4 +1,4 @@
-**Dev.276 draft.** Every Treasury, story dungeon and side interior has a bilingual entrance briefing. Treasury descriptions name the defenders, explain what the stores hold, and tell players to clear the guards before collecting caches. Main entrances keep their recovery-camp action and show the briefing even when a camp is ready. Side entrances offer the briefing and entry with the existing scene transition.
+**Dev.276 draft.** Every Treasury, story dungeon and side interior has a bilingual entrance briefing. Entrance copy uses public roles, exterior clues and the known purpose of the site. Treasury descriptions identify known captains and explain the rule for collecting caches. Captive locations, room contents, and revelations belong to exploration. Main entrances keep their recovery-camp action and show the briefing even when a camp is ready. Side entrances offer the briefing and entry with the existing scene transition.
 
 # Dungeon preparation and leader return rules — dev.131
 

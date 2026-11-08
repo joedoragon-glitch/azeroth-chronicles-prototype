@@ -3,60 +3,60 @@
   'use strict';
   const siteBriefings = {
     'supply-vale': [
-      'Scornfang, Thornfang’s Goblin disciple, oversees salvage for the winter estate. His Treasury stores reclaimed timber, fittings and two supply caches. Scornfang and his guards defend the stores.',
-      'Scornfang, discípulo goblin de Thornfang, dirige la recuperación de materiales para la residencia invernal. Su Tesoro guarda madera recuperada, herrajes y dos depósitos de suministros. Scornfang y sus guardias protegen el almacén.',
+      'Reclaimed timber and scaffold fittings are hauled here from the winter-estate works. The yard belongs to Scornfang, Thornfang’s Goblin disciple and Greenwood’s superintendent of reclamation.',
+      'Aquí llegan madera recuperada y herrajes de andamios de las obras de la residencia invernal. El recinto pertenece a Scornfang, discípulo goblin de Thornfang y encargado de la recuperación de materiales en Greenwood.',
     ],
     'supply-march': [
-      'Mirejaw’s guards keep three supply caches in this wetland storehouse. Direjaw, Mirejaw’s disciple, commands the defenders inside.',
-      'Los guardias de Mirejaw guardan tres depósitos de suministros en este almacén de las marismas. Direjaw, discípulo de Mirejaw, dirige a los defensores del interior.',
+      'Mirejaw’s storehouse sits among the wetland supply routes. His disciple Direjaw commands the guards posted here.',
+      'El almacén de Mirejaw se encuentra entre las rutas de abastecimiento de las marismas. Su discípulo Direjaw manda a los guardias de este puesto.',
     ],
     'supply-highlands': [
-      'Crag Tyrant, the Master of Coin’s disciple, guards the coin stores, accounts and three supply caches. The Crown riders quarter here alongside their armored direwolves.',
-      'Crag Tyrant, discípulo del Maestro de la Moneda, custodia las reservas de moneda, los libros de cuentas y tres depósitos de suministros. Los jinetes de la Corona se alojan aquí junto a sus lobos terribles acorazados.',
+      'Coin shipments from Stonecross travel under guard. This Treasury is under Crag Tyrant, a disciple of the Master of Coin. Armored direwolf riders patrol its approaches.',
+      'Los cargamentos de moneda de Stonecross viajan bajo escolta. Crag Tyrant, discípulo del Maestro de la Moneda, está al mando de este Tesoro. Jinetes montados en lobos terribles acorazados patrullan los accesos.',
     ],
     'supply-crown': [
-      'Cindermaw and Dreadmaw jointly manage this Treasury. Dreadmaw oversees the Crown’s food supply and guards the Inner Vault. Three supply caches are kept inside.',
-      'Cindermaw y Dreadmaw administran juntos este Tesoro. Dreadmaw supervisa los alimentos de la Corona y custodia la cámara interior. Dentro se guardan tres depósitos de suministros.',
+      'The Crown’s food convoys come through this Treasury. Cindermaw shares its administration with Dreadmaw, the Minister of Agriculture.',
+      'Los convoyes de alimentos de la Corona pasan por este Tesoro. Cindermaw comparte su administración con Dreadmaw, el ministro de Agricultura.',
     ],
     crypt: [
-      'The Lifebinder brought his skeleton crews to turn this old crypt into the Dark Lord’s winter retreat. The work is still under way, and Borin, Millhaven’s smith, was put to work on its construction and repairs.',
-      'El Lifebinder trajo a sus cuadrillas de esqueletos para convertir esta antigua cripta en la residencia invernal del Dark Lord. Las obras siguen y Borin, el herrero de Millhaven, fue obligado a trabajar en ellas.',
+      'An old burial crypt stands behind the scaffolding. The Lifebinder oversees the work here, converting it into a winter retreat for the Dark Lord.',
+      'Una antigua cripta funeraria se alza tras los andamios. El Lifebinder dirige las obras para convertirla en la residencia invernal del Dark Lord.',
     ],
     archive: [
-      'The Drowned Keeper tends the Crown’s records here. Floodwater damaged the lower shelves, and the Keeper brought Neri here for her knowledge of how to preserve the soaked books.',
-      'El Drowned Keeper custodia aquí los registros de la Corona. La inundación dañó los estantes inferiores y el Keeper trajo a Neri porque sabe cómo conservar los libros empapados.',
+      'The Drowned Keeper is the archivist responsible for this collection. Water stains on the masonry mark how high the flood reached.',
+      'El Drowned Keeper es el archivero a cargo de esta colección. Las manchas en la mampostería marcan hasta dónde llegó el agua.',
     ],
     mine: [
-      'Ogre wardens and Crown riders guard this working mine. Garun, the Stone Colossus, commissions repairs and curiosities from Dara, a smith whose paid work here came with strict limits on leaving.',
-      'Guardianes ogros y jinetes de la Corona protegen esta mina en explotación. Garun, el Coloso de Piedra, encarga reparaciones y curiosidades a Dara, una herrera cuyo trabajo remunerado aquí incluía restricciones para marcharse.',
+      'Ore carts still roll out of Colossus Mine. Ogre wardens and Crown riders guard the workings for Garun, the Stone Colossus.',
+      'Los carros de mineral siguen saliendo de Colossus Mine. Guardianes ogros y jinetes de la Corona protegen la explotación para Garun, el Coloso de Piedra.',
     ],
     abyss: [
-      'Veyrith, the Dark Lord’s mount and Air Marshal, is preparing a royal air force here. The hatchery and harness stations are already in use. The garrison brought Eren the Runewright here as a captive.',
-      'Veyrith, montura del Dark Lord y mariscal del aire, prepara aquí una fuerza aérea real. El criadero y los puestos de arneses ya están en uso. La guarnición trajo aquí como cautivo a Eren, el artesano de runas.',
+      'The Crown has set aside Abyss Bastion for its military dragons. The unfinished launch platform overlooks the approach. Veyrith, the Dark Lord’s mount, commands the post.',
+      'La Corona ha reservado Abyss Bastion para sus dragones militares. La plataforma de despegue, aún en obras, domina el acceso. Veyrith, montura del Dark Lord, manda en el puesto.',
     ],
     citadel: [
-      'Marshal Veyra turned the Dark Lord’s irregular fighters into a standing army. The Citadel is her garrison and drill ground. Tovan, the final instructor, was brought here as a prisoner.',
-      'La mariscal Veyra convirtió a los combatientes irregulares del Dark Lord en un ejército permanente. La Ciudadela es su guarnición y campo de instrucción. Tovan, el último instructor, fue traído aquí como prisionero.',
+      'The Citadel of Ashes is the garrison of Marshal Veyra’s standing army. Orders, drills and changes of watch set the pace here.',
+      'La Ciudadela de Ceniza es la guarnición del ejército permanente de la mariscal Veyra. Las órdenes, los ejercicios y los cambios de guardia marcan el ritmo del lugar.',
     ],
     'side-vale-cellars': [
-      'Goblin families displaced by the winter-estate works now live in these old fruit cellars. Bedrolls, hearths and jars of preserves fill the rooms they share.',
-      'Familias goblin desplazadas por las obras de la residencia invernal viven ahora en estas antiguas bodegas. En sus habitaciones compartidas hay petates, hogares y tarros de conservas.',
+      'These cellars once stored the orchard’s fruit. The orchard has newer stores now, but the old doorway still sees use.',
+      'En estas bodegas se guardaba la fruta del huerto. Ahora hay almacenes más nuevos, pero la antigua entrada sigue en uso.',
     ],
     'side-march-watchhouse': [
-      'Reed Beasts have made a shelter above the waterline of this flooded watchhouse. They dry fish and build their nests where soldiers once kept watch.',
-      'Las bestias del carrizal se refugian por encima del agua en este puesto de vigilancia inundado. Secan pescado y hacen sus nidos donde antes montaban guardia los soldados.',
+      'The old watchhouse once stood guard over the wetland routes. The lower walls are waterlogged, and the approach is slick with mud.',
+      'El antiguo puesto vigilaba las rutas de las marismas. La parte baja de los muros está empapada y el acceso resbala por el barro.',
     ],
     'side-highlands-signal': [
-      'The signal station still works. Ogre households keep mining tools here and gather around the hearth after their shifts.',
-      'El puesto de señales sigue funcionando. Las familias ogro guardan aquí sus herramientas de minería y se reúnen junto al hogar después de sus turnos.',
+      'The ridge keep was built to send warnings across the Highlands. Its signal station still serves the people working the mountain.',
+      'La fortaleza se construyó para enviar avisos por las tierras altas. Su puesto de señales sigue al servicio de quienes trabajan en la montaña.',
     ],
     'side-frontier-shrine': [
-      'Orc soldiers use the old shrine as a barracks. They cook and drill here, and still look after the surviving ritual furnishings.',
-      'Los soldados orcos usan el antiguo santuario como cuartel. Aquí cocinan y se entrenan, y siguen cuidando el mobiliario ritual que se conserva.',
+      'The old shrine still stands beside the Frontier’s military road. Orc soldiers have taken up quarters here.',
+      'El antiguo santuario sigue en pie junto a la vía militar de Ashen Frontier. Soldados orcos se han instalado aquí.',
     ],
     'side-crown-foundry': [
-      'The old foundry’s walls are damaged, but its forge still works. Crown soldiers eat and sleep beside the benches where they repair their equipment.',
-      'Los muros de la antigua fundición están dañados, pero la fragua sigue en uso. Los soldados de la Corona comen y duermen junto a los bancos donde reparan su equipo.',
+      'The foundry’s outer walls are scarred. Smoke from the chimney and the sound of hammering carry out to the road.',
+      'Los muros exteriores de la fundición están marcados por los daños. El humo de la chimenea y el sonido de los martillos llegan hasta el camino.',
     ],
     'thorn-homestead': [
       'Thornfang was a Crown wilderness scout. The gear here is for scent work, recall drills and caring for his hounds. He was put in charge of patrolling the winter estate’s approaches. He took Mira on those rounds to inspect its defenses, paying her while forbidding her to leave. Once the estate can keep itself secure, Thornfang means to return to his distant home.',

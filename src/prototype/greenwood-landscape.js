@@ -2131,6 +2131,17 @@
   }
   // A single coherent native painter for the homestead's actual silhouettes.
   // Shared isometric axes and a fixed palette avoid disconnected box art.
+  function drawRoofCourses(stroke, ridge, eave, backRidge, backEave, seam, highlight) {
+    const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const at = (pitch, depth) => mix(mix(ridge, eave, pitch), mix(backRidge, backEave, pitch), depth);
+    for (let course = 1; course <= 5; course++) {
+      const pitch = course / 6;
+      stroke([at(pitch, 0.02), at(pitch, 0.98)], seam, 1.2);
+      stroke([at(pitch + 0.025, 0.03), at(pitch + 0.025, 0.97)], highlight, 0.65);
+      for (let depth = course % 2 ? 0.16 : 0.28; depth < 0.94; depth += 0.22)
+        stroke([at(pitch - 0.14, depth), at(pitch, depth)], seam, 0.8);
+    }
+  }
   function drawThornHomestead(ctx, e, p) {
     const kind = e.greenwoodFacility;
     ctx.save();
@@ -2257,6 +2268,16 @@
           1,
         );
       }
+      // Raised stone sill and a pinned timber frame follow the wall planes.
+      poly([[-60, -9], [31, 9], [84, -9], [84, -3], [31, 15], [-60, -3]], '#83806d');
+      for (const x of [-54, -42, 23])
+        stroke([[x, -8 + (x + 60) * 0.2], [x, -3 + (x + 60) * 0.2]], '#555349', 1);
+      stroke([[-59, -59], [-39, -45]], beam, 4);
+      stroke([[31, -43], [82, -60]], '#9b7b59', 3);
+      for (const x of [43, 55, 67, 78]) {
+        const base = 15 - (x - 31) * 0.34;
+        stroke([[x, base - 52], [x, base - 6]], '#4e4033', 1);
+      }
       // Broad old loading door, open for a quadruped, not a scaled-down pet door.
       poly(
         [
@@ -2267,6 +2288,8 @@
         ],
         '#27372e',
       );
+      poly([[-32, -18], [-15, -24], [14, -17], [14, 9], [-32, 0]], '#465044');
+      stroke([[-25, -20], [-25, -5], [-15, -3]], '#6c6048', 2);
       oval(-8, 4, 24, 7, '#b29a72');
       for (let j = 0; j < 6; j++)
         stroke(
@@ -2319,27 +2342,15 @@
       // Close the overhanging right eave onto the real side wall. Without
       // this narrow fascia, the backdrop shows through as a green wedge.
       poly([roofFrontRight, roofRearRight, [84, -63], [31, -45]], '#4b3b2d');
+      poly([roofFrontRidge, roofFrontRight, [31, -45], [-14, -95]], '#574332');
       stroke([roofFrontLeft, roofFrontRidge, roofFrontRight], edge, 2.5);
       stroke([roofFrontRidge, roofRearRidge], '#b6956a', 2);
       stroke([roofFrontLeft, roofRearLeft], '#a98c64', 1.6);
       stroke([roofFrontRight, roofRearRight], '#a98c64', 1.6);
-      // Only two faint aligned board seams on the long visible pitch.
-      for (const t of [1 / 3, 2 / 3]) {
-        stroke(
-          [
-            [
-              roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
-              roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t,
-            ],
-            [
-              roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
-              roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
-            ],
-          ],
-          '#876b4e',
-          0.9,
-        );
-      }
+      drawRoofCourses(stroke, roofFrontRidge, roofFrontRight, roofRearRidge, roofRearRight,
+        '#493a30', '#a68058');
+      drawRoofCourses(stroke, roofFrontRidge, roofFrontLeft, roofRearRidge, roofRearLeft,
+        '#705238', '#b39266');
       stroke(
         [
           [-61, -61],
@@ -2425,6 +2436,8 @@
         oval(x, y + 2, 6, 2.5, '#24372766');
         stroke([[x, y], [x, topY]], beam, 6);
       }
+      stroke([[-43, -48], [-30, -59]], '#8d6947', 4);
+      stroke([[7, -19], [21, -40]], '#8d6947', 4);
       // Four eaves are a parallelogram, never crossed roof slopes.
       const restRoof = [
         [-48, -62],
@@ -3524,6 +3537,7 @@
     plan,
     drawNature,
     drawFacility,
+    drawRoofCourses,
     drawRoads,
     prepareRoadPaint,
     drawWall,

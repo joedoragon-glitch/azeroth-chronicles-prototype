@@ -63,53 +63,8 @@
     ctx.strokeStyle = '#ecf1ee';
     ctx.lineWidth = 1;
     ctx.stroke();
-    // The ruler's right-facing head and identifiable nose, chin and shoulder.
-    // The same portrait grammar is used on Stonecross's striking-die tray.
-    ctx.fillStyle = '#586d77';
-    ctx.beginPath();
-    ctx.moveTo(-5, -3);
-    ctx.lineTo(2, -5);
-    ctx.lineTo(4, -2);
-    ctx.lineTo(7, 0);
-    ctx.lineTo(4, 1);
-    ctx.lineTo(3, 4);
-    ctx.lineTo(1, 5);
-    ctx.lineTo(-3, 4);
-    ctx.lineTo(-6, 6);
-    ctx.lineTo(-7, 5);
-    ctx.lineTo(-4, 2);
-    ctx.closePath();
-    ctx.fill();
-    // The ruler's own tall pointed helm and broad three-tipped crown,
-    // miniaturized from the actual Dark Lord silhouette, not generic royalty.
-    ctx.fillStyle = '#596274';
-    ctx.beginPath();
-    ctx.moveTo(-5, -3);
-    ctx.lineTo(-4, -6);
-    ctx.lineTo(0, -8);
-    ctx.lineTo(4, -5);
-    ctx.lineTo(5, -3);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = '#4e646e';
-    ctx.beginPath();
-    ctx.moveTo(-5.5, -4);
-    ctx.lineTo(-8, -8.6);
-    ctx.lineTo(-3, -6.2);
-    ctx.lineTo(0, -9.5);
-    ctx.lineTo(3, -6.2);
-    ctx.lineTo(7.8, -8.6);
-    ctx.lineTo(5.8, -4);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = '#e3e9e7';
-    ctx.lineWidth = 0.8;
-    ctx.beginPath();
-    ctx.moveTo(-4, -4);
-    ctx.lineTo(3, -4);
-    ctx.stroke();
-    ctx.fillStyle = '#e3e9e7';
-    ctx.fillRect(1, -2, 1.2, 1.2);
+    const visuals = root.PrototypeVisuals || require('./visuals.js');
+    visuals.drawDarkLordProfile(ctx);
     ctx.restore();
   }
 
