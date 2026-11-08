@@ -1,6 +1,6 @@
 **First trips (dev.276 draft).** Regional transport offers a short bilingual description of Flooded Marches, Ironroot Highlands, Ashen Frontier, or Dark Crown before the first arrival. It uses the existing arrival record. Fares, work passage and departure requirements follow the existing travel rules.
 
-**Greenwood ground cover (dev.276 draft).** The shared terrain painter adds irregular tufts, broadleaf plants and meadow flowers across the region. Stable paint samples keep the vegetation in place between visits. Roads and water remain separate paint layers.
+**Greenwood ground cover (dev.276 draft).** The shared terrain painter adds irregular tufts, broadleaf plants and meadow flowers across the region. Stable paint samples keep the vegetation in place between visits. Roads and water remain separate paint layers. A single petal silhouette keeps each bloom readable without overlapping paint paths.
 
 **Story onboarding (dev.276 draft).** The Millhaven board displays a gold marker until opened in a campaign. Board and Journal share the two regional rescue briefings, quest progress and separate Track and Navigate actions. The existing rescue quest IDs, requirements and payouts are used by Main Story. Completed quests keep their history.
 

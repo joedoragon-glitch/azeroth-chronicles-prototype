@@ -3571,13 +3571,16 @@
           if (f.dandelion || (f.h >>> 3) % petalColors.length !== color) continue;
           const x = f.x + f.lean,
             y = f.y - f.stem;
-          for (let k = 0; k < 5; k++) {
-            const a = (Math.PI * 2 * k) / 5,
-              px = x + Math.cos(a) * 2.2,
-              py = y + Math.sin(a) * 2;
-            ctx.moveTo(px + 1.8, py);
-            ctx.arc(px, py, 1.8, 0, Math.PI * 2);
-          }
+          // One small scalloped silhouette avoids overlapping antialiased petals.
+          ctx.moveTo(x - 3, y - 1);
+          ctx.lineTo(x - 1, y - 2);
+          ctx.lineTo(x, y - 4);
+          ctx.lineTo(x + 2, y - 2);
+          ctx.lineTo(x + 4, y);
+          ctx.lineTo(x + 2, y + 3);
+          ctx.lineTo(x, y + 2);
+          ctx.lineTo(x - 2, y + 3);
+          ctx.closePath();
         }
         ctx.fill();
       }
