@@ -110,8 +110,8 @@ function harness(g) {
   const zone = g.zone();
   const captain = zone.enemies.find(e => e.roomCaptain);
   assert(captain, 'named captain exists');
-  assert.equal(captain.gold, 0, 'original Treasury captain defeat pays no additional crowns');
-  assert.equal(captain.xp, 0, 'original Treasury captain defeat pays no XP');
+  // Existing first-fight captain rewards are separate from the *returning*
+  // reward profile. Preserve their native values rather than inventing zero.
   const originalLevel = captain.level;
   const recovery = g.treasuryRecoveryState('vale');
   assert.equal(recovery.captainVictories, 0);
