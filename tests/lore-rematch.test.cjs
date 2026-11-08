@@ -110,6 +110,8 @@ function harness(g) {
   const zone = g.zone();
   const captain = zone.enemies.find(e => e.roomCaptain);
   assert(captain, 'named captain exists');
+  assert.equal(captain.gold, 0, 'original Treasury captain defeat pays no additional crowns');
+  assert.equal(captain.xp, 0, 'original Treasury captain defeat pays no XP');
   const originalLevel = captain.level;
   const recovery = g.treasuryRecoveryState('vale');
   assert.equal(recovery.captainVictories, 0);
@@ -139,6 +141,33 @@ function harness(g) {
   restored.enter('supply-vale');
   assert.equal(restored.zone().enemies.find(e => e.roomCaptain).level, originalLevel + 1,
     'population reconciliation does not stack rematch levels');
+
+  const returnCaptain = (defeated) => {
+    defeated.hp = 0;
+    g.treasuryCaptainDefeated(defeated);
+    Object.assign(g.hero, { x: 0, y: 0 });
+    g.s.time = recovery.respawnAt + 1;
+    g.syncTreasuryRecovery(zone);
+    const returned = zone.enemies.find(e => e.roomCaptain);
+    assert(returned && returned.hp > 0, 'captain returns for the next recovery cycle');
+    return returned;
+  };
+  const second = returnCaptain(first);
+  assert.equal(recovery.captainVictories, 2);
+  assert.equal(second.rematchTier, 2);
+  assert.equal(second.level, originalLevel + 2);
+  assert.equal(second.baseHp, captain.baseHp);
+  assert.equal(second.baseDamage, captain.baseDamage);
+  assert.equal(second.gold, first.gold, 'bonus does not grow with rematch level');
+  assert.equal(second.xp, first.xp);
+  const third = returnCaptain(second);
+  assert.equal(recovery.captainVictories, 3);
+  assert.equal(third.rematchTier, 2, 'level progression caps at plus two');
+  assert.equal(third.level, originalLevel + 2);
+  assert.equal(third.gold, first.gold);
+  assert.equal(third.xp, first.xp);
+  assert.equal(C.restore(g.snapshot()).s.treasuryRecovery.vale.captainVictories, 3,
+    'capped history survives v4 save/restore');
 }
 
 {
