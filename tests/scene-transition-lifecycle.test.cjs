@@ -312,10 +312,10 @@ function openForwardTravel(app) {
     Object.assign(game.hero, { x: entrance.x, y: entrance.y });
     for (const fn of app.events.keydown || [])
       fn({ code: 'KeyF', preventDefault() {}, target: null, repeat: false });
-    if (kind === 'main') {
+    {
       const actions = app.elements.get('modal-actions')?.children || [];
-      const enter = actions.find((action) => action.textContent.startsWith('Enter dungeon'));
-      assert(enter && !enter.disabled, 'main dungeon action remains explicit');
+      const enter = actions.find((action) => action.textContent.startsWith(kind === 'main' ? 'Enter dungeon' : 'Go inside'));
+      assert(enter && !enter.disabled, kind + ' dungeon action remains explicit');
       enter.click();
     }
     assert.equal(game.zoneId, entrance.family, 'native ' + kind + ' admission committed');

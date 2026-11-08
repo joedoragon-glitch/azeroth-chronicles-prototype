@@ -13,6 +13,12 @@ for (const region of C.data.regions) {
     !sites.some((n) => n.kind === 'boss' && n.family === 'thorn'),
     'tracking clues preserve Thornfang search',
   );
+  assert(!sites.some((n) => n.thornFootprint || n.thornTrail !== undefined));
+  assert(!sites.some((n) => n.id.startsWith('bridge-')), 'ordinary crossing markers stay off the list');
+  if (region.id === 'vale') {
+    assert(ids.includes('thorn-local-report') && ids.includes('goblin-camp'));
+    assert(g.zone().npcs.some((n) => n.thornTrail !== undefined), 'tracks remain in the world');
+  }
   const town = sites.find((n) => n.kind === 'rest' && n.id === 'rest');
   assert.equal(town.name, region.town);
   for (const target of sites.filter(

@@ -70,6 +70,14 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
     'upper source is deliberately shallow, not an unmarked new strategic barrier');
   assert.equal(g.clearSegment(bridge.from, bridge.to, 12),true,
     'whole bridge crossing, not only the center, is physically usable');
+  assert.equal(bridge.width, 84 * cfg.scale);
+  const dx = bridge.to.x - bridge.from.x, dy = bridge.to.y - bridge.from.y;
+  const length = Math.hypot(dx, dy);
+  for (const offset of [-23, 23]) {
+    const shift = (point) => ({ x: point.x - dy / length * offset, y: point.y + dx / length * offset });
+    assert(g.clearSegment(shift(bridge.from), shift(bridge.to), 15),
+      'an off-center hero can walk across the full timber deck');
+  }
   assert(!g.blocked(cfg.millEntrance.x,cfg.millEntrance.y,'vale',12,true),
     'the visible mill loading entrance has dry terrain');
   assert(!g.blocked(cfg.millEntrance.x,cfg.millEntrance.y,'vale',12),
@@ -89,6 +97,15 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
     'northern freight road remains traversable over the shallow creek culvert');
   assert.equal(g.clearSegment(culvert.from, culvert.to, 12), true,
     'culvert road surface is passable end to end, not just at its midpoint');
+  const woodland = cfg.woodlandCulvert;
+  const woodlandCenter = crossMid(woodland);
+  assert.equal(woodland.kind, culvert.kind);
+  assert(woodland.width < culvert.width, 'the woodland culvert matches the narrower lane');
+  assert(g.clearSegment(woodland.from, woodland.to, 12, true),
+    'the second culvert spans the already walkable creek without creating a barrier');
+  assert(Math.abs(woodlandCenter.x / cfg.scale - 1262) < 1 &&
+    Math.abs(woodlandCenter.y / cfg.scale - 274.5) < 1,
+    'the deck is centered on the upstream road and creek intersection');
   assert.equal(g.blocked(cfg.millServiceLane[0].x,cfg.millServiceLane[0].y,'vale',12,true),
     false,'farm route starts on dry, walkable ground');
 

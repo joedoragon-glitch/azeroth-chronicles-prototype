@@ -63,53 +63,8 @@
     ctx.strokeStyle = '#ecf1ee';
     ctx.lineWidth = 1;
     ctx.stroke();
-    // The ruler's right-facing head and identifiable nose, chin and shoulder.
-    // The same portrait grammar is used on Stonecross's striking-die tray.
-    ctx.fillStyle = '#586d77';
-    ctx.beginPath();
-    ctx.moveTo(-5, -3);
-    ctx.lineTo(2, -5);
-    ctx.lineTo(4, -2);
-    ctx.lineTo(7, 0);
-    ctx.lineTo(4, 1);
-    ctx.lineTo(3, 4);
-    ctx.lineTo(1, 5);
-    ctx.lineTo(-3, 4);
-    ctx.lineTo(-6, 6);
-    ctx.lineTo(-7, 5);
-    ctx.lineTo(-4, 2);
-    ctx.closePath();
-    ctx.fill();
-    // The ruler's own tall pointed helm and broad three-tipped crown,
-    // miniaturized from the actual Dark Lord silhouette, not generic royalty.
-    ctx.fillStyle = '#596274';
-    ctx.beginPath();
-    ctx.moveTo(-5, -3);
-    ctx.lineTo(-4, -6);
-    ctx.lineTo(0, -8);
-    ctx.lineTo(4, -5);
-    ctx.lineTo(5, -3);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = '#4e646e';
-    ctx.beginPath();
-    ctx.moveTo(-5.5, -4);
-    ctx.lineTo(-8, -8.6);
-    ctx.lineTo(-3, -6.2);
-    ctx.lineTo(0, -9.5);
-    ctx.lineTo(3, -6.2);
-    ctx.lineTo(7.8, -8.6);
-    ctx.lineTo(5.8, -4);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = '#e3e9e7';
-    ctx.lineWidth = 0.8;
-    ctx.beginPath();
-    ctx.moveTo(-4, -4);
-    ctx.lineTo(3, -4);
-    ctx.stroke();
-    ctx.fillStyle = '#e3e9e7';
-    ctx.fillRect(1, -2, 1.2, 1.2);
+    const visuals = root.PrototypeVisuals || require('./visuals.js');
+    visuals.drawDarkLordProfile(ctx);
     ctx.restore();
   }
 
@@ -3108,26 +3063,28 @@
           ctx.shadowBlur = 0;
         }
         if (kind === 'enemy' && !slot) drawCombatName(ctx, e, p, null);
-        // The Millhaven captain's recruitment prompt was previously missing.
-        if (
-          kind === 'npc' &&
-          e.kind === 'recruiter' &&
-          game.zoneId === 'vale' &&
-          game.s.party.length <= 2
-        ) {
-          ctx.fillStyle = '#f9ce72';
-          ctx.beginPath();
-          ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#fff1b4';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.fillStyle = '#19291e';
-          ctx.font = 'bold 23px system-ui';
-          ctx.fillText('!', p.x, p.y - 72);
-        }
+        if (kind === 'npc' && millhavenCue(e)) drawQuestCue(p);
       }
       ctx.restore();
+    }
+    function millhavenCue(entity) {
+      return game.zoneId === 'vale' &&
+        ((entity.kind === 'recruiter' && game.s.party.length <= 2) ||
+          (entity.kind === 'quests' && entity.id === 'board' &&
+            !game.s.discovered?.['vale:quest-board-intro']));
+    }
+    function drawQuestCue(p) {
+      ctx.fillStyle = '#f9ce72';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff1b4';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#19291e';
+      ctx.font = 'bold 23px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('!', p.x, p.y - 72);
     }
     function drawArenaBoundary() {
       if (game.s.mode !== 'arena') return;
@@ -3410,8 +3367,6 @@
       }
       finishPhase('terrain');
       if (renderLayer === 'background') return;
-      const boardCue = null,
-        captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
       const entities = collectVisibleEntities();
       // Reserve nameplates once in screen space, with interactable NPCs and
       // bosses first. Entity draw/depth order must not decide which nearby
@@ -3595,20 +3550,7 @@
             if (slot) ctx.fillText(name, slot.x, slot.y, Math.min(slot.width, width || slot.width));
             ctx.shadowBlur = 0;
           }
-          const cue =
-            e.kind === 'quests' ? boardCue : e.kind === 'recruiter' && captainCue ? '!' : null;
-          if (cue) {
-            ctx.fillStyle = cue === '?' ? '#9fe4ad' : '#f9ce72';
-            ctx.beginPath();
-            ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#fff1b4';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.fillStyle = '#19291e';
-            ctx.font = 'bold 23px system-ui';
-            ctx.fillText(cue, p.x, p.y - 72);
-          }
+          if (millhavenCue(e)) drawQuestCue(p);
         }
         if (sceneryPlaceName(e) && worldLabelVisible(e)) {
           const slot = labelSlots.get(e);

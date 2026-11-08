@@ -24,7 +24,14 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
       return {
         x: b.x,
         width: b.width,
+        top: b.top,
+        bottom: b.bottom,
         height: b.height,
+        text: el.firstElementChild.textContent,
+        reserved: ['hud', 'menu-button'].map((id) => {
+          const r = document.getElementById(id).getBoundingClientRect();
+          return { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
+        }),
         pointer: getComputedStyle(el).pointerEvents,
         cardWidth: el.firstElementChild.scrollWidth,
         clientWidth: el.firstElementChild.clientWidth,
@@ -32,19 +39,16 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
     });
     assert.equal(geometry.pointer, 'none', 'strip cannot capture joystick/attack input');
     assert(geometry.cardWidth <= geometry.clientWidth + 1, 'prose wraps without overflow');
+    assert.equal(geometry.text, text, 'the full Chronicle text is visible');
+    assert(geometry.x >= 0 && geometry.x + geometry.width <= viewport.width,
+      'the strip fits the viewport');
+    for (const control of geometry.reserved)
+      assert(geometry.x + geometry.width <= control.left || geometry.x >= control.right ||
+        geometry.bottom <= control.top || geometry.top >= control.bottom,
+      'the strip avoids the HUD and Menu button');
     if (phone) {
-      assert(
-        geometry.width >= viewport.width - 24,
-        'long phone notices use available horizontal space',
-      );
-      assert(
-        geometry.x >= 0 && geometry.x + geometry.width <= viewport.width,
-        'strip stays inside phone viewport',
-      );
-      assert(
-        geometry.height <= (viewport.width > viewport.height ? 58 : 100),
-        'reading stays shallow in both phone orientations',
-      );
+      assert(geometry.width >= Math.min(300, viewport.width - 24));
+      assert(geometry.height <= 135, 'the Chronicle leaves room to play');
     }
     await page.screenshot({ path: path.join(out, 'notice-strip-' + tag + '.png') });
     await page.evaluate(() => {

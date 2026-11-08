@@ -1,3 +1,5 @@
+**Dev.276 draft.** Every Treasury, story dungeon and side interior has a bilingual entrance briefing. Entrance copy uses public roles, exterior clues and the known purpose of the site. Treasury descriptions identify known captains and explain the rule for collecting caches. Captive locations, room contents, and revelations belong to exploration. Main entrances keep their recovery-camp action and show the briefing even when a camp is ready. Side entrances offer the briefing and entry with the existing scene transition.
+
 # Dungeon preparation and leader return rules — dev.131
 
 The new preparation menu covers five main dungeons and four Treasuries. Side dungeons retain direct entry and their current behavior. Frontier's roaming captain has no entrance to modify.

@@ -899,18 +899,18 @@
       mapDestinations() {
         const zone = this.zone(),
           region = this.definition(),
-          hidden = new Set([
-            'supplier',
-            'recruiter',
-            'quests',
-            'teacher',
-            'smith',
-            'alchemist',
-            'cage',
-            'bundle',
-          ]);
+          storyPlaces = {
+            vale: ['thorn-local-report', 'mill-pond', 'goblin-camp', 'cache'],
+            march: ['mire-nests', 'night-site'],
+            highlands: ['ogre-hearth', 'ore'],
+            frontier: ['convoy', 'orc-bivouac'],
+            crown: ['siege', 'fortress-gate'],
+          }[region.id] || [];
         const places = this.visibleNPCs()
-          .filter((n) => !n.thornFootprint && (this.isDungeon() || !hidden.has(n.kind)))
+          .filter((n) =>
+            ['rest', 'transport', 'exit', 'dungeon', 'mini'].includes(n.kind) ||
+            (!this.isDungeon() && storyPlaces.includes(n.id)),
+          )
           .map((n) =>
             n.kind === 'rest' && n.id === 'rest' ? { ...n, name: region.town, icon: '🏘️' } : n,
           );
@@ -920,8 +920,7 @@
           name: b.name || 'Barracks',
           icon: b.progress < 4 ? '🏗️' : '🏕️',
         }));
-        // Thornfang's authored tracking clues stay on the map; never turn his
-        // mobile patrol into an omniscient live destination.
+        // Thornfang's moving patrol is handled by the roadside witness.
         const bosses = zone.enemies
           .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral && e.family !== 'thorn')
           .map((e) => ({
@@ -1531,19 +1530,43 @@
             }),
           );
         }
-        // Open western road shoulder: clear of the hamlet roofs and lantern.
-        // Reposition the same resident on old saves as well as fresh campaigns.
-        witness.name = R.greenwoodLayout?.version === 2
-          ? 'Western road observer'
-          : 'Orchard trail witness';
-        Object.assign(
-          witness,
-          R.greenwoodLayout?.version === 2
-            ? this.safe(850 * R.greenwoodLayout.scale, 750 * R.greenwoodLayout.scale, 'vale')
-            : this.safe(780, 740, 'vale'),
-        );
+        this.positionThornWitness(witness);
       }
-      thornReport(concise = false) {
+      positionThornWitness(witness) {
+        const layout = R.greenwoodLayout;
+        // The west road shoulder is outside the Captain's interaction radius.
+        witness.name = layout?.version === 2 ? 'Western road observer' : 'Orchard trail witness';
+        const position = layout?.version === 2
+          ? this.safe(680 * layout.scale, 1020 * layout.scale, 'vale')
+          : this.safe(780, 740, 'vale');
+        Object.assign(witness, position);
+      }
+      thornWitnessLead() {
+        if (this.s.keys.thorn || this.s.rescued.thorn || this.peace) return null;
+        const thorn = this.s.zones.vale?.enemies.find(
+          (e) => e.type === 'boss' && e.family === 'thorn' && e.hp > 0 &&
+            !e.neutral && !e.developerSummon,
+        );
+        if (!thorn) return null;
+        const cfg = R.thornPatrol;
+        const heading = !(thorn.aggro || thorn.returning || thorn.thornReturn ||
+          thorn.thornIntroRetreat != null || thorn.thornPause > 0);
+        let leg = cfg.startLeg;
+        if (heading) {
+          if (cfg.route[thorn.thornLeg]) leg = thorn.thornLeg;
+        } else {
+          leg = cfg.route.reduce(
+            (best, [x, y], i) =>
+              dist(thorn, { x, y }) < dist(thorn, { x: cfg.route[best][0], y: cfg.route[best][1] })
+                ? i
+                : best,
+            0,
+          );
+        }
+        const [x, y] = cfg.route[leg];
+        return { id: 'thorn-lead-' + leg, name: cfg.names[leg], x, y, heading };
+      }
+      thornReport(concise = false, sighting = concise ? this.thornWitnessLead() : null) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
         if (this.s.keys.thorn) {
           const n = this.thornCaptive(), cfg = R.thornPatrol;
@@ -1554,19 +1577,18 @@
           return 'Thornfang was defeated. Mira waits near ' + cfg.names[i] +
             '. Your journal can guide you to her last known waiting place.';
         }
-        // Never turn a static roadside witness into a global GPS receiver.
-        // Track evidence expires, and only pawprints actually near the observer
-        // or the investigating player can support a recent local claim.
         const z = this.s.zones.vale;
-        const observer = z?.npcs.find((n) => n.id === 'thorn-local-report');
-        const origin = concise ? (observer || this.hero) : this.hero;
+        if (concise) {
+          const lead = sighting
+            ? (sighting.heading ? 'Thornfang’s patrol is heading toward ' : 'Last word puts Thornfang near ') +
+              sighting.name + '.'
+            : 'I haven’t seen Thornfang on the trail lately. Check back and I’ll tell you when he’s out on patrol.';
+          return lead + '\n\n' +
+            'He used to scout for the Crown. Now he takes Mira along to inspect security at the Dark Lord’s winter estate. He pays her, then tells her she can’t leave. Some employer. If you catch up with him, get her out of there.';
+        }
         const fresh = z?.npcs.some((n) => n.thornFootprint &&
           n.expires > this.s.time && Number.isFinite(n.x) && Number.isFinite(n.y) &&
-          dist(n, origin) <= 230);
-        if (concise)
-          return fresh
-            ? 'Recent pawprints were found by the western road. They may already be old; follow the tracks.'
-            : 'No recent sighting from the western road. Search for scout tracks near the southern woods and both crossings.';
+          dist(n, this.hero) <= 230);
         const context = 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
         return (fresh ? 'Fresh pawprints mark this nearby path. Follow their direction. ' : '') + context;
       }

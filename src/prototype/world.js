@@ -1277,9 +1277,10 @@
       // and guards in established v4 saves.
       narrativeSceneReconciliation(z) {
         const inspection = R.narrativeSceneInspections?.[z.id];
-        if (!inspection || z.narrativeSceneVersion === 1) return;
+        const version = z.id === 'side-vale-cellars' ? 2 : 1;
+        if (!inspection || z.narrativeSceneVersion === version) return;
         const side = this.sideDungeon(z.id);
-        if (side) {
+        if (side && !z.narrativeSceneVersion) {
           // Keep historical 'side-decor-N' IDs and all blocking geometry stable.
           for (const [j, [x, y, structure]] of side.decor.entries()) {
             const id = 'side-decor-' + j;
@@ -1297,8 +1298,13 @@
           }
         }
         for (const item of inspection) {
-          if (z.npcs.some((n) => n.id === item.id)) continue;
+          const existing = z.npcs.find((n) => n.id === item.id);
+          if (existing && !item.presentation) continue;
           const point = this.safe(item.x, item.y, z.id);
+          if (existing) {
+            Object.assign(existing, point, { presentation: item.presentation });
+            continue;
+          }
           z.npcs.push({
             id: item.id,
             name: item.name,
@@ -1306,9 +1312,10 @@
             narrativeId: item.narrativeId,
             ...point,
             icon: item.icon,
+            ...(item.presentation ? { presentation: item.presentation } : {}),
           });
         }
-        z.narrativeSceneVersion = 1;
+        z.narrativeSceneVersion = version;
       }
       interiorCoherence(z) {
         this.narrativeSceneReconciliation(z);

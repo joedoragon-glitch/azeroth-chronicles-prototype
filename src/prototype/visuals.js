@@ -2842,7 +2842,7 @@
       oval(26.6, -20.7, 2.6, 2, '#8e9487');
       grip(15, -4, hide);
     }
-    function goblinBody(crown = false, ranged = !!e.ranged, friendly = false) {
+    function goblinBody(crown = false, ranged = !!e.ranged, friendly = false, civilian = false) {
       const hide = '#9caa78',
         cloth = crown ? '#55485f' : friendly ? '#66875c' : '#867356';
       // The friendly Archer alone carries arrows. Hostile Slingers keep stones.
@@ -2928,7 +2928,7 @@
         grip(15, -4, hide);
       } else if (ranged) {
         goblinSlingerEquipment(hide);
-      } else {
+      } else if (!civilian) {
         sword(15, -8);
         grip(17, 0, hide);
       }
@@ -9351,6 +9351,58 @@
       poly([[49, 13], [94, 13], [99, 19], [45, 19]], '#a7a38d');
       line([[47, -3], [89, -3]], '#b9a07c', 1);
     }
+    function orchardCellar(older) {
+      oval(0, 15, 47, 12, '#273a2d66');
+      shaped(older ? '#625e48' : '#62734a', () => {
+        ctx.moveTo(-46, 13);
+        ctx.quadraticCurveTo(-44, -10, -33, -24);
+        ctx.quadraticCurveTo(-23, -45, 14, -42);
+        ctx.quadraticCurveTo(37, -35, 47, 12);
+      });
+      shaped(older ? '#7b8058' : '#82915c', () => {
+        ctx.moveTo(-43, -3);
+        ctx.quadraticCurveTo(-30, -44, 6, -44);
+        ctx.quadraticCurveTo(36, -43, 43, -2);
+        ctx.quadraticCurveTo(25, -18, 9, -18);
+        ctx.quadraticCurveTo(-20, -18, -43, -3);
+      });
+      const masonry = older ? ['#827a64', '#aaa087', '#918c74'] : ['#b2ad8d', '#c1b595', '#9f9d83'];
+      for (const side of [-1, 1])
+        for (let row = 0; row < 3; row++) {
+          const x = side < 0 ? -30 : 18;
+          softRect(x, -11 + row * 8, 12, 8, masonry[(row + (side > 0 ? 1 : 0)) % 3], 1.4);
+          line([[x + 2, -9 + row * 8], [x + 10, -9 + row * 8]], '#cec09a', 0.7);
+        }
+      // Individual wedge stones follow the vault, with the raised keystone at the crown.
+      const arch = (rx, ry, angle) => [Math.cos(angle) * rx, -10 - Math.sin(angle) * ry];
+      for (let stone = 0; stone < 9; stone++) {
+        const a = stone * Math.PI / 9, b = (stone + 1) * Math.PI / 9;
+        softPoly([arch(30, 27, a), arch(30, 27, b), arch(18, 16, b), arch(18, 16, a)],
+          masonry[stone % 3], 1);
+      }
+      softPoly([[-5, -38], [5, -38], [4, -25], [-4, -25]], '#b8ad87', 1);
+      recessedDoor(0, -19, 35, 30, older);
+      for (const y of [-11, 3]) {
+        timber([-14, y], [14, y], 1.8, older ? '#4f4b40' : '#67563b');
+        for (const x of [-10, 10]) oval(x, y, 0.9, 0.9, '#c6b28b');
+      }
+      for (const [y, width] of [[11, 20], [16, 23]]) {
+        softPoly([[-width, y], [width, y], [width + 2, y + 4], [-width - 2, y + 4]],
+          older ? '#807b66' : '#a79c7d', 1);
+        line([[-width + 2, y + 1], [width - 2, y + 1]], '#c8b99a', 0.8);
+      }
+      if (older) {
+        rockPiece(-33, 13, 9, 12);
+        rockPiece(34, 14, 10, 13);
+        foliage(-28, -22, 8, 4, '#5a6b49');
+        foliage(24, -28, 8, 4, '#586a48');
+        line([[-25, -29], [-28, -21], [-34, -17]], '#756246', 1.5);
+      } else {
+        softRect(-7, -44, 14, 7, '#514e3c', 1);
+        for (const x of [-4, 0, 4]) line([[x, -43], [x, -39]], '#a38d5d', 1.1);
+        craftAt(34, 14, 0.45, () => crateBody(0, -7));
+      }
+    }
     function carvedGateway(family) {
       const side = R.sideDungeons?.find((d) => d.id === family),
         theme = side?.theme;
@@ -9453,7 +9505,11 @@
       }
       const dark = military || theme === 'foundry',
         stone = dark ? '#6a6878' : archive ? '#85968a' : '#939b86';
-      if (mine || theme === 'cellar') {
+      if (theme === 'cellar') {
+        orchardCellar(true);
+        return true;
+      }
+      if (mine) {
         shaped('#7f8976', () => {
           ctx.moveTo(-36, 14);
           ctx.lineTo(-33, -12);
@@ -9468,18 +9524,13 @@
           ctx.quadraticCurveTo(22, -31, 25, -10);
           ctx.lineTo(25, 14);
         });
-        if (mine) {
-          for (const x of [-24, 24]) timber([x, 15], [x, -24], 7);
-          timber([-29, -25], [29, -25], 8);
-          for (const side of [-1, 1]) timber([side * 24, -12], [side * 13, -24], 4);
-          craftAt(0, 13, 0.65, () => {
-            ctx.transform(0.85, 0.25, -0.85, 0.25, 0, 0);
-            craftedDecoration('rail');
-          });
-        } else {
-          recessedDoor(0, -18, 31, 31, false);
-          for (const x of [-29, 29]) rockPiece(x, 10, 10, 20);
-        }
+        for (const x of [-24, 24]) timber([x, 15], [x, -24], 7);
+        timber([-29, -25], [29, -25], 8);
+        for (const side of [-1, 1]) timber([side * 24, -12], [side * 13, -24], 4);
+        craftAt(0, 13, 0.65, () => {
+          ctx.transform(0.85, 0.25, -0.85, 0.25, 0, 0);
+          craftedDecoration('rail');
+        });
       } else if (theme === 'flooded') {
         craftAt(0, -2, 1, () => craftedHouse('march-stilt-house'));
         line(
@@ -9701,16 +9752,24 @@
         line([roofFrontRidge, roofRearRidge], '#b5986e', 2);
         line([roofFrontLeft, roofRearLeft], '#a78a66', 1.5);
         line([roofFrontRight, roofRearRight], '#a78a66', 1.5);
-        for (const t of [1 / 3, 2 / 3]) {
-          line([
-            [roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
-              roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t],
-            [roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
-              roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t],
-          ], '#83664a', 0.85);
-        }
+        GreenwoodLandscape.drawRoofCourses(line, roofFrontRidge, roofFrontRight,
+          roofRearRidge, roofRearRight, '#43372f', '#9b7655');
+        GreenwoodLandscape.drawRoofCourses(line, roofFrontRidge, roofFrontLeft,
+          roofRearRidge, roofRearLeft, '#715137', '#c19a69');
+        // Braced timber bays on a low masonry footing.
+        softPoly([[-46, -8], [22, 6], [62, -8], [62, -1], [22, 12], [-46, -2]],
+          '#88816c', 1);
+        for (const x of [-40, -32, 13, 20])
+          line([[x, -45 + (x + 46) * 0.2], [x, -5 + (x + 46) * 0.2]], '#6c513b', 2);
+        for (const x of [28, 43, 56])
+          line([[x, -34 - (x - 22) * 0.33], [x, 9 - (x - 22) * 0.33]], '#493a2e', 2);
+        timber([25, -31], [41, 1], 2.5, '#846347');
+        timber([59, -43], [45, 1], 2.5, '#846347');
         // Loading doors remain visible beneath added iron straps and lock.
-        softRect(-29, -37, 37, 43, '#534635', 2);
+        softPoly([[-29, -37], [8, -30], [8, 8], [-29, 1]], '#554333', 1);
+        for (const x of [-24, -17, -10, -3, 4])
+          line([[x, -34 + (x + 24) * 0.19], [x, 1 + (x + 24) * 0.19]], '#8c6949', 1.2);
+        line([[-11, -33], [-11, 4]], '#332d26', 1.8);
         for (const y of [-30, -10])
           line(
             [
@@ -9721,7 +9780,9 @@
             3,
           );
         softRect(-4, -15, 7, 9, '#a08b57', 1);
-        softRect(-18, -64, 14, 12, '#4a4032', 1);
+        softRect(-19, -65, 16, 13, '#70543b', 1);
+        softRect(-17, -63, 12, 9, '#332e28', 1);
+        for (const x of [-14, -10, -6]) line([[x, -63], [x, -54]], '#a88456', 1.1);
         for (const y of [-30, -23, -16])
           line(
             [
@@ -11480,17 +11541,8 @@
         '#c6b790',
         1.6,
       );
-      if (crown)
-        poly(
-          [
-            [x + 17, y - 51],
-            [x + 23, y - 44],
-            [x + 17, y - 37],
-            [x + 11, y - 44],
-          ],
-          '#b5a0bc',
-        );
-      if (!crown)
+      if (crown) craftAt(x + 18, y - 43, 1.05, () => drawDarkLordProfile(ctx, true));
+      else
         line(
           [
             [x + 17, y - 50],
@@ -12496,24 +12548,7 @@
           timber([0, -27], [0, 0], 3, '#686c5c');
           break;
         case 'fruit-cellar':
-          softPoly(
-            [
-              [-49, 16],
-              [-44, -8],
-              [-23, -32],
-              [13, -38],
-              [45, -15],
-              [52, 17],
-            ],
-            '#637d50',
-            2,
-          );
-          blockwork(-24, -19, 48, 39, '#989a7d', 9);
-          oval(0, -17, 24, 16, '#9a9d83');
-          rect(-15, -16, 30, 34, '#403d2d');
-          boards(-12, -15, 24, 31, '#8f714a');
-          timber([0, -15], [0, 16], 2, '#594730');
-          craftAt(31, 13, 0.55, () => chest(false));
+          orchardCellar(false);
           break;
         case 'estate-scaffold':
           for (const x of [-32, 28]) timber([x, -67], [x, 21], 5);
@@ -12976,17 +13011,6 @@
         case 'crown-banner':
         case 'royal-flight-standard':
           flag(true);
-          if (kind === 'royal-flight-standard')
-            softPoly(
-              [
-                [-7, -32],
-                [3, -37],
-                [10, -31],
-                [3, -33],
-              ],
-              '#d0b887',
-              0.5,
-            );
           break;
         case 'shelf':
           boards(-26, -34, 52, 46, '#68543e');
@@ -17620,6 +17644,62 @@
         1.6,
       );
     }
+    function wagonHorse() {
+      const bay = '#916848';
+      shaped('#594236', () => {
+        ctx.moveTo(-23, -14);
+        ctx.quadraticCurveTo(-42, -12, -34, 14);
+        ctx.quadraticCurveTo(-30, 4, -25, -2);
+      });
+      for (const [x, y, bend, color] of [
+        [-17, -4, -5, '#70503c'], [17, -5, 2, '#70503c'],
+        [-23, 1, -6, bay], [23, -1, 2, bay],
+      ]) {
+        shaped(color, () => {
+          ctx.moveTo(x - 5, y);
+          ctx.lineTo(x + 5, y);
+          ctx.quadraticCurveTo(x + bend + 3, y + 11, x + bend + 2, y + 16);
+          ctx.lineTo(x + bend + 3, y + 25);
+          ctx.lineTo(x + bend - 3, y + 25);
+          ctx.lineTo(x + bend - 4, y + 13);
+        });
+        softRect(x + bend - 4, y + 23, 8, 5, '#433a32', 1);
+      }
+      shaped(bay, () => {
+        ctx.moveTo(-28, -7);
+        ctx.bezierCurveTo(-36, -26, -15, -28, 0, -24);
+        ctx.quadraticCurveTo(14, -23, 24, -28);
+        ctx.quadraticCurveTo(37, -22, 29, -5);
+        ctx.quadraticCurveTo(15, 6, -21, 3);
+      });
+      shaped('#a77853', () => {
+        ctx.moveTo(16, -8);
+        ctx.quadraticCurveTo(17, -24, 32, -40);
+        ctx.quadraticCurveTo(36, -44, 44, -36);
+        ctx.quadraticCurveTo(39, -23, 31, -8);
+        ctx.quadraticCurveTo(26, 0, 16, -8);
+      });
+      shaped('#513b32', () => {
+        ctx.moveTo(13, -22);
+        ctx.quadraticCurveTo(19, -39, 36, -44);
+        ctx.lineTo(39, -36);
+        ctx.quadraticCurveTo(28, -35, 20, -23);
+      });
+      shaped('#ab7b56', () => {
+        ctx.moveTo(35, -41);
+        ctx.lineTo(34, -50);
+        ctx.quadraticCurveTo(39, -51, 40, -42);
+        ctx.quadraticCurveTo(47, -42, 49, -38);
+        ctx.lineTo(57, -30);
+        ctx.quadraticCurveTo(57, -23, 49, -23);
+        ctx.lineTo(39, -32);
+        ctx.quadraticCurveTo(32, -35, 35, -41);
+      });
+      oval(51, -27, 5, 3, '#725140');
+      oval(43, -37, 1.3, 1.3, '#302b23');
+      line([[37, -40], [41, -31], [51, -27], [53, -33]], '#5e4132', 2);
+      oval(49, -29, 1.3, 1.3, '#c5a26c');
+    }
     function craftedTransport() {
       if (e.icon === '🐉' || /Dragon/.test(e.name || '')) {
         dragon('#8b9980');
@@ -17794,33 +17874,69 @@
         );
         return;
       }
-      craftAt(-28, 1, 0.95, () => cartBody(true));
-      shaped('#c7b48a', () => {
-        ctx.moveTo(-58, -16);
-        ctx.bezierCurveTo(-65, -54, 5, -56, 8, -18);
-        ctx.lineTo(0, -13);
-        ctx.quadraticCurveTo(-29, -8, -56, -12);
+      // Timber underframe, rear axle and smaller steering wheels.
+      timber([-52, 6], [13, 2], 5, '#634e38');
+      wheel(-42, 5, 11);
+      wheel(9, 2, 8);
+      wheel(-47, 13, 13);
+      wheel(-5, 11, 10);
+      boards(-60, -14, 69, 17, '#94663e', true);
+      softPoly([[-60, -14], [-51, -20], [16, -20], [9, -14]], '#b58c5b', 1);
+      softPoly([[9, -14], [16, -20], [16, -4], [9, 3]], '#725339', 1);
+      for (const x of [-55, -38, -21, 3]) {
+        timber([x, -15], [x, 2], 2, '#70533a');
+        oval(x, -11, 0.9, 0.9, '#c4ad79');
+      }
+      // The long canvas flank and the front hoop are separate planes.
+      shaped('#b4a078', () => {
+        ctx.moveTo(-60, -15);
+        ctx.bezierCurveTo(-64, -27, -60, -42, -51, -46);
+        ctx.lineTo(0, -51);
+        ctx.quadraticCurveTo(7, -40, -3, -20);
+        ctx.lineTo(-58, -15);
       });
-      for (const x of [-48, -28, -9])
-        line(
-          [
-            [x, -42],
-            [x + 4, -17],
-          ],
-          '#9b8a64',
-          1.4,
-        );
-      craftAt(56, 0, 0.8, () => draftAnimal());
-      timber([0, -2], [45, 2], 3);
-      line(
-        [
-          [-4, -26],
-          [32, -28],
-          [85, -30],
-        ],
-        '#d4bd91',
-        1.5,
-      );
+      shaped('#d8c59a', () => {
+        ctx.moveTo(-52, -46);
+        ctx.bezierCurveTo(-46, -53, -40, -53, -32, -53);
+        ctx.lineTo(16, -58);
+        ctx.quadraticCurveTo(8, -56, 0, -51);
+        ctx.lineTo(-52, -46);
+      });
+      shaped('#504538', () => {
+        ctx.moveTo(-3, -20);
+        ctx.bezierCurveTo(-6, -34, -4, -50, 9, -55);
+        ctx.bezierCurveTo(21, -62, 29, -43, 23, -24);
+        ctx.lineTo(-3, -20);
+      });
+      for (const x of [-56, -39, -22]) {
+        line([[x + 5, -44 - (x + 56) * 0.1], [x, -34], [x - 1, -17 - (x + 56) * 0.1]],
+          '#8b785b', 1);
+        line([[x - 1, -17 - (x + 56) * 0.1], [x + 3, -11]], '#dfcc9e', 1.3);
+      }
+      ctx.beginPath();
+      ctx.moveTo(-3, -20);
+      ctx.bezierCurveTo(-6, -34, -4, -50, 9, -55);
+      ctx.bezierCurveTo(21, -62, 29, -43, 23, -24);
+      ctx.strokeStyle = '#d8c49b';
+      ctx.lineWidth = 2.3;
+      ctx.stroke();
+      sack(5, -23, 0.54, '#b49a71');
+      craftAt(14, -25, 0.45, () => crateBody(0, 0));
+      timber([8, -14], [25, -16], 3.5, '#a77f51');
+      // Shaft, breast collar and traces connect the horse to the underframe.
+      timber([10, -3], [57, 0], 2.6, '#7c593c');
+      craftAt(56, -1, 0.74, wagonHorse);
+      shaped('#5b4032', () => {
+        ctx.moveTo(77, -36);
+        ctx.quadraticCurveTo(68, -29, 70, -13);
+        ctx.lineTo(64, -17);
+        ctx.quadraticCurveTo(66, -33, 77, -36);
+      });
+      timber([9, 3], [67, 7], 3, '#9d754a');
+      line([[27, 1], [60, -1], [74, -13]], '#48382c', 2);
+      line([[72, -18], [77, -11], [73, -4]], '#543c30', 3);
+      oval(74, -10, 1.8, 1.8, '#ba9b66');
+      line([[20, -19], [39, -15], [62, -18], [92, -22]], '#b29975', 1.2);
       craftAt(-58, 3, 0.4, () => lantern(0, -20));
     }
 
@@ -18475,7 +18591,8 @@
     } else if (e.kind === 'landmark') {
       landmark();
     } else if (type === 'npc') {
-      if (e.family && ['teacher', 'smith', 'alchemist'].includes(e.kind)) specialist(e);
+      if (e.presentation === 'goblin-resident') goblinBody(false, false, false, true);
+      else if (e.family && ['teacher', 'smith', 'alchemist'].includes(e.kind)) specialist(e);
       else {
         const smith = ['smith', 'alchemist'].includes(e.kind);
         humanoid(smith ? '#8b7770' : '#8b9c7b');
@@ -20671,7 +20788,11 @@
       // Mill service geometry is owned by the current region layout. The
       // culvert is a dirt road over a creek, not another stone bridge.
       // The timber crossing is much smaller than either named river bridge.
-      for (const deck of [R.greenwoodLayout.creekCulvert, R.greenwoodLayout.millBridge]) {
+      for (const deck of [
+        R.greenwoodLayout.creekCulvert,
+        R.greenwoodLayout.woodlandCulvert,
+        R.greenwoodLayout.millBridge,
+      ]) {
         if (!deck) continue;
         const a = deck.from, b = deck.to,
           length = Math.hypot(b.x - a.x, b.y - a.y) || 1,
@@ -20701,15 +20822,19 @@
               '#7d674d', 1.25,
             );
           }
-          const mid = { x: (a.x+b.x)/2, y: (a.y+b.y)/2 };
+          const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+          // For a diagonal creek, follow the water centerline out from each shoulder.
+          const flowAcross = deck.flow ? deck.flow.x * nx + deck.flow.y * ny : 0;
+          const flowX = flowAcross ? deck.flow.x / flowAcross : nx;
+          const flowY = flowAcross ? deck.flow.y / flowAcross : ny;
           for (const side of [-1, 1]) {
             const rim = {
-              x: mid.x + nx*(half+3)*side,
-              y: mid.y + ny*(half+3)*side,
+              x: mid.x + flowX * (half + 3) * side,
+              y: mid.y + flowY * (half + 3) * side,
             };
             const outer = {
-              x: rim.x + nx*9*side,
-              y: rim.y + ny*9*side,
+              x: rim.x + flowX * 9 * side,
+              y: rim.y + flowY * 9 * side,
             };
             // The mouth is a small water-darkened gap between stone cheeks,
             // not a solid black stripe through the middle of the road.
@@ -21624,8 +21749,58 @@
       e.ranged && ['mireling', 'ogre', 'orc', 'ashbeast', 'crownguard'].includes(e.species);
     return e.species + (rangedClass ? ':ranged' : '');
   }
+  function drawDarkLordProfile(ctx, cloth = false) {
+    // The ruler's right-facing head and identifiable nose, chin and shoulder.
+    // The same portrait grammar is used on Stonecross's striking-die tray.
+    ctx.fillStyle = cloth ? '#d8b477' : '#586d77';
+    ctx.beginPath();
+    ctx.moveTo(-5, -3);
+    ctx.lineTo(2, -5);
+    ctx.lineTo(4, -2);
+    ctx.lineTo(7, 0);
+    ctx.lineTo(4, 1);
+    ctx.lineTo(3, 4);
+    ctx.lineTo(1, 5);
+    ctx.lineTo(-3, 4);
+    ctx.lineTo(-6, 6);
+    ctx.lineTo(-7, 5);
+    ctx.lineTo(-4, 2);
+    ctx.closePath();
+    ctx.fill();
+    // The ruler's own tall pointed helm and broad three-tipped crown,
+    // miniaturized from the actual Dark Lord silhouette, not generic royalty.
+    ctx.fillStyle = cloth ? '#c19a65' : '#596274';
+    ctx.beginPath();
+    ctx.moveTo(-5, -3);
+    ctx.lineTo(-4, -6);
+    ctx.lineTo(0, -8);
+    ctx.lineTo(4, -5);
+    ctx.lineTo(5, -3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = cloth ? '#eed5a4' : '#4e646e';
+    ctx.beginPath();
+    ctx.moveTo(-5.5, -4);
+    ctx.lineTo(-8, -8.6);
+    ctx.lineTo(-3, -6.2);
+    ctx.lineTo(0, -9.5);
+    ctx.lineTo(3, -6.2);
+    ctx.lineTo(7.8, -8.6);
+    ctx.lineTo(5.8, -4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = cloth ? '#604457' : '#e3e9e7';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(-4, -4);
+    ctx.lineTo(3, -4);
+    ctx.stroke();
+    ctx.fillStyle = cloth ? '#604457' : '#e3e9e7';
+    ctx.fillRect(1, -2, 1.2, 1.2);
+  }
   root.PrototypeVisuals = {
     draw,
+    drawDarkLordProfile,
     frontierTreeShoots,
     frontierGroundRecoveryAt,
     height,

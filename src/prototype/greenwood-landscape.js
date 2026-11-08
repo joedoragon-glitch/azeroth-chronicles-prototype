@@ -9,6 +9,7 @@
     for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
     return h;
   };
+  const wagonExit = [3200, 80];
   const plan = {
     town: [650, 600],
     hamlet: [550, 1750],
@@ -275,11 +276,17 @@
       ],
       millBridge = {
         from: q([1210, 1575]), to: q([1250, 1495]),
-        width: 62 * scale, kind: 'timber',
+        width: 84 * scale, kind: 'timber',
       },
       creekCulvert = {
         from: q([1070, 725]), to: q([1145, 805]),
         width: 76 * scale, kind: 'stone-culvert',
+      },
+      woodlandCulvert = {
+        // The north woodland lane crosses the same creek upstream of Millhaven.
+        from: q([1232, 258]), to: q([1292, 290]),
+        width: 40 * scale, kind: 'stone-culvert',
+        flow: { x: 40, y: 170 },
       },
       // One genuine service road branches from the existing west-bank farm road,
       // ends on dry ground; its NARROW footpath crosses the true
@@ -288,7 +295,7 @@
         [650, 1550], [785, 1595], [990, 1655], [1200, 1660],
       ].map(q),
       // A 24-unit pedestrian trail, NOT a cart road, runs across the
-      // 62-unit-wide timber deck and then bends to the actual mill door.
+      // 84-unit-wide timber deck and then bends to the actual mill door.
       millDoorFootpath = [
         [1200, 1660], [1210, 1575], [1250, 1495],
         [1400, 1490], [1290, 1490], [1210, 1485],
@@ -364,6 +371,7 @@
       upperCreek,
       millBridge,
       creekCulvert,
+      woodlandCulvert,
       millServiceLane,
       millDoorFootpath,
       millEntrance: q([1210, 1485]),
@@ -577,18 +585,14 @@
         z.greenwoodHomesteadVersion = 1;
       }
       greenwoodOwnerCompoundFinish(z) {
-        if (z.id === 'vale' && z.greenwoodDepartureClearanceVersion !== 1) {
-          const a = R.greenwoodLayout.anchors.wagon,
-            b = { x: 3200, y: 80 };
-          const dx = b.x - a.x,
-            dy = b.y - a.y,
-            len2 = dx * dx + dy * dy;
-          z.props = z.props.filter((p) => {
-            if (!p.greenwoodNature || p.owned || p.playerOwned || p.custom) return true;
-            const t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2;
-            return t < 0 || t > 1 || Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy) > 75;
-          });
-          z.greenwoodDepartureClearanceVersion = 1;
+        if (z.id === 'vale' && z.greenwoodDepartureClearanceVersion !== 2) {
+          const layout = R.greenwoodLayout;
+          const end = point(wagonExit.map((value) => value * layout.scale));
+          z.props = z.props.filter((p) =>
+            !p.greenwoodNature || p.owned || p.playerOwned || p.custom ||
+            distanceToRoadSegment(p, layout.anchors.wagon, end) > 105 * layout.scale,
+          );
+          z.greenwoodDepartureClearanceVersion = 2;
         }
         if (z.id === 'vale' && z.greenwoodOwnerHomesteadLayoutVersion !== 1) {
           const bay = z.props.find((p) => p.id === 'greenwood-thorn-homestead-rest-bay');
@@ -1475,7 +1479,6 @@
             'goblin-camp': plan.goblin,
             'supply-entrance': plan.treasury,
             'mini-field-thorn': [920, 2880],
-            'thorn-local-report': [850, 750],
           };
           for (const n of z.npcs) {
             if (npcPositions[n.id]) Object.assign(n, q(npcPositions[n.id]));
@@ -1897,7 +1900,7 @@
               if (p && this.blocked(p.x, p.y, 'vale'))
                 Object.assign(p, this.safe(p.x, p.y, 'vale'));
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
-          if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
+          if (witness) this.positionThornWitness(witness);
           // Shape authored routes and bridge corridors before positioning
           // homestead and botanical overlays against their final road footprint.
           // The method's own version guard keeps restore idempotent.
@@ -2128,6 +2131,17 @@
   }
   // A single coherent native painter for the homestead's actual silhouettes.
   // Shared isometric axes and a fixed palette avoid disconnected box art.
+  function drawRoofCourses(stroke, ridge, eave, backRidge, backEave, seam, highlight) {
+    const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const at = (pitch, depth) => mix(mix(ridge, eave, pitch), mix(backRidge, backEave, pitch), depth);
+    for (let course = 1; course <= 5; course++) {
+      const pitch = course / 6;
+      stroke([at(pitch, 0.02), at(pitch, 0.98)], seam, 1.2);
+      stroke([at(pitch + 0.025, 0.03), at(pitch + 0.025, 0.97)], highlight, 0.65);
+      for (let depth = course % 2 ? 0.16 : 0.28; depth < 0.94; depth += 0.22)
+        stroke([at(pitch - 0.14, depth), at(pitch, depth)], seam, 0.8);
+    }
+  }
   function drawThornHomestead(ctx, e, p) {
     const kind = e.greenwoodFacility;
     ctx.save();
@@ -2254,6 +2268,16 @@
           1,
         );
       }
+      // Raised stone sill and a pinned timber frame follow the wall planes.
+      poly([[-60, -9], [31, 9], [84, -9], [84, -3], [31, 15], [-60, -3]], '#83806d');
+      for (const x of [-54, -42, 23])
+        stroke([[x, -8 + (x + 60) * 0.2], [x, -3 + (x + 60) * 0.2]], '#555349', 1);
+      stroke([[-59, -59], [-39, -45]], beam, 4);
+      stroke([[31, -43], [82, -60]], '#9b7b59', 3);
+      for (const x of [43, 55, 67, 78]) {
+        const base = 15 - (x - 31) * 0.34;
+        stroke([[x, base - 52], [x, base - 6]], '#4e4033', 1);
+      }
       // Broad old loading door, open for a quadruped, not a scaled-down pet door.
       poly(
         [
@@ -2264,6 +2288,8 @@
         ],
         '#27372e',
       );
+      poly([[-32, -18], [-15, -24], [14, -17], [14, 9], [-32, 0]], '#465044');
+      stroke([[-25, -20], [-25, -5], [-15, -3]], '#6c6048', 2);
       oval(-8, 4, 24, 7, '#b29a72');
       for (let j = 0; j < 6; j++)
         stroke(
@@ -2316,27 +2342,15 @@
       // Close the overhanging right eave onto the real side wall. Without
       // this narrow fascia, the backdrop shows through as a green wedge.
       poly([roofFrontRight, roofRearRight, [84, -63], [31, -45]], '#4b3b2d');
+      poly([roofFrontRidge, roofFrontRight, [31, -45], [-14, -95]], '#574332');
       stroke([roofFrontLeft, roofFrontRidge, roofFrontRight], edge, 2.5);
       stroke([roofFrontRidge, roofRearRidge], '#b6956a', 2);
       stroke([roofFrontLeft, roofRearLeft], '#a98c64', 1.6);
       stroke([roofFrontRight, roofRearRight], '#a98c64', 1.6);
-      // Only two faint aligned board seams on the long visible pitch.
-      for (const t of [1 / 3, 2 / 3]) {
-        stroke(
-          [
-            [
-              roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
-              roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t,
-            ],
-            [
-              roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
-              roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
-            ],
-          ],
-          '#876b4e',
-          0.9,
-        );
-      }
+      drawRoofCourses(stroke, roofFrontRidge, roofFrontRight, roofRearRidge, roofRearRight,
+        '#493a30', '#a68058');
+      drawRoofCourses(stroke, roofFrontRidge, roofFrontLeft, roofRearRidge, roofRearLeft,
+        '#705238', '#b39266');
       stroke(
         [
           [-61, -61],
@@ -2422,6 +2436,8 @@
         oval(x, y + 2, 6, 2.5, '#24372766');
         stroke([[x, y], [x, topY]], beam, 6);
       }
+      stroke([[-43, -48], [-30, -59]], '#8d6947', 4);
+      stroke([[7, -19], [21, -40]], '#8d6947', 4);
       // Four eaves are a parallelogram, never crossed roof slopes.
       const restRoof = [
         [-48, -62],
@@ -2958,7 +2974,7 @@
   // and the non-overlapping path fragments once per real geometry revision.
   // Canvas and Pixi consume this same painter; no on-tick pathfinding or meshes.
   let roadPaintCache = null;
-  const roadWidths = Object.freeze({ cart: 44, farm: 26, path: 12 });
+  const roadWidths = Object.freeze({ cart: 44, farm: 26, path: 20 });
   function smoothRoad(path, kind) {
     if (!Array.isArray(path) || path.length < 3) return (path || []).slice();
     const limit = kind === 'cart' ? 85 : kind === 'farm' ? 54 : 32;
@@ -3035,12 +3051,8 @@
       kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
       points: smoothRoad(points, kinds[i] === 'cart' || i === 0 ? 'cart' : 'farm'),
     }));
-    // The previously appended merchant exit made the cart road bend sharply
-    // right toward the wagon. Keep the main carriageway moving through to the
-    // NORTH map boundary, and let the existing wagon stop branch off as a
-    // narrower, gently joined service lane. These are presentation-only
-    // centerlines; z.roads, NPC travel, saves and collision remain unchanged.
-    // The shape check avoids altering older/unrecognized road layouts.
+    // Extend the existing carriageway past the wagon at full width. This
+    // presentation keeps the wagon as the travel interaction at the same stop.
     const source = roads?.[0],
       destination = source?.at(-1),
       scale = destination?.x / 2880;
@@ -3049,22 +3061,14 @@
         Math.abs(destination.y - 280 * scale) < 1 &&
         Math.abs(source.at(-2).x - 2480 * scale) < 1 &&
         Math.abs(source.at(-2).y - 650 * scale) < 1) {
-      const fork = { x: 2480 * scale, y: 650 * scale };
-      wide[0].points = smoothRoad([
-        ...source.slice(0, -1),
-        { x: 2450 * scale, y: 490 * scale },
-        { x: 2350 * scale, y: 240 * scale },
-        { x: 2270 * scale, y: -35 * scale },
-      ], 'cart');
-      wide.push({
-        kind: 'farm',
-        points: smoothRoad([
-          fork,
-          { x: 2630 * scale, y: 495 * scale },
-          { x: 2800 * scale, y: 345 * scale },
-          { ...destination },
-        ], 'farm'),
-      });
+      const westStart = source[0];
+      const millhavenWest =
+        Math.abs(westStart.x - 250 * scale) < 1 && Math.abs(westStart.y - 600 * scale) < 1
+          ? [{ x: 0, y: westStart.y }]
+          : [];
+      const exit = point(wagonExit.map((value) => value * scale));
+      wide[0].points = smoothRoad([...millhavenWest, ...source, exit], 'cart');
+      wide[0].endsAtEastEdge = true;
     }
     const fragments = [];
     for (const path of footpaths || []) {
@@ -3096,9 +3100,18 @@
         distance(path[0], { x: 250 * northScale, y: 600 * northScale }) < 1 &&
         distance(path.at(-1), { x: 1330 * northScale, y: 1000 * northScale }) < 1;
       const paintedPath = northernConnector
-        ? [...path.slice(0, -2),
-          { x: 1510 * northScale, y: 885 * northScale },
-          { x: 1510 * northScale, y: 1000 * northScale }]
+        ? [
+            // Merge into the straight westbound carriageway at a shallow angle.
+            { x: 315 * northScale, y: 600 * northScale },
+            { x: 225 * northScale, y: 577 * northScale },
+            { x: 155 * northScale, y: 515 * northScale },
+            { x: 112 * northScale, y: 404 * northScale },
+            { x: 108 * northScale, y: 265 * northScale },
+            { x: 153 * northScale, y: 187 * northScale },
+            ...path.slice(3, -2),
+            { x: 1510 * northScale, y: 885 * northScale },
+            { x: 1510 * northScale, y: 1000 * northScale },
+          ]
         : path;
       const points = smoothRoad(paintedPath, 'path');
       // Short village/service spurs are maintained roads, not moss-colored
@@ -3149,7 +3162,7 @@
     }
     return { wide, fragments, widths: roadWidths };
   }
-  function appendRoadRibbon(ctx, screen, points, width) {
+  function appendRoadRibbon(ctx, screen, points, width, endsAtEastEdge = false) {
     if (points.length < 2) return;
     const normals = [];
     for (let i = 1; i < points.length; i++) {
@@ -3172,8 +3185,17 @@
         dy = ny / len,
         denominator = Math.max(0.65, dx * after.x + dy * after.y),
         reach = width / denominator;
-      left.push(screen({ x: points[i].x + dx * reach, y: points[i].y + dy * reach }));
-      right.push(screen({ x: points[i].x - dx * reach, y: points[i].y - dy * reach }));
+      const p = points[i];
+      if (endsAtEastEdge && i === points.length - 1) {
+        const before = points[i - 1];
+        const slope = (p.y - before.y) / (p.x - before.x);
+        const edgeOffset = (dy - dx * slope) * reach;
+        left.push(screen({ x: p.x, y: p.y + edgeOffset }));
+        right.push(screen({ x: p.x, y: p.y - edgeOffset }));
+      } else {
+        left.push(screen({ x: p.x + dx * reach, y: p.y + dy * reach }));
+        right.push(screen({ x: p.x - dx * reach, y: p.y - dy * reach }));
+      }
     }
     left.concat(right.reverse()).forEach((p, i) => {
       if (i) ctx.lineTo(p.x, p.y);
@@ -3232,9 +3254,10 @@
       // strip on top of another and left visible seams at T/Y junctions.
       for (const road of wide) {
         const w = roadWidths[road.kind] * widthFactor;
-        appendRoadRibbon(ctx, screen, road.points, w);
-        appendRoadCap(ctx, screen, road.points[0], w);
-        appendRoadCap(ctx, screen, road.points.at(-1), w);
+        appendRoadRibbon(ctx, screen, road.points, w, road.endsAtEastEdge);
+        // A west-boundary carriageway ends flush with the map edge.
+        if (road.points[0].x !== 0) appendRoadCap(ctx, screen, road.points[0], w);
+        if (!road.endsAtEastEdge) appendRoadCap(ctx, screen, road.points.at(-1), w);
       }
       const footWidth = roadWidths.path * widthFactor;
       for (const run of fragments) {
@@ -3319,14 +3342,25 @@
     [2420, 2040, 135, 100],
     [2930, 1740, 110, 120],
     [500, 2750, 145, 110],
+    [230, 625, 150, 155],
+    [940, 420, 155, 125],
+    [920, 1470, 135, 140],
+    [330, 2200, 165, 145],
+    [1160, 2170, 150, 130],
+    [1900, 485, 190, 165],
+    [2480, 440, 135, 150],
+    [2050, 1560, 160, 145],
+    [2610, 1650, 180, 160],
+    [2750, 2375, 145, 125],
+    [2000, 2770, 155, 135],
   ].map(([cx, cy, rx, ry], index) => ({
     cx,
     cy,
-    flowers: Array.from({ length: 13 }, (_, j) => {
+    flowers: Array.from({ length: 19 }, (_, j) => {
       const h = hash('greenwood-meadow-' + index + '-' + j);
       const a = j * 2.3999632297 + (h % 23) * 0.017;
       const r = Math.sqrt(((h >>> 8) % 997) / 997);
-      const dandelion = j % 4 === 0;
+      const dandelion = j % 7 === 0;
       return {
         x: cx + Math.cos(a) * rx * r,
         y: cy + Math.sin(a) * ry * r,
@@ -3337,6 +3371,24 @@
       };
     }),
   }));
+  // Jittered patches give rural ground continuous cover with irregular clumps.
+  // These samples are paint only and are shared by Canvas and Pixi terrain.
+  const groundTufts = Array.from({ length: 20 * 20 }, (_, index) => {
+    const seed = hash('vale-tuft-' + index);
+    const x = (index % 20) * 160 + 24 + (seed % 111);
+    const y = Math.floor(index / 20) * 160 + 24 + ((seed >>> 8) % 111);
+    return { x, y, tufts: Array.from({ length: 8 + (seed % 5) }, (_, i) => {
+      const h = hash('vale-blade-' + index + '-' + i);
+      return {
+        x: x + (h % 135) - 67,
+        y: y + ((h >>> 8) % 135) - 67,
+        height: 4 + ((h >>> 18) % 8),
+        tone: (h >>> 26) % 3,
+        leaf: i % 5 === 0,
+        bloom: i === 0 && (seed >>> 16) % 3 === 0 ? h : 0,
+      };
+    }) };
+  });
   const litterCache = new Map(); // twelve fixed native ground patches, bounded
   function drawGround(ctx, screen, cfg, bounds) {
     const s = cfg.scale;
@@ -3425,10 +3477,46 @@
     dirt.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
     ctx.closePath();
     ctx.fill();
+    const visibleTufts = [[], [], []];
+    const meadowVisible = [];
+    for (const patch of groundTufts) {
+      const center = screen({ x: patch.x * s, y: patch.y * s });
+      if (center.x < -130 || center.x > bounds.width + 130 ||
+          center.y < -75 || center.y > bounds.height + 75) continue;
+      for (const tuft of patch.tufts) {
+        if (tuft.x < 10 || tuft.y < 10 || tuft.x > 3190 || tuft.y > 3190) continue;
+        const p = screen({ x: tuft.x * s, y: tuft.y * s });
+        if (p.x < -10 || p.x > bounds.width + 10 || p.y < -14 || p.y > bounds.height + 10)
+          continue;
+        visibleTufts[tuft.tone].push({ ...p, height: tuft.height, leaf: tuft.leaf });
+        if (tuft.bloom)
+          meadowVisible.push({ ...p, h: tuft.bloom, stem: 8 + tuft.height / 3, lean: 2 });
+
+      }
+    }
+    for (const [tone, color] of ['#829456b5', '#a6a9699e', '#5d804ec9'].entries()) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      for (const { x, y, height, leaf } of visibleTufts[tone]) {
+        ctx.moveTo(x - 3, y);
+        ctx.quadraticCurveTo(x - 4, y - height * 0.7, x - 7, y - height);
+        ctx.quadraticCurveTo(x - 1, y - height * 0.8, x, y);
+        ctx.lineTo(x + 2, y);
+        ctx.quadraticCurveTo(x + 3, y - height, x + 7, y - height - 1);
+        ctx.quadraticCurveTo(x + 5, y - height * 0.5, x + 4, y);
+        ctx.closePath();
+        if (leaf) {
+          ctx.moveTo(x - 1, y - 2);
+          ctx.quadraticCurveTo(x - 9, y - 3, x - 10, y - 7);
+          ctx.quadraticCurveTo(x - 3, y - 9, x - 1, y - 2);
+          ctx.closePath();
+        }
+      }
+      ctx.fill();
+    }
     // These meadow samples are computed once and shared by every draw.
     // A bounded number of batched Canvas paths replaces hundreds of
     // per-flower strokes, fills and trig/hash calls on each painted scene.
-    const meadowVisible = [];
     for (const patch of meadowSamples) {
       const center = screen({ x: patch.cx * s, y: patch.cy * s });
       if (
@@ -3441,7 +3529,7 @@
       for (const flower of patch.flowers) {
         const p = screen({ x: flower.x * s, y: flower.y * s });
         if (p.x < -18 || p.x > bounds.width + 18 || p.y < -26 || p.y > bounds.height + 18) continue;
-        meadowVisible.push({ x: p.x, y: p.y, ...flower });
+        meadowVisible.push({ ...flower, x: p.x, y: p.y });
       }
     }
     if (meadowVisible.length) {
@@ -3483,13 +3571,16 @@
           if (f.dandelion || (f.h >>> 3) % petalColors.length !== color) continue;
           const x = f.x + f.lean,
             y = f.y - f.stem;
-          for (let k = 0; k < 5; k++) {
-            const a = (Math.PI * 2 * k) / 5,
-              px = x + Math.cos(a) * 2.2,
-              py = y + Math.sin(a) * 2;
-            ctx.moveTo(px + 1.8, py);
-            ctx.arc(px, py, 1.8, 0, Math.PI * 2);
-          }
+          // One small scalloped silhouette avoids overlapping antialiased petals.
+          ctx.moveTo(x - 3, y - 1);
+          ctx.lineTo(x - 1, y - 2);
+          ctx.lineTo(x, y - 4);
+          ctx.lineTo(x + 2, y - 2);
+          ctx.lineTo(x + 4, y);
+          ctx.lineTo(x + 2, y + 3);
+          ctx.lineTo(x, y + 2);
+          ctx.lineTo(x - 2, y + 3);
+          ctx.closePath();
         }
         ctx.fill();
       }
@@ -3514,6 +3605,7 @@
     plan,
     drawNature,
     drawFacility,
+    drawRoofCourses,
     drawRoads,
     prepareRoadPaint,
     drawWall,

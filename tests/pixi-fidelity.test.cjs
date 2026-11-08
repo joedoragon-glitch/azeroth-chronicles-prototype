@@ -10,7 +10,11 @@ const game = {
   hero: { id: 'hero', x: 334, y: 298 },
   zoneId: 'vale',
   s: { rescued: {}, loot: [], projectiles: [], throneClaimed: false, statistics: { deaths: 0 } },
-  zone: () => ({ props: game.props || [], enemies: game.enemies || [], buildings: [] }),
+  zone: () => ({
+    props: game.props || [],
+    enemies: game.enemies || [],
+    buildings: game.buildings || [],
+  }),
   visibleNPCs: () => game.npcs || [],
   visibleResourceNodes: () => [],
   activeLivingParty: () => [],
@@ -251,6 +255,7 @@ const runtime = {
   PrototypeVisuals: {
     draw() {},
     atmosphereMotes: Visuals.atmosphereMotes,
+    barracksVisualState: Visuals.barracksVisualState,
     terrainMotionLines: () => [],
   },
   AzerothNativeWebGLCore: { lampGlowCommands: () => [] },
@@ -259,7 +264,8 @@ const runtime = {
       commandFor: (entity, point, { facing = 1 } = {}) => {
         facingOptions.push({ id: entity.id, facing });
         return (entity.renderKind === 'prop' && entity.structure !== 'dead-tree') ||
-          entity.species === 'orc'
+          entity.species === 'orc' ||
+          entity.renderKind === 'building'
           ? { supported: false, reason: 'original-game-procedural-art' }
           : {
               supported: true,
@@ -441,6 +447,33 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   );
   game.hero.x = heroStartX;
   game.props = [];
+  const barracks = { id: 'test-barracks', kind: 'barracks', x: game.hero.x + 85, y: game.hero.y };
+  game.buildings = [barracks];
+  const barracksTextures = new Set();
+  for (const [progress, full] of [
+    [0, false],
+    [1, false],
+    [2, false],
+    [3, false],
+    [4, false],
+    [4, true],
+  ]) {
+    Object.assign(barracks, { progress, full });
+    gpu.draw();
+    const texture = frames.at(-1).find((actor) => actor.key === 'building:test-barracks').textureId;
+    assert(!barracksTextures.has(texture), 'each visible Barracks stage needs fresh art');
+    barracksTextures.add(texture);
+    if (progress < 4) {
+      barracks.progress += 0.5;
+      gpu.draw();
+      assert.equal(
+        frames.at(-1).find((actor) => actor.key === 'building:test-barracks').textureId,
+        texture,
+        'progress within one visual stage reuses the texture',
+      );
+    }
+  }
+  game.buildings = [];
   // New Stage 5 hostile-entry GPU path: cold nearby procedural art must
   // receive an actual Pixi PrepareSystem upload while the game remains still.
   game.props = [

@@ -52,18 +52,45 @@ assert(g.clearSegment(
   {x:1530,y:2297}, {x:1940,y:2297}, 15, true,
 ), 'southern footbridge has body clearance even with modest off-center walking');
 const prepared = Landscape.prepareRoadPaint(z.roads, z.footpaths, z.greenwoodRoadKinds);
-// The principal road now continues across the north boundary instead of
-// turning toward the merchant stop. A modest farm-width branch still serves
-// the original wagon anchor without changing the underlying authored route.
-assert.deepEqual(prepared.wide[0].points.at(-1), { x: 2270, y: -35 });
-const wagonSpur = prepared.wide.find((road) =>
-  road.kind === 'farm' &&
-  Math.abs(road.points[0].x - 2480) < 1 &&
-  Math.abs(road.points[0].y - 650) < 1);
-assert(wagonSpur, 'merchant access visibly forks from the main road');
-assert.deepEqual(wagonSpur.points.at(-1), { x: 2880, y: 280 });
-assert.deepEqual(z.roads[0].at(-1), { x: 2880, y: 280 },
-  'saved authoritative merchant travel anchor remains unchanged');
+assert.deepEqual(prepared.wide[0].points[0], { x: 0, y: 600 },
+  'Millhaven carriageway extends all the way to the west boundary');
+assert.deepEqual(z.roads[0][0], { x: 250, y: 600 },
+  'west continuation is presentation-only');
+const millhavenLane = prepared.fragments.find((run) =>
+  run.some((point) => point.x < 180 && point.y > 300 && point.y < 500));
+assert(millhavenLane, 'woodland lane curves into the west approach');
+assert(millhavenLane[0].x > 200 && millhavenLane[0].y > 560,
+  'the narrow lane meets the cart surface well before the map edge');
+const cartRoad = prepared.wide[0];
+const wagon = z.npcs.find((npc) => npc.id === 'outbound');
+const exit = cartRoad.points.at(-1);
+assert.deepEqual(exit, { x: g.zoneSize(), y: 80 });
+assert(cartRoad.endsAtEastEdge);
+assert(cartRoad.points.some((p) => Math.hypot(p.x - wagon.x, p.y - wagon.y) < 20),
+  'the carriageway reaches the wagon at full width before leaving Greenwood');
+assert(!prepared.wide.some((road) => road.kind === 'farm' &&
+  road.points.some((p) => Math.hypot(p.x - wagon.x, p.y - wagon.y) < 10)),
+  'the wagon is on the carriageway');
+assert.deepEqual(z.roads[0].at(-1), { x: wagon.x, y: wagon.y });
+const exitLength = Math.hypot(exit.x - wagon.x, exit.y - wagon.y);
+assert(!z.props.some((p) => {
+  if (!p.greenwoodNature) return false;
+  const along = ((p.x - wagon.x) * (exit.x - wagon.x) +
+    (p.y - wagon.y) * (exit.y - wagon.y)) / exitLength;
+  const across = ((p.x - wagon.x) * (exit.y - wagon.y) -
+    (p.y - wagon.y) * (exit.x - wagon.x)) / exitLength;
+  return along > 0 && along < exitLength && Math.abs(across) < 100;
+}), 'trees and natural scatter stay clear beyond the wagon');
+const oldDeparture = g.snapshot();
+const savedVale = oldDeparture.zones.vale;
+savedVale.greenwoodDepartureClearanceVersion = 1;
+const tree = { id: 'old-departure-tree', x: (wagon.x + exit.x) / 2,
+  y: (wagon.y + exit.y) / 2, r: 18, icon: '🌲', greenwoodNature: true };
+savedVale.props.push(tree);
+const revisedVale = Campaign.restore(oldDeparture, rng).zone();
+assert(!revisedVale.props.some((p) => p.id === tree.id), 'v4 restore clears old roadside scatter');
+assert.deepEqual(revisedVale.npcs.find((n) => n.id === 'outbound'), wagon);
+
 assert(prepared.wide.some((road) => road.kind === 'path'),
   'short maintained Millhaven side lanes share cart/farm earth painting');
 const southPaint = prepared.wide.find((road) =>
@@ -79,7 +106,7 @@ assert(prepared.fragments.length > 0,
   'long woodland tracks keep their quieter, separate footpath treatment');
 assert.equal(prepared.widths.cart * 2, 88);
 assert.equal(prepared.widths.farm * 2, 52);
-assert.equal(prepared.widths.path * 2, 24);
+assert.equal(prepared.widths.path * 2, 40);
 assert(prepared.wide[0].points.length > z.roads[0].length, 'cart bends are smoothly sampled');
 assert(prepared.fragments.length > 0, 'woodland paths survive main-road junction clipping');
 // Independent designer acceptance: major routes must not retain a jagged

@@ -707,6 +707,13 @@
       const shared = sharedDecorationKey(visual);
       if (shared !== null)
         return backingRatio + ':' + zoom + ':shared-decor:' + shared + ':' + current.zoneId;
+      // Barracks artwork changes at whole construction stages, not every tick.
+      let barracksStage = '';
+      if (visual.renderKind === 'building' && visual.kind === 'barracks') {
+        barracksStage = root.PrototypeVisuals.barracksVisualState(visual);
+        if (barracksStage === 'construction')
+          barracksStage += ':' + Math.max(0, Math.floor(visual.progress));
+      }
       return (
         backingRatio +
         ':' +
@@ -726,7 +733,8 @@
         ':' +
         !!visual.rangedAim +
         ':' +
-        !!visual.frenzy
+        !!visual.frenzy +
+        (barracksStage ? ':' + barracksStage : '')
       );
     }
     function evictUnused(protectedRevisions, bytesNeeded) {
