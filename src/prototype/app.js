@@ -6304,11 +6304,6 @@
       ['60', '60 FPS'],
     ];
     const items = [
-      menuControls.section('Display'),
-      menuControls.section(
-        'Active layout',
-        platform.mode === 'phone' ? 'Phone / touch screen' : 'Chromebook / desktop screen',
-      ),
       performanceSelect(
         'Screen layout',
         platform.preference,
@@ -6321,7 +6316,6 @@
           platform.select(value);
           performancePage();
         },
-        'Choose phone or desktop controls. Your save stays the same.',
       ),
       performanceSelect(
         'Camera zoom',
@@ -6361,22 +6355,14 @@
             requestPerformancePixi();
           }
         },
-        'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(!pixiSettings && graphics.preferredRenderer === 'webgl2'
         ? [performanceAction('Retry PixiJS WebGL2', requestPerformancePixi)]
         : []),
-      menuControls.section(pixiSettings ? 'Pixi graphics' : 'Canvas graphics'),
       ...(started ? [menuControls.section(
         'Effective density',
         density + ' · ' + canvas.width + ' × ' + canvas.height,
       )] : []),
-      ...(pixiSettings
-        ? [menuControls.section(
-            'Effective atmospheric particles',
-            !pixiQuality.preset && pixiQuality.particles ? 'On' : 'Off',
-          )]
-        : [menuControls.section('Effective optimization', optimizationMode ? 'On' : 'Off')]),
       ...(pixiSettings
         ? [
             menuControls.toggle(
@@ -6400,7 +6386,7 @@
               },
               pixiQuality.preset
                 ? 'Saved choice. The preset currently hides decorative particles.'
-                : 'Decorative motes only.',
+                : '',
               false,
             ),
           ]
@@ -6455,8 +6441,6 @@
             ? 'Device sharpness stays fixed during play.'
             : 'Automatic sharpness can adapt during play.',
       ),
-      menuControls.section('Frame pacing'),
-      menuControls.section('Active draw target', fps.target + ' FPS'),
       performanceSelect(
         'Drawing target (FPS)',
         fps.preference,
