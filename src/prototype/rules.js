@@ -7834,6 +7834,17 @@
       specialRange: bossCadence.specialRange * balance.enemySpecialReachMultiplier,
       areaRangeMultiplier: bossCadence.areaRangeMultiplier * balance.enemySpecialReachMultiplier,
     },
+    // Rematches change readiness and warning windows, not boss health or damage.
+    // Floors keep already brief warnings readable at the game's ~20 FPS target.
+    rematchAdaptation: Object.freeze({
+      field: Object.freeze({ warningScale: 0.9, recoveryScale: 0.92, warningFloor: 0.62 }),
+      captain: Object.freeze([
+        Object.freeze({ warningScale: 1, cooldownScale: 1 }),
+        Object.freeze({ warningScale: 0.9, cooldownScale: 0.88 }),
+        Object.freeze({ warningScale: 0.82, cooldownScale: 0.76 }),
+      ]),
+      captainWarningFloor: 0.62,
+    }),
     bossSummoning,
     bossBehavior,
     greenwoodPassives,

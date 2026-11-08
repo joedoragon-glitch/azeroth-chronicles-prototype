@@ -1230,7 +1230,7 @@
         parts.push('Visit after dark and defeat two Lantern wraiths for Shadows After Sundown.');
       if (z.id === 'vale' && n.id === 'cache')
         parts.push(
-          "Scornfang's freight depot sorts timber, scaffold fittings and reclamation supplies between the unfinished Forest Crypt estate and his Treasury. A manifest lists the two guarded supply caches inside Scornfang's Treasury; they must be recovered there, not from this loading yard.",
+          "Scornfang's Goblins move furnishings and building supplies through this yard as the old Forest Crypt becomes a winter retreat. Their records track what has been saved, repaired, or carefully moved.",
         );
       if (n.id === 'goblin-camp') parts.push(AuthorCopy.L01.en);
       if (n.id === 'mire-nests') parts.push(AuthorCopy.L02.en);
@@ -1762,6 +1762,21 @@
         e.name = e.name.replace(/ store guard/i, ' treasury guard');
       z.treasuryVersion = targetVersion;
     }
+    applyCaptainRematchLevel(e, region) {
+      // Existing save actors can be present before the first post-update
+      // respawn. Only a living, disengaged named captain can be normalized.
+      const account = this.s.treasuryRecovery?.[region];
+      if (!account || e.hp <= 0 || e.aggro || e.returning) return;
+      const victories = Number.isInteger(account.captainVictories)
+        ? account.captainVictories
+        : account.unlocked || account.respawnAt > 0 ? 1 : 0;
+      const tier = Math.min(2, Math.max(0, victories));
+      const prior = e.rematchTier || 0;
+      if (tier > prior) {
+        e.level += tier - prior;
+        e.rematchTier = tier;
+      }
+    }
     upgradeCaptainEndurance(e, profile) {
       if (!e || !profile?.enduranceHp) return;
       // The new Greenwood health budget must migrate existing v2 captains,
@@ -1808,6 +1823,7 @@
         captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;
       this.upgradeCaptainEndurance(captain, profile);
+      this.applyCaptainRematchLevel(captain, this.supplyRoom(z.id).region);
       if (captain.name !== profile.name) captain.name = profile.name;
     }
     fieldCaptainPopulation(z) {
@@ -1856,6 +1872,7 @@
       captain.captainPatrolWait = Math.max(0, captain.captainPatrolWait || 0);
       captain.fieldCaptainVersion = 1;
       this.upgradeCaptainEndurance(captain, profile);
+      this.applyCaptainRematchLevel(captain, 'frontier');
       if (captain.name !== profile.name) captain.name = profile.name;
       z.fieldCaptainVersion = 1;
     }
@@ -4990,8 +5007,11 @@
       const composition = (plan.composition || Array(cap).fill('melee')).slice(0, cap),
         missing = [...composition],
         sc = R.summonScaling[this.regionIndex()],
-        baseHp = Math.round((40 + e.level * 15) * sc.hp),
-        baseDamage = Math.round((5 + e.level) * sc.damage),
+        // Rematch level changes awareness/XP band, not the summoned
+        // broodlings' inherited health and attack budgets.
+        summonLevel = e.level - (e.rematchTier || 0),
+        baseHp = Math.round((40 + summonLevel * 15) * sc.hp),
+        baseDamage = Math.round((5 + summonLevel) * sc.damage),
         spawnPoint = (slot) => {
           for (let n = 0; n < 30; n++) {
             const a = ((slot + n) * Math.PI) / 3,
@@ -5021,7 +5041,7 @@
               species: plan.species || 'ashbeast',
               name: ranged ? 'Cinder broodling' : 'Ash broodling',
               icon: '👻',
-              level: e.level,
+              level: summonLevel,
               hp: baseHp,
               damage: baseDamage,
               gold: 0,
@@ -5102,7 +5122,11 @@
         anonymousCast =
           (e.captainProfile === 'supply-highlands' && !fatigued) ||
           (e.captainProfile === 'supply-march' && plan.warning === 0),
-        attackWarning = anonymousCast ? 0.9 : plan.warning,
+        rematch = R.rematchAdaptation.captain[Math.min(2, e.rematchTier || 0)],
+        baseWarning = anonymousCast ? 0.9 : plan.warning,
+        attackWarning = baseWarning > 0
+          ? Math.max(R.rematchAdaptation.captainWarningFloor, baseWarning * rematch.warningScale)
+          : 0,
         markHero =
           plan.kind === 'circle' &&
           this.hero.hp > 0 &&
@@ -5156,8 +5180,10 @@
           sequence: [],
           arenaPatches: pads.slice(2).map(({ x, y, radius }) => ({ x, y, radius })),
           pairMarks: pads.slice(2).map((p) => ({ x: p.x, y: p.y })),
-          timer: plan.pairWarning,
-          total: plan.pairWarning,
+          timer: Math.max(R.rematchAdaptation.captainWarningFloor,
+            plan.pairWarning * rematch.warningScale),
+          total: Math.max(R.rematchAdaptation.captainWarningFloor,
+            plan.pairWarning * rematch.warningScale),
           name: plan.name + ' — second pair',
         });
       }
@@ -5173,8 +5199,8 @@
           ...p,
           arenaPatches: [{ x: p.x, y: p.y, radius: p.radius }],
           count: 1,
-          timer: attackWarning * 0.72,
-          total: attackWarning * 0.72,
+          timer: Math.max(R.rematchAdaptation.captainWarningFloor, attackWarning * 0.72),
+          total: Math.max(R.rematchAdaptation.captainWarningFloor, attackWarning * 0.72),
           name: plan.name + ' follow-up',
         }));
       }
@@ -5190,7 +5216,8 @@
           ? e.captainProfile === 'supply-highlands'
             ? e.captainAttackRate
             : 0.82
-          : 1);
+          : 1) *
+        rematch.cooldownScale;
       this.event(
         'warning',
         anonymousCast
@@ -7223,7 +7250,17 @@
               !z.enemies.some((a) => a !== e && a.family === e.family && a.hp > 0) &&
               !(e.family === 'darklord' && this.s.true.darklord)
             ) {
-              Object.assign(e, this.bossEnemy(this.boss(e.family), 'normal', e.home));
+              const fresh = this.bossEnemy(this.boss(e.family), 'normal', e.home);
+              // The second Normal encounter is a practiced rematch. TRUE
+              // spawns keep their separate established difficulty contract.
+              if (e.family !== 'darklord' && this.boss(e.family)?.kind === 'field') {
+                const tier = Math.min(1, this.s.fieldBossKills?.[e.family] || 0);
+                if (tier) {
+                  fresh.rematchTier = tier;
+                  fresh.level += tier;
+                }
+              }
+              Object.assign(e, fresh);
               this.say(this.boss(e.family).name + ' has returned.');
             }
           }

@@ -2854,6 +2854,7 @@
   } = PrototypeMenus.create({
     getGame: () => game,
     getLanguage: () => language,
+    onSpecialistIntroduction: () => save(),
     Campaign,
     D,
     action,
