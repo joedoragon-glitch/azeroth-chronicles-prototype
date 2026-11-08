@@ -1195,7 +1195,7 @@
     "src/prototype/sprites.js": "a49f3db912824770e7b546177745d3d428194b99459b095e6b659a838de43e43",
     "src/prototype/renderer.js": "0610c247a60f22ed9cb7e83716b4870233222a0d95e1dd9fef4cb748fd7c3212",
     "src/prototype/greenwood-landscape.js": "fb15806bcb55d8b54a93476348b22554e5c0fc38ef04a83cfe0941a9c3f1744c",
-    "src/prototype/dark-crown-landscape.js": "de5cf0c66fb9b8696fd0d9e0a4444e8e8c7b771c7517c4a0c87c67bb8c334d8c"
+    "src/prototype/dark-crown-landscape.js": "c30c17f004bc8690088a482bc1bdd824976cd212d8427387de5837d2a31b3dfb"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }

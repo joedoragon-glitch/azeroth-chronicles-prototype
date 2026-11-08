@@ -4,6 +4,8 @@
 
 ## Current completion register
 
+The terrain painter now reuses immutable samples at world tile centers and shared corners. A focused synthetic draw-preparation benchmark is separate from the outstanding Crown browser performance gate.
+
 **Release gate: HOLD.** This is implementation in draft #769. The earlier focused run [42505370490](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42505370490) failed on test ownership and stale sprite-scope evidence. The new draft maps Crown tests and refreshes the audited scope, which adds only Crown renderer families and source fingerprints. The companion [PWA run](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42505370498) passed for that earlier checkpoint. Four mini-dungeon assertions reproduced on unchanged main and the draft. They concern Greenwood cover/progression and an outdoor trap contract. Preserve their outcomes and keep the relevant Crown original behavior under the dedicated route and save checks.
 
 | #707 scene | Draft evidence | Release disposition |

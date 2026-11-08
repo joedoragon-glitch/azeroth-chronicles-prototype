@@ -135,14 +135,29 @@
     ];
   }
   const rgb = (channels) => 'rgb(' + channels.map(Math.round).join(',') + ')';
+  // Cache only the finite world lattice of tile centers and shared vertices.
+  // The authored field is immutable, so the cache is independent of camera,
+  // renderer, save and time. Arbitrary coordinates remain uncached.
+  const paintedFields = new Map();
+  function authoredPaintField(x, y) {
+    if (x < 0 || y < 0 || x > WORLD_SIZE + 80 || y > WORLD_SIZE + 80 ||
+        x % 80 !== y % 80 || x % 40) return sample(x, y, authored);
+    const key = x * (WORLD_SIZE + 81) + y;
+    let field = paintedFields.get(key);
+    if (!field) {
+      field = sample(x, y, authored);
+      paintedFields.set(key, field);
+    }
+    return field;
+  }
   function tilePigment(ctx, p, x, y, field) {
     if (typeof ctx.createLinearGradient !== 'function') return rgb(pigment(field));
     // Adjacent diamonds sample their shared world vertices. Shade across the
     // dominant axis to soften seams while keeping the mineral colors local.
-    const left = pigment(sample(x, y + 80, authored));
-    const right = pigment(sample(x + 80, y, authored));
-    const top = pigment(sample(x, y, authored));
-    const bottom = pigment(sample(x + 80, y + 80, authored));
+    const left = pigment(authoredPaintField(x, y + 80));
+    const right = pigment(authoredPaintField(x + 80, y));
+    const top = pigment(authoredPaintField(x, y));
+    const bottom = pigment(authoredPaintField(x + 80, y + 80));
     const delta = (a, b) => a.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0);
     const horizontal = delta(left, right) >= delta(top, bottom);
     const gradient = horizontal
@@ -156,7 +171,7 @@
   function paintTile(ctx, p, x, y) {
     // The renderer owns the 80-unit world diamond. Anchoring the grain to
     // this lattice keeps Canvas windows and overlapping Pixi tiles consistent.
-    const field = sample(x + 40, y + 40, authored);
+    const field = authoredPaintField(x + 40, y + 40);
     ctx.fillStyle = tilePigment(ctx, p, x, y, field);
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
