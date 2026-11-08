@@ -78,7 +78,13 @@ function harness(g) {
   const g = fresh();
   const boss = g.boss('thorn');
   g.enter('vale');
-  const e = g.zone().enemies.find(x => x.family === 'thorn' && x.type === 'boss' && x.hp > 0);
+  let e = g.zone().enemies.find(x => x.family === 'thorn' && x.type === 'boss' && x.hp > 0);
+  // First-time Vale onboarding deliberately delays Thornfang until level 2.
+  // Test the actual return contract without bypassing that start-game gate.
+  if (!e) {
+    e = g.bossEnemy(boss, 'normal', g.fieldCenter(0));
+    g.zone().enemies.push(e);
+  }
   assert(e);
   const baseline = g.bossEnemy(boss, 'normal', e.home);
   g.s.fieldBossKills.thorn = 1;
