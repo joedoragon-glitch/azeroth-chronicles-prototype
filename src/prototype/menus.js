@@ -63,6 +63,129 @@
       "Una insignia gastada de explorador de la Corona cuelga junto a un silbato. La baranda tiene arañazos a la altura de un sabueso; hay un cuenco de agua junto al lecho.",
     ],
   };
+  // Short player-facing story context. Same ordering as the 30 existing quests.
+  const questStories = [
+  [
+    "Mira was hired to train the winter estate's defenders. Thornfang pays her, but refuses to let her return to Millhaven.",
+    "Mira fue contratada para entrenar a los defensores de la residencia invernal. Thornfang le paga, pero no la deja volver a Millhaven."
+  ],
+  [
+    "Greenwood's farmers and carters depend on these woodland roads. Keep the routes safe for those who use them.",
+    "Los agricultores y carreteros de Greenwood dependen de estos caminos. Hazlos seguros para quienes los recorren."
+  ],
+  [
+    "Scornfang's reclamation crews collect usable timber and fittings for the estate. Millhaven carters want their supplies back.",
+    "Las cuadrillas de Scornfang recuperan madera y herrajes para la residencia. Los carreteros de Millhaven quieren sus provisiones."
+  ],
+  [
+    "Borin is helping turn an old burial crypt into the Dark Lord's winter retreat. The Lifebinder's self-aware skeleton crews work there too.",
+    "Borin trabaja en convertir una antigua cripta en retiro invernal del Dark Lord. Allí también trabajan los esqueletos conscientes de Lifebinder."
+  ],
+  [
+    "The working mill and merchant wagon connect farms, orchards and neighboring provinces. Find the crossings that keep trade moving.",
+    "El molino y la carreta mercante conectan granjas, huertos y provincias vecinas. Busca los pasos que mantienen el comercio."
+  ],
+  [
+    "Beyond Millhaven are orchards, Goblin territory and a winter estate under construction. Explore the lives along these roads.",
+    "Más allá de Millhaven hay huertos, territorio goblin y una residencia en obras. Explora la vida alrededor de estos caminos."
+  ],
+  [
+    "Mirejaw knows the marsh channels better than any mapmaker. He holds the instructor Sela deep in his territory.",
+    "Mirejaw conoce los canales mejor que cualquier cartógrafo. Retiene a la instructora Sela en su territorio."
+  ],
+  [
+    "The fishing villages rely on raised roads and the lake crossings. Reed Beasts make those journeys dangerous.",
+    "Las aldeas pesqueras dependen de caminos elevados y pasos junto al lago. Las bestias de los juncos hacen peligrosos esos viajes."
+  ],
+  [
+    "Neri is being forced to restore the Keeper's flood-damaged books. Nobody has established what caused the flooding.",
+    "Neri debe restaurar por obligación los libros inundados del Keeper. Nadie ha determinado qué causó la inundación."
+  ],
+  [
+    "Direjaw, Mirejaw's disciple, controls a guarded supply landing. The boat crews want the provisions held there.",
+    "Direjaw, discípulo de Mirejaw, controla un embarcadero de suministros. Los barqueros quieren recuperar las provisiones retenidas."
+  ],
+  [
+    "Lantern Wraiths haunt the Marches at night. They left Ironroot after mining disturbed their old mountain homes.",
+    "Los espectros de las linternas recorren las marismas de noche. Dejaron Ironroot cuando las minas perturbaron sus antiguos hogares."
+  ],
+  [
+    "Fishing settlements, marsh territories and a flooded Archive share these wetlands. Explore the routes between them.",
+    "Asentamientos pesqueros, territorios pantanosos y un Archivo inundado comparten estas tierras. Explora sus caminos."
+  ],
+  [
+    "The Master of Coin pays archers and protects ore traffic. Orin has seen how little choice some workers have under that order.",
+    "El Maestro de la Moneda paga arqueros y protege el mineral. Orin conoce la escasa libertad que tienen algunos trabajadores."
+  ],
+  [
+    "Silver and copper travel under guard toward the Stonecross mint. Workers need safe roads too.",
+    "La plata y el cobre viajan bajo escolta hacia la ceca de Stonecross. Los trabajadores también necesitan caminos seguros."
+  ],
+  [
+    "Garun designed roads and fortresses across the realm. Even when paid, the smith Dara needs his permission to leave Colossus Mine.",
+    "Garun diseñó caminos y fortalezas de todo el reino. Aunque recibe un salario, Dara necesita su permiso para salir de Colossus Mine."
+  ],
+  [
+    "Crag Tyrant guards his mentor's accounts, coin stores and Treasury. His paid direwolf riders patrol the approaches.",
+    "Crag Tyrant protege las cuentas, monedas y Tesoro de su maestro. Sus jinetes remunerados sobre lobos terribles patrullan el acceso."
+  ],
+  [
+    "The Crown seized these mineral-rich mountains long ago. The mint thrives; Ogre hearths and wild Wolf dens endure outside the workings.",
+    "La Corona se apoderó de estas montañas mineras hace tiempo. La ceca prospera; los ogros y los lobos salvajes aún viven fuera de las minas."
+  ],
+  [
+    "Stonecross mints portrait crowns from the Highlands' silver and copper. Follow the ore roads toward the money used across the realm.",
+    "Stonecross acuña coronas con el retrato del Dark Lord usando plata y cobre de las montañas. Sigue las rutas del mineral."
+  ],
+  [
+    "The Ashen Warlord repaired crossings and supplied checkpoints, but his army also enforces levies and compulsory work. Lyss remains captive.",
+    "El Ashen Warlord reparó pasos y abasteció puestos, pero su ejército exige tributos y trabajo obligatorio. Lyss sigue cautiva."
+  ],
+  [
+    "Food and repairs move through the Frontier under military inspection. Cinder Warlord checks those convoys for the governor.",
+    "Los alimentos y materiales cruzan la Frontera bajo inspección militar. Cinder Warlord revisa las caravanas en nombre del gobernador."
+  ],
+  [
+    "Veyrith is preparing dragon harnesses and an unfinished launch platform. The air marshal will not release runewright Eren.",
+    "Veyrith prepara arneses para dragones y una plataforma de despegue aún sin terminar. El mariscal no deja marchar a Eren."
+  ],
+  [
+    "Homes and gardens are being rebuilt where the war burned them. The occupied roads remain dangerous.",
+    "Casas y huertos se reconstruyen donde los quemó la guerra. Los caminos ocupados siguen siendo peligrosos."
+  ],
+  [
+    "Poppies and saplings return to the ash. Explore the settlements rebuilding under the army's rule.",
+    "Las amapolas y los árboles jóvenes vuelven a la ceniza. Explora los asentamientos que se reconstruyen bajo el ejército."
+  ],
+  [
+    "Civilian travelers use Emberwatch's dragon landing. Veyrith's unfinished military air base is a separate operation.",
+    "Los viajeros civiles usan el embarcadero de dragones de Emberwatch. La base aérea militar de Veyrith es una operación aparte."
+  ],
+  [
+    "Veyra trained Goblins, Ogres and Humans to serve in one standing army. The Citadel is holding the instructor Tovan.",
+    "Veyra entrenó a goblins, ogros y humanos para un mismo ejército permanente. La Ciudadela retiene al instructor Tovan."
+  ],
+  [
+    "The capital's roads connect workers, soldiers and volcanic workshops. Travel them and see how Crown rule functions.",
+    "Los caminos de la capital conectan obreros, soldados y talleres volcánicos. Recórrelos y conoce el funcionamiento de la Corona."
+  ],
+  [
+    "Cindermaw provides shelter, supplies and roads through Interior and Welfare. He pays master smith Vera but forbids her departure.",
+    "Cindermaw proporciona refugio, suministros y caminos desde Interior y Bienestar. Paga a Vera, pero le prohíbe marcharse."
+  ],
+  [
+    "Dreadmaw oversees farming, livestock, fisheries and food distribution for five provinces. His Treasury holds their supplies.",
+    "Dreadmaw supervisa cultivos, ganadería, pesca y alimentos de cinco provincias. Su Tesoro guarda esos suministros."
+  ],
+  [
+    "Crownwatch uses volcanic warmth in baths, kilns and workshops. The same government collects levies and directs compulsory labor.",
+    "Crownwatch usa el calor volcánico en baños, hornos y talleres. El mismo gobierno cobra tributos y dirige trabajos obligatorios."
+  ],
+  [
+    "Free the last two specialists before approaching the fortress. The Dark Lord waits beyond its guarded gate.",
+    "Libera a los dos últimos especialistas antes de acercarte a la fortaleza. El Dark Lord espera tras su puerta vigilada."
+  ]
+];
   const rescueBriefings = {
     thorn: [
       'Thornfang is keeping Mira, Millhaven’s instructor, under guard. Ask the Western road observer where to pick up his trail. Free Mira so she can teach you your second skill.',
@@ -3251,7 +3374,10 @@
                       : 'No destination is currently available. ' + q.objective,
                   );
               },
-              q.objective +
+              (q.id.startsWith('quest-') && questStories[Number(q.id.slice(6))]
+                ? questStories[Number(q.id.slice(6))][getLanguage() === 'es' ? 1 : 0] + '\n'
+                : '') +
+                q.objective +
                 ' · ' +
                 (q.tutorial ? 'Tutorial' : q.gold + ' crowns / ' + q.xp + ' XP') +
                 ' · ' +
