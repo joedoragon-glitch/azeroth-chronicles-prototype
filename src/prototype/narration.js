@@ -37,8 +37,8 @@
     {
       kind: 'narration',
       id: 'C11',
-      text: "Two Lantern Wraiths have fallen, but they return at night. For a nighttime departure from the Marches, the Wraiths blocking the ferry must first be cleared.",
-      es: "Han caído dos Lantern Wraiths, pero aparecen de nuevo por la noche. Para zarpar de las Marismas de noche, primero hay que despejar de Wraiths la salida del ferry.",
+      text: "The Lantern Wraiths study with the Keeper, but at Lantern Shore they want you dead. The ferryman will not sail at night while they control the landing.",
+      es: "Los Lantern Wraiths estudian con el Keeper, pero en Lantern Shore quieren matarte. El barquero no zarpará de noche mientras controlen el embarcadero.",
     }, // 11
     null, // 12
     null, // 13
@@ -121,8 +121,8 @@
       "es": "Neri está libre. Puedes consultar sus tónicos de preparación, la vitalidad de los compañeros y los reinicios de disciplinas en Especialistas rescatados de un cuartel terminado."
     },
     "C11": {
-      "en": "Two Lantern Wraiths have fallen, but they return at night. For a nighttime departure from the Marches, the Wraiths blocking the ferry must first be cleared.",
-      "es": "Han caído dos Lantern Wraiths, pero aparecen de nuevo por la noche. Para zarpar de las Marismas de noche, primero hay que despejar de Wraiths la salida del ferry."
+      "en": "The Lantern Wraiths study with the Keeper, but at Lantern Shore they want you dead. The ferryman will not sail at night while they control the landing.",
+      "es": "Los Lantern Wraiths estudian con el Keeper, pero en Lantern Shore quieren matarte. El barquero no zarpará de noche mientras controlen el embarcadero."
     },
     "C16": {
       "en": "Crag guards Ridge Tyrant's Treasury. Crown riders bunk near their armored direwolves' kennels. Treasury accounts record wages, stores and restrictions on workers.",
