@@ -1814,6 +1814,19 @@
           [built.first, ...sequence].some((a) => !this.enemyWithdrawalPlan(e, a, a.index))
         )
           return false;
+        // Only a repeat Normal field fight learns to give shorter cues.
+        // First encounters, TRUE forms, and anonymous preparations retain
+        // their established timing and identities.
+        if (e.form === 'normal' && e.rematchTier > 0 &&
+            this.boss(e.family)?.kind === 'field' && e.family !== 'darklord') {
+          const tuning = R.rematchAdaptation.field;
+          for (const cast of [built.first, ...sequence]) {
+            if (!cast || cast.anonymousCast || !(cast.total > 0)) continue;
+            const warning = Math.max(tuning.warningFloor, cast.total * tuning.warningScale);
+            cast.total = warning;
+            cast.timer = warning;
+          }
+        }
         if (!this.prepareAttackSequence(e, built.first, sequence)) return false;
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;
@@ -2950,10 +2963,17 @@
           if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
             return;
           e.motion = null;
+          // Preserve Thornfang's locked 0.375s post-pounce recovery even
+          // on rematches. Other Normal field skills rotate slightly faster.
+          const practicedField =
+            e.type === 'boss' && e.form === 'normal' && e.rematchTier > 0 &&
+            this.boss(e.family)?.kind === 'field' && e.family !== 'darklord' &&
+            !(e.family === 'thorn' && a.index === 1);
           e.cd =
             a.recovery *
             (e.type === 'boss' ? R.bossCadence.specialRecoveryMultiplier : 1) *
-            (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1);
+            (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
+            (practicedField ? R.rematchAdaptation.field.recoveryScale : 1);
           if (a.opening)
             e.open = e.form === 'true' && e.family === 'citadel' ? a.opening / 2 : a.opening;
           e.telegraph = this.advanceQueuedAttack(e);
