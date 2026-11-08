@@ -77,11 +77,19 @@ const types = {
       ],
     });
     const receipts = [];
+    const roadBridgeScenes = [
+      'millhaven-west-junction', 'millhaven-east-junction', 'carriage-turn',
+      'north-bridge-west', 'north-bridge', 'north-bridge-east',
+      'south-bridge-west', 'south-bridge', 'south-bridge-east',
+    ];
     for (const viewport of [
       { width: 1280, height: 800, touch: false, clock: 120 },
       { width: 393, height: 852, touch: true, clock: 120 },
       { width: 852, height: 393, touch: true, clock: 500 },
-    ].filter((v, i) => !process.argv.includes('--desktop-only') || i === 0)) {
+    ].filter((v, i) =>
+      process.argv.includes('--desktop-only') ? i === 0 :
+      process.argv.includes('--landscape-only') ? i === 2 : true
+    )) {
       const context = await browser.newContext({
           viewport: { width: viewport.width, height: viewport.height },
           hasTouch: viewport.touch,
@@ -91,6 +99,11 @@ const types = {
         page = await context.newPage(),
         errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
+      if (process.argv.includes('--road-bridge-scenes') && !pixi)
+        await page.addInitScript(() => {
+          localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+          localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+        });
       await page.addInitScript((state) => {
         localStorage.setItem('azeroth-display-language-v1', 'en');
         localStorage.setItem('azeroth-v4-normal', JSON.stringify(state));
@@ -98,9 +111,13 @@ const types = {
       await page.goto(
         'http://127.0.0.1:' +
           server.address().port +
-          (viewport.touch ? '/phone.html' : '/index.html'),
+          (viewport.touch
+            ? (process.argv.includes('--road-bridge-scenes') ? '/phone-game.html' : '/phone.html')
+            : '/index.html'),
       );
-      const resume = page.getByRole('button', { name: 'Continue Adventure', exact: true });
+      const resume = process.argv.includes('--road-bridge-scenes')
+        ? page.locator('#title-continue')
+        : page.getByRole('button', { name: 'Continue Adventure', exact: true });
       await resume.waitFor({ state: 'visible' });
       assert(await resume.isEnabled());
       await resume.click();
@@ -129,10 +146,12 @@ const types = {
         Prototype.game.hero.order = null;
         Prototype.closeMenu();
       });
-      const names = process.argv.includes('--interiors')
-        ? ['treasury-interior', 'crypt-interior', 'cellars-interior']
+      const names = process.argv.includes('--road-bridge-scenes')
+        ? roadBridgeScenes
+        : process.argv.includes('--interiors')
+          ? ['treasury-interior', 'crypt-interior', 'cellars-interior']
         : viewport.touch
-          ? ['start', 'hamlet', 'orchard', 'mill', 'north-bridge', 'crypt']
+          ? ['start', 'hamlet', 'orchard', 'mill', 'north-bridge', 'crypt', 'thorn-homestead']
           : [
               'start',
               'refuge',
@@ -141,7 +160,7 @@ const types = {
               'mill',
               'north-bridge',
               'south-bridge',
-              'eastern-pond',
+              'thorn-homestead',
               'cache',
               'treasury',
               'crypt',
@@ -181,13 +200,21 @@ const types = {
               },
               wagon: p('outbound'),
               'north-smallholds': { x: 700, y: 170 },
+              'millhaven-west-junction': { x: 650, y: 600 },
+              'millhaven-east-junction': { x: 810, y: 635 },
+              'carriage-turn': { x: 1190, y: 840 },
+              'north-bridge-west': { x: 1420, y: 1000 },
+              'north-bridge-east': { x: 1940, y: 1000 },
+              'south-bridge-west': { x: 1520, y: 2280 },
+              'south-bridge-east': { x: 1940, y: 2280 },
               refuge: p('rest'),
               hamlet: p('minor'),
               orchard: p('orchard'),
               mill: p('mill-pond'),
               'north-bridge': p('bridge-north'),
               'south-bridge': p('bridge-south'),
-              'eastern-pond': PrototypeRules.terrain[0][1],
+              'eastern-pond': PrototypeRules.terrain[0][1] || { x: 2720, y: 1320 },
+              'thorn-homestead': { x: 2720, y: 1320 },
               cache: p('cache'),
               treasury: p('supply-entrance'),
               crypt: p('entrance'),
@@ -217,7 +244,7 @@ const types = {
                 typeof PrototypeMaterials !== 'undefined' ? PrototypeMaterials.status() : null,
             };
           },
-          { name, clock: viewport.clock },
+          { name, clock: process.argv.includes('--daytime') ? 120 : viewport.clock },
         );
         assert.equal(receipt.zoom, 1.5);
         assert(receipt.snapshotUnchanged);
@@ -225,7 +252,7 @@ const types = {
         assert.deepEqual(errors, []);
         if (pixi) assert.equal(receipt.graphics.mode, 'webgl2');
         await page.waitForTimeout(180);
-        const file = `browser-${name}-${viewport.width}x${viewport.height}-${viewport.clock === 120 ? 'day' : 'night'}.webp`;
+        const file = `browser-${name}-${viewport.width}x${viewport.height}-${process.argv.includes('--daytime') || viewport.clock === 120 ? 'day' : 'night'}.webp`;
         await sharp(await page.screenshot())
           .webp({ quality: 88 })
           .toFile(path.join(out, file));

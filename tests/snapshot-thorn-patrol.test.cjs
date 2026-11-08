@@ -20,7 +20,21 @@ function frame(c, e, n) {
   c.updateEnemies(0.1);
   assert(dist(before, e) <= 8.2 + 1e-7, 'patrol/return must not teleport');
   assert(dist(nb, n) <= 24 + 1e-7, 'Mira must not teleport');
-  assert(c.clearSegment(before, e), 'real traversable boss movement');
+  // A failing sampled movement must report the exact actor-radius overlap.
+  if (!c.clearSegment(before, e)) {
+    const failed = [];
+    for (let j = 0; j <= 10; j++) {
+      const x = before.x + (e.x - before.x) * j / 10,
+        y = before.y + (e.y - before.y) * j / 10;
+      if (c.blocked(x, y, c.s.zone, 15)) failed.push({j,x,y});
+    }
+    assert.fail('real traversable boss movement '+JSON.stringify({
+      before,after:{x:e.x,y:e.y},thornLeg:e.thornLeg,returning:e.thornReturn,
+      gameTime:c.s.time,failed:failed.slice(0,6),
+      beforeActorRadiusBlocked:c.blocked(before.x,before.y,c.s.zone,15),
+      afterActorRadiusBlocked:c.blocked(e.x,e.y,c.s.zone,15),
+    }));
+  }
   assert(c.clearSegment(nb, n), 'real traversable Mira movement');
   assert(!c.blocked(n.x, n.y), 'Mira must remain interactable outside walls');
   // The old 2700-unit town was near (300,350); the reconstructed

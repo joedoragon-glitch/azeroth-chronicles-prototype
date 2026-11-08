@@ -1,24 +1,26 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 3 November 2026 · **452 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory reviewed 8 November 2026 · **460 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
 **Read first:** [Development state](DEVELOPMENT_STATE.md) owns verified public-build and acceptance information; [Architecture](ARCHITECTURE.md) maps source owners; [Decisions](DECISIONS.md) gives design rules and supersessions; [AGENTS.md](../AGENTS.md) governs authorization; [Engineering workflow](MECHANIC_DEVELOPMENT.md) describes verification; [Brand identity](BRAND_IDENTITY.md) gives the official title and legacy exceptions.
 
-**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the exact published build and outstanding device acceptance. The [65-song soundtrack](AUDIO_PHASE9_FIRST_LISTEN.md) is **integrated and published**; its independent [environmental redesign #727](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727) remains separate. Greenwood and other releases must not be treated as installed or owner-accepted merely because code or documentation has merged.
+**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the exact published build and outstanding device acceptance.
+
+**Performance phase closeout and next priority:** The intensive Chromebook-first optimization sprint was owner-closed **with exceptions** on 8 November 2026; [#839](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/839) and [performance-first program](PERFORMANCE_FIRST_PLAYTEST_PROGRAM_20261106.md) own the decision and build-identified playtest evidence. [#841](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/841) owns the still-reproducible Highlands Pixi procedural-art fallback; [#755](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/755) owns whole-campaign acceptance boundaries. The owner's new priority is Dark Crown, with approved [design contract #707](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707), substantive [lead implementation #769](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/769) and [landscape draft #794](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/794). Owner-approved no-homework integration authority and canon safeguards are recorded in [Decisions](DECISIONS.md) and [AGENTS](../AGENTS.md). These links are **navigation**, not new player release or source acceptance claims. The [65-song soundtrack](AUDIO_PHASE9_FIRST_LISTEN.md) is **integrated and published**; its independent [environmental redesign #727](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727) remains separate. Greenwood and other releases must not be treated as installed or owner-accepted merely because code or documentation has merged.
 
 **Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that every historical body was independently audited. Labels such as *Dated record* describe source context, not a present work order.
 
 ## Jump to a subject
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
-- [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (23)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (127)
-- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
+- [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (24)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (131)
+- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (22)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (52)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
-- [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (46)
+- [Rendering, optimization, performance and WebGL](#rendering-optimization-performance-and-webgl) (48)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
 - [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (13)
 - [Save data, backup and recovery](#save-data-backup-and-recovery) (6)
@@ -55,6 +57,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Audio Phase6 Critical Review](AUDIO_PHASE6_CRITICAL_REVIEW.md) — *Dated production record.* Title, defeat and finale score decisions and measured isolated source corrections.
 - [Audio Phase7 Handoff](AUDIO_PHASE7_HANDOFF.md) — *Closed phase handoff.* Former 65-cue integration plan and focused source checks; publication supersession is at the top.
 - **[Audio Phase9 First Listen](AUDIO_PHASE9_FIRST_LISTEN.md)** — **Optional listening reference.** All 65 released new songs and 18 protected Crown references by stable ID; personal creative review is deferred.
+- [Millhaven Remake Listening Studies](../tools/audio/MILLHAVEN_REMAKE_LISTENING_STUDIES.md) — *Dated production record.* Original listening-candidate source/hashes; selected Candidate B later merged via #771.
 - [Audio Sample Bank Source README](../tools/audio/phase3-samples/README.md) — *Dated source-provenance record.* Pinned CC0 source recordings and attribution used in authored soundtrack production.
 - [Audio Stage1 Coverage 20261025](AUDIO_STAGE1_COVERAGE_20261025.md) — *Dated record.* Development-only observer for tracing game event coverage by the audio layer.
 - [Audio Stage2 Recovery 20261025](AUDIO_STAGE2_RECOVERY_20261025.md) — *Dated record.* Dated stage for Web Audio startup, interruption recovery and fallback.
@@ -69,6 +72,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ## Hero abilities, combat, enemies and bosses
 
 - **[Target Centered Boss Ground AoE](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md)** — **Design reference.** Committed boss damage footprints, warning parity and terrain/line-of-sight boundaries.
+- [Monster Night Passive](MONSTER_NIGHT_PASSIVE_20261101.md) — *Dated implementation record.* Shared nighttime power for hostile and legally owned monsters, subsequently merged via #761.
+- **[Skill Block Owner Contract](SKILL_EVASION_OWNER_CONTRACT_20261101.md)** — **Design reference.** Approved per-target Block odds and exclusions, implemented by #760; initial draft status is historical.
 - **[Rogue Charm Heritage](ROGUE_CHARM_HERITAGE_589.md)** — **Reference.** Charmed heritage abilities, nighttime species, published implementation evidence and pending balance review.
 - **[Rogue Rank and Stacking Reconciliation](ROGUE_SKILL_RANK_PROGRESS_AND_STACKING_RECONCILIATION_20261029.md)** — **Reference.** Current #606 stacking/rank integration versus earlier alternatives and instructor/journal verification.
 - **[Warning Effect Handoff](WARNING_EFFECT_HANDOFF_20261028.md)** — **Reference.** Native warning expiration at actual attack release across Canvas and the Pixi overlay.
@@ -162,8 +167,10 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Issue463 Hero Companion Projectile Audit 20261025](ISSUE463_HERO_COMPANION_PROJECTILE_AUDIT_20261025.md) — *Dated record.* Examines issue463 hero companion projectile for source or design inconsistencies, recording dated findings and limits.
 - [Mage Beam Travel And Hero Projectile Audit 20261025](MAGE_BEAM_TRAVEL_AND_HERO_PROJECTILE_AUDIT_20261025.md) — *Dated record.* Examines mage beam travel and hero projectile for source or design inconsistencies, recording dated findings and limits.
 - [Mounted Roster Skills 20261020](MOUNTED_ROSTER_SKILLS_20261020.md) — *Dated record.* Reference structure or catalog for mounted roster skills, with its original assumptions and scope.
+- **[Paladin Tap/Charged Skill Reassessment](PALADIN_TAP_CHARGED_IDENTITY_AUDIT_20261103.md)** — **Owner design decision.** Existing Skills 1–8 remain unchanged for the v0.9.2 development goal; future refinements require actual playthrough evidence.
 - [Pet Skill Scheduling DEV180](PET_SKILL_SCHEDULING_DEV180.md) — *Dated record.* Describes pet skill scheduling decisions, constraints or engineering observations from its original development checkpoint.
 - [Ranger Support Feedback 20261020](RANGER_SUPPORT_FEEDBACK_20261020.md) — *Dated record.* Describes ranger support feedback decisions, constraints or engineering observations from its original development checkpoint.
+- **[Rogue Tap/Charged Skill Identity](ROGUE_NORMAL_CHARGED_IDENTITY_AUDIT_20261103.md)** — **Owner design decision.** Preserve all current Rogue skills for the v0.9.2 goal; replacement proposals are withdrawn and not approved work.
 - [Skill Journal DEV159](SKILL_JOURNAL_DEV159.md) — *Dated record.* Describes skill journal decisions, constraints or engineering observations from its original development checkpoint.
 - [Skill Queue Forms DEV139](SKILL_QUEUE_FORMS_DEV139.md) — *Dated record.* Describes skill queue forms decisions, constraints or engineering observations from its original development checkpoint.
 - [Slow Cooldown Interaction 20261015](SLOW_COOLDOWN_INTERACTION_20261015.md) — *Dated record.* Describes slow cooldown interaction decisions, constraints or engineering observations from its original development checkpoint.
@@ -230,6 +237,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Gathering Escort DEV130](GATHERING_ESCORT_DEV130.md) — *Dated record.* Describes gathering escort decisions, constraints or engineering observations from its original development checkpoint.
 - [Pet Visual Identity 20261020](PET_VISUAL_IDENTITY_20261020.md) — *Dated record.* Describes pet visual identity decisions, constraints or engineering observations from its original development checkpoint.
 - [Queued Companion Care DEV149](QUEUED_COMPANION_CARE_DEV149.md) — *Dated record.* Describes queued companion care decisions, constraints or engineering observations from its original development checkpoint.
+- **[Dormant Squad Commands Design](SQUAD_COMMANDS_DORMANT_DESIGN.md)** — **Design reference.** The test-only command planner is not playable; timed Recall in #685 merged independently.
 - [Recall Highlight DEV153](RECALL_HIGHLIGHT_DEV153.md) — *Dated record.* Describes recall highlight decisions, constraints or engineering observations from its original development checkpoint.
 - [Recall Tutorial DEV152](RECALL_TUTORIAL_DEV152.md) — *Dated record.* Describes recall tutorial decisions, constraints or engineering observations from its original development checkpoint.
 - [Resource Gathering Flow Audit DEV129](RESOURCE_GATHERING_FLOW_AUDIT_DEV129.md) — *Dated record.* Examines resource gathering flow for source or design inconsistencies, recording dated findings and limits.
@@ -239,12 +247,16 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## World, geography, travel and narrative
 
+- [Greenwood #679 Refinement Staging](GREENWOOD_679_REFINEMENT_PATCH_STAGING.md) — *Dated candidate record.* Bounded scenery and Thornfang/Mira refinements, later merged in #680 without physical-device visual acceptance.
+- [Greenwood #680 Candidate Acceptance](GREENWOOD_680_CANDIDATE_ACCEPTANCE.md) — *Dated acceptance record.* Scene cards, protected monster placement and save constraints; final creative acceptance is separate.
+- [Greenwood #680 Engineering Audit](GREENWOOD_680_ENGINEERING_AUDIT.md) — *Dated engineering record.* Non-destructive scenic overlay, patrol compatibility and source/test receipts from the integrated candidate.
 - [Greenwood redesign masterplan comparison](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) — *Dated design evidence.* Two distinct regional plans, the implemented dev.238 replacement, all-50 execution-quality audit, interior extension and handoff under #644/#654. Owner first-hour acceptance remains pending.
 - **[Greenwood Flagship Work Handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md)** — **Maintained implementation handoff.** Historical dev.233 evidence with a current routing banner to #654; the new design record owns implementation/audit/handoff.
 - [Greenwood Geography and Livelihood Audit](GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md) — *Dated record.* Preserved 2700 source inventory, deficiencies and evidence overlays; current status routes to the handoff.
 - **[Greenwood Owner Art Direction](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md)** — **Approved design reference.** The 50 authorial decisions, including Scornfang ownership, with protected identities and engineering boundaries.
 - [Greenwood Piedmont Design Brief](GREENWOOD_VALE_PIEDMONT_REGIONAL_IDENTITY_DESIGN_BRIEF_20261028.md) — *Dated record.* Original environmental inspiration, subordinate to the approved decisions and selected measured implementation.
 - [Greenwood Work Readiness Audit](GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md) — *Dated record.* Original 17 findings and route/scene/save acceptance rubric, with current status routed to the feature handoff.
+- **[Greenwood watermill #814 — independent restart and #828/main reconciliation](GREENWOOD_WATERMILL_PR814_RESTART_HANDOFF_20261105.md)** — **Current branch-specific engineering handoff (5 Nov 2026).** Exact main ancestry, owner's creek/door/bridge decisions, v4 route migration, CI and artwork blocker, and integration boundaries with parallel environmental PR #828. Read on #814's branch; draft, not shipped.
 
 
 ### Regions, settlements, transportation and terrain
@@ -297,10 +309,6 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ### Other geographic and narrative records
 
 - **[Dark Crown Regime Layout](DARK_CROWN_REGIME_LAYOUT.md)** — **Reference.** Describes dark crown regime layout decisions, constraints or engineering observations from its original development checkpoint.
-- **[Dark Crown Authorial Contract (PR #707)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707)** — **External owner creative authority.** Separate draft design branch; not counted among local documents.
-- **[Dark Crown Autonomous Implementation and Adversarial Audit Mandate](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md)** — **Active PR #769 draft engineering policy.** Scope, evidence, focused testing and no-publication consent gates.
-- **[Dark Crown Regional Implementation Baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md)** — **Active PR #769 engineering and phase ledger.** Exact-head source/Canvas/Pixi/performance results, earlier corrective commits and unfinished physical/logistical/visual design; draft and unpublished.
-- **[Dark Crown Lead Chat Handoff](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md)** — **Authoritative standalone PR #769 cross-chat handoff.** Current source SHA, CI, phase 0–6 exit matrix, two-commit upstream drift, open design issues and next implementation step without a previous chat transcript.
 - [Snapshot Crown Economy Audit 20261015](SNAPSHOT_CROWN_ECONOMY_AUDIT_20261015.md) — *Dated record.* Examines snapshot crown economy for source or design inconsistencies, recording dated findings and limits.
 
 ## Sprite art, textures and visual design
@@ -370,14 +378,21 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Snapshot Vale Cottage Original Export 20261014](SNAPSHOT_VALE_COTTAGE_ORIGINAL_EXPORT_20261014.md) — *Dated record.* Describes snapshot vale cottage original export decisions, constraints or engineering observations from its original development checkpoint.
 - **[Terrain Texture Pipeline](TERRAIN_TEXTURE_PIPELINE.md)** — **Reference.** Describes terrain texture pipeline decisions, constraints or engineering observations from its original development checkpoint.
 
-## Rendering, optimization, performance and WebGL experiments
+## Rendering, optimization, performance and WebGL
 
+**New active owner priority — 6 November 2026:** [P0 PC performance-first playtest program](PERFORMANCE_FIRST_PLAYTEST_PROGRAM_20261106.md) (tracked at [issue #839](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/839)) is the current cross-chat handoff. It supersedes scheduling of discretionary art/feature/mobile work and starts with Phase 1 instrumentation checks only; do not confuse this plan with a verified FPS gain or an authorized release.
+
+- **[P0 PC Performance-First Playtest Program (2026-11-06)](PERFORMANCE_FIRST_PLAYTEST_PROGRAM_20261106.md)** — **Active owner handoff.** Phase 1 source/test plan, evidence and scope gates, PC tester protocol, later milestones and next-chat prompt. Planning only; no phase execution claim.
+
+**Current renderer (3 November 2026):** PixiJS WebGL2 is the published default world presentation; independent Canvas 2D remains selectable and supplies critical gameplay-cue overlays. Ferry grounding (#758), boss aura optimization (#762), idle occlusion contours (#767) and paired-performance checks (#765) have merged. None proves physical iPhone/Chromebook visual acceptance or sustained FPS. [Architecture](ARCHITECTURE.md) owns source routing; [Development state](DEVELOPMENT_STATE.md) owns exact release status. Historical source filenames do not imply an experimental live renderer.
+
+- **[Pixi Performance Acceptance](PIXI_PERFORMANCE_ACCEPTANCE_755.md)** — **Acceptance reference.** Paired Chromium/source workload comparisons from merged #765, not verified hardware FPS.
 - **[Canvas–Pixi visual parity](PIXI_VISUAL_PARITY_20261031.md)** — **Feature contract.** Original draw-layer ownership, animation/cache rules, matched-composite acceptance and #748 repair evidence.
 
 - **[Chromebook Graphics Preparation Cache Policy](CHROMEBOOK_GRAPHICS_PREPARATION_CACHE_POLICY_20261028.md)** — **Design reference.** Prepared arrivals, voluntary Canvas bypass and graphics cache retention; source/release status is separately evidenced.
 
 
-### Experimental PixiJS, GPU and WebGL
+### Historical PixiJS and WebGL pilot experiments
 
 - [PIXI Twilight Glow Failure 20261026](PIXI_TWILIGHT_GLOW_FAILURE_20261026.md) — *Dated record.* Describes PIXI twilight glow failure decisions, constraints or engineering observations from its original development checkpoint.
 - [PIXIJS Playtest Step2 20261022](PIXIJS_PLAYTEST_STEP2_20261022.md) — *Dated record.* Records tests or acceptance criteria for PIXIJS playtest at its original checkpoint.
@@ -390,6 +405,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[webgl pilot — README](../tools/webgl-pilot/README.md)** — **Reference.** Entry guide for the experimental WebGL renderer pilots and demos.
 - **[Real World GPU Readme](../tools/webgl-pilot/REAL_WORLD_GPU_README.md)** — **Reference.** GPU pilot for drawing actual game scenes rather than simple synthetic geometry.
 - **[Strategy Lab Readme](../tools/webgl-pilot/STRATEGY_LAB_README.md)** — **Reference.** Experiments comparing alternative renderer strategies and their measurements.
+
+**Current cross-chat performance handoff (4 November 2026):** Before triaging any new owner slowdown screenshot or exported JSON, read the [active performance issue map and playtest intake protocol](DEVELOPMENT_STATE.md#active-performance-evidence-and-playtest-routing) and [R0–R3 final record in issue #783](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/783). [R2 diagnostics #784](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/784) are **merged but not published**, while [R3 test-only #789](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/789) is **tested but still draft**. This spans other open simulation, navigation, projectile, memory and hardware-acceptance problems; do not presume every stall has a Pixi cause.
 
 ### Frame rate, recovery, optimization and profiling
 

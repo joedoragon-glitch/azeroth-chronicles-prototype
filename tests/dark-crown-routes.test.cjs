@@ -4,9 +4,9 @@
 // a player can get to them. No changes to traps, guards or campaign state.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
-const stations = Campaign.rules.crownFoundryStations;
+const plannedStations = Campaign.rules.crownFoundryStations;
 
-assert.equal(stations.length, 5, 'Authorial plan has five sequential work functions');
+assert.equal(plannedStations.length, 5, 'Authorial plan has five sequential work functions');
 for (const mode of ['normal', 'nightmare']) {
   const game = new Campaign(mode, 'paladin', () => 0.73);
   assert(game.enter('side-crown-foundry'), mode + ' existing Foundry is enterable');
@@ -14,31 +14,31 @@ for (const mode of ['normal', 'nightmare']) {
   const start = game.safe(game.hero.x, game.hero.y, zone.id);
   assert(Math.hypot(start.x - game.hero.x, start.y - game.hero.y) < 90,
     mode + ' initial Foundry landing remains collision-safe');
-  const workers = zone.props.filter(p => p.crownFoundryWorker);
-  const roles = workers.map(p => p.id.replace('crown-foundry-work-', '')).sort();
-  const expected = stations.map(row => row[0]).sort();
+  const stations = zone.props.filter(p => p.crownFoundryEquipment);
+  const roles = stations.map(p => p.id.replace('crown-foundry-work-', '')).sort();
+  const expected = plannedStations.map(row => row[0]).sort();
   assert.deepEqual(roles, expected,
     mode + ' must actually place all five identifiable production stages');
-  for (const worker of workers) {
-    assert(!game.blocked(worker.x, worker.y, zone.id, 15, true),
-      mode + ' ' + worker.id + ' work center must be walkable');
-    const destination = game.safe(worker.x + 36, worker.y + 28, zone.id);
-    assert(Math.hypot(destination.x - worker.x, destination.y - worker.y) <= 110,
-      mode + ' ' + worker.id + ' reachable floor must be adjacent to the task');
+  for (const station of stations) {
+    assert(!game.blocked(station.x, station.y, zone.id, 15, true),
+      mode + ' ' + station.id + ' work center must be walkable');
+    const destination = game.safe(station.x + 36, station.y + 28, zone.id);
+    assert(Math.hypot(destination.x - station.x, destination.y - station.y) <= 110,
+      mode + ' ' + station.id + ' reachable floor must be adjacent to the task');
     for (const [from, to, direction] of [
       [start, destination, 'entry'], [destination, start, 'return'],
     ]) {
       const route = game.route(from, to);
       assert(route.length > 0,
-        mode + ' ' + worker.id + ' needs a ' + direction + ' path from the actual entrance');
+        mode + ' ' + station.id + ' needs a ' + direction + ' path from the actual entrance');
       assert.deepEqual(route.at(-1), to,
-        mode + ' ' + worker.id + ' path must reach the selected legal work point');
+        mode + ' ' + station.id + ' path must reach the selected legal work point');
       let previous = from;
       for (const waypoint of route) {
         assert(!game.blocked(waypoint.x, waypoint.y, zone.id, 15, true),
-          mode + ' ' + worker.id + ' route has blocked waypoint');
+          mode + ' ' + station.id + ' route has blocked waypoint');
         assert(game.clearSegment(previous, waypoint, 15),
-          mode + ' ' + worker.id + ' route crosses collision');
+          mode + ' ' + station.id + ' route crosses collision');
         previous = waypoint;
       }
     }
@@ -132,7 +132,7 @@ for (const mode of ['normal', 'nightmare']) {
 // Phase 1: audit the *resolved* geometry instead of mistaking rules.js's
 // requested anchors and eight optional freight links for a working network.
 // This is diagnostic-only evidence, not an assertion that geothermal pipes,
-// potable water, a bathhouse, cargo transfer or living worker AI exists.
+// potable water, a bathhouse, cargo transfer or living station AI exists.
 {
   const audit = new Campaign('normal', 'paladin', () => 0.73);
   assert(audit.enter('crown'), 'Phase 1 ledger enters the real Crown world');
@@ -258,7 +258,7 @@ for (const mode of ['normal', 'nightmare']) {
   assert(audit.enter('side-crown-foundry'),
     'Phase 1 ledger enters the existing Foundry side dungeon');
   const inside = audit.zone();
-  const workers = inside.props.filter(q => q.crownFoundryWorker)
+  const stations = inside.props.filter(q => q.crownFoundryEquipment)
     .map(q => ({
       id: q.id, role: q.crownFoundryRole,
       actual: [Math.round(q.x), Math.round(q.y)],
@@ -278,7 +278,7 @@ for (const mode of ['normal', 'nightmare']) {
     thermal, authoredLinkCount: Campaign.rules.crownIndustrialLinks.length,
     realizedLinks: links, freight, foundry: {
       exit: [120, 150], size: foundry.size,
-      workers, hostileHomes, trapAnchors: foundry.traps,
+      stations, hostileHomes, trapAnchors: foundry.traps,
       pillarAnchors: foundry.walls,
     },
   }));

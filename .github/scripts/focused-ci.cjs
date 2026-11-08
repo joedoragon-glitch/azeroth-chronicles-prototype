@@ -15,6 +15,11 @@ const {
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
+  {
+    match:
+      /^src\/prototype\/(?:startup-diagnostics|playtest-report-guide)\.js$|^src\/prototype\/app\.js$|^scripts\/site-assets\.cjs$|^templates\/game\.html$/,
+    tests: [TEST + 'startup-diagnostics.test.cjs'],
+  },
   // #755: future comparator edits must exercise the positive-control guard.
   {
     match: /^scripts\/pixi-755-compare\.cjs$|^tests\/pixi-755-acceptance\.test\.cjs$/,
@@ -22,7 +27,11 @@ const groups = [
   },
   {
     match: /^src\/prototype\/(?:greenwood|greenwood-landscape)\.js$/,
-    tests: [TEST + 'greenwood-flagship.test.cjs', TEST + 'town-street-audit.test.cjs'],
+    tests: [
+      TEST + 'greenwood-flagship.test.cjs',
+      TEST + 'greenwood-679-candidate.test.cjs',
+      TEST + 'town-street-audit.test.cjs',
+    ],
   },
   {
     match: /^src\/prototype\/narration\.js$/,
@@ -59,6 +68,10 @@ const groups = [
     ],
   },
   { match: /^\.github\//, tests: [TEST + 'focused-ci-report.test.cjs'] },
+  {
+    match: /^tests\/helpers\/notice-browser\.cjs$/,
+    tests: [TEST + 'notice-presentation.test.cjs'],
+  },
   {
     match: /^tests\/helpers\/native-fixture-contracts\.cjs$/,
     tests: [
@@ -139,6 +152,7 @@ const groups = [
       /(?:^|\/)(?:pixi-experimental\.js|pixi-scene-bridge\.js|native-sprite-adapter\.js|renderer-switch-guard\.js|native-webgl2-core\.js)$|^tests\/pixi-|^tools\/webgl-pilot\//,
     tests: [
       TEST + 'pixi-fidelity.test.cjs',
+      TEST + 'pixi-fixed-quality-pilot.test.cjs',
       TEST + 'pixi-parity.test.cjs',
       TEST + 'pixi-step3-source.test.cjs',
       PILOT + 'pixi-scene-bridge.test.cjs',
@@ -151,6 +165,20 @@ const groups = [
       TEST + 'occlusion.test.cjs',
       TEST + 'terrain-effects.test.cjs',
       TEST + 'pixi-fidelity.test.cjs',
+    ],
+  },
+  {
+    // Changes to the shared Canvas/Pixi combat-cue painter can violate
+    // attack/hazard timing, Rogue/Ledger cast exceptions and native pixels.
+    // Keep this focused: no full browser or complete campaign test matrix.
+    match: /^src\/prototype\/combat-visuals\.js$/,
+    tests: [
+      TEST + 'warning-effect-handoff.test.cjs',
+      TEST + 'effect-warning-anonymous-cast.test.cjs',
+      TEST + 'effect-warning-ledger-cast.test.cjs',
+      TEST + 'effect-warning-reuse-family-matrix.test.cjs',
+      TEST + 'effect-warning-crowd-fps.test.cjs',
+      TEST + 'terrain-effects.test.cjs',
     ],
   },
   {
@@ -207,6 +235,18 @@ const groups = [
     ],
   },
   {
+    // #615: source-only changes to native routing or Cindermaw's ministerial
+    // circuit must retain full convoy/save/return acceptance, not only the
+    // short performance diagnostics. Keep this focused to the owning files.
+    match: /^src\/prototype\/(?:navigation|cindermaw-combat)\.js$/,
+    tests: [
+      TEST + 'boss-captain-native-navigation-diagnostic.test.cjs',
+      TEST + 'boss-captain-navigation-lifecycle.test.cjs',
+      TEST + 'issue615-remaining-native-navigation-diagnostic.test.cjs',
+      TEST + 'snapshot-vera-inspection.test.cjs',
+    ],
+  },
+  {
     match: /^src\/prototype\/navigation\.js$/,
     tests: [
       TEST + 'navigation-route-stage4.test.cjs',
@@ -247,6 +287,12 @@ const groups = [
     tests: [TEST + 'snapshot-encounter-lifecycle.test.cjs'],
   },
   {
+    // Named captain reward/respawn changes must retain their original
+    // cross-region recovery contract and the new rematch/save coverage.
+    match: /^src\/prototype\/treasury\.js$/,
+    tests: [TEST + 'treasury-recovery.test.cjs', TEST + 'lore-rematch.test.cjs'],
+  },
+  {
     // A rules edit can alter the source fingerprints in the sprite census.
     // Validate its checked-in evidence even when the graphics stay identical.
     match: /^src\/prototype\/rules\.js$|^docs\/evidence\/SPRITE_SCOPE_RECONCILIATION\.json$/,
@@ -281,7 +327,8 @@ const groups = [
     // #727 Stage 2–6 source ledgers are the production truth for the isolated
     // preview importer; its own source preflight must not fall through to a
     // generic architecture test.
-    match: /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies|production-routing)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
+    match:
+      /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies|production-routing)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
     tests: [TEST + 'environment-727-stage6-source.test.cjs'],
   },
   {
@@ -397,7 +444,8 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
       if (exists(file)) chosen.add(file);
       covered = true;
     }
-    if (file.startsWith('tests/') && file.endsWith('-browser.test.cjs') && !covered) {
+    if ((file.endsWith('-browser.test.cjs') || file === TEST + 'helpers/camera-browser.cjs') &&
+        file.startsWith('tests/') && !covered) {
       manualBrowser.push(file);
       covered = true; // Deferred to owner-approved browser acceptance, not architecture coverage.
     }
@@ -475,6 +523,11 @@ function run(
               ? {
                   PIXI_BROWSER_DEVICE:
                     file === TEST + 'pixi-renderer-phone-browser.test.cjs' ? 'phone' : 'desktop',
+                  // Full manually-invoked graphics/lighting/restart matrix remains
+                  // unchanged; CI exercises the single regression owning this PR.
+                  ...(file === TEST + 'pixi-renderer-browser.test.cjs'
+                    ? { PIXI_BROWSER_FOCUSED: '1' }
+                    : {}),
                 }
               : {}),
             ...(pixiBrowser || statusBrowser ? { REQUIRE_WEBGL2: '1' } : {}),

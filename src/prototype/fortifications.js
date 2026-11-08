@@ -9,6 +9,56 @@
       [x2, y2],
       [x1, y2],
     ];
+    // Greenwood's line-built walls are authored from absolute endpoints,
+    // not the older individual ten-post ring. Derive the actual exterior
+    // envelope once when fortAreas() caches geometry. Convex hull bridges
+    // the deliberate gate opening and prevents old wall-index offsets from
+    // shifting combat protection away from the visible structure.
+    function wallFootprint(walls, margin) {
+      const endpoints = walls
+        .flatMap((p) => {
+          const line = p.greenwoodWall;
+          return line ? [line.a, line.b] : [];
+        })
+        .filter((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y));
+      if (endpoints.length < 6) return null;
+      const sorted = endpoints.map(({ x, y }) => [x, y]).sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+      const half = (points) => {
+        const hull = [];
+        for (const p of points) {
+          while (hull.length >= 2 && cross(hull.at(-2), hull.at(-1), p) <= 0) hull.pop();
+          hull.push(p);
+        }
+        return hull;
+      };
+      const lower = half(sorted),
+        upper = half(sorted.slice().reverse());
+      const hull = [...lower.slice(0, -1), ...upper.slice(0, -1)];
+      if (hull.length < 3) return null;
+      if (!(margin > 0)) return hull;
+      const points = [];
+      // A short cached arc at each convex corner gives a physically bounded
+      // outdoor apron. Inflate the sampled radius slightly so straight
+      // chords never shrink the promised leeway at diagonal approaches.
+      for (let i = 0; i < hull.length; i++) {
+        const previous = hull[(i + hull.length - 1) % hull.length];
+        const at = hull[i],
+          next = hull[(i + 1) % hull.length];
+        const angle = (a, b) => Math.atan2(-(b[0] - a[0]), b[1] - a[1]);
+        let start = angle(previous, at),
+          end = angle(at, next);
+        while (end <= start) end += 2 * Math.PI;
+        const count = Math.max(1, Math.ceil((end - start) / (Math.PI / 10)));
+        const step = (end - start) / count;
+        const radius = margin / Math.cos(step / 2);
+        for (let j = 0; j <= count; j++) {
+          const a = start + step * j;
+          points.push([at[0] + radius * Math.cos(a), at[1] + radius * Math.sin(a)]);
+        }
+      }
+      return points;
+    }
     const contains = (points, p) => {
       let inside = false;
       for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
@@ -25,6 +75,15 @@
         if (frame?.props === z.props && frame.count === z.props.length) return frame.areas;
         const areas = [],
           cfg = R.balance.fortifications;
+        // Expand authored outdoor polygons only when the zone's geometry is cached.
+        // Indoor walkable rooms keep their existing exact bounds.
+        const outdoorRectangle = (x1, x2, y1, y2) =>
+          rectangle(
+            x1 - cfg.outdoorLeeway,
+            x2 + cfg.outdoorLeeway,
+            y1 - cfg.outdoorLeeway,
+            y2 + cfg.outdoorLeeway,
+          );
         const add = (id, points, walls, partitions = []) =>
           areas.push({
             id,
@@ -70,11 +129,41 @@
             ? { x: median(anchors.map((p) => p.x)), y: median(anchors.map((p) => p.y)) }
             : this.creatureStrongholdCenter(z, plan);
           if (!center) continue;
+          // Add a 160-unit radial apron to ruin/habitat vertices, following
+          // any relocated wall anchor. Per-actor eligibility remains unchanged.
+          const actualWallPoints = walls.some((p) => p.greenwoodWall)
+            ? wallFootprint(walls, cfg.outdoorLeeway)
+            : null;
           const points =
-            plan.defenseStyle === 'fort'
-              ? rectangle(center.x - 150, center.x + 150, center.y - 150, center.y + 150)
-              : ring.map(([x, y]) => [center.x + x, center.y + y]);
+            actualWallPoints ||
+            (plan.defenseStyle === 'fort'
+              ? outdoorRectangle(center.x - 150, center.x + 150, center.y - 150, center.y + 150)
+              : ring.map(([x, y]) => {
+                  const scale = 1 + cfg.outdoorLeeway / Math.hypot(x, y);
+                  return [center.x + x * scale, center.y + y * scale];
+                }));
           add(plan.id, points, walls);
+          if (actualWallPoints) {
+            // Preserve authored ordering and concavity, closing only gate gaps.
+            const ordered = walls
+              .filter((p) => p.greenwoodWall)
+              .sort(
+                (a, b) =>
+                  Number(a.id.match(/-wall-(\d+)$/)?.[1] || 0) -
+                  Number(b.id.match(/-wall-(\d+)$/)?.[1] || 0),
+              );
+            const boundary = ordered
+              .flatMap((p) => [p.greenwoodWall.a, p.greenwoodWall.b])
+              .map((p) => [p.x, p.y]);
+            const area = areas.at(-1);
+            area.wallBoundary = boundary;
+            area.wallEdges = boundary.map((a, i) => {
+              const b = boundary[(i + 1) % boundary.length],
+                dx = b[0] - a[0],
+                dy = b[1] - a[1];
+              return { a, b, dx, dy, len2: dx * dx + dy * dy };
+            });
+          }
         }
         for (const mini of z.minis || []) {
           const walls = z.props.filter(
@@ -83,7 +172,7 @@
           if (mini.type === 'field' && walls.length)
             add(
               mini.id,
-              rectangle(
+              outdoorRectangle(
                 mini.x - cfg.compoundHalfSize,
                 mini.x + cfg.compoundHalfSize,
                 mini.y - cfg.compoundHalfSize,
@@ -95,7 +184,7 @@
         for (const area of cfg.outdoorAreas.filter((a) => a.zone === z.id)) {
           add(
             area.id,
-            rectangle(...area.bounds),
+            outdoorRectangle(...area.bounds),
             z.props.filter(
               (p) =>
                 area.districts.includes(p.crownDistrict) &&
@@ -133,7 +222,19 @@
           !this.s.zones[this.zoneId]?.enemies.some((u) => u === e || u.id === e.id)
         )
           return null;
-        return this.fortAreas().find((f) => contains(f.points, e)) || null;
+        return (
+          this.fortAreas().find((f) => {
+            if (!f.wallBoundary) return contains(f.points, e);
+            if (contains(f.wallBoundary, e)) return true;
+            const margin2 = R.balance.fortifications.outdoorLeeway ** 2;
+            return f.wallEdges.some(({ a, dx, dy, len2 }) => {
+              const t = len2
+                ? Math.max(0, Math.min(1, ((e.x - a[0]) * dx + (e.y - a[1]) * dy) / len2))
+                : 0;
+              return (e.x - a[0] - t * dx) ** 2 + (e.y - a[1] - t * dy) ** 2 <= margin2;
+            });
+          }) || null
+        );
       }
       enemyRanged(e) {
         return e.ranged ?? ['archer', 'crownguard'].includes(e.species);
@@ -185,7 +286,7 @@
         return cover;
       }
       fortShotBlocked(p, fort) {
-        return this.blocked(p.x, p.y, this.zoneId, 0, false, fort);
+        return this.blocked(p.x, p.y, this.zoneId, 0, false, fort, true);
       }
       fortShotClear(a, b, fort) {
         const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 8));
@@ -219,7 +320,7 @@
         // warning reach rather than extending their range a second time.
         p.life = span / p.speed;
         const end = target || { x: p.x + (p.dx || 0) * span, y: p.y + (p.dy || 0) * span };
-        p.rangedArc = !!fort || !this.line(p, end);
+        p.rangedArc = !!fort || !this.rangedLine(p, end);
         p.fortDistance = Math.max(1, target ? Math.hypot(target.x - p.x, target.y - p.y) : span);
         // An arc has one fixed landing point. A dodged shot ends there rather
         // than skating along the floor for the remainder of its range budget.

@@ -28,9 +28,10 @@ function installedChromium() {
 }
 async function selectPixi(page) {
   await page.locator('#menu-button').click();
-  await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
+  await page.getByRole('button', {name: 'Settings', exact: true}).click();
   await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
+  await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
   try {
     // A complete current-region atlas can legitimately take much longer than
@@ -58,18 +59,16 @@ async function selectPixi(page) {
 // Drive the actual modern title-screen flow. Earlier graphics tests relied
 // on automatic gameplay startup and could silently skip preloading entirely.
 async function enterPlayableGame(page) {
-  await page.waitForFunction(() => !!window.Prototype?.renderer);
-  await require('./helpers/language-browser.cjs').selectEnglish(page);
+  await page.waitForFunction(() => !!window.Prototype?.renderer && document.querySelector('#startup-update')?.hidden);
+  if (await page.locator('#language-welcome').isVisible())
+    await page.locator('#language-welcome [data-language="en"]').click();
   const title = page.locator('#title-screen');
   if (await title.evaluate((el) => !el.hidden)) {
     if (!(await page.locator('#title-continue').isDisabled())) {
       await page.locator('#title-continue').click();
     } else {
       await page.locator('#title-new').click();
-      await page.getByRole('button', {name:'New Normal game', exact:true}).click();
-      await page.getByRole('button', {name:/^English(?: ✓)?$/}).click();
-      await page.getByRole('button',
-        {name:'Standard death and refuge recovery', exact:true}).click();
+      await page.getByRole('button', { name: /^Choose Hero/ }).click();
       await page.getByRole('button', {name:/Paladin/}).first().click();
     }
   }
@@ -381,11 +380,15 @@ async function run() {
         isMobile: phone, hasTouch: phone,
       });
       try {
+        await context.addInitScript(() => {
+          localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
+          localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+          localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+        });
         const page = await context.newPage();
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
-        await page.goto(host + (phone ? 'phone.html' : 'index.html'));
-        await page.waitForFunction(() => !!window.Prototype?.renderer);
+        await page.goto(host + (phone ? 'phone-game.html' : 'index.html'));
         await enterPlayableGame(page);
         await page.waitForFunction(() => document.querySelector('#modal').hidden);
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');

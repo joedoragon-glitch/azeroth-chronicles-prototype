@@ -1,6 +1,7 @@
 'use strict';
 // One inventory drives entry validation, offline packaging and deployment.
 const scripts = [
+  'src/prototype/startup-diagnostics.js',
   'src/sprint.js',
   ...[
     'highlands',
@@ -66,22 +67,30 @@ const scripts = [
     'ground-cache',
     'renderer',
   ].map((name) => 'src/prototype/' + name + '.js'),
-  // GPU helpers must initialize BEFORE the experimental adapter and app.
+  // Live GPU primitives, sprite adapter, bridge and guard load before Pixi and app.
   'tools/webgl-pilot/native-webgl2-core.js',
   'tools/webgl-pilot/native-sprite-adapter.js',
   'tools/webgl-pilot/pixi-scene-bridge.js',
   'tools/webgl-pilot/renderer-switch-guard.js',
-  ...['pixi-experimental', 'archive', 'archive-reading', 'skill-reference', 'menus', 'app'].map(
-    (name) => 'src/prototype/' + name + '.js',
-  ),
+  ...[
+    'pixi-experimental',
+    'archive',
+    'archive-reading',
+    'skill-reference',
+    'menus',
+    'playtest-report-guide',
+    'app',
+  ].map((name) => 'src/prototype/' + name + '.js'),
 ];
 const core = [
   'index.html',
   'prototype.html',
   'phone.html',
+  'phone-game.html',
   'styles/prototype.css',
   'styles/desktop.css',
   'styles/phone.css',
+  'styles/phone-frame.css',
   ...scripts,
   'manifest.webmanifest',
   'icons/icon-192.png',

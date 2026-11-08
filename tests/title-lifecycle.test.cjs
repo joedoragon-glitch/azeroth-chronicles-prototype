@@ -37,8 +37,9 @@ for (const language of ['en', 'es']) {
 // Minimize is a real session boundary, not just a pause while an expensive
 // WebGL cache is reconstructed on top of moving enemies.
 for (const language of ['en', 'es']) {
+  let clock = 0;
   const { scope, elements, storage, events, documentEvents, frame } =
-    shell(language, 'mage', { stayOnTitle: true });
+    shell(language, 'mage', { stayOnTitle: true, now: () => clock });
   const title = elements.get('title-screen');
   const continueButton = elements.get('title-continue');
   const hiddenChanged = () => documentEvents.visibilitychange.forEach((fn) => fn());
@@ -55,12 +56,11 @@ for (const language of ['en', 'es']) {
   for (const fn of events.focus || []) fn();
 
   elements.get('menu-button').click();
+  clock = 100;
   scope.document.hidden = true;
   hiddenChanged();
-  assert.equal(scope.Prototype.started, false, 'hidden game enters title');
-  assert.equal(title.hidden, false);
-  assert.equal(elements.get('modal').hidden, true, 'old gameplay menu is closed');
-  assert.equal(continueButton.disabled, false, 'valid saved game stays resumable');
+  assert.equal(scope.Prototype.started, true, 'hidden game is frozen before classification');
+  assert.equal(title.hidden, true, 'no immediate title bounce during a brief hidden signal');
   const saved = JSON.parse(storage.get('azeroth-v4-normal'));
   assert.equal(saved.time, originalTime, 'minimize persisted exact campaign time');
   assert.equal(saved.hero.x, originalHeroX, 'minimize persisted player position');
@@ -68,13 +68,16 @@ for (const language of ['en', 'es']) {
   frame(300);
   assert.equal(liveCampaign.s.time, originalTime, 'no simulation while hidden');
   hiddenChanged();
-  assert.equal(scope.Prototype.started, false, 'repeated hidden notification is inert');
+  assert.equal(scope.Prototype.started, true, 'repeated hidden signals do not start or cancel play');
 
+  clock = 4100;
   scope.document.hidden = false;
   hiddenChanged();
   for (const fn of events.focus || []) fn();
-  frame(400);
-  assert.equal(title.hidden, false, 'foreground does not restart play');
+  frame(4200);
+  assert.equal(title.hidden, false, 'sustained background still needs Continue');
+  assert.equal(elements.get('modal').hidden, true, 'old gameplay menu is closed');
+  assert.equal(continueButton.disabled, false, 'valid saved game stays resumable');
   assert.equal(scope.Prototype.started, false);
   assert.equal(scope.Prototype.game, liveCampaign, 'live campaign remains in memory');
 
@@ -88,10 +91,13 @@ for (const language of ['en', 'es']) {
 
   // If the tab is minimized during Continue's asynchronous ready-frame step,
   // cancelling that step must never allow an automatic foreground launch.
+  clock = 4400;
   scope.document.hidden = true;
   hiddenChanged();
+  clock = 7500;
   scope.document.hidden = false;
   hiddenChanged();
+  assert.equal(scope.Prototype.started, false, 'a second sustained hide re-enters title');
   continueButton.click();
   assert.equal(scope.Prototype.started, false);
   scope.document.hidden = true;
@@ -105,6 +111,119 @@ for (const language of ['en', 'es']) {
   continueButton.click();
   frame(700);
   assert.equal(scope.Prototype.started, true, 'explicit new Continue works');
+}
+
+// A brief iPhone-style visibility flip should save and freeze play without
+// discarding its live scene. A missing visibilitychange on return can be
+// reconciled through pageshow or focus, as some Home Screen PWAs behave.
+for (const [language, resumeSource] of [
+  ['en', 'visibilitychange'],
+  ['es', 'pageshow'],
+  ['en', 'focus'],
+]) {
+  let clock = 0;
+  const { scope, elements, storage, documentEvents, events, frame } =
+    shell(language, 'mage', { stayOnTitle: true, now: () => clock });
+  const visibility = () => documentEvents.visibilitychange.forEach((fn) => fn());
+  elements.get('title-continue').click();
+  frame(100);
+  assert.equal(scope.Prototype.started, true);
+  const campaign = scope.Prototype.game;
+  const firstTime = campaign.s.time;
+  clock = 150;
+  scope.document.hidden = true;
+  visibility();
+  assert.equal(scope.Prototype.started, true, 'short hide retains live session identity');
+  assert.equal(elements.get('title-screen').hidden, true);
+  assert.equal(JSON.parse(storage.get('azeroth-v4-normal')).time, firstTime,
+    'the short interruption saves immediately');
+  frame(200);
+  assert.equal(campaign.s.time, firstTime, 'the hidden game never simulates');
+  clock = 650;
+  scope.document.hidden = false;
+  if (resumeSource === 'visibilitychange') visibility();
+  else if (resumeSource === 'pageshow')
+    for (const fn of events.pageshow || []) fn({ persisted: false });
+  else for (const fn of events.focus || []) fn();
+  assert.equal(scope.Prototype.started, true, 'brief interruption resumes in place');
+  assert.equal(scope.Prototype.game, campaign, 'brief interruption never restores a new campaign');
+  assert.equal(elements.get('title-screen').hidden, true);
+  frame(700);
+  assert(campaign.s.time >= firstTime, 'the resumed scene is eligible for simulation');
+  const history = JSON.parse(storage.get('sibdlp-playtest-diagnostics-v1')).events;
+  assert(history.some((event) => event.kind === 'background-return-classified' &&
+    event.decision === 'live-resume' && event.source === resumeSource));
+  assert(!history.some((event) => event.kind === 'return-to-title'),
+    'a short background signal is not misclassified as a title transition');
+}
+
+// Even a brief hide requires the guarded Continue path if a renderer signals
+// that it needs GPU recovery rather than risking active combat during rebuild.
+{
+  let clock = 0;
+  const state = { mode: 'canvas2d', phase: 'canvas', preferredRenderer: 'canvas2d',
+    recoveryPending: false, recoveryPaused: false };
+  const guard = { startupChoice: () => ({ renderer: 'canvas2d' }), create: () => ({
+    status: () => state, visibilityChanged() {}, check: () => state,
+    confirm: () => false, revert: () => false, requestWebGL: async () => false,
+    maybeRecover: async () => false, webglFailed: () => false,
+    resumeConfirmedWebGL: async () => false,
+  }) };
+  const { scope, elements, documentEvents, frame } =
+    shell('en', 'mage', { stayOnTitle: true, now: () => clock, graphicsGuard: guard });
+  elements.get('title-continue').click();
+  frame(100);
+  assert.equal(scope.Prototype.started, true);
+  clock = 150;
+  scope.document.hidden = true;
+  for (const fn of documentEvents.visibilitychange || []) fn();
+  state.recoveryPending = true;
+  clock = 350;
+  scope.document.hidden = false;
+  for (const fn of documentEvents.visibilitychange || []) fn();
+  assert.equal(scope.Prototype.started, false,
+    'known renderer recovery still requires the guarded title loading route');
+  const history = JSON.parse(scope.localStorage.getItem('sibdlp-playtest-diagnostics-v1')).events;
+  assert(history.some((event) => event.kind === 'return-to-title' &&
+    event.reason === 'document-hidden-graphics-recovery'));
+}
+
+// A failed campaign save must not be mislabeled as a safe live return.
+// The previous durable save and the unsaved in-memory run must both survive.
+for (const language of ['en', 'es']) {
+  let clock = 0;
+  const { scope, elements, storage, documentEvents, frame } =
+    shell(language, 'ranger', { stayOnTitle: true, now: () => clock });
+  elements.get('title-continue').click();
+  frame(100);
+  assert.equal(scope.Prototype.started, true);
+  const live = scope.Prototype.game;
+  const primary = storage.get('azeroth-v4-normal');
+  const beforeTime = live.s.time;
+  const originalSet = storage.set.bind(storage);
+  storage.set = (key, value) => {
+    if (key === 'azeroth-v4-normal') throw Error('simulated save-storage failure');
+    return originalSet(key, value);
+  };
+  clock = 130;
+  scope.document.hidden = true;
+  for (const fn of documentEvents.visibilitychange || []) fn();
+  clock = 230;
+  scope.document.hidden = false;
+  for (const fn of documentEvents.visibilitychange || []) fn();
+  assert.equal(scope.Prototype.started, true,
+    'failed persistence cannot discard the unsaved live campaign');
+  assert.equal(scope.Prototype.game, live);
+  assert.equal(elements.get('title-screen').hidden, true);
+  assert.equal(storage.get('azeroth-v4-normal'), primary,
+    'the previous saved snapshot is not overwritten');
+  frame(300);
+  assert.equal(live.s.time, beforeTime, 'simulation stays paused after save failure');
+  const history = JSON.parse(storage.get('sibdlp-playtest-diagnostics-v1')).events;
+  assert(history.some((event) => event.kind === 'background-return-classified' &&
+    event.decision === 'save-or-ownership-pause'),
+    'failed save is classified as a safe paused state, never live-resume');
+  storage.set = originalSet;
 }
 
 // Confirmed WebGL loss in a session may restore behind Continue, but the

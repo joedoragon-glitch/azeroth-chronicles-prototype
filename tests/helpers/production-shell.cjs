@@ -75,11 +75,17 @@ function shell(language, heroClass = 'paladin', options = {}) {
     Campaign: C,
     console,
     performance: { now: options.now || (() => 0) },
+    devicePixelRatio: options.devicePixelRatio,
     innerWidth: 393,
     innerHeight: 852,
     Sprint: { enabled: false, press() {}, release() {}, reset() {}, tick: () => 1 },
-    localStorage: { getItem: (k) => storage.get(k), setItem: (k, v) => storage.set(k, v) },
+    localStorage: {
+      getItem: (k) => storage.get(k),
+      setItem: (k, v) => storage.set(k, v),
+      removeItem: (k) => storage.delete(k),
+    },
     location: options.location || { protocol: 'file:', hostname: '' },
+    history: options.history,
     navigator: options.navigator || {},
     document: {
       documentElement: {},
@@ -98,7 +104,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     },
     setTimeout() {},
     clearTimeout() {},
-    setInterval() {},
+    setInterval(fn, ms) { options.onInterval?.(fn, ms); },
     Blob,
     URL: { createObjectURL: () => '', revokeObjectURL() {} },
     confirm: () => true,
@@ -107,6 +113,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     PrototypeHeroPresentation: 'hero-presentation',
     PrototypeMenus: 'menus',
     PrototypeBuild: 'build-info',
+    PrototypePlaytestReportGuide: 'playtest-report-guide',
     PrototypeInput: 'input',
     PrototypePersistence: 'persistence',
     PrototypePlatform: 'platform',
@@ -131,10 +138,15 @@ function shell(language, heroClass = 'paladin', options = {}) {
     const runtime = scope.PrototypeRuntime;
     scope.PrototypeRuntime = { ...runtime, create: () => runtime.create(options.now) };
   }
+  if (options.pixi) scope.PrototypePixiExperimental = options.pixi;
   if (options.graphicsGuard) scope.AzerothRendererSwitchGuard = options.graphicsGuard;
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
   scope.window = scope;
   vm.createContext(scope);
+  vm.runInContext(
+    fs.readFileSync(require.resolve('../../src/prototype/startup-diagnostics'), 'utf8'),
+    scope,
+  );
   vm.runInContext(fs.readFileSync(require.resolve('../../src/prototype/app'), 'utf8'), scope);
   scope.Prototype.renderer.draw = () => {};
   // Existing presentation fixtures explicitly enter gameplay; the title

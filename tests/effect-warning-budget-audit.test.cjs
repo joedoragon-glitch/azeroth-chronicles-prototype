@@ -78,8 +78,8 @@ const results = [];
 for (const id of ['thorn', 'crypt', 'mire', 'archive', 'ridge', 'mine',
   'warlord', 'abyss', 'citadel', 'cindermaw', 'darklord']) results.push(warningScene(id));
 assert.equal(results.length, 11);
-assert(results.some((r) => r.fill.visible > 0 && r.cue.visible > 0),
-  'real boss warning footprints have no Canvas pixels');
+assert(results.some((r) => r.cue.visible > 0 && r.fill.visible === 0),
+  'minimalist one-pass boss warning has no Canvas pixels, or still paints redundant separate fill');
 assert(results.some((r) => r.projections > 0),
   'real warning geometry was not projected');
 assert(results.every((r) => Number.isFinite(r.fillMs + r.cueMs)));

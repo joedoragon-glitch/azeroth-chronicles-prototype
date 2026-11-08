@@ -7,7 +7,7 @@
   "start_url": "./phone.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "landscape",
   "background_color": "#030305",
   "theme_color": "#0a0812",
   "icons": [

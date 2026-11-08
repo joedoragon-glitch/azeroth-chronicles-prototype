@@ -110,8 +110,18 @@ for (const mode of ['normal', 'nightmare'])
     const returned = g.treasuryCaptain(g.zone(), site);
     assert(returned.hp > 0, 'captain returns for another recovery cycle');
     assert.equal(returned.id, cap.id);
-    assert.equal(returned.gold, 0);
-    assert.equal(returned.xp, 0);
+    const ordinaryPrize = g.regionalEnemyRewards(g.regionIndex(site.region));
+    assert.equal(returned.gold, Math.max(1, Math.floor(ordinaryPrize.gold / 2)),
+      'named captain return pays only half an ordinary local enemy in crowns');
+    assert.equal(returned.xp, Math.max(1, Math.floor(ordinaryPrize.xp / 4)),
+      'named captain return pays half the effective ordinary-enemy XP');
+    assert(returned.gold < ordinaryPrize.gold && returned.xp < ordinaryPrize.xp,
+      'returning captain bonus is deliberately modest');
+    const rewarded = g.enemyReward(returned);
+    assert(rewarded.gold <= returned.gold && rewarded.xp <= returned.xp,
+      'level-gap reductions remain in force');
+    assert.equal(returned.level, cap.level + 1, 'first return gains exactly one displayed level');
+    assert.equal(returned.rematchTier, 1);
     assert.equal(state.unlocked, false);
     assert(
       !g.blocked(returned.x, returned.y, g.zoneId, g.actorRadius(returned)),

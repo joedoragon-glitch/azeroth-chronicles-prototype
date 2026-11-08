@@ -1,6 +1,7 @@
-/* Experimental PixiJS presentation for the LIVE Campaign.
- * The normal Canvas renderer owns input projection and critical 2D cue overlays.
- * Do not label this a complete or faster WebGL implementation before review.
+/* Primary PixiJS/WebGL2 world presentation for the live Campaign.
+ * The original Canvas renderer supplies critical gameplay-cue overlays and
+ * remains an independent selectable fallback; gameplay state is unchanged.
+ * Default selection does not prove higher FPS or physical-device acceptance.
  */
 (function (root) {
   'use strict';
@@ -188,16 +189,148 @@
     // Canvas sorts the presented body, not a ferry's separate boarding location.
     return result.sort((a, b) => a.visual.x + a.visual.y - (b.visual.x + b.visual.y));
   }
-  function bake(visual, game, density = 1) {
+  // Observe conservative device-pixel bounds while the original artist paints.
+  // Curves stay within their control-point hull; clips only remove pixels.
+  // Unknown operations/effects fall back to the original alpha readback. No
+  // guessed sprite sizes, alternate artwork, or lower-resolution rasterization.
+  function proceduralBoundsContext(context) {
+    if (typeof context.getTransform !== 'function') return { ctx: context, bounds: () => null };
+    let matrix = context.getTransform(),
+      path = null,
+      painted = null,
+      pathScale = 1,
+      safe = true;
+    const methods = new Map();
+    const union = (a, b) =>
+      !a
+        ? b
+        : !b
+          ? a
+          : [Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[2], b[2]), Math.max(a[3], b[3])];
+    const scale = () => Math.hypot(matrix.a, matrix.b, matrix.c, matrix.d);
+    const point = (x, y) => {
+      const px = matrix.a * x + matrix.c * y + matrix.e,
+        py = matrix.b * x + matrix.d * y + matrix.f;
+      if (!Number.isFinite(px) || !Number.isFinite(py)) safe = false;
+      return [px, py, px, py];
+    };
+    const rectangle = (x, y, w, h) =>
+      union(union(point(x, y), point(x + w, y)), union(point(x, y + h), point(x + w, y + h)));
+    const addPath = (...coordinates) => {
+      for (let i = 0; i < coordinates.length; i += 2)
+        path = union(path, point(coordinates[i], coordinates[i + 1]));
+      pathScale = Math.max(pathScale, scale());
+    };
+    const paint = (bounds, stroke = false) => {
+      if (
+        (context.filter && context.filter !== 'none') ||
+        context.shadowBlur ||
+        context.shadowOffsetX ||
+        context.shadowOffsetY
+      )
+        safe = false;
+      if (!bounds) return;
+      const pad = stroke
+        ? context.lineWidth *
+          Math.max(pathScale, scale()) *
+          (context.lineJoin === 'miter' ? Math.max(1, context.miterLimit) : 1)
+        : 0;
+      painted = union(painted, [bounds[0] - pad, bounds[1] - pad, bounds[2] + pad, bounds[3] + pad]);
+    };
+    const transforms = new Set([
+      'setTransform',
+      'resetTransform',
+      'translate',
+      'scale',
+      'rotate',
+      'transform',
+      'restore',
+    ]);
+    const inert = new Set([
+      'save',
+      'closePath',
+      'clip',
+      'clearRect',
+      'createLinearGradient',
+      'createRadialGradient',
+      'createPattern',
+      'measureText',
+      'getTransform',
+      'setLineDash',
+      'getLineDash',
+    ]);
+    const ctx = new Proxy(context, {
+      get(object, key) {
+        const value = object[key];
+        if (key === 'canvas') safe = false; // another context could paint unseen
+        if (typeof value !== 'function') return value;
+        if (!methods.has(key))
+          methods.set(key, (...args) => {
+            if (key === 'beginPath') {
+              path = null;
+              pathScale = scale();
+            } else if (
+              key === 'moveTo' ||
+              key === 'lineTo' ||
+              key === 'quadraticCurveTo' ||
+              key === 'bezierCurveTo'
+            )
+              addPath(...args);
+            else if (key === 'rect' || key === 'roundRect') {
+              path = union(path, rectangle(...args.slice(0, 4)));
+              pathScale = Math.max(pathScale, scale());
+            } else if (key === 'arc' || key === 'ellipse') {
+              const [x, y, rx] = args,
+                ry = key === 'arc' ? rx : args[3];
+              // A full radius-square encloses any rotation and partial arc.
+              const r = Math.max(Math.abs(rx), Math.abs(ry));
+              path = union(path, rectangle(x - r, y - r, 2 * r, 2 * r));
+              pathScale = Math.max(pathScale, scale());
+            } else if (key === 'fill' || key === 'stroke') {
+              if (args.length && typeof args[0] !== 'string') safe = false; // external Path2D
+              paint(path, key === 'stroke');
+            } else if (key === 'fillRect' || key === 'strokeRect')
+              paint(rectangle(...args), key === 'strokeRect');
+            else if (key === 'drawImage') {
+              const image = args[0];
+              const r =
+                args.length === 3
+                  ? [args[1], args[2], image.videoWidth || image.naturalWidth || image.width, image.videoHeight || image.naturalHeight || image.height]
+                  : args.length === 5
+                    ? args.slice(1)
+                    : args.slice(5);
+              if (r.length !== 4) safe = false;
+              else paint(rectangle(...r));
+            } else if (!transforms.has(key) && !inert.has(key)) safe = false;
+            const result = value.apply(object, args);
+            if (transforms.has(key)) matrix = context.getTransform();
+            return result;
+          });
+        return methods.get(key);
+      },
+      set(object, key, value) {
+        object[key] = value;
+        return true;
+      },
+    });
+    return { ctx, bounds: () => (safe ? painted || [] : null) };
+  }
+  function bake(visual, game, density = 1, trace = null, clock = null) {
+    // Bake lives outside create(); the opt-in high-resolution clock is passed by its caller.
+    const readClock = trace ? clock || Date.now : null;
     // The procedural artist draws vectors. Bake at the same final display
     // density as Canvas (camera zoom × backing ratio), not a 1x bitmap.
     const width = Math.round(576 * density),
       work = makeCanvas(width, width),
-      c = work.getContext('2d');
+      raw = work.getContext('2d');
+    requireValue(raw, 'Original procedural artist is unavailable');
+    const tracked = proceduralBoundsContext(raw),
+      c = tracked.ctx;
     requireValue(c, 'Original procedural artist is unavailable');
     c.setTransform(density, 0, 0, density, 0, 0);
     const center = { x: 288, y: 460 };
     const ambientParts = [];
+    const painterAt = trace ? readClock() : 0;
     const ambient = root.Campaign?.rules?.ambientLife?.[visual.structure || visual.id];
     root.PrototypeVisuals.draw(
       c,
@@ -211,20 +344,45 @@
           : { mode: 'static', onPart: (part) => ambientParts.push(part) }
         : null,
     );
-    const { data } = c.getImageData(0, 0, work.width, work.height);
+    if (trace)
+      trace.proceduralPainterMs =
+        (trace.proceduralPainterMs || 0) + Math.max(0, readClock() - painterAt);
+    const bounds = tracked.bounds();
+    // Read only the conservative painted rectangle, then retain the original
+    // exact alpha-tight crop. This avoids full-bitmap transfer/scan without
+    // trading cold stalls for larger resident CPU images and GPU textures.
+    const readLeft = bounds?.length ? Math.max(0, Math.min(width - 1, Math.floor(bounds[0]) - 2)) : 0;
+    const readTop = bounds?.length ? Math.max(0, Math.min(width - 1, Math.floor(bounds[1]) - 2)) : 0;
+    const readRight = bounds?.length
+      ? Math.max(readLeft + 1, Math.min(width, Math.ceil(bounds[2]) + 2))
+      : width;
+    const readBottom = bounds?.length
+      ? Math.max(readTop + 1, Math.min(width, Math.ceil(bounds[3]) + 2))
+      : width;
+    const readWidth = readRight - readLeft,
+      readHeight = readBottom - readTop;
+    const readbackAt = trace ? readClock() : 0;
+    const { data } = raw.getImageData(readLeft, readTop, readWidth, readHeight);
+    if (trace)
+      trace.proceduralReadbackMs =
+        (trace.proceduralReadbackMs || 0) + Math.max(0, readClock() - readbackAt);
+    const alphaScanAt = trace ? readClock() : 0;
     let left = width,
       top = width,
       right = -1,
       bottom = -1;
-    for (let y = 0; y < width; y++)
-      for (let x = 0; x < width; x++) {
-        if (data[(y * width + x) * 4 + 3] > 0) {
-          left = Math.min(left, x);
-          right = Math.max(right, x);
-          top = Math.min(top, y);
-          bottom = Math.max(bottom, y);
+    for (let y = 0; y < readHeight; y++)
+      for (let x = 0; x < readWidth; x++) {
+        if (data[(y * readWidth + x) * 4 + 3] > 0) {
+          left = Math.min(left, x + readLeft);
+          right = Math.max(right, x + readLeft);
+          top = Math.min(top, y + readTop);
+          bottom = Math.max(bottom, y + readTop);
         }
       }
+    if (trace)
+      trace.proceduralAlphaScanMs =
+        (trace.proceduralAlphaScanMs || 0) + Math.max(0, readClock() - alphaScanAt);
     if (right < left || bottom < top) {
       if (!ambientParts.length) return null;
       // Animal-only groups still need a tiny, transparent retained home node.
@@ -237,6 +395,7 @@
         ambientParts,
       };
     }
+    const cropAt = trace ? readClock() : 0;
     left = Math.max(0, left - 2);
     top = Math.max(0, top - 2);
     right = Math.min(width - 1, right + 2);
@@ -245,6 +404,8 @@
     image
       .getContext('2d')
       .drawImage(work, left, top, image.width, image.height, 0, 0, image.width, image.height);
+    if (trace)
+      trace.proceduralCropMs = (trace.proceduralCropMs || 0) + Math.max(0, readClock() - cropAt);
     return {
       image,
       dx: left / density - center.x,
@@ -334,20 +495,22 @@
       proceduralGpuPrepared = 0,
       gpuPreparationMs = 0,
       gpuPreparationBatches = 0;
-    let cancelGpuPreparation = null;
+    let cancelGpuPreparation = null,
+      deviceGraphics = null;
     // One portrait-stamped Crown coin texture, reused for every visible drop.
     const crownLootTextureId = 'pixi-world-crown-loot';
     let crownLootTexture = null,
       crownLootDensity = 0;
     const measureNow = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
-    // Opt-in developer-mode CPU stage timings. A JS draw() completion means
-    // commands were submitted, not that GPU rendering/presentation finished.
-    // Never allocate a sample or read a clock during ordinary player frames.
+    // Developer-mode percentiles remain sampled every 12th draw. #783 also
+    // captures EVERY stage on the existing opt-in player renderer recording;
+    // no extra timing clock or row allocation on ordinary normal-mode draws.
+    // JavaScript submission timings never measure GPU completion or presented FPS.
     const drawCpuSamples = [];
     let developerDrawFrames = 0;
     const drawCpuSampleEvery = 12;
     function drawCpuReport() {
-      const names = ['viewport', 'resolution', 'background', 'actors', 'atmosphere', 'scene'];
+      const names = ['viewport', 'resolution', 'background', 'actors', 'liquid', 'atmosphere', 'scene', 'predictive'];
       const quantile = (values, p) => {
         const list = values.slice().sort((a, b) => a - b);
         return +(list[Math.floor((list.length - 1) * p)] || 0).toFixed(2);
@@ -540,39 +703,17 @@
       bakeZone = null;
       if (!keepLoaded) loaded.clear();
     }
-    // Crown Foundry's productive workers are animated by the Canvas artist,
-    // but Pixi caches procedural art. Cache a bounded set of 8 phase frames
-    // instead of freezing the first pose or rasterizing a unique texture on
-    // every display frame. Only the five authored work stations and the real
-    // shipping attendant qualify; static fixtures stay on their old keys.
-    function crownWorkPhase(visual) {
-      const worker = visual.renderKind === 'prop' && visual.crownFoundryWorker === true;
-      const shipping =
-        visual.renderKind === 'prop' &&
-        visual.crownFoundryExterior === true &&
-        visual.structure === 'crown-foundry-yard-shipping';
-      if (!worker && !shipping) return null;
-      const frequency = worker ? 3.3 : 2.8;
-      const seconds = Number.isFinite(visual.ambientTime)
-        ? Math.max(0, visual.ambientTime)
-        : 0;
-      const cycle = (seconds * frequency) % (2 * Math.PI);
-      const frame = Math.min(7, Math.floor((cycle / (2 * Math.PI)) * 8));
-      return { frame, frequency };
-    }
-    function crownBakedPose(visual) {
-      const phase = crownWorkPhase(visual);
-      if (!phase) return visual;
-      return {
-        ...visual,
-        ambientTime: ((phase.frame + 0.5) * Math.PI * 2) / (8 * phase.frequency),
-      };
-    }
     function revisionFor(entity, visual, key, current, zoom) {
       const shared = sharedDecorationKey(visual);
       if (shared !== null)
         return backingRatio + ':' + zoom + ':shared-decor:' + shared + ':' + current.zoneId;
-      const crownFrame = crownWorkPhase(visual);
+      // Barracks artwork changes at whole construction stages, not every tick.
+      let barracksStage = '';
+      if (visual.renderKind === 'building' && visual.kind === 'barracks') {
+        barracksStage = root.PrototypeVisuals.barracksVisualState(visual);
+        if (barracksStage === 'construction')
+          barracksStage += ':' + Math.max(0, Math.floor(visual.progress));
+      }
       return (
         backingRatio +
         ':' +
@@ -593,7 +734,7 @@
         !!visual.rangedAim +
         ':' +
         !!visual.frenzy +
-        (crownFrame ? ':crown-work-phase:' + crownFrame.frame : '')
+        (barracksStage ? ':' + barracksStage : '')
       );
     }
     function evictUnused(protectedRevisions, bytesNeeded) {
@@ -1079,6 +1220,7 @@
       zoom,
       protectedRevisions = null,
       detach = null,
+      trace = null,
     ) {
       if (baked.has(revision)) {
         proceduralCacheHits++;
@@ -1086,7 +1228,11 @@
         return baked.get(revision);
       }
       const started = measureNow();
-      const body = bake(crownBakedPose(painted), current, backingRatio * zoom);
+      const body = bake(painted, current, backingRatio * zoom, trace, trace ? measureNow : null);
+      if (trace) {
+        trace.proceduralRasterMs =
+          (trace.proceduralRasterMs || 0) + Math.max(0, measureNow() - started);
+      }
       if (!body) return null;
       const bytes = body.image.width * body.image.height * 4;
       if (imageBytes + bytes > proceduralBudget && detach) {
@@ -1098,9 +1244,13 @@
         throw Error('Visible procedural artwork exceeds Pixi image budget');
       }
       const id = 'pixi-procedural:' + revision;
+      const textureStarted = trace ? measureNow() : 0;
       const texture = root.PIXI.Texture.from(body.image);
       texture.source.scaleMode = 'nearest';
       scene.registerTexture(id, texture);
+      if (trace)
+        trace.proceduralRegisterMs =
+          (trace.proceduralRegisterMs || 0) + Math.max(0, measureNow() - textureStarted);
       imageBytes += bytes;
       baked.set(revision, { ...body, id, bytes, texture, lastUsedFrame: actorFrameNumber });
       proceduralBakes++;
@@ -1117,6 +1267,7 @@
           zoom,
           protectedRevisions,
           detach,
+          trace,
         );
       }
       return baked.get(revision);
@@ -1368,7 +1519,8 @@
         });
       }
     }
-    function actorFrame() {
+    function actorFrame(trace = null) {
+      const candidateStarted = trace ? measureNow() : 0;
       const current = game(),
         zoom = platform.cameraZoom || 1;
       // Keep already prepared outdoor and dungeon artwork resident across
@@ -1393,6 +1545,8 @@
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')),
       );
+      if (trace)
+        trace.actorCandidatesMs = Math.max(0, measureNow() - candidateStarted);
       // Protect ALL current-frame identities, including entries encountered
       // later in the loop, from accidental eviction during a capacity trim.
       const protectedRevisions = new Set();
@@ -1505,6 +1659,7 @@
             zoom,
             protectedRevisions,
             detachForEviction,
+            trace,
           );
           if (!b) {
             if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
@@ -1543,6 +1698,7 @@
               zoom,
               protectedRevisions,
               detachForEviction,
+              trace,
             );
             requireValue(body, 'Missing original ambient animal: ' + partRevision);
             body.lastUsedFrame = actorFrameNumber;
@@ -1588,7 +1744,10 @@
           };
         if (source.visual.presentation === 'scout-tracks') record.depth = -Number.MAX_SAFE_INTEGER;
       }
+      const syncActorsStarted = trace ? measureNow() : 0;
       scene.syncActors(records);
+      if (trace)
+        trace.actorSubmitMs = Math.max(0, measureNow() - syncActorsStarted);
       silhouetteFrames = nextSilhouettes;
       if (active) canvasRenderer.setSilhouetteFrames?.(silhouetteFrames);
       // Keep offscreen and previously visited artwork resident for reuse.
@@ -1633,33 +1792,21 @@
       const lights = [];
       if (darkness > 0) {
         for (const p of z.props) {
+          const projected = project(p);
+          const fixtures = root.PrototypeVisuals.lightingFixtures?.(p, projected, zoom, region) || [];
+          if (fixtures.length) {
+            lights.push(...fixtures.filter((lamp) => lamp.lit !== false));
+            continue;
+          }
           const kind = root.PrototypeRenderer.nightLightKind(String(p.structure || ''));
-          if (kind)
-            lights.push({
-              ...project(p),
-              kind,
-              id: p.id,
-              ...(p.structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
-            });
+          if (kind) lights.push({ ...projected, kind, id: p.id });
         }
         for (const b of z.buildings)
-          if (b.progress >= 4) lights.push({ ...project(b), kind: 'window', id: b.id });
+          if (b.progress >= 4)
+            lights.push(...(root.PrototypeVisuals.lightingFixtures?.(b, project(b), zoom, region) || []).filter((lamp) => lamp.lit !== false));
         for (const n of current.visibleNPCs())
-          if (
-            [
-              'rest',
-              'supplier',
-              'recruiter',
-              'quests',
-              'fountain',
-              'transport',
-              'smith',
-              'teacher',
-              'alchemist',
-            ].includes(n.kind) &&
-            !n.interactionOnly
-          )
-            lights.push({ ...project(n), kind: 'lantern', id: n.id });
+          if (!n.interactionOnly)
+            lights.push(...(root.PrototypeVisuals.lightingFixtures?.(n, project(n), zoom, region) || []).filter((lamp) => lamp.lit !== false));
       }
       // Canvas already lights the glass actually carried by living, nonboss
       // Wraiths. Reuse its facing and idle presentation rather than inventing
@@ -1721,18 +1868,54 @@
       // They continue drifting even when the player/camera is stationary.
       const zoomedWidth = viewport.width / zoom,
         zoomedHeight = viewport.height / zoom;
-      const motes = root.PrototypeVisuals.atmosphereMotes({
-        width: zoomedWidth,
-        height: zoomedHeight,
-        region,
-        darkness,
-        dungeon: !!current.isDungeon(),
-        room: !!current.supplyRoom(),
-        optimized: !!options.getOptimizationMode(),
-        time: (typeof performance !== 'undefined' ? performance.now() : 0) / 1000,
-      });
+      const motes =
+        options.getAtmosphericParticles?.() === false
+          ? []
+          : root.PrototypeVisuals.atmosphereMotes({
+              width: zoomedWidth,
+              height: zoomedHeight,
+              region,
+              darkness,
+              dungeon: !!current.isDungeon(),
+              room: !!current.supplyRoom(),
+              optimized: !!options.getOptimizationMode(),
+              time: (typeof performance !== 'undefined' ? performance.now() : 0) / 1000,
+            });
       scene.syncMotes(motes, zoom);
       scene.setVignette({ darkness, optimized: !!options.getOptimizationMode() });
+    }
+    function readDeviceGraphics(gl) {
+      if (typeof gl?.getParameter !== 'function') return null;
+      const read = (token) => {
+        try {
+          if (token === undefined) return null;
+          const value = gl.getParameter(token);
+          return typeof value === 'string'
+            ? value.slice(0, 240)
+            : Number.isFinite(value)
+              ? value
+              : null;
+        } catch (_) {
+          return null;
+        }
+      };
+      let debug = null;
+      try {
+        debug = gl.getExtension?.('WEBGL_debug_renderer_info');
+      } catch (_) {}
+      return Object.freeze({
+        source: 'existing-game-webgl2-context',
+        observedAt: new Date().toISOString(),
+        version: read(gl.VERSION),
+        renderer: read(gl.RENDERER),
+        vendor: read(gl.VENDOR),
+        shaderVersion: read(gl.SHADING_LANGUAGE_VERSION),
+        unmaskedRenderer: read(debug?.UNMASKED_RENDERER_WEBGL),
+        unmaskedVendor: read(debug?.UNMASKED_VENDOR_WEBGL),
+        maxTextureSize: read(gl.MAX_TEXTURE_SIZE),
+        maxRenderbufferSize: read(gl.MAX_RENDERBUFFER_SIZE),
+        note: 'Last observed actual game context, not a new probe. May describe software rendering; values can be masked/unavailable. This does not certify device speed or current context health.',
+      });
     }
     async function prepare() {
       if (disposed) throw Error('Experimental renderer disposed');
@@ -1776,7 +1959,9 @@
           background: 0x0c1913,
         });
         stage = 'webgl2-context';
-        requireValue(app.canvas.getContext('webgl2'), 'WebGL2 context not available');
+        const actualContext = app.canvas.getContext('webgl2');
+        requireValue(actualContext, 'WebGL2 context not available');
+        deviceGraphics = readDeviceGraphics(actualContext);
         requireValue(
           typeof app.renderer.prepare?.upload === 'function',
           'PixiJS GPU preparation system not installed',
@@ -1895,12 +2080,22 @@
       let stage = 'active-check';
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
-        // Sampling is silent outside explicitly selected developer mode.
-        const observe =
+        // #783: the normal-mode recorder is explicitly opt-in. Keep the
+        // existing developer percentile cadence independent of that capture.
+        const capture = options.getDiagnosticRecording?.() === true;
+        const developerSample =
           game()?.s?.mode === 'developer' && ++developerDrawFrames % drawCpuSampleEvery === 0;
+        const observe = capture || developerSample;
         const row = observe ? {} : null;
         let stamp = observe ? measureNow() : 0;
-        // Ordinary frames must not allocate a recording callback.
+        const startedAtMs = stamp;
+        const bakesBefore = capture ? proceduralBakes : 0;
+        const bytesBefore = capture ? imageBytes : 0;
+        const paintsBefore = capture ? backgroundRepaints : 0;
+        const ratioBefore = backingRatio;
+        const viewportChanged =
+          app.screen.width !== viewport.width || app.screen.height !== viewport.height;
+        // Ordinary frames never create a profiler callback or read a clock.
         const record = row
           ? (name) => {
               const next = measureNow();
@@ -1918,20 +2113,41 @@
         syncBackground();
         if (record) record('background');
         stage = 'actors';
-        actorFrame();
+        actorFrame(capture ? row : null);
         if (record) record('actors');
+        stage = 'liquid';
         syncLiquidMotion();
+        if (record) record('liquid');
         stage = 'atmosphere';
         syncAtmosphere();
         if (record) record('atmosphere');
         stage = 'scene-render';
         scene.draw();
         if (record) record('scene');
-        if (row) {
+        stage = 'predictive-preparation';
+        queuePredictiveWarm(game());
+        if (record) record('predictive');
+        if (developerSample && row) {
           drawCpuSamples.push(row);
           if (drawCpuSamples.length > 120) drawCpuSamples.shift();
         }
-        queuePredictiveWarm(game());
+        if (capture) {
+          const finishedAtMs = measureNow();
+          return {
+            startedAtMs,
+            finishedAtMs,
+            totalMs: Math.max(0, finishedAtMs - startedAtMs),
+            phaseMs: row,
+            ratioBefore,
+            ratioAfter: backingRatio,
+            viewportChanged,
+            resolutionChanged: Math.abs(backingRatio - ratioBefore) >= 0.001,
+            bakesDuringDraw: proceduralBakes - bakesBefore,
+            proceduralBytesDelta: imageBytes - bytesBefore,
+            backgroundRepaintsDuringDraw: backgroundRepaints - paintsBefore,
+            note: 'Synchronous JavaScript draw and resource preparation, not GPU completion.',
+          };
+        }
       } catch (error) {
         // Pixi/ANGLE can signal context loss through its draw exception
         // BEFORE the browser fires webglcontextlost. Preserve that cause
@@ -1963,7 +2179,7 @@
       active = false;
       canvasRenderer.setSilhouetteFrames?.(null);
       silhouetteFrames = null;
-      if (app?.canvas) app.canvas.style.display = 'none';
+      if (app?.renderer && app.canvas) app.canvas.style.display = 'none';
     }
     function disposeResources() {
       dropBackgroundLookahead(true);
@@ -1981,10 +2197,16 @@
       backing?.destroy?.(false);
       backing = null;
       if (app) {
-        const node = app.canvas;
-        app.destroy(true);
-        node?.remove();
+        // Pixi's canvas getter dereferences renderer.canvas. If init rejected
+        // before a renderer existed, calling it (or destroy) masks the root
+        // startup error and strands the next retry on a half-created app.
+        const previous = app;
         app = null;
+        if (previous.renderer) {
+          const node = previous.canvas;
+          previous.destroy(true);
+          node?.remove();
+        }
       }
       backgroundRenderer = null;
       backdrop = null;
@@ -2016,6 +2238,7 @@
       status: () => ({
         active,
         lastError,
+        deviceGraphics,
         // Actual Pixi scene counters; Canvas overlay counters are separate.
         sceneMetrics: scene?.metrics?.() || null,
         drawCpuProfile: drawCpuReport(),

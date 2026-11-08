@@ -13,8 +13,8 @@ const catalog = Menus.create({
   Campaign,
   D: Campaign.data,
   action: (label, action, detail = '', disabled = false) => ({ label, action, detail, disabled }),
-  openMenu: (title, description, actions, back) => {
-    opened = { title, description, actions, back };
+  openMenu: (title, description, actions, back, options) => {
+    opened = { title, description, actions, back, view: options?.view || 'default' };
   },
   closeMenu: back,
   recallSquad() {},
@@ -25,6 +25,7 @@ game.s.keys.thorn = true;
 game.rescue('thorn');
 catalog.teacher({ family: 'thorn', name: game.boss('thorn').captive }, back);
 assert.equal(opened.back, back);
+assert.equal(opened.view, 'npc-training-hub', 'instructor menu uses compact hub presentation');
 opened.actions.find((a) => a.label.startsWith('Expedition training')).action();
 const train = opened.actions.find((a) => a.label.startsWith('Train Expedition Skill'));
 assert(train && !train.disabled);
@@ -79,3 +80,74 @@ assert.equal(game.hero.skills[0], 1);
 assert.equal(game.hero.gold, 0);
 assert(opened.actions[0].disabled, 'native funds guard and refreshed disabled state');
 console.log('PASS instructor confirmations refresh stale campaign quotes and recheck native funds');
+
+// Game-design contract: specialist catalog uses single-column transaction
+// presentation; Barracks uses comparable peer-category choices. No price,
+// unlock, companion order or save state changes are needed to classify them.
+game = new Campaign('normal', 'paladin');
+catalog.supplier({ kind: 'supplies', name: 'Town Supplies', family: 'vale' }, back);
+assert.equal(opened.view, 'npc-service-catalog');
+assert(
+  opened.actions.some((a) => a.label.includes('Ranger field support')),
+  'specialized supplier services remain reachable',
+);
+game.zone().buildings.push({ id: 'design-audit-barracks', progress: 4, full: false });
+catalog.barracksMenu({ id: 'design-audit-barracks' }, back);
+assert.equal(opened.view, 'barracks-hub');
+assert.deepEqual(
+  opened.actions.slice(0, 4).map((entry) => entry.label),
+  ['Company', 'Recovery', 'Training', 'Operations'],
+  'Barracks keeps four equal entry categories ahead of optional upgrades',
+);
+assert(
+  opened.actions.some((entry) => entry.label.includes('Full Barracks')),
+  'native gated upgrade remains on the root',
+);
+console.log('PASS NPC supplier and Barracks game-design hierarchy without changing service permissions');
+
+// Transactions should read as a structured catalog, never as a pair of
+// arbitrary equivalent buttons. Merely opening the Smith/Alchemist cannot
+// spend crowns, change stats or bypass the native specialist context.
+game = new Campaign('normal', 'paladin');
+game.hero.gold = 1000;
+const beforeServiceInspection = JSON.stringify(game.snapshot());
+catalog.smith({ kind: 'smith', family: 'crypt', name: 'Forge specialist' }, back);
+assert.equal(opened.view, 'npc-service-catalog', 'Smith uses a transactional list');
+assert(
+  ['Equipment upgrades', 'Reforging', 'Appearance'].every((label) =>
+    opened.actions.some((entry) => entry.label === label && entry.kind === 'section'),
+  ),
+  'Smith keeps equipment/rework/cosmetic intents separate',
+);
+catalog.supplier({ kind: 'alchemist', family: 'archive', name: 'Alchemist' }, back);
+assert.equal(opened.view, 'npc-service-catalog', 'Alchemist uses a transactional list');
+assert(
+  ['Preparation Tonics', 'Ranger support', 'Training and resets'].every((label) =>
+    opened.actions.some((entry) => entry.label === label && entry.kind === 'section'),
+  ),
+  'Alchemist preserves cost-bearing service categories',
+);
+assert.equal(
+  JSON.stringify(game.snapshot()),
+  beforeServiceInspection,
+  'reading specialist menus cannot mutate the campaign',
+);
+console.log('PASS Smith and Alchemist transaction categories remain available and read-only until chosen');
+const engineeringBarracks = { id: 'engineering-full-barracks', progress: 4, full: true };
+game.zone().buildings.push(engineeringBarracks);
+catalog.barracksMenu(engineeringBarracks, back);
+{
+  assert.equal(opened.title, 'Full Barracks');
+  assert.equal(opened.view, 'barracks-hub');
+  assert.deepEqual(
+    opened.actions.slice(0, 4).map((entry) => entry.label),
+    ['Company', 'Recovery', 'Training', 'Operations'],
+    'Full Barracks must retain the same four service destinations as Basic',
+  );
+  assert(
+    !opened.actions.some((entry) => entry.label.includes('Upgrade to Full Barracks')),
+    'Full Barracks cannot offer its Basic upgrade a second time',
+  );
+}
+
+

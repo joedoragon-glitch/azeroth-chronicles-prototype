@@ -1,5 +1,8 @@
 > **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
 
+> **8 November execution checkpoint.** Current Dark Crown integration draft: the Foundry production and shipping fixtures are static equipment. Descriptions of animated labor refer to the superseded provisional draft.
+
+
 # Phase 2A — Canon sprite coverage audit
 
 ## Purpose

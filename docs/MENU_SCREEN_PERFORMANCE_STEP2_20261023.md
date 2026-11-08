@@ -1,4 +1,67 @@
-# Menu usability overhaul — Step 2: one Screen & Performance window
+# Screen & Performance settings
+
+## Current implemented layout and release — 8 November 2026
+
+**Implemented, merged and published; older candidate sections below are historical.** Owner-marked declutter [PR #858](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/858) shipped as dev.275 at [merged main `2d8fafe`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/2d8fafe0301bfef6540b252c88e13d037d975ce6), with [successful focused/Pages #42447507266](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42447507266). It is also included in the later published [dev.276 source `ee44c2f`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/ee44c2f9975a9ced0b392ad19f2e317a01e669f8) ([Pages #42480404721](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42480404721)). Neither merge nor hosting proves every device has installed the same version.
+
+The actual **Settings / Ajustes** design is one scrollable **Screen and performance** page with Screen layout, Camera zoom, Renderer and recovery, effective active-renderer graphics controls, Drawing target (FPS) and Adaptive frame skip. Redundant Display/Frame pacing/graphics headings, duplicated effective-state values and unnecessary explanatory tips were removed as the owner annotated. There are **no nested Screen and performance submenus**. **Playtest tools** is its sibling page: local JSON export, concise screenshot-friendly Performance details, inline profiler controls and sample reset, with Help and privacy as the only informational child page. Export is not a remote upload or a save backup. Preferred renderer and actual world renderer are distinct; the title screen's Canvas UI must not be mislabeled a failed Pixi world initialization. Preserve player-selected Canvas, startup quarantine, 15-second Keep/Revert, honest EN/ES reasons for genuine fallback and safe manual retry.
+
+Pixi uses its dedicated resolution and optional atmospheric-particle settings and reversible opt-in Optimization Mode; Canvas uses its independently adaptive quality controls on fallback or deliberate selection. The available Auto/20/60 drawing targets do not represent monitor-presented FPS. Gameplay, AI, combat cues, music and campaign saves remain unaffected by the documentation update. The owner approved **closing the intensive optimization phase**, not deleting these supported controls or claiming full-campaign FPS validation. Later sections on dev.274/275 as an unmerged candidate record the genuine pre-release state **at those dates** and must not be used as current implementation instructions. See [development state](DEVELOPMENT_STATE.md), [performance closeout #839](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/839), and [live Pixi/Canvas exception #841](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/841).
+
+## Owner-marked compact layout — dev.275 candidate (7 November 2026)
+
+The owner's annotated phone screenshots define the visible cleanup. Remove **Display**, **Active layout** and its current value, the **Pixi graphics / Canvas graphics** heading, **Effective atmospheric particles** and analogous **Effective optimization** readout, **Frame pacing**, and the separate **Active draw target** with its FPS value. Also remove the redundant descriptions beneath **Screen layout** and **Graphics renderer**, and “Decorative motes only.” beneath the particle switch. These are noninteractive labels and tips, not feature removals. The conditional explanation that Optimization Mode temporarily hides particles is still necessary and remains; so do the useful camera zoom and resolution explanations.
+
+Reflow without gaps: start with Screen layout and Camera zoom immediately below the page description; keep **Renderer and recovery** as a separator; then show effective density, inline active-renderer graphics controls, Drawing target (FPS), and Adaptive frame skip. No nested settings pages. Preserve real fallback explanations, selectable Canvas/Pixi, the 15-second Keep/Revert trial and crash protection, AI, saves and renderer behavior. The FPS selector already carries the selected target; actual measured drawing rate stays in Playtest tools → Performance details.
+
+**Verified baseline:** dev.274 merged as [PR #857](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/857), [main c1c33b8](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/c1c33b8effd5939eb67384a69af59a4c23c342c9), and [successful Pages #42445318925](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42445318925). Dev.275 is a new unreleased proposal pending focused verification and its own publication receipt; owner device appearance/FPS acceptance remains separate.
+
+
+## Previous one-page correction — dev.274 (7 Nov 2026)
+
+**Base:** published `main@97cb3b8af9c24976e5946a786d33f22461a78049`, dev.273, following merged #855 and #856 ([Pages #42430517255](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42430517255)). **Current candidate:** dev.274 on [PR #857](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/857), not player-published pending relevant exact-head checks; owner authorized merge after validation. Physical-device acceptance is separate.
+
+The owner rejected dev.273's four clickable child menus and duplicate technical readouts. **Screen and performance is now a single scrollable Settings page**, with inline section headings and their controls:
+- **Display:** current layout, layout choice and zoom.
+- **Renderer and recovery:** active world renderer (only during gameplay), any genuine known recovery/fallback state, and the chosen Pixi/Canvas renderer. The selector itself communicates the preferred choice, so no duplicate preferred-renderer summary. Safe retry remains available only when appropriate, with the existing manual 15-second Keep/Revert and quarantine intact.
+- **Pixi graphics / Canvas graphics:** effective density when gameplay is running, one relevant set of graphics controls, and its own effective quality readouts. Before New Game/Continue, show the preferred backend's settings without claiming that the title Canvas element is an actual Pixi failure. A configured Canvas backup and true fallback still show Canvas controls when active.
+- **Frame pacing:** draw target appears once, beside FPS selection and adaptive skip. This is a target, not a display-presentation measurement.
+
+**No Display, Renderer and recovery, Graphics or Frame pacing navigation buttons or child screens remain.** Gameplay controls/prefs, both rendering implementations, performance presets, critical recovery, save data and actual performance metrics are unchanged. **Playtest tools** remains the distinct, one-page diagnostics destination under Settings, with Export, Performance details, profiling, and Reset available together; Help and privacy remains an informational subpage.
+
+The title screen does **not** announce Pixi, expose graphics explanations, or announce that preferences were migrated/reset. The one-time migration remains functional but silent; existing offline/update-availability messaging is unrelated and unchanged. A false “Pixi startup failed” label is suppressed before gameplay on an ordinary clean launch; actual stored recovery holds are still visible in Settings. This distinction requires targeted title/entry/real-failure tests, not only static inspection.
+
+**Validation/release gate:** verify English/Spanish production-shell menus, a no-announcement title launch, Canvas selection and recovery, focused Pixi browser navigation, phone layout geometry, and the relevant offline package at exact candidate SHA. A draft is not a player update; merging/deployment require separate approval. No claim of improved FPS or ChromeOS/iOS hardware verification is made.
+
+## Historical 7 November split-page audit — superseded by owner direction
+
+Baseline: published dev.272 (`0a7397bfb39e456f1d88584bca8f71c8fbe0c114`). The October consolidation and dev.271–272 candidate notes below are historical. The follow-up belongs in one PR.
+
+| Gate | Audit findings | Observable result |
+| --- | --- | --- |
+| Settings hierarchy and renderer state | F01–F02 | Landing identifies active and preferred renderer before any settings. Display, renderer/recovery, active graphics, pacing and diagnostics have separate destinations. Deliberate Canvas and GPU fallback are distinguishable. |
+| Effective controls | F03–F04, F09–F10 | Pixi device sharpness is fixed during play; Canvas Auto can adapt. Preset reports applied density/particles and retained choices. Zoom mentions rendering load and the FPS label describes a draw target. |
+| Device preferences and recovery | F05–F08 | Returning devices receive the reset once, partial writes remain retryable, fresh installs use defaults, and post-reset edits persist. Trial interruption and safety holds still reach Canvas. Device-only selections produce zero campaign writes. |
+| Diagnostics and accessibility | F11–F13 | EN/ES menu and recovery flows have clear focus/back navigation. Local export stays one click from Playtest tools. Sample deletion requires confirmation and describes the evidence cleared. |
+| Build and acceptance | F14 | Record candidate SHA and focused shell, renderer, migration, packaging and browser results. Physical installed buildCommit and full-campaign performance are separate acceptance evidence. |
+
+Resume in order: verify main and the open PR, finish the preference/safety contract, complete the player-facing pages, then run targeted shell and browser journeys and reconcile this document and the development ledger. Candidate acceptance requires the exact branch head and concrete pass/fail evidence. Publication requires separate owner authorization.
+
+Historical checkpoint: initial runtime implementation was in [PR #856](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/856). It split the settings pages (subsequently rejected by the owner), used the live renderer for graphics controls, separated saved and effective values, and adds a pre-controller settings migration. An interrupted trial preserves the guard’s Canvas decision rather than being retried by the migration. PR #856 merged/published dev.273 before the owner's later one-page correction. Its original checks are historical evidence, not acceptance of the revised navigation.
+
+### Playtest tools
+
+The parent menu is **Settings** (**Ajustes**). **Playtest tools** is a sibling of **Screen and performance**. Its single working page includes report export, the screenshot-friendly Performance details readout, inline profiling, and sample reset. **Help and privacy** is its only informational child page. The readout uses existing frame and profiler snapshots on page open or refresh, labels issued draws separately from display FPS, and distinguishes empty samples from measured zero. The full JSON export remains device-local and unchanged. Effect recording remains developer-gated.
+
+### Candidate controls and recovery
+
+The landing shows active and preferred renderers, fallback status when applicable, effective backing resolution and the current draw target. The Display page shows resolved layout and camera zoom. Renderer and recovery keeps Canvas as a selectable backup and closes the menu for a deliberate Pixi trial. Graphics follows the active backend, including after a context loss while the menu is open. Frame pacing has its own settings page.
+
+The versioned migration runs before settings controllers. It resets display and camera, both renderers’ quality, draw target and routine skip. It defaults to Pixi when safe. An interrupted trial is resolved by the existing startup guard, including retaining Canvas where the trial was unconfirmed. An existing recovery hold remains in force. The migration is allowlisted, its completion marker is written last, and a later successful retry completes a partially written migration. Device-only changes do not serialize a campaign save.
+
+Local shell checks passed for bilingual navigation, save-write isolation, migration and recovery storage, diagnostics/export, frame skip and resolution. Software Chromium 153 passed the focused Pixi trial → Keep → preset → context loss → live Canvas menu journey, FPS preference/ungated simulation on desktop and the phone game document, and EN/ES phone-frame menu geometry, contrast, touch, Back and Escape. The generated offline package and release documentation consistency checks passed. GitHub runs for the exact candidate head are tracked in #856. Local software Chromium does not verify WebKit, assistive-technology speech output, installed builds or hardware FPS.
+
+## Historical Step 2 record
 
 **Status:** Review candidate; not deployed.  
 **Base reconciled:** Step 1 PR #413 merged into `main` as `3ad37c961d06c0b9b9339361df796deb8cd06041`. The merged commit's file tree matches the Step 1 head exactly (`e230841c04ee97b80a024fce2997813b267e97ca`).  
@@ -34,3 +97,20 @@ Untested until a deliberately scoped later device check: real phone touch scroll
 **Merge to `main` is separately authorized after focused validation; do not merge while checks are failing. GitHub's normal focused publisher may deploy after merge. No manual broad matrix.** After validation and merge of this PR, proceed to Step 3 (Music & Sound) as its own scoped branch/change.
 
 Validation note: the initial focused run validated the Step 1 + Step 2 stack against the original main. After Step 1 merged, the diff against the updated main contains only five Step 2 files. The focused validation must still pass on the current proposed changes before Step 2 merges.
+
+## Pixi recovery follow-up, dev.271 release
+
+Pixi preparation uses the explicit rendering density and optimization preference. Canvas backup retains its temporary adaptive density and optimization state while Pixi prepares or runs. A failed retry or return to Canvas restores that state. Playtest reports show the effective Pixi backing ratio while Pixi owns the presentation. Existing settings and controls remain available. PR #854 merged into main as `23f6dcb9fa5057903727bbfd481698d35f147a97`; focused validation and Pages publication [#42409998499](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42409998499) succeeded on 7 November 2026. This is source/release verification, not evidence of owner-device installation or campaign-wide FPS.
+
+## Pixi pacing follow-up candidate
+
+Routine Pixi frame skipping requires drawing to account for at least half of the measured callback work. The existing budget, consecutive-skip and frame-age limits still apply. Canvas and emergency protection retain their existing rules. This is included in unmerged PR #855, based directly on main following #854; not a player release. The selected FPS remains a draw target, separate from confirmed presentation and simulation timing.
+
+## Pixi graphics settings reconciliation, dev.272 candidate
+
+Pixi keeps its own resolution, atmospheric-particle preference, and Optimization Mode state. The preset caps resolution at the tested 80% candidate and hides decorative motes. A previously selected lower custom resolution is respected. Turning the preset off restores custom choices. Changes draw while the settings screen pauses the campaign, so density preparation happens before gameplay resumes. Canvas retains its own automatic and manual preferences. Pixi keeps the normal terrain, audio, warning, and input behavior. New FPS choices are Auto, 20 and 60. An existing legacy 30 or Auto 30–60 choice stays selectable until the player chooses a new target. Existing explicit 60% or 50% resolution choices likewise carry forward until changed. The preset is opt-in. Software-browser evidence and actual owner hardware acceptance are separate.
+
+
+## Focused CI browser regression ownership (7 November 2026)
+
+The FPS browser fixture exercises the actual `phone-game.html` document hosted by the separate `phone.html` orientation/iframe shell; PWA/phone framing remains independently covered by the release and startup browser workflows. The real title/new-game language entry remains required, rather than an artificial automatic-start shortcut. The focused Pixi browser gate now drives a single real desktop WebGL2 select → Keep → context-loss → effective Canvas-settings journey. The existing longer Mage combat overlay, lighting, resize, reload and phone trials are preserved in the same file for explicitly invoked full manual browser acceptance; they are not asserted passed by this focused subset. This scope split prevents the former two-journey CI process from timing out at six minutes after the Mage case already passed, without raising CI timeouts or waiving the active-fallback check. Chromium software results do not establish physical-device performance.

@@ -6,6 +6,8 @@ An original, offline-capable fantasy RPG about becoming a serious inconvenience 
 
 The playable Community Snapshot is still receiving updates. **For the current code/build version and verified Pages publication, see [Development state](docs/DEVELOPMENT_STATE.md).** Rogue/Pícara is the fourth playable class. For the latest *verified* publication, open issues, and device-testing limits, see [Development state](docs/DEVELOPMENT_STATE.md). A published update does not automatically mean an installed browser/PWA has loaded it.
 
+**Icon-led menu update — [PR #800](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/800), merged and published:** Menus use the crown icon’s violet/gold palette and larger landscape text. Start with **New Game → New Adventure** (Normal/Standard defaults, optional Succession), then **Choose Hero**. Saved Games, Help and advanced diagnostics are grouped by purpose. Physical iPhone Air acceptance remains open. See the [design contract](docs/MENU_STAGE4_ICON_LED_GAME_DESIGN_20261104.md) and [verified release status](docs/DEVELOPMENT_STATE.md).
+
 **Jump to:** [Play](#play) · [The game](#the-game) · [Controls](#controls) · [Saves and updates](#saves-updates-and-diagnostics) · [Graphics and audio](#graphics-and-audio) · [Development](#development) · [Documentation](#project-documentation)
 
 ## Play
@@ -14,11 +16,11 @@ Use the **[browser / Chromebook game](https://joedoragon-glitch.github.io/azerot
 
 On the title screen:
 
-1. Choose **New Game** and select **Paladin, Mage, Ranger, or Rogue**. Normal and Nightmare have separate saves; Nightmare unlocks after the peaceful ending.
+1. Choose **New Game**, review **New Adventure**, then **Choose Hero** and select **Paladin, Mage, Ranger, or Rogue**. Normal and Nightmare have separate saves; Nightmare unlocks after the peaceful ending.
 2. Use **Continue Adventure** to resume an eligible saved game. **Saved Games & Backups** provides recovery and file import/export.
 3. During play, open **Adventure → Quest journal** for the story, **Map and travel routes** for destinations, and **Hero skills** for your class's actions and training information.
 
-The title screen also contains **Settings** and **Help & Credits**. English and **partial** Spanish localization are available; some names and text remain in English.
+After the automatic startup update check, first-time visitors choose **English** or **Español** on a dedicated welcome screen. The choice is a browser preference separate from campaign saves and can later be changed in **Settings**; returning players skip the welcome screen. The title screen has **Settings**, **Saved Games & Backups**, and **Help & Credits**. Help now includes how to play, performance diagnostics, update and backup guidance, current installed-version information, development goals, and creator contact. English and **partial** Spanish localization are available; some names and text remain in English.
 
 ## The game
 
@@ -34,7 +36,9 @@ Greenwood has a working mill and pond, cultivated orchards, a separate decorativ
 
 ## Controls
 
-These are **default** desktop bindings. Keyboard presets and individual keys can be changed under **Game and settings → Controls → Customize keyboard**; existing saved preferences are preserved. On phone, use the on-screen buttons and joystick or tap a reachable destination.
+These are **default** desktop bindings. Movement, interaction, menu/back, combat, and utility keys can all be changed under **Settings → Controls → Customize keyboard → Movement and menu keys** (or the other key groups). Escape remains a safety fallback for opening and leaving menus; Enter remains available for confirmation. On phone, use the on-screen buttons and joystick or tap a reachable destination.
+
+On desktop, a prompt shows the current **Interact** key and the nearby NPC, object, or resource it will act on. It follows your binding if you change it.
 
 | Action | Desktop / Chromebook | Phone |
 | --- | --- | --- |
@@ -52,15 +56,15 @@ These are **default** desktop bindings. Keyboard presets and individual keys can
 
 Tap **Target** to cycle eligible enemies; hold it for roughly **0.55 seconds** to lock the current target for the encounter. **Recall** is a five-second defensive regroup: the button shows ON and remaining seconds; press it again to cancel. Both automatic and manually activated hero attacks leave Recall alone. The five seconds count active game time, so pausing does not consume them. Companion labor cannot be newly assigned during the brief Recall hold. Menu selection follows the movement keys; F, Enter or Space confirms. Skills can be queued while cooling down. The Classic number-key preset and a mirrored left-hand preset are available in Controls.
 
-On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. The controls and settings are described in more detail in **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** and the in-game Help / Controls menus.
+On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. Controls can be customized under **Settings → Controls**; basic play instructions and report/profiling explanations live in **Help & Credits**. The **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** gives additional guidance.
 
 ## Saves, updates and diagnostics
 
 **Your campaigns are stored locally in the browser/device.** Before clearing browser data, reinstalling or moving devices, export a backup. Normal and Nightmare saves are independent, and the game maintains compatibility with its v4 save format.
 
-- **Save or restore:** **Game and settings → Save and game management → Save backups → Export save / Import save**. The title screen also has **Saved Games & Backups**. The [save-protection improvements from issue #773](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/773) provide validated manual exports that include mode/class/level/date, imports require a review and separate confirmation, the backup menus can gently suggest another external copy, and supported browsers offer an explicit persistent-storage request. See [development state](docs/DEVELOPMENT_STATE.md) and [PR #775](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/775) for the verified merge/publication status and check which version is installed. A started download is not proof of a retained file. Store the exported `.json` outside browser site data; neither the one local checkpoint nor persistence permission protects against clearing site data or losing the device.
-- **Check for updates:** **Game and settings → Check for game update**, then **Install available game update** when offered. A new deployment can still leave an existing browser or installed PWA using an older cached build.
-- **See the version actually running:** **Game and settings → Screen and performance → Export playtest report**. This downloads local JSON diagnostics, including the `version` field. **It is not a save backup**, and the game does not automatically send telemetry.
+- **Save or restore:** From the main title screen, open **Saved Games & Backups** to select Normal/Nightmare, recover a checkpoint, export a save, import a save or request supported storage protection. Each entry explains its action. The [save-protection improvements from issue #773](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/773) provide validated manual exports that include mode/class/level/date, imports require a review and separate confirmation, the backup menus can gently suggest another external copy, and supported browsers offer an explicit persistent-storage request. See [development state](docs/DEVELOPMENT_STATE.md) and [PR #775](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/775) for the verified merge/publication status and check which version is installed. A started download is not proof of a retained file. Store the exported `.json` outside browser site data; neither the one local checkpoint nor persistence permission protects against clearing site data or losing the device.
+- **Updates:** The game automatically checks for updates at startup and offers an installation action when an update becomes available during play. There is no separate manual Check button in Settings. An existing installed PWA can still temporarily show its earlier cached build.
+- **See the version actually running:** **Help & Credits → Version and development**, or **Settings → Screen and performance → Export playtest report** for a JSON with the same build version and diagnostics. **It is not a save backup**, and the game does not automatically send telemetry.
 
 **Distribution boundary:** This automatic/incremental update mechanism is for the current link-based browser game and optional PWA. A future packaged mobile or desktop app will require a fresh platform-specific update and save-compatibility review; it must not simply inherit the browser service-worker design. See the [recorded owner decision](docs/DECISIONS.md#31-october-2026--web-updater-is-transitional-native-application-delivery-requires-a-new-decision). No native updater or breaking-version policy enforcement is implemented by that decision.
 
@@ -69,6 +73,10 @@ For the distinction between implemented, tested, merged, published and *device-v
 ## Graphics and audio
 
 **Graphics policy for the PixiJS-primary release (PR #574):** **PixiJS WebGL2 · Default** is the preferred world renderer; **Canvas 2D · Backup** is a full selectable alternative and the automatic fallback after an unsupported, failed or quarantined GPU start. The upgrade changes older Canvas preferences **once**; choosing Canvas afterward remains persistent across reloads. Pixi preparation occurs when entering **New Game / Continue Adventure**, with **Continue with Canvas** if preparation is slow. The **15-second Keep/Revert trial** still applies when a player manually switches from Canvas to WebGL2, not to automatic default startup. The candidate settings no longer describe PixiJS as “Experimental”—this is a **product role**, not proof of hardware certification or superior FPS.
+
+**Automatic startup history (#842 candidate; not released):** The same playtest report automatically includes the latest three starts/returns to the game, including preparation, renderer choice, scene reveal and any interruption. No diagnostic button, movement, or second export is required. This small history is separate from campaign saves.
+
+**Startup safety feedback (Issue #841 candidate; not yet released):** If a previous WebGL2 startup was interrupted or repeated failures paused recovery, Canvas stays playable and the game explains the hold in English/Spanish. **Retry PixiJS WebGL2** deliberately starts the existing 15-second Keep/Revert trial; **Use Canvas 2D** saves the backup choice. Reloading never silently clears a hold. Reports retain the startup decision, hold code and bounded first/latest recorded renderer errors. Older holds without error evidence remain explicitly unknown.
 
 **Availability:** This is the PixiJS-default source for PR #574. Publication requires a successful merged-`main` GitHub Pages workflow; an installed PWA may retain its previous renderer/version until it updates. Check [Development state](docs/DEVELOPMENT_STATE.md) and the version exported under **Screen and performance** before assuming your device has the rollout. Performance-report counters are diagnostic measurements, **not proof of visible frames per second on a Chromebook or phone**. Rendering resolution, optimization and frame-skip controls remain available.
 

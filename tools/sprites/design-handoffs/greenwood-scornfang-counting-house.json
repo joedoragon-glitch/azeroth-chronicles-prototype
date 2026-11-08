@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "greenwood-scornfang-counting-house",
+  "name": "Scornfang's appropriated farm storehouse Treasury",
+  "kind": "structure",
+  "nextAction": "Complete native/Canvas/Pixi visual and focused functional review of the joint Priority 1–4 artistic candidate in draft PR #832. No merge, deployment, new raster production or owner's visual acceptance is claimed.",
+  "context": {
+    "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
+    "decisionSummary": "Owner explicitly directs that Scornfang took possession of an agricultural structure to establish his Treasury and workplace. Supersedes purpose-built counting-house direction; preserve agricultural origin beneath security/receiving/accounting adaptations.",
+    "decisionDate": "2026-11-05",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/828",
+    "contentDocuments": [
+      "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
+    ],
+    "locationAndLore": "Existing Scornfang's Treasury in Greenwood; adapted agricultural storehouse/granary. No invented prior owner or acquisition event."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner-selected appropriated agricultural structure; no unseen procedural/raster appearance acceptance.",
+    "proceduralDesignAcceptance": "Priority 1–4 structural and compositional candidates authored in shared procedural art; original identities preserved. Focused tests and direct owner visual acceptance remain separate gates.",
+    "spriteProductionAuthorization": "Not requested in this task.",
+    "generatedAppearanceAcceptance": "None.",
+    "pendingCorrections": [
+      "Replace recycled cottage with recognizable former farm storage building",
+      "Adapt original broad loading opening, secure storage and work apron for Treasury/reclamation use",
+      "Add restrained reinforcement, accounting/weights/records and organized goods; preserve routes/interior/recovery",
+      "Check roof joins, open rest bay, yard clusters, and restrained post grounding in both renderers at 150% camera before visual signoff"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "85ffe148",
+    "ownerFilesAndBranches": [
+      {
+        "path": "src/prototype/visuals.js",
+        "branch": "fix/greenwood-owner-visual-review-20261105"
+      },
+      {
+        "path": "src/prototype/greenwood-landscape.js",
+        "branch": "fix/greenwood-owner-visual-review-20261105"
+      },
+      {
+        "path": "src/prototype/greenwood-interiors.js",
+        "branch": "fix/greenwood-owner-visual-review-20261105"
+      }
+    ],
+    "exactEntityState": "dev.262 procedural implementation; native 852x393 camera at 150%, day clock120/night500, existing v4 scene. See committed scene receipt and coverage record.",
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "docs/evidence/greenwood-owner-environment-20261105/treasury-day.png",
+      "docs/evidence/greenwood-owner-environment-20261105/treasury-night.png"
+    ],
+    "traitsToPreserve": [
+      "Greenwood weathered timber, stone footing and patched shingle agricultural architecture",
+      "Existing loading frontage and farm storage silhouette remain recognizable beneath later adaptations",
+      "Scornfang ownership, supply-vale interior/cache identities, recovery gates and old saves",
+      "Distinct from Thornfang's domestic/scout adaptations; no invented prior-owner story"
+    ],
+    "assetSpecificDependencies": [
+      "PR #828 controlling handoff and docs/evidence/greenwood-owner-environment-20261105/README.md; implementation source is a candidate, not released art."
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Scornfang's appropriated farm storehouse Treasury"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Day/night, Canvas/Pixi and fresh/restored v4 worlds as applicable."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "path": "src/prototype/visuals.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      },
+      {
+        "path": "src/prototype/greenwood-landscape.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      },
+      {
+        "path": "src/prototype/greenwood-interiors.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "no new animation requested",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "docs/evidence/greenwood-owner-environment-20261105/README.md",
+      "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "main@e25ad8e800f385a8c5591a8373edb04c2f85a1b8",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

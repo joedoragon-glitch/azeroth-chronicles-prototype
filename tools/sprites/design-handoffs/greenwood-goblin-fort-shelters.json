@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "greenwood-goblin-fort-shelters",
+  "name": "Goblin Road Fort domestic shelters",
+  "kind": "structure",
+  "nextAction": "Complete focused browser/GPU and performance verification on PR #828; preserve the reviewed native candidate and owner feedback. No raster sprite generation, merge or release is requested by this record.",
+  "context": {
+    "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
+    "decisionSummary": "Owner requested design-first takeover. This is a proposed implementation specification grounded in owner feedback; not acceptance of unseen implementation or generated artwork.",
+    "decisionDate": "2026-11-05",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/828",
+    "contentDocuments": [
+      "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
+    ],
+    "locationAndLore": "Goblin Road Fort domestic shelters in Greenwood Vale; preserve existing canon."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner authorized design/reconciliation work; the specific implementation has not been visually accepted.",
+    "proceduralDesignAcceptance": "Implemented and engineer-reviewed in native Canvas scenes; owner visual acceptance is not claimed. Browser/Pixi candidate review remains tracked in #828.",
+    "spriteProductionAuthorization": "Not requested in this task.",
+    "generatedAppearanceAcceptance": "None.",
+    "pendingCorrections": [
+      "Two goblin-usable canvas/timber shelters; rear-facing layout opens into courtyard",
+      "Preserve east gate, tribute access, stable wall IDs and real collision",
+      "Fit enclosure to shelter/party clearances; migrate once, including partial donor state"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "85ffe148",
+    "ownerFilesAndBranches": [
+      {
+        "path": "src/prototype/greenwood-landscape.js",
+        "branch": "fix/greenwood-owner-visual-review-20261105"
+      },
+      {
+        "path": "src/prototype/visuals.js",
+        "branch": "fix/greenwood-owner-visual-review-20261105"
+      },
+      {
+        "path": "src/prototype/fortifications.js",
+        "branch": "fix/greenwood-owner-visual-review-20261105"
+      }
+    ],
+    "exactEntityState": "dev.262 procedural implementation; native 852x393 camera at 150%, day clock120/night500, existing v4 scene. See committed scene receipt and coverage record.",
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "docs/evidence/greenwood-owner-environment-20261105/goblin-day.png"
+    ],
+    "traitsToPreserve": [
+      "Two goblin-usable canvas/timber shelters; rear-facing layout opens into courtyard",
+      "Preserve east gate, tribute access, stable wall IDs and real collision",
+      "Fit enclosure to shelter/party clearances; migrate once, including partial donor state"
+    ],
+    "assetSpecificDependencies": [
+      "PR #828 controlling handoff and docs/evidence/greenwood-owner-environment-20261105/README.md; implementation source is a candidate, not released art."
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Goblin Road Fort domestic shelters"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Day/night, Canvas/Pixi and fresh/restored v4 worlds as applicable."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "path": "src/prototype/greenwood-landscape.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      },
+      {
+        "path": "src/prototype/visuals.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      },
+      {
+        "path": "src/prototype/fortifications.js",
+        "reason": "Reuse owning procedural/runtime system; no new raster production."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "no new animation requested",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "docs/evidence/greenwood-owner-environment-20261105/README.md"
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "main@e25ad8e800f385a8c5591a8373edb04c2f85a1b8",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

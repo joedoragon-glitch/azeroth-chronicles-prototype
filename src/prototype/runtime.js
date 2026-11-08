@@ -295,13 +295,15 @@
       },
       // Called only for a drawing already permitted by the regular FPS limiter.
       // Applies at every valid FPS target; warnings have no special exemption.
-      shouldSkip(now, target) {
+      shouldSkip(now, target, requireRenderDominance = false) {
         if ((!enabled && !emergency) || !Number.isFinite(now) ||
           !Number.isFinite(target) || target <= 0) return false;
         const stressed =
           drawnSamples >= 6 &&
           drawWork > (1000 / target) * 1.12 &&
-          renderWork >= 5;
+          renderWork >= 5 &&
+          // Ordinary Pixi skips should pay for a meaningful share of the callback.
+          (!requireRenderDominance || renderWork * 2 >= drawWork);
         const drawAge = lastDrawAt === null ? Infinity : now - lastDrawAt;
         const skip = (emergency || stressed) &&
           consecutiveSkips < (emergency ? 5 : 2) &&
@@ -348,6 +350,12 @@
         };
       },
     };
+  }
+  // P0 #839 controlled, unmerged Pixi fixed-quality experiment: the current
+  // active renderer, not the saved preference, determines whether we freeze
+  // automatic presentation changes. Never disable real WebGL failure recovery.
+  function pixiFixedQualityExperimentActive(mode, active) {
+    return mode === 'webgl2' && active === true;
   }
   // Presentation-only relief. Normal Off is respected outside true emergencies;
   // confirmed near-freeze recovery temporarily overrides even manual Off.
@@ -425,13 +433,16 @@
   // Adapt only the backing-store density. CSS coordinates, camera, input and
   // simulation remain independent of this device-local presentation policy.
   const resolutionPreferenceKey = 'azeroth-render-resolution-v1';
-  function createResolution(storage) {
+  function createResolution(storage, preferenceKey = resolutionPreferenceKey, legacyPreference) {
     // Manual density is relative to CSS viewport size, never device resolution.
     const fixedRatios = Object.freeze({ '100': 1, '80': 0.8, '60': 0.6, '50': 0.5 });
     let preference = 'auto';
     try {
-      const saved = storage?.getItem(resolutionPreferenceKey);
+      const stored = storage?.getItem(preferenceKey);
+      const saved = stored ?? legacyPreference;
       if (saved === 'native' || Object.hasOwn(fixedRatios, saved)) preference = saved;
+      if (stored == null && legacyPreference !== undefined)
+        storage?.setItem(preferenceKey, preference);
     } catch (_) {}
     let maximum = 1,
       ratio = selectedRatio(),
@@ -439,8 +450,8 @@
       checkAt = null,
       changedAt = null,
       changes = 0;
-    function selectedRatio() {
-      return Object.hasOwn(fixedRatios, preference) ? fixedRatios[preference] : maximum;
+    function selectedRatio(ceiling = maximum) {
+      return Object.hasOwn(fixedRatios, preference) ? fixedRatios[preference] : ceiling;
     }
     function suspend() {
       samples = [];
@@ -453,6 +464,7 @@
       get ratio() {
         return ratio;
       },
+      selectedRatio,
       configure(value) {
         if (!Number.isFinite(value) || value <= 0) return;
         // The shell resizes immediately after adaptation. Reapplying the same
@@ -470,7 +482,7 @@
         changedAt = null;
         suspend();
         try {
-          storage?.setItem(resolutionPreferenceKey, value);
+          storage?.setItem(preferenceKey, value);
         } catch (_) {}
         return true;
       },
@@ -552,6 +564,12 @@
       companionUnitsMs: round(row.companionUnitsMs),
       companionBookkeepingMs: round(row.companionBookkeepingMs),
       enemyAIMs: round(row.enemyAIMs), renderMs: round(row.renderMs),
+      // Already-measured surface costs belong in rare incident snapshots,
+      // not only rolling averages. Null means the surface was not drawn.
+      // These are synchronous JS timings, never GPU-presented frame time.
+      pixiMs: row.pixiAttempted ? round(row.pixiMs) : null,
+      canvasOverlayMs: row.canvasOverlayDrawn ? round(row.canvasOverlayMs) : null,
+      canvasWorldMs: row.canvasWorldDrawn ? round(row.canvasWorldMs) : null,
       audioUpdateMs: round(row.audioUpdateMs), eventDispatchMs: round(row.eventDispatchMs),
       otherJsMs: round(row.otherJsMs), drawn: row.drawn,
       eventKinds: row.recentEventKinds || [],
@@ -661,6 +679,7 @@
     createFrameSkip,
     frameSkipPreferenceKey,
     createAutoOptimization,
+    pixiFixedQualityExperimentActive,
     createResolution,
     resolutionPreferenceKey,
   };

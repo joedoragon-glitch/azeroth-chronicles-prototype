@@ -23,6 +23,40 @@ const mime = {
   '.mp3': 'audio/mpeg',
   '.webmanifest': 'application/manifest+json',
 };
+// The phone PWA's /phone.html is an outer orientation/iframe shell. FPS
+// assertions must use the actual same-origin game document (phone-game.html),
+// just as the live shell does inside its iframe; PWA/phone framing is tested
+// separately by the release and startup browser suites.
+// Keep this Canvas/frame-cadence fixture independent of Pixi startup and migration.
+const startCanvas = () => {
+  if (localStorage.getItem('azeroth-renderer-webgl-primary-v1') !== 'applied') {
+    localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
+    localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+    localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+  }
+};
+async function enterPlayableGame(page) {
+  await page.waitForFunction(() =>
+    !!window.Prototype?.renderer && document.querySelector('#startup-update')?.hidden);
+  if (await page.locator('#language-welcome').isVisible())
+    await page.locator('#language-welcome [data-language="en"]').click();
+  const title = page.locator('#title-screen');
+  if (await title.evaluate(el => !el.hidden)) {
+    if (await page.locator('#title-continue').isEnabled()) {
+      await page.locator('#title-continue').click();
+    } else {
+      await page.locator('#title-new').click();
+      await page.getByRole('button', {name: /^Choose Hero/}).click();
+      await page.getByRole('button', {name: /Paladin/}).first().click();
+    }
+  }
+  await page.waitForFunction(() =>
+    !!window.Prototype?.started &&
+    document.querySelector('#title-screen')?.hidden &&
+    document.querySelector('#scene-loading')?.hidden !== false,
+    null, {timeout: 180000});
+  await page.waitForFunction(() => document.querySelector('#modal')?.hidden);
+}
 const server = http.createServer((req, res) => {
   const file = path.resolve(root, '.' + new URL(req.url, 'http://localhost').pathname);
   if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
@@ -52,32 +86,33 @@ const server = http.createServer((req, res) => {
         hasTouch: phone,
         isMobile: phone,
       });
+      await context.addInitScript(startCanvas);
       const page = await context.newPage();
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
       await page.goto(
-        'http://127.0.0.1:' + server.address().port + (phone ? '/phone.html' : '/index.html'),
+        'http://127.0.0.1:' + server.address().port + (phone ? '/phone-game.html' : '/index.html'),
       );
-      await page.waitForFunction(() => !!window.Prototype);
-      await require('./helpers/language-browser.cjs').selectEnglish(page);
-      await page.keyboard.press('f');
-      await page.keyboard.press('f');
-      await page.waitForFunction(() => document.querySelector('#modal').hidden);
+      await enterPlayableGame(page);
       const openSettings = async () => {
         await page.locator('#menu-button').click();
-        await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+        await page.getByRole('button', { name: 'Settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+        await page.getByRole('button', { name: 'Frame pacing', exact: true }).click();
       };
       await openSettings();
       for (const [value] of [
         ['20', '20 FPS'],
-        ['30', '30 FPS'],
         ['60', '60 FPS'],
-        ['auto60', 'Auto 30–60 FPS'],
         ['auto', 'Auto 20–30 FPS'],
       ]) {
         const before = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
-        await page.locator('select[aria-label="Frame rate"]').selectOption(value);
+        await page.locator('select[aria-label="Drawing target (FPS)"]').selectOption(value);
+        assert.match(
+          await page.locator('#modal').innerText(),
+          new RegExp('Active draw target:\\s+' + (value === '60' ? 60 : value === '20' ? 20 : 30) + ' FPS'),
+          'Settings must show the effective draw target, not only the saved FPS preference',
+        );
         assert.deepEqual(
           await page.evaluate(() => ({
             preference: Prototype.fps.preference,
@@ -92,17 +127,16 @@ const server = http.createServer((req, res) => {
           'Changing rendering preferences cannot mutate a paused campaign',
         );
       }
-      await page.locator('select[aria-label="Frame rate"]').selectOption('60');
+      await page.locator('select[aria-label="Drawing target (FPS)"]').selectOption('60');
       await page.reload();
-      await page.waitForFunction(() => !!window.Prototype);
+      await enterPlayableGame(page);
       assert.equal(
         await page.evaluate(() => Prototype.fps.preference),
         '60',
         'UI preference survives reload',
       );
-      await page.evaluate(() => Prototype.closeMenu());
       await openSettings();
-      await page.locator('select[aria-label="Frame rate"]').selectOption('30');
+      await page.locator('select[aria-label="Drawing target (FPS)"]').selectOption('20');
       await page.evaluate(() => {
         Prototype.closeMenu();
         window.__fpsCounts = { ticks: 0, updates: 0, observations: 0, draws: 0 };
@@ -151,6 +185,7 @@ const server = http.createServer((req, res) => {
         hasTouch: phone,
         isMobile: phone,
       });
+      await hiContext.addInitScript(startCanvas);
       const hi = await hiContext.newPage();
       await hi.addInitScript(() => {
         // Seed only the first load; subsequent reloads must honor saved changes.
@@ -159,12 +194,12 @@ const server = http.createServer((req, res) => {
           // This test exercises deliberate user choices after the one-time
           // upgrade, not the first-launch preference migration.
           localStorage.setItem('azeroth-optimization-auto-default-v1', 'applied');
-          localStorage.setItem('azeroth-performance-defaults-dev170-v1', 'applied');
+          localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
           sessionStorage.setItem('optimization-seeded', 'true');
         }
       });
       await hi.goto(
-        'http://127.0.0.1:' + server.address().port + (phone ? '/phone.html' : '/index.html'),
+        'http://127.0.0.1:' + server.address().port + (phone ? '/phone-game.html' : '/index.html'),
       );
       await hi.waitForFunction(() => !!window.Prototype);
       const optimized = await hi.evaluate(() => ({

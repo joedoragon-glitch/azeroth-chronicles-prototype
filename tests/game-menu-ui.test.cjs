@@ -23,7 +23,7 @@ for (const language of ['en', 'es']) {
   for (const label of [
     t('Character', 'Personaje'),
     t('Quest journal', 'Diario de misiones'),
-    t('Game and settings', 'Juego y ajustes'),
+    t('Settings', 'Ajustes'),
   ])
     assert(e.get('modal-actions').children.some((b) => b.textContent === label));
   const initial = JSON.stringify(g.snapshot());
@@ -66,13 +66,15 @@ for (const language of ['en', 'es']) {
   back();
   title('Adventure menu', 'Menú de aventura');
   click(t('Quest journal', 'Diario de misiones'));
-  assert(e.get('modal-actions').children.some((b) => b.textContent.includes('Mira')));
+  assert(e.get('modal-description').textContent.includes('Mira'));
+  assert(e.get('modal-actions').children.some((b) =>
+    b.textContent.startsWith(t('A Teacher Taken', 'Una maestra cautiva'))));
   click(t('Announcements', 'Anuncios'));
   short();
   back();
   title('Quest journal', 'Diario de misiones');
   back();
-  click(t('Game and settings', 'Juego y ajustes'));
+  click(t('Settings', 'Ajustes'));
   click(t('Screen and performance', 'Pantalla y rendimiento'));
   title('Screen and performance', 'Pantalla y rendimiento');
   short();
@@ -90,26 +92,83 @@ for (const language of ['en', 'es']) {
     assert(control, 'missing control ' + en);
     control.value = value;
     control.onchange();
-    title('Screen and performance', 'Pantalla y rendimiento');
-    assert(!e.get('modal').hidden, 'setting should not close the unified window');
+    assert(!e.get('modal').hidden, 'setting should leave its page open');
   };
   const section = (en, es = en) => {
     assert(rows().some((node) => node.className === 'menu-section' && node.textContent === t(en, es)));
   };
-  section('Display', 'Pantalla');
-  section('Graphics', 'Gráficos');
-  section('Frame rate', 'Fotogramas por segundo');
-  section('Graphics renderer', 'Motor gráfico');
-  section('Diagnostics', 'Diagnósticos');
-  assert(rows().some((node) => node.textContent.startsWith(
-    t('Export playtest report', 'Exportar informe de prueba'))),
-    'playtest report export belongs in Performance settings');
+  // All screen, renderer, graphics and pacing settings are inline: no child pages.
+  section('Renderer and recovery', 'Motor gráfico y recuperación');
+  assert(!rows().some((node) => node.textContent.startsWith(
+    t('Export playtest report', 'Exportar informe de prueba'))));
+  assert(!rows().some((node) => ['menu-action', 'menu-action menu-highlight'].includes(node.className)),
+    'Screen and performance has no navigation buttons');
+  assert(!rows().some((node) => node.className === 'menu-section' &&
+    node.textContent.startsWith(t('Preferred renderer', 'Motor gráfico preferido'))),
+    'preferred renderer belongs to the selected graphics control, not a duplicate label');
+  section('Active renderer', 'Motor gráfico activo');
+  section('Effective density', 'Densidad efectiva');
+  assert(!rows().some((node) => node.className === 'menu-section' &&
+    [t('Display', 'Pantalla'), t('Canvas graphics', 'Gráficos de Canvas'),
+      t('Frame pacing', 'Ritmo de fotogramas'),
+      t('Active draw target', 'Objetivo de dibujo activo'),
+      t('Active layout', 'Disposición activa'),
+      t('Effective optimization', 'Optimización efectiva')].includes(node.textContent)),
+    'redundant headings and status readouts should be absent');
+  assert(!e.get('modal').textContent.includes('Choose phone or desktop controls. Your save stays the same.'),
+    'unneeded layout explanation should be absent');
   assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 6);
+
+  // On a fresh title screen the Canvas DOM surface is not a failed Pixi world.
+  // Migrations must be silent: no technical release announcements to players.
+  const titleOnly = shell(language, 'paladin', {
+    stayOnTitle: true,
+    graphicsGuard: require('../tools/webgl-pilot/renderer-switch-guard.js'),
+  });
+  const titleElements = titleOnly.elements;
+  const titleNotice = titleElements.get('startup-update-notice');
+  assert(!/Performance settings updated|Ajustes de rendimiento actualizados/.test(titleNotice.textContent),
+    'silent default migration does not announce itself on the title screen');
+  titleElements.get('title-settings').click();
+  const titleActions = () => titleElements.get('modal-actions').children;
+  const screenEntry = titleActions().find((node) => node.textContent.startsWith(
+    t('Screen and performance', 'Pantalla y rendimiento')));
+  assert(screenEntry, 'Screen and performance is accessible from title settings');
+  screenEntry.click();
+  const titleSections = titleActions().filter((node) => node.className === 'menu-section');
+  assert(!titleSections.some((node) => node.textContent === t('Pixi graphics', 'Gráficos de Pixi')),
+    'no redundant Pixi graphics heading at the title screen');
+  assert(titleActions().some((node) => node.textContent.includes(t('Optimization Mode', 'Modo de optimización'))),
+    'Pixi optimization remains available inline on the title screen');
+  assert(!titleSections.some((node) => node.textContent.startsWith(
+    t('Active renderer', 'Motor gráfico activo'))),
+    'do not present the title Canvas surface as a world renderer');
+  assert(!titleSections.some((node) => node.textContent.startsWith(
+    t('Renderer status', 'Estado del motor gráfico'))),
+    'no false startup-failure warning before entering the game');
+  const titleRenderer = titleActions().find((node) => node.className === 'menu-setting' &&
+    node.children.some((child) => child.textContent === t('Graphics renderer', 'Motor gráfico')));
+  assert(titleRenderer, 'renderer preference is editable without another submenu');
+  const titleChoice = titleRenderer.children.find((node) => node.className === 'menu-setting-input');
+  titleChoice.value = 'canvas2d';
+  titleChoice.onchange();
+  assert(titleActions().some((node) => node.className === 'menu-setting' &&
+    node.children.some((child) => child.textContent === t('Optimization Mode', 'Modo de optimización'))),
+    'explicitly selecting Canvas on title exposes Canvas optimization inline, without a heading');
+  const writes = [];
+  const originalSet = storage.set.bind(storage);
+  storage.set = (key, value) => {
+    writes.push(key);
+    return originalSet(key, value);
+  };
   const canvas = setting('Graphics renderer', 'Motor gráfico');
   assert(canvas.children.some((o) => o.value === 'canvas2d'));
   assert(canvas.children.some((o) => o.value === 'webgl2'));
   assert.equal(s.Prototype.experimentalGraphics.mode, 'canvas2d');
 
+  selectSetting('Graphics renderer', 'Motor gráfico', 'canvas2d');
+  assert(setting('Optimization Mode', 'Modo de optimización'),
+    'Canvas optimization remains available without a graphics heading');
   selectSetting('Screen layout', 'Disposición de pantalla', 'phone');
   assert.equal(s.Prototype.platform.mode, 'phone');
   assert.equal(storage.get(s.PrototypePlatform.preferenceKey), 'phone');
@@ -133,8 +192,8 @@ for (const language of ['en', 'es']) {
 
   assert.equal(s.Prototype.fps.preference, 'auto');
   assert.equal(s.Prototype.fps.target, 30);
-  for (const value of ['60', '30', '20', 'auto60', 'auto']) {
-    selectSetting('Frame rate', 'Fotogramas por segundo', value);
+  for (const value of ['60', '20', 'auto']) {
+    selectSetting('Drawing target (FPS)', 'Objetivo de dibujo (FPS)', value);
     assert.equal(s.Prototype.fps.preference, value);
     assert.equal(storage.get(s.PrototypeRuntime.fpsPreferenceKey), value);
     if (value === '20') assert.equal(s.Prototype.fps.target, 20);
@@ -147,33 +206,33 @@ for (const language of ['en', 'es']) {
   assert.equal(s.Prototype.frameSkip.enabled, true);
   assert.equal(storage.get(s.PrototypeRuntime.frameSkipPreferenceKey), 'on');
 
-  click(t('Show performance details', 'Mostrar detalles de rendimiento'));
-  title('Screen and performance', 'Pantalla y rendimiento');
-  assert(rows().some((node) => node.textContent === t('Performance details', 'Detalles de rendimiento')));
-  click(t('Start renderer profiling', 'Iniciar registro del renderizador'));
-  assert(rows().some((node) => node.textContent.startsWith(
-    t('Stop renderer profiling', 'Detener registro del renderizador'))),
-    'opt-in renderer recording stays inside expanded Performance details');
-  click(t('Stop renderer profiling', 'Detener registro del renderizador'));
-  assert(rows().some((node) => node.textContent.startsWith(
-    t('Clear renderer profiling', 'Borrar registro del renderizador'))));
-  click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
-  title('Screen and performance', 'Pantalla y rendimiento');
-  click(t('Hide performance details', 'Ocultar detalles de rendimiento'));
-  assert(!rows().some((node) => node.textContent === t('Performance details', 'Detalles de rendimiento')));
+  assert(!writes.some((key) => key.startsWith('azeroth-v4-')), 'device settings write no campaign saves');
   back();
-  title('Game and settings', 'Juego y ajustes');
+  title('Settings', 'Ajustes');
+  click(t('Playtest tools', 'Herramientas de prueba'));
+  assert(rows().some((node) => node.textContent.startsWith(t('Export playtest report', 'Exportar informe de prueba'))));
+  section('Performance details', 'Detalles de rendimiento');
+  click(t('Help and privacy', 'Ayuda y privacidad'));
+  title('Help and privacy', 'Ayuda y privacidad');
+  back();
+  title('Playtest tools', 'Herramientas de prueba');
+  click(t('Start renderer profiling', 'Iniciar registro del renderizador'));
+  click(t('Stop renderer profiling', 'Detener registro del renderizador'));
+  click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
+  title('Reset performance sample', 'Reiniciar muestra de rendimiento');
+  back();
+  title('Playtest tools', 'Herramientas de prueba');
+  click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
+  click(t('Confirm sample reset', 'Confirmar reinicio de la muestra'));
+  title('Playtest tools', 'Herramientas de prueba');
+  back();
+  title('Settings', 'Ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
   title('Music and sound', 'Música y sonido');
+  writes.length = 0;
   short();
   // Instrument the actual shell's localStorage adapter. Audio already persists
   // to its profile; dragging should never rewrite the entire campaign save.
-  const writes = [];
-  const originalSet = storage.set.bind(storage);
-  storage.set = (key, value) => {
-    writes.push(key);
-    return originalSet(key, value);
-  };
   const soundRows = () => e.get('modal-actions').children;
   const channels = [
     ['master', 'Master volume', 'Volumen general'],
@@ -239,7 +298,7 @@ for (const language of ['en', 'es']) {
     'sound sliders and mute must not trigger full-campaign saves');
   storage.set = originalSet;
   back();
-  title('Game and settings', 'Juego y ajustes');
+  title('Settings', 'Ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
   title('Music and sound', 'Música y sonido');
   for (const [key, en, es] of channels) {
@@ -252,30 +311,11 @@ for (const language of ['en', 'es']) {
   back();
   click(t('Language', 'Idioma'));
   click(language === 'en' ? 'English' : 'Español');
-  title('Game and settings', 'Juego y ajustes');
+  title('Settings', 'Ajustes');
   click(t('Controls', 'Controles'));
   short();
-  assert.equal(e.get('modal-actions').children.length, 5);
-  click(t('Movement and menus', 'Movimiento y menús'));
-  short();
-  back();
-  click(t('Skills and targeting', 'Habilidades y objetivos'));
-  short();
-  for (const [en, es] of [
-    ['Using skills', 'Usar habilidades'],
-    ['Queued skills', 'Habilidades en cola'],
-    ['Targeting and dodging', 'Apuntar y esquivar'],
-  ]) {
-    click(t(en, es));
-    short();
-    back();
-  }
-  click(t('Combat conditions', 'Estados de combate'));
-  back();
-  back();
-  click(t('Companion commands', 'Órdenes de compañeros'));
-  short();
-  back();
+  assert.equal(e.get('modal-actions').children.length, 2,
+    'Settings Controls contains only customization, not duplicate help topics');
   click(t('Customize keyboard', 'Personalizar teclado'));
   title('Customize keyboard', 'Personalizar teclado');
   assert.equal(s.Prototype.input.preferences.preset, 'right');
@@ -285,7 +325,7 @@ for (const language of ['en', 'es']) {
   );
   const groupPaths = [
     ['Movement and menu keys', 'Teclas de movimiento y menú',
-      ['up', 'down', 'left', 'right', 'confirm']],
+      ['up', 'down', 'left', 'right', 'confirm', 'menu']],
     ['Skills and combat keys', 'Teclas de habilidades y combate',
       ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'skill7', 'skill8', 'target', 'heal', 'mana']],
     ['Companion and utility keys', 'Teclas de compañeros y utilidades',
@@ -423,33 +463,16 @@ for (const language of ['en', 'es']) {
   back();
   title('Controls', 'Controles');
   back();
-  title('Game and settings', 'Juego y ajustes');
-  click(t('Save and game management', 'Partidas guardadas'));
-  short();
-  assert.equal(e.get('modal-actions').children.length, 4);
+  title('Settings', 'Ajustes');
   assert(!e.get('modal-actions').children.some((node) =>
-    node.textContent.startsWith(t('Export playtest report', 'Exportar informe de prueba'))),
-    'save management no longer mixes in performance reports');
-  assert(
-    !e.get('modal-actions').children.some((node) => /Combat (Arena|Diagnostics)/i.test(node.textContent)),
-    'Normal visitors must not see the unlisted combat test save',
-  );
-  click(t('Save backups', 'Copias de seguridad'));
-  short();
-  assert.equal(e.get('modal-actions').children.length, 2);
-  back();
-  click(t('New game', 'Nueva partida'));
-  short();
-  assert(
-    e
-      .get('modal-actions')
-      .children.find((b) =>
-        b.textContent.startsWith(t('New game in Nightmare Mode', 'Nueva partida Pesadilla')),
-      ).disabled,
-  );
-  back();
-  back();
-  back();
+    node.textContent.includes('Save and game management') ||
+      node.textContent.includes('Partidas guardadas')),
+    'save and backups are no longer duplicated inside Settings');
+  assert(!e.get('modal-actions').children.some((node) =>
+    node.textContent.includes('Check for game update') ||
+      node.textContent.includes('Buscar actualización')),
+    'manual update checks are removed; startup checks remain');
+  back(); // Adventure menu
   assert.equal(
     JSON.stringify(g.snapshot()),
     initial,
@@ -519,11 +542,9 @@ console.log(
   assert.equal(playtest.elements.get('title-screen').hidden, false);
   playtest.elements.get('title-new').click();
   click('New Combat Diagnostics run');
-  assert.equal(playtest.elements.get('modal-title').textContent, 'Choose your language');
-  click('English');
   assert.equal(playtest.elements.get('modal-title').textContent,
-    'New Combat Diagnostics adventure');
-  // The first child is the optional name input, not a hero choice.
+    'New Combat Diagnostics adventure', 'new runs reuse saved language');
+  // The optional name field now follows the hero cards in the landscape setup.
   // Exercise the real button that starts the selected class.
   const heroButton = actions().find((node) => /paladin/i.test(node.textContent));
   assert(heroButton && !heroButton.disabled, 'Paladin class button remains accessible');
@@ -546,11 +567,16 @@ console.log(
     button.click();
   };
   normal.elements.get('menu-button').click();
-  open('Game and settings');
-  open('Save and game management');
+  open('Settings');
+  assert(!normalActions().some((item) => /Save and game management|Check for game update/.test(item.textContent)),
+    'settings do not duplicate save/update navigation');
+  normal.elements.get('close-button').click();
+  open('Return to Main Menu');
+  normal.elements.get('title-saves').click();
   assert(!normalActions().some((item) => /Combat (Arena|Diagnostics)/i.test(item.textContent)),
-    'regular Save menu stays free of diagnostic entries');
-  open('New game');
+    'regular Saved Games menu stays free of diagnostic entries');
+  normal.elements.get('close-button').click();
+  normal.elements.get('title-new').click();
   assert(!normalActions().some((item) => /Combat (Arena|Diagnostics)/i.test(item.textContent)),
     'regular New Game menu stays free of diagnostic entries');
   normal.elements.get('close-button').click();
@@ -564,13 +590,18 @@ console.log(
     assert(button && !button.disabled, 'Playtest menu item: ' + label);
     button.click();
   };
-  specialOpen('Game and settings');
-  specialOpen('Save and game management');
+  specialOpen('Settings');
+  assert(!special.get('modal-actions').children.some((item) =>
+    /Save and game management|Check for game update/.test(item.textContent)));
+  special.get('close-button').click();
+  specialOpen('Return to Main Menu');
+  special.get('title-saves').click();
   assert(special.get('modal-actions').children.some((item) =>
-    item.textContent.startsWith('Load Combat Diagnostics run') && !item.disabled),
-    'playtest link exposes the separate existing arena save');
-  specialOpen('New game');
+    item.textContent.startsWith('Combat Diagnostics')),
+    'playtest link preserves its separate saved arena selection');
+  special.get('close-button').click();
+  special.get('title-new').click();
   assert(special.get('modal-actions').children.some((item) =>
     item.textContent.startsWith('New Combat Diagnostics run')),
-    'playtest link exposes the diagnostic start action');
+    'playtest link exposes diagnostic New Game only');
 }

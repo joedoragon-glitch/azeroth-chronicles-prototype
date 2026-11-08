@@ -16,6 +16,14 @@ for(const [i,code] of ['KeyJ','KeyK','KeyL','KeyU','KeyI','Space','KeyO','KeyN']
 assert.equal(controls.actionFor('KeyW'),'up');
 assert.equal(controls.actionFor('KeyE'),'target','E cycles hero targets by default');
 assert.equal(controls.actionFor('KeyF'),'confirm','F handles menus and field interaction');
+assert.equal(controls.actionFor('Escape'),'menu','Esc opens and leaves menus by default');
+assert.equal(controls.key('menu'),'Esc','menu key has a player-readable label');
+assert.equal(controls.rebind('menu','KeyV'),null,'the menu key is customizable');
+assert.equal(controls.actionFor('KeyV'),'menu','new custom menu binding becomes active');
+assert.equal(controls.actionFor('Escape'),null,'Esc remains a hardcoded safety fallback in the app');
+assert.equal(controls.rebind('up','Escape') !== null,true,'Escape cannot displace a movement key');
+assert.equal(controls.rebind('menu','Escape'),null,'restoring the default menu key succeeds');
+
 assert.equal(controls.actionFor('KeyQ'),'recall','Q is an additional shortcut for squad recall');
 assert.equal(controls.actionFor('Backquote'),'recall');
 assert.equal(controls.actionFor('KeyH'),'heal','Ranger Heal remains on H');

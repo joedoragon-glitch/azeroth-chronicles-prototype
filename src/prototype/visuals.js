@@ -184,6 +184,75 @@
   // A larger original-master export is required before an existing registered
   // sprite can use the world-size increase. Low-resolution runtime PNGs must
   // never be stretched to impersonate a high-density replacement.
+  // Lighting must address the actual glass already painted on a fixture.
+  // All coordinates below belong to existing procedural building/prop art;
+  // renderers supply only the projected world point. No save fields or
+  // nighttime-only surrogate windows are needed.
+  // One observation-only source of truth for the visible glass in each fixture.
+  // This describes where an already-painted lamp is, NOT an actor or save flag.
+  // No free-floating light sources are fabricated for unlit service characters.
+  function lightingFixtures(e, point, projectionScale = 1, region = 0) {
+    if (!e || !point || e.interactionOnly) return [];
+    const structure = String(e.structure || '');
+    const kind = String(e.kind || '');
+    let sites = [];
+    let visualScale = 1;
+    // Existing watermill facade houses this lamp; no independent light actor.
+    if (region===0 && e.treasury && e.treasuryBoss==='thorn') {
+      visualScale=featureScale(e);
+      sites=[{x:-35,y:-18,role:'workshop',radius:68,alpha:.20}];
+    } else if (region === 0 && e.greenwoodFacility === 'thorn-lodge')
+      sites = [{ x: 40, y: -25, role: 'home', radius: 60, alpha: 0.2 }];
+    else if (region === 0 && e.greenwoodFacility === 'mill')
+      sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
+    else if (structure === 'roadside-lantern')
+      sites = [{ x: 0, y: -42, role: 'street', radius: 80, alpha: 0.25 }];
+    else if (structure === 'grave-lamp')
+      sites = [{ x: 0, y: -22, role: 'grave', radius: 66, alpha: 0.17 }];
+    else if (kind === 'rest') {
+      visualScale = featureScale({ ...e, renderKind: 'npc' });
+      sites =
+        region === 0
+          ? [{ x: -25, y: -12, role: 'refuge', radius: 84, alpha: 0.27 }]
+          : // Outside Greenwood, keep the historic dedicated entrance lantern.
+            [{ x: -27, y: -9.5, role: 'refuge', radius: 76, alpha: 0.23 }];
+    } else if (structure === 'vale-cottage' || structure === 'vale-workshop') {
+      visualScale = featureScale({ ...e, renderKind: 'prop' });
+      if (structure === 'vale-cottage') {
+        // A sleeping village needs darkness between pools of practical light.
+        // The same saved id gets the same unlit/lit presentation every visit.
+        let hash = 2166136261;
+        for (const ch of String(e.id || e.structure))
+          hash = Math.imul(hash ^ ch.charCodeAt(0), 16777619) >>> 0;
+        sites = [{ x: -25, y: -12, role: 'home', radius: 48, alpha: 0.13, lit: hash % 3 === 0 }];
+      } else sites = [{ x: 27, y: -12, role: 'workshop', radius: 55, alpha: 0.16 }];
+    } else if (['quests', 'supplier', 'recruiter'].includes(kind)) {
+      sites = [{ x: 29, y: -20, role: 'stall', radius: 62, alpha: 0.2 }];
+    } else if (kind === 'transport' && !['⛵', '🐫', '🐉'].includes(e.icon)) {
+      // The wagon painter carries this physical lantern at craftAt(-58,3,.4).
+      visualScale = featureScale({ ...e, renderKind: 'npc' });
+      sites = [{ x: -58, y: -3.8, role: 'wagon', radius: 62, alpha: 0.17 }];
+    } else if (kind === 'barracks' && Number(e.progress) >= 4 && e.full === true) {
+      visualScale = featureScale({ ...e, renderKind: 'building' });
+      sites = [{ x: -59, y: -8.6, role: 'camp', radius: 60, alpha: 0.17 }];
+    }
+    if (!sites.length) return [];
+    if (Number.isFinite(e.visualScale) && e.visualScale > 0 && visualScale > 1)
+      visualScale = e.visualScale;
+    return sites.map((site, i) => ({
+      x: point.x + site.x * visualScale * projectionScale,
+      y: point.y + site.y * visualScale * projectionScale,
+      kind: 'lantern',
+      fixture: 'glass',
+      role: site.role,
+      lit: site.lit !== false,
+      radius: site.radius,
+      alpha: site.alpha,
+      scale: visualScale * (site.role === 'camp' ? 0.45 : site.role === 'wagon' ? 0.4 : 1),
+      id: String(e.id || kind || structure) + ':glass-' + i,
+    }));
+  }
+
   function assetSafeScale(e, entry) {
     const target = featureScale(e);
     if (target <= 1 || !entry) return target;
@@ -2778,7 +2847,7 @@
       oval(26.6, -20.7, 2.6, 2, '#8e9487');
       grip(15, -4, hide);
     }
-    function goblinBody(crown = false, ranged = !!e.ranged, friendly = false) {
+    function goblinBody(crown = false, ranged = !!e.ranged, friendly = false, civilian = false) {
       const hide = '#9caa78',
         cloth = crown ? '#55485f' : friendly ? '#66875c' : '#867356';
       // The friendly Archer alone carries arrows. Hostile Slingers keep stones.
@@ -2864,7 +2933,7 @@
         grip(15, -4, hide);
       } else if (ranged) {
         goblinSlingerEquipment(hide);
-      } else {
+      } else if (!civilian) {
         sword(15, -8);
         grip(17, 0, hide);
       }
@@ -8548,6 +8617,133 @@
         '#a6a28a',
       );
     }
+    // Distinct, physically mounted lamps, all centered on their actual glass.
+    // These are always part of the facade; the night pass only lights the lens.
+    function mountedSconce(x, y, role = 'home') {
+      const refuge = role === 'refuge',
+        workshop = role === 'workshop',
+        stall = role === 'stall';
+      const w = refuge ? 5.4 : workshop ? 4.6 : stall ? 4.2 : 3.8,
+        h = refuge ? 7.2 : workshop ? 5.8 : stall ? 5.5 : 5.3;
+      const iron = workshop ? '#464944' : refuge ? '#554f40' : '#51594f',
+        edge = workshop ? '#898172' : refuge ? '#b6a17a' : '#8b8c77',
+        glass = workshop ? '#8f8065' : refuge ? '#b19a6c' : '#96876a';
+      // Mounting plate and curved support follow the front wall/wooden post.
+      softRect(x - 11, y - 8, 4, 10, '#594b3b', 1);
+      for (const yy of [-6, -1]) oval(x - 9, y + yy, 0.75, 0.75, '#c0a77e');
+      line(
+        [
+          [x - 9, y - 7],
+          [x - 7, y - 11],
+          [x - 2, y - 11],
+        ],
+        iron,
+        2.2,
+      );
+      ctx.beginPath();
+      ctx.strokeStyle = edge;
+      ctx.lineWidth = 1.2;
+      ctx.moveTo(x - 5, y - 10.3);
+      ctx.quadraticCurveTo(x + 1, y - 12, x, y - h - 2.8);
+      ctx.stroke();
+      // Hood, shallow bevel, protected panes and lower iron catch tray.
+      softPoly(
+        [
+          [x - w - 1.5, y - h + 1],
+          [x, y - h - 3.2],
+          [x + w + 1, y - h + 1],
+          [x + w + 0.5, y - h + 2.1],
+          [x - w - 0.9, y - h + 2.1],
+        ],
+        iron,
+        0.8,
+      );
+      line(
+        [
+          [x - w, y - h + 1],
+          [x, y - h - 2.2],
+          [x + w, y - h + 1],
+        ],
+        edge,
+        0.85,
+      );
+      softPoly(
+        [
+          [x - w, y - h + 2],
+          [x + w, y - h + 2],
+          [x + w - 0.7, y + h - 1.4],
+          [x - w + 0.8, y + h - 1.4],
+        ],
+        '#434940',
+        0.9,
+      );
+      softPoly(
+        [
+          [x - w + 1.2, y - h + 3],
+          [x + w - 1.2, y - h + 3],
+          [x + w - 1.5, y + h - 2.1],
+          [x - w + 1.5, y + h - 2.1],
+        ],
+        glass,
+        0.65,
+      );
+      line(
+        [
+          [x, y - h + 2.6],
+          [x, y + h - 1.4],
+        ],
+        iron,
+        0.95,
+      );
+      line(
+        [
+          [x - w + 2.1, y - h + 4],
+          [x - w + 2.1, y + h - 3.2],
+        ],
+        '#cbb990',
+        0.8,
+      );
+      softPoly(
+        [
+          [x - w - 0.5, y + h - 2],
+          [x + w + 0.5, y + h - 2],
+          [x + w - 0.6, y + h + 0.4],
+          [x - w + 0.6, y + h + 0.4],
+        ],
+        iron,
+        0.85,
+      );
+      line(
+        [
+          [x - w + 0.6, y + h - 1.2],
+          [x + w - 0.6, y + h - 1.2],
+        ],
+        edge,
+        0.85,
+      );
+      if (refuge) {
+        // Refuge identity: protected double hook and a welcoming brass collar.
+        oval(x, y - h - 4, 1.7, 1.3, '#b69a65');
+        line(
+          [
+            [x - w - 1, y + h],
+            [x + w + 1, y + h],
+          ],
+          '#bbaa7a',
+          1.1,
+        );
+      } else if (workshop) {
+        // A durable hood with a soot-dark underside, not a glowing workbench.
+        line(
+          [
+            [x - w + 1, y - h + 2.9],
+            [x + w - 1, y - h + 2.9],
+          ],
+          '#383f3a',
+          1.2,
+        );
+      }
+    }
     function craftedHouse(kind = 'house') {
       const r = kind.startsWith('vale')
         ? 0
@@ -8749,6 +8945,14 @@
           2,
         );
       }
+      // Corrected Greenwood design only. The five regional house palettes
+      // are not license to stamp identical hardware across every settlement.
+      if (r === 0)
+        mountedSconce(
+          workshop ? 27 : -25,
+          -12,
+          workshop ? 'workshop' : e.kind === 'rest' ? 'refuge' : 'home',
+        );
     }
     function craftedFence(palisade = false) {
       for (const [x, h] of [
@@ -9083,7 +9287,9 @@
             'crown-ash-house',
           ][region],
         );
-        craftAt(-27, -1, 0.5, () => lantern());
+        // Other regional refuges keep their previous entrance lantern rather
+        // than inheriting the new Greenwood cottage sconce.
+        if (region !== 0) craftAt(-27, -1, 0.5, () => lantern());
         return true;
       }
       regionalServiceFooting();
@@ -9136,6 +9342,11 @@
         }
       }
       craftedRoof(34, -31, -48, region);
+      // The hook physically hangs from the pre-existing right stall post.
+      // Greenwood gets a refined sconce. Other regions retain their older
+      // sheltered lantern rather than losing the once-implied service light.
+      if (region === 0) mountedSconce(29, -20, 'stall');
+      else craftAt(29, -20, 0.48, () => lantern(0, 0));
       if (region === 4)
         poly(
           [
@@ -9148,6 +9359,159 @@
         );
       return true;
     }
+    // The Forest Crypt is being absorbed into an unfinished winter residence.
+    // One bounded static facade: original stone heart, occupied timber additions,
+    // and visible roof framing. No new collision, gameplay state or animation.
+    function winterEstateGateway() {
+      fillOval(0, 17, 103, 14, '#2b4034', 0.22);
+      // A broad, finished-to-the-door forecourt connects the old burial entry
+      // to the newer household wings and the existing freight road.
+      poly([[-97, 14], [95, 14], [108, 23], [-107, 23]], '#948f79');
+      for (const y of [17, 21])
+        line([[-87, y], [89, y]], '#b4ae91', 1);
+      // The left wing is already weather-tight: re-used cool stone at the
+      // footing, fresh cladding and a properly glazed residential window.
+      blockwork(-97, -42, 56, 58, '#92988a', 9);
+      boards(-91, -37, 43, 48, '#8c7556', true);
+      timber([-91, -41], [-91, 13], 3);
+      timber([-47, -42], [-47, 13], 3);
+      // The old crypt remains recognizable in the middle, not as the
+      // silhouette of the whole structure.
+      blockwork(-43, -66, 86, 83, '#8a9486', 8);
+      for (const x of [-37, 37])
+        line([[x, -59], [x, 13]], '#c1bea4', 2);
+      // New residential wing: one cladded bay, with its outer roof and
+      // carpenter's framing intentionally unfinished.
+      blockwork(43, -45, 50, 62, '#8e9584', 9);
+      boards(47, -38, 43, 54, '#967955', true);
+      poly([[93, -44], [107, -54], [107, 8], [93, 17]], '#686e60');
+      for (const x of [-70, 68]) {
+        softRect(x - 11, -33, 22, 27, '#594d3d', 2);
+        softRect(x - 8, -30, 16, 21, '#d1b781', 1);
+        line([[x, -30], [x, -9]], '#765b43', 1.5);
+        line([[x - 8, -20], [x + 8, -20]], '#765b43', 1.5);
+        // House shutters, not bars or funerary tracery.
+        timber([x - 12, -30], [x - 12, -7], 2, '#a18b63');
+        timber([x + 12, -30], [x + 12, -7], 2, '#a18b63');
+      }
+      recessedDoor(0, -38, 39, 52, true);
+      // Keep the original crypt arch as an inset historical feature.
+      shaped('#a4a996', () => {
+        ctx.moveTo(-27, -39);
+        ctx.quadraticCurveTo(-28, -73, 0, -78);
+        ctx.quadraticCurveTo(28, -73, 27, -39);
+        ctx.lineTo(19, -39);
+        ctx.quadraticCurveTo(20, -63, 0, -66);
+        ctx.quadraticCurveTo(-20, -63, -19, -39);
+      });
+      // Opening remains dark and accessible after the old stone surround.
+      softRect(-19, -38, 38, 50, '#263a32', 0.8);
+      for (const x of [-23, -11, 0, 11, 23])
+        line([[x, -67 + Math.abs(x) * 0.35], [x * 0.82, -55 + Math.abs(x) * 0.32]], '#65766b', 0.8);
+      skull(0, -68, 3.2); // subdued retained keystone; no new burial symbolism
+      poly([[-28, 14], [28, 14], [38, 21], [-38, 21]], '#c0b69b');
+      line([[-34, 22], [35, 22]], '#797d6b', 2);
+      // One calm, symmetrical slate hip roof sits squarely over the old
+      // masonry heart. A flat short upper ridge and matching eaves avoid
+      // twisted projected planes reaching into the adjacent wings.
+      poly([[-101, -43], [-82, -69], [-59, -69], [-40, -43]], '#707361');
+      line([[-99, -43], [-82, -67], [-59, -67]], '#b3a487', 1.3);
+      const roofHalfEave = 54,
+        roofHalfRidge = 23,
+        roofEaveY = -64,
+        roofRidgeY = -101;
+      poly([
+        [-roofHalfEave, roofEaveY],
+        [-roofHalfRidge, roofRidgeY],
+        [roofHalfRidge, roofRidgeY],
+        [roofHalfEave, roofEaveY],
+      ], '#707a70');
+      // Symmetrical front fascia hides the original flat stone-wall top.
+      poly([
+        [-roofHalfEave, roofEaveY],
+        [roofHalfEave, roofEaveY],
+        [roofHalfEave, roofEaveY + 5],
+        [-roofHalfEave, roofEaveY + 5],
+      ], '#526358');
+      line([
+        [-roofHalfEave, roofEaveY],
+        [-roofHalfRidge, roofRidgeY],
+        [roofHalfRidge, roofRidgeY],
+        [roofHalfEave, roofEaveY],
+      ], '#b8b7a8', 1.8);
+      line([[-roofHalfEave, roofEaveY + 5], [roofHalfEave, roofEaveY + 5]],
+        '#929a8e', 1.2);
+      for (const y of [-73, -82, -91]) {
+        const half = roofHalfEave -
+          (roofHalfEave - roofHalfRidge) * ((roofEaveY - y) / (roofEaveY - roofRidgeY));
+        line([[-half + 7, y], [half - 7, y]], '#869188', 0.8);
+      }
+      // The eastern addition stays visibly under construction: a centered
+      // front roof frame, not an asymmetric extra closed roof volume.
+      poly([[45, -48], [70, -75], [96, -48], [96, -44], [45, -44]], '#796a52');
+      timber([46, -49], [70, -75], 3, '#a78c66');
+      timber([70, -75], [95, -49], 3, '#a78c66');
+      timber([54, -54], [54, 17], 3, '#ad936d');
+      timber([93, -51], [93, 18], 3, '#ad936d');
+      timber([54, -52], [94, -52], 3, '#ad936d');
+      timber([70, -74], [70, -52], 2, '#c6aa7d');
+      // A small maintained sill and a partly prepared wing tell the story
+      // without covering the approach with unrelated stacks of loot.
+      poly([[49, 13], [94, 13], [99, 19], [45, 19]], '#a7a38d');
+      line([[47, -3], [89, -3]], '#b9a07c', 1);
+    }
+    function orchardCellar(older) {
+      oval(0, 15, 47, 12, '#273a2d66');
+      shaped(older ? '#625e48' : '#62734a', () => {
+        ctx.moveTo(-46, 13);
+        ctx.quadraticCurveTo(-44, -10, -33, -24);
+        ctx.quadraticCurveTo(-23, -45, 14, -42);
+        ctx.quadraticCurveTo(37, -35, 47, 12);
+      });
+      shaped(older ? '#7b8058' : '#82915c', () => {
+        ctx.moveTo(-43, -3);
+        ctx.quadraticCurveTo(-30, -44, 6, -44);
+        ctx.quadraticCurveTo(36, -43, 43, -2);
+        ctx.quadraticCurveTo(25, -18, 9, -18);
+        ctx.quadraticCurveTo(-20, -18, -43, -3);
+      });
+      const masonry = older ? ['#827a64', '#aaa087', '#918c74'] : ['#b2ad8d', '#c1b595', '#9f9d83'];
+      for (const side of [-1, 1])
+        for (let row = 0; row < 3; row++) {
+          const x = side < 0 ? -30 : 18;
+          softRect(x, -11 + row * 8, 12, 8, masonry[(row + (side > 0 ? 1 : 0)) % 3], 1.4);
+          line([[x + 2, -9 + row * 8], [x + 10, -9 + row * 8]], '#cec09a', 0.7);
+        }
+      // Individual wedge stones follow the vault, with the raised keystone at the crown.
+      const arch = (rx, ry, angle) => [Math.cos(angle) * rx, -10 - Math.sin(angle) * ry];
+      for (let stone = 0; stone < 9; stone++) {
+        const a = stone * Math.PI / 9, b = (stone + 1) * Math.PI / 9;
+        softPoly([arch(30, 27, a), arch(30, 27, b), arch(18, 16, b), arch(18, 16, a)],
+          masonry[stone % 3], 1);
+      }
+      softPoly([[-5, -38], [5, -38], [4, -25], [-4, -25]], '#b8ad87', 1);
+      recessedDoor(0, -19, 35, 30, older);
+      for (const y of [-11, 3]) {
+        timber([-14, y], [14, y], 1.8, older ? '#4f4b40' : '#67563b');
+        for (const x of [-10, 10]) oval(x, y, 0.9, 0.9, '#c6b28b');
+      }
+      for (const [y, width] of [[11, 20], [16, 23]]) {
+        softPoly([[-width, y], [width, y], [width + 2, y + 4], [-width - 2, y + 4]],
+          older ? '#807b66' : '#a79c7d', 1);
+        line([[-width + 2, y + 1], [width - 2, y + 1]], '#c8b99a', 0.8);
+      }
+      if (older) {
+        rockPiece(-33, 13, 9, 12);
+        rockPiece(34, 14, 10, 13);
+        foliage(-28, -22, 8, 4, '#5a6b49');
+        foliage(24, -28, 8, 4, '#586a48');
+        line([[-25, -29], [-28, -21], [-34, -17]], '#756246', 1.5);
+      } else {
+        softRect(-7, -44, 14, 7, '#514e3c', 1);
+        for (const x of [-4, 0, 4]) line([[x, -43], [x, -39]], '#a38d5d', 1.1);
+        craftAt(34, 14, 0.45, () => crateBody(0, -7));
+      }
+    }
     function carvedGateway(family) {
       const side = R.sideDungeons?.find((d) => d.id === family),
         theme = side?.theme;
@@ -9156,6 +9520,12 @@
         mine = family === 'mine',
         military = family === 'abyss' || family === 'citadel';
       if (!side && !crypt && !archive && !mine && !military) return false;
+      if (crypt) {
+        // Interior exits stay ordinary doors; do not duplicate the estate indoors.
+        if (e.kind === 'exit') return false;
+        winterEstateGateway();
+        return true;
+      }
       if (family === 'abyss') {
         for (const side of [-1, 1]) {
           shaped('#5b4a50', () => {
@@ -9244,7 +9614,11 @@
       }
       const dark = military || theme === 'foundry',
         stone = dark ? '#6a6878' : archive ? '#85968a' : '#939b86';
-      if (mine || theme === 'cellar') {
+      if (theme === 'cellar') {
+        orchardCellar(true);
+        return true;
+      }
+      if (mine) {
         shaped('#7f8976', () => {
           ctx.moveTo(-36, 14);
           ctx.lineTo(-33, -12);
@@ -9259,18 +9633,13 @@
           ctx.quadraticCurveTo(22, -31, 25, -10);
           ctx.lineTo(25, 14);
         });
-        if (mine) {
-          for (const x of [-24, 24]) timber([x, 15], [x, -24], 7);
-          timber([-29, -25], [29, -25], 8);
-          for (const side of [-1, 1]) timber([side * 24, -12], [side * 13, -24], 4);
-          craftAt(0, 13, 0.65, () => {
-            ctx.transform(0.85, 0.25, -0.85, 0.25, 0, 0);
-            craftedDecoration('rail');
-          });
-        } else {
-          recessedDoor(0, -18, 31, 31, false);
-          for (const x of [-29, 29]) rockPiece(x, 10, 10, 20);
-        }
+        for (const x of [-24, 24]) timber([x, 15], [x, -24], 7);
+        timber([-29, -25], [29, -25], 8);
+        for (const side of [-1, 1]) timber([side * 24, -12], [side * 13, -24], 4);
+        craftAt(0, 13, 0.65, () => {
+          ctx.transform(0.85, 0.25, -0.85, 0.25, 0, 0);
+          craftedDecoration('rail');
+        });
       } else if (theme === 'flooded') {
         craftAt(0, -2, 1, () => craftedHouse('march-stilt-house'));
         line(
@@ -9314,27 +9683,6 @@
           blockwork(-37, -43, 74, 8, '#a4b4a1', 8);
         }
         recessedDoor(0, -24, military ? 40 : 34, 38, true, dark ? 4 : 0);
-        if (crypt) {
-          shaped(stone, () => {
-            ctx.moveTo(-25, -23);
-            ctx.quadraticCurveTo(-27, -52, 0, -52);
-            ctx.quadraticCurveTo(28, -51, 26, -23);
-            ctx.lineTo(18, -23);
-            ctx.quadraticCurveTo(18, -40, 0, -41);
-            ctx.quadraticCurveTo(-18, -40, -18, -23);
-          });
-          for (const x of [-19, -10, 0, 10, 19])
-            line(
-              [
-                [x, -44 + Math.abs(x) * 0.25],
-                [x * 0.8, -34 + Math.abs(x) * 0.25],
-              ],
-              '#687e6c',
-              0.9,
-            );
-          skull(0, -39, 5);
-          foliage(-27, 11, 8, 6, '#738866');
-        }
         if (family === 'citadel')
           poly(
             [
@@ -9450,6 +9798,126 @@
         rockPiece(29, 9, 12, 18, true);
         return true;
       }
+      if (boss === 'thorn') {
+        // Old agricultural loading hall adapted to secure reclamation work.
+        softPoly(
+          [
+            [-49, 0],
+            [23, 15],
+            [66, 0],
+            [-6, -15],
+          ],
+          '#78735e',
+        );
+        softPoly(
+          [
+            [-46, -48],
+            [22, -34],
+            [22, 12],
+            [-46, -2],
+          ],
+          '#957654',
+        );
+        softPoly(
+          [
+            [22, -34],
+            [62, -48],
+            [62, -1],
+            [22, 12],
+          ],
+          '#66513d',
+        );
+        softPoly(
+          [
+            [-46, -48],
+            [-12, -79],
+            [22, -34],
+          ],
+          '#9c7c56',
+        );
+        // Properly joined agricultural roof: matching slopes share a single
+        // front gable and the same 42,-16 depth vector on every corner.
+        const roofFrontLeft = [-52, -52],
+          roofFrontRidge = [-12, -79],
+          roofFrontRight = [29, -39],
+          roofRearLeft = [-10, -68],
+          roofRearRidge = [30, -95],
+          roofRearRight = [71, -55];
+        softPoly(
+          [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
+          '#97714d',
+        );
+        softPoly(
+          [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
+          '#604735',
+        );
+        // Seal the small eave overhang to the existing storehouse walls,
+        // instead of exposing a green background wedge at the roof junction.
+        softPoly([roofFrontRight, roofRearRight, [62, -48], [22, -34]], '#493a2c');
+        softPoly([roofFrontRidge, roofFrontRight, [22, -34], [-12, -75]], '#493a2c');
+        // A single narrow fascia, without a second bulky or fractured
+        // roof below the actual eaves.
+        line([roofFrontLeft, roofFrontRidge, roofFrontRight], '#b5986e', 2.4);
+        line([roofFrontRidge, roofRearRidge], '#b5986e', 2);
+        line([roofFrontLeft, roofRearLeft], '#a78a66', 1.5);
+        line([roofFrontRight, roofRearRight], '#a78a66', 1.5);
+        GreenwoodLandscape.drawRoofCourses(line, roofFrontRidge, roofFrontRight,
+          roofRearRidge, roofRearRight, '#43372f', '#9b7655');
+        GreenwoodLandscape.drawRoofCourses(line, roofFrontRidge, roofFrontLeft,
+          roofRearRidge, roofRearLeft, '#715137', '#c19a69');
+        // Braced timber bays on a low masonry footing.
+        softPoly([[-46, -8], [22, 6], [62, -8], [62, -1], [22, 12], [-46, -2]],
+          '#88816c', 1);
+        for (const x of [-40, -32, 13, 20])
+          line([[x, -45 + (x + 46) * 0.2], [x, -5 + (x + 46) * 0.2]], '#6c513b', 2);
+        for (const x of [28, 43, 56])
+          line([[x, -34 - (x - 22) * 0.33], [x, 9 - (x - 22) * 0.33]], '#493a2e', 2);
+        timber([25, -31], [41, 1], 2.5, '#846347');
+        timber([59, -43], [45, 1], 2.5, '#846347');
+        // Loading doors remain visible beneath added iron straps and lock.
+        softPoly([[-29, -37], [8, -30], [8, 8], [-29, 1]], '#554333', 1);
+        for (const x of [-24, -17, -10, -3, 4])
+          line([[x, -34 + (x + 24) * 0.19], [x, 1 + (x + 24) * 0.19]], '#8c6949', 1.2);
+        line([[-11, -33], [-11, 4]], '#332d26', 1.8);
+        for (const y of [-30, -10])
+          line(
+            [
+              [-28, y],
+              [7, y + 6],
+            ],
+            '#323833',
+            3,
+          );
+        softRect(-4, -15, 7, 9, '#a08b57', 1);
+        softRect(-19, -65, 16, 13, '#70543b', 1);
+        softRect(-17, -63, 12, 9, '#332e28', 1);
+        for (const x of [-14, -10, -6]) line([[x, -63], [x, -54]], '#a88456', 1.1);
+        for (const y of [-30, -23, -16])
+          line(
+            [
+              [36, y],
+              [52, y - 5],
+            ],
+            '#302e29',
+            2,
+          );
+        mountedSconce(-35,-18,'workshop');
+        // A shallow former loading apron with one clear doorway lane,
+        // flanked by secure goods and a modest records station.
+        softPoly(
+          [
+            [-49, 7],
+            [15, 21],
+            [46, 10],
+            [-18, -5],
+          ],
+          '#82745a',
+        );
+        // No oversized loose pallet/mat painted into the same tiny apron.
+        // Keep the actual exterior yard props; do not duplicate them on the
+        // entrance apron where they crowd the loading threshold.
+        return true;
+      }
       const key =
         boss === 'thorn'
           ? 'vale-cottage'
@@ -9527,18 +9995,25 @@
           craftAt(18, -2, 0.6, () => lantern());
           break;
         case 'cache':
-          chest(true, 0.9);
-          timber([22, 10], [31, -15], 3);
+          // Scornfang's Crypt-side freight station, not a loot/tribute chest.
+          // Reuse existing material primitives without creating a new sprite.
+          boards(-33, 7, 66, 12, '#806145', true);
+          timber([-29, 11], [-29, -27], 4);
+          timber([29, 11], [29, -27], 4);
           softPoly(
             [
-              [25, -15],
-              [33, -13],
-              [34, -8],
-              [29, -6],
+              [-34, -26],
+              [-26, -39],
+              [24, -39],
+              [35, -26],
             ],
-            '#8d9d91',
+            '#6e745c',
             1,
           );
+          timber([-34, -26], [35, -26], 2);
+          craftAt(-16, 2, 0.58, () => craftedDecoration('supply-stack'));
+          craftAt(11, 3, 0.6, () => craftedDecoration('crate'));
+          paper(23, -9, 9);
           break;
         case 'wagon':
         case 'convoy':
@@ -11175,17 +11650,8 @@
         '#c6b790',
         1.6,
       );
-      if (crown)
-        poly(
-          [
-            [x + 17, y - 51],
-            [x + 23, y - 44],
-            [x + 17, y - 37],
-            [x + 11, y - 44],
-          ],
-          '#b5a0bc',
-        );
-      if (!crown)
+      if (crown) craftAt(x + 18, y - 43, 1.05, () => drawDarkLordProfile(ctx, true));
+      else
         line(
           [
             [x + 17, y - 50],
@@ -11475,15 +11941,41 @@
     }
     function lantern(x = 0, y = -20) {
       timber([x, y + 33], [x, y + 2], 3);
-      softRect(x - 7, y - 5, 14, 18, '#5d655b', 2);
-      softRect(x - 4, y - 2, 8, 11, '#dbbf75', 1);
+      // Recessed, tapered glass with a visible metal cage; daytime glass is
+      // unlit, while nighttime flame is painted inside this exact silhouette.
+      poly(
+        [
+          [x - 7, y - 5],
+          [x + 7, y - 5],
+          [x + 6, y + 11],
+          [x - 6, y + 11],
+        ],
+        '#4b574e',
+      );
+      poly(
+        [
+          [x - 4, y - 2],
+          [x + 4, y - 2],
+          [x + 3.5, y + 9],
+          [x - 3.5, y + 9],
+        ],
+        '#86785c',
+      );
       line(
         [
           [x, y - 2],
           [x, y + 9],
         ],
-        '#777b65',
+        '#515749',
         1,
+      );
+      line(
+        [
+          [x - 6, y + 11],
+          [x + 6, y + 11],
+        ],
+        '#62685b',
+        2,
       );
       poly(
         [
@@ -11502,7 +11994,139 @@
         '#666d61',
         1.8,
       );
-      fillOval(x - 1, y + 2, 2, 3, '#ffe2a0', 0.7);
+      line(
+        [
+          [x - 2.2, y - 1],
+          [x - 1.2, y + 4],
+        ],
+        '#b0a084',
+        0.6,
+      );
+    }
+    // Original roadside identity: the same tall weathered post and hooked
+    // cage, with readable panes/rim instead of the pasted rectangular flare.
+    function roadsideLamp() {
+      timber([0, 15], [0, -42], 4, '#75664e');
+      line(
+        [
+          [-1.4, -6],
+          [-1.4, -36],
+        ],
+        '#a69370',
+        0.85,
+      );
+      line(
+        [
+          [1.8, -15],
+          [1.8, 3],
+        ],
+        '#4b5144',
+        0.65,
+      );
+      for (const yy of [3, -14, -28]) oval(0.6, yy, 0.85, 1.2, '#4c4c3c');
+      line(
+        [
+          [0, -45],
+          [0, -58],
+          [4.5, -62],
+          [9, -62],
+        ],
+        '#525a51',
+        2.4,
+      );
+      line(
+        [
+          [1, -45],
+          [1, -56],
+          [5, -60],
+        ],
+        '#ad9877',
+        0.65,
+      );
+      oval(9, -61, 1.5, 1.6, '#676f60');
+      // Slightly tapered ironwork; glass sits behind a metal crossbar.
+      softPoly(
+        [
+          [-8, -48],
+          [8, -48],
+          [7.2, -33],
+          [-7.2, -33],
+        ],
+        '#3e4a43',
+        1,
+      );
+      softPoly(
+        [
+          [-5.8, -46.4],
+          [5.8, -46.4],
+          [5.2, -34.8],
+          [-5.2, -34.8],
+        ],
+        '#8b8169',
+        0.7,
+      );
+      line(
+        [
+          [-4.7, -45],
+          [-4.7, -36],
+        ],
+        '#b2a387',
+        0.85,
+      );
+      line(
+        [
+          [0, -47],
+          [0, -34],
+        ],
+        '#4b5249',
+        1.2,
+      );
+      line(
+        [
+          [4.5, -45],
+          [4.5, -36],
+        ],
+        '#54594b',
+        0.6,
+      );
+      softPoly(
+        [
+          [-9.5, -49],
+          [0, -55],
+          [9.5, -49],
+          [8.8, -46.7],
+          [-8.8, -46.7],
+        ],
+        '#606b5e',
+        1.2,
+      );
+      line(
+        [
+          [-8.4, -49.3],
+          [0, -53.8],
+          [8.4, -49.3],
+        ],
+        '#b6ae90',
+        1,
+      );
+      softPoly(
+        [
+          [-8.2, -34.1],
+          [8.2, -34.1],
+          [6.2, -31.8],
+          [-6.2, -31.8],
+        ],
+        '#4a544c',
+        0.9,
+      );
+      line(
+        [
+          [-7.4, -34.8],
+          [7.4, -34.8],
+        ],
+        '#998f70',
+        1,
+      );
     }
     function pool(wet = true) {
       shaped(wet ? '#6c8378' : '#85765a', () => {
@@ -12033,24 +12657,7 @@
           timber([0, -27], [0, 0], 3, '#686c5c');
           break;
         case 'fruit-cellar':
-          softPoly(
-            [
-              [-49, 16],
-              [-44, -8],
-              [-23, -32],
-              [13, -38],
-              [45, -15],
-              [52, 17],
-            ],
-            '#637d50',
-            2,
-          );
-          blockwork(-24, -19, 48, 39, '#989a7d', 9);
-          oval(0, -17, 24, 16, '#9a9d83');
-          rect(-15, -16, 30, 34, '#403d2d');
-          boards(-12, -15, 24, 31, '#8f714a');
-          timber([0, -15], [0, 16], 2, '#594730');
-          craftAt(31, 13, 0.55, () => chest(false));
+          orchardCellar(false);
           break;
         case 'estate-scaffold':
           for (const x of [-32, 28]) timber([x, -67], [x, 21], 5);
@@ -12513,17 +13120,6 @@
         case 'crown-banner':
         case 'royal-flight-standard':
           flag(true);
-          if (kind === 'royal-flight-standard')
-            softPoly(
-              [
-                [-7, -32],
-                [3, -37],
-                [10, -31],
-                [3, -33],
-              ],
-              '#d0b887',
-              0.5,
-            );
           break;
         case 'shelf':
           boards(-26, -34, 52, 46, '#68543e');
@@ -12696,6 +13292,62 @@
           );
           break;
         case 'thorn-bed':
+          if (region === 0 && e.greenwoodNest) {
+            // Readable low bedding for Thornfang's woodland den: a dry leaf
+            // pallet, woven timber edges and a folded hide, not a stone ring.
+            oval(0, 10, 38, 12, '#253b2944');
+            for (const y of [-7, 4, 12])
+              line(
+                [
+                  [-29, y],
+                  [27, y + 3],
+                ],
+                '#806b4c',
+                4,
+              );
+            softPoly(
+              [
+                [-29, -3],
+                [-15, -13],
+                [15, -12],
+                [29, 0],
+                [13, 10],
+                [-19, 7],
+              ],
+              '#9d9066',
+              2,
+            );
+            softPoly(
+              [
+                [-18, -7],
+                [7, -12],
+                [24, 0],
+                [-10, 3],
+              ],
+              '#b7a67f',
+              1.5,
+            );
+            line(
+              [
+                [-16, 1],
+                [6, 0],
+                [22, 5],
+              ],
+              '#746b4d',
+              1.1,
+            );
+            for (const x of [-27, -14, 6, 19, 30])
+              line(
+                [
+                  [x, 12],
+                  [x + 5, 7],
+                  [x + 3, 2],
+                ],
+                '#667c4b',
+                1.5,
+              );
+            break;
+          }
           nest(0, 4, 1.2);
           for (const x of [-17, -5, 8, 18])
             craftAt(x, 2, 0.5, () => foliage(0, 0, 10, 7, '#6d8557'));
@@ -13316,21 +13968,16 @@
           for (const y of [-30, -17])
             line([[-15, y], [-2, y]], '#c4b2a3', 1.5);
           break;
-        case 'crown-foundry-yard-shipping': {
-          const motion = Math.sin(Math.max(0, e.ambientTime || 0) * 2.8);
+        case 'crown-foundry-yard-shipping':
           blockwork(-37, 8, 74, 12, '#85818a', 5);
           crateBody(18, 4, 0.62);
           crateBody(-12, 7, 0.53);
-          // A loading attendant performs a bounded lift, distinct from
-          // the armed sentries of the same entrance.
-          softRect(-28, -18, 13, 24, '#78857f', 3);
-          oval(-21, -26, 9, 9, '#c6a083');
-          softPoly([[-31, -31], [-22, -39], [-11, -33]], '#b6b3a8', 2);
-          const gripY = -13 - 7 * (motion + 1);
-          line([[-16, -14], [-7, gripY]], '#be987a', 3.5);
-          softRect(-6, gripY - 5, 17, 6, '#c2a98a', 1);
+          // Fixed loading gantry with a parked lifting hook.
+          blockwork(-32, -34, 9, 44, '#77777b', 3);
+          softRect(-33, -37, 43, 7, '#a9a49c', 2);
+          oval(2, -31, 6, 6, '#67686d');
+          line([[2, -29], [2, -14], [6, -11], [9, -15]], '#aaa79c', 2);
           break;
-        }
         // Historical side-decor IDs now represent useful maintained
         // facilities. Cooling is air-assisted, NOT unexplained water supply.
         case 'crown-foundry-cooling-rack':
@@ -13357,17 +14004,13 @@
             softRect(x - 3, -13, 6, 25, '#9e9c9a', 1.5);
           break;
         // Five working stages occupy the original side-crown-foundry.
-        // Each stage contains a distinct workstation and a real animated
-        // labor gesture. These are noncombat environmental figures; no new
-        // crafting transaction or named finished product is implied.
+        // Guards are occupied with the intrusion. The work floor contains
+        // stationary equipment for each step of production.
         case 'crown-foundry-receiving':
         case 'crown-foundry-furnace':
         case 'crown-foundry-forming':
         case 'crown-foundry-finishing':
         case 'crown-foundry-dispatch': {
-          const time = Math.max(0, e.ambientTime || 0);
-          const motion = Math.sin(time * 3.3 + (variant % 7));
-          const lift = (motion + 1) * 0.5;
           const stage = kind.slice('crown-foundry-'.length);
           fillOval(0, 14, 36, 10, '#221f26', 0.24);
           // Utilitarian, swept masonry floors, not damaged ruin floor tiles.
@@ -13384,14 +14027,17 @@
             softRect(9, -19, 23, 21, '#39353a', 2);
             softRect(12, -14, 17, 14, '#c47a47', 2);
             for (const x of [15, 22, 27])
-              glint(x, -11 + lift * 3, '#efc27b', 1.5);
+              glint(x, -10, '#efc27b', 1.5);
             line([[30, -26], [30, -45]], '#afb1a5', 3);
           } else if (stage === 'forming') {
             blockwork(1, 1, 36, 12, '#7b7a82', 3);
             softRect(6, -7, 27, 9, '#a8a9ab', 2);
             softPoly([[7, -10], [27, -10], [33, -5], [5, -5]], '#c6ab86', 1);
-            for (const x of [5, 30])
-              softRect(x, 9, 4, 10, '#747177', 1);
+            for (const x of [3, 29])
+              blockwork(x, -32, 6, 42, '#747177', 3);
+            softRect(1, -34, 36, 8, '#b0aca4', 2);
+            softRect(16, -27, 6, 19, '#8b8c89', 1);
+            softRect(11, -13, 16, 5, '#c2b9a6', 1);
           } else if (stage === 'finishing') {
             softRect(2, -11, 34, 12, '#a1a4a3', 3);
             softRect(5, -8, 28, 5, '#697b80', 1.5);
@@ -13421,41 +14067,6 @@
             softRect(13, 10, 27, 4, '#b8b5b0', 1);
             for (const x of [18, 27, 36])
               oval(x, 7, 3, 2, '#d2c9b3');
-          }
-          // Unarmed artisan silhouette, deliberately unlike Crown guards:
-          // linen headwrap, work apron and two hands with an active task.
-          softPoly([[-27, 10], [-22, -8], [-10, -9], [-4, 11]],
-            '#4b4c58', 2);
-          softPoly([[-23, -14], [-19, -25], [-8, -25], [-5, -12], [-7, 9], [-21, 9]],
-            '#7b8581', 3);
-          softRect(-18, -12, 8, 18, '#c2aa8c', 2);
-          oval(-14, -30, 9, 10, '#c49d82');
-          softPoly([[-24, -34], [-17, -42], [-7, -39], [-5, -32], [-17, -36]],
-            '#c6b7a7', 2);
-          line([[-17, -29], [-15, -29]], '#3b3434', 1.1);
-          if (stage === 'receiving' || stage === 'dispatch') {
-            const armY = -10 - lift * 10;
-            line([[-8, -18], [4, armY]], '#bd9c80', 4.2);
-            oval(4, armY, 4, 3.5, '#d4af8d');
-            // A handled, lifted item makes actual loading legible.
-            softRect(1, armY - 7, 16, 7, '#b9a48b', 1.3);
-          } else if (stage === 'furnace') {
-            line([[-8, -17], [8, -11 + motion * 4]], '#cba486', 4);
-            line([[8, -11 + motion * 4], [24, -16 + motion * 5]],
-              '#838586', 2.6);
-            oval(25, -16 + motion * 5, 3, 4, '#b8afa1');
-          } else if (stage === 'forming') {
-            const hand = -29 - lift * 17;
-            line([[-8, -17], [3, hand]], '#cba486', 4);
-            line([[3, hand], [23, -9 - lift * 7]], '#797d80', 3.5);
-            softRect(21, -17 - lift * 7, 12, 6, '#bcc0b9', 1.2);
-            if (lift < 0.16) glint(24, -10, '#e5ad64', 2.2);
-          } else {
-            const hand = -16 + motion * 4;
-            line([[-8, -17], [16, hand]], '#cba486', 4);
-            softRect(14, hand - 4, 11, 5, '#d5c7ac', 1.1);
-            if (stage === 'finishing')
-              line([[19, hand - 4], [26, -4]], '#e3d7bc', 1.5);
           }
           break;
         }
@@ -14453,10 +15064,11 @@
           );
           break;
         case 'grave-lamp':
+          lantern(0, -25);
+          rockPiece(0, 12, 11, 9);
+          break;
         case 'roadside-lantern':
-          lantern(0, kind === 'roadside-lantern' ? -45 : -25);
-          if (kind === 'roadside-lantern') timber([0, -12], [0, 15], 4, '#746c51');
-          if (kind === 'grave-lamp') rockPiece(0, 12, 11, 9);
+          roadsideLamp();
           break;
         case 'caretaker-table':
           table(45);
@@ -15290,6 +15902,73 @@
           break;
         case 'furrow-plot':
         case 'garden':
+          if (region === 0 && e.greenwoodField) {
+            // An occupied field reads as three cultivated strips, not a
+            // miniature soil token. Rows are rendered, never new crop nodes.
+            for (const [dx, dy] of [
+              [-48, 9],
+              [0, -7],
+              [48, -23],
+            ]) {
+              softPoly(
+                [
+                  [dx - 32, dy + 1],
+                  [dx - 8, dy - 15],
+                  [dx + 34, dy - 5],
+                  [dx + 7, dy + 13],
+                ],
+                '#816b49',
+                2,
+              );
+              for (const v of [-6, 2, 10]) {
+                line(
+                  [
+                    [dx - 24 + v, dy + v * 0.3],
+                    [dx + 25 + v, dy - 6 + v * 0.3],
+                  ],
+                  '#5d593d',
+                  1.4,
+                );
+              }
+              for (const [fx, fy] of [
+                [-19, 2],
+                [-7, -3],
+                [9, 4],
+                [21, -3],
+              ])
+                foliage(dx + fx, dy + fy, 4.5, 4.5, '#6e8d51');
+            }
+            break;
+          }
+          if (region === 0 && e.greenwoodKitchen) {
+            for (const dx of [-28, 27]) {
+              softPoly(
+                [
+                  [dx - 22, 1],
+                  [dx - 8, -17],
+                  [dx + 24, -8],
+                  [dx + 8, 11],
+                ],
+                '#8a7752',
+                2,
+              );
+              for (const [x, y] of [
+                [dx - 12, -2],
+                [dx, -8],
+                [dx + 13, 0],
+              ])
+                foliage(x, y, 5, 6, '#71915c');
+            }
+            line(
+              [
+                [-52, 15],
+                [52, 15],
+              ],
+              '#b09b6e',
+              1.3,
+            );
+            break;
+          }
           softPoly(
             [
               [-32, 1],
@@ -16108,30 +16787,28 @@
           }
           break;
         case 'cache':
-          rect(-17, -12, 34, 25, '#8f704d');
-          line(
+          // Simple fallback silhouette: timber depot platform, not a chest.
+          rect(-29, -4, 58, 15, '#8a6e51');
+          rect(-28, -29, 4, 35, '#684e3a');
+          rect(24, -29, 4, 35, '#684e3a');
+          poly(
             [
-              [-17, -12],
-              [17, 13],
+              [-34, -26],
+              [-25, -38],
+              [25, -38],
+              [34, -26],
             ],
-            '#c1a170',
-            3,
+            '#737b60',
           );
+          rect(-22, -14, 20, 12, '#96734f');
+          rect(5, -17, 16, 15, '#b3a07b');
           line(
             [
-              [17, -12],
-              [-17, 13],
+              [-30, -26],
+              [30, -26],
             ],
-            '#c1a170',
-            3,
-          );
-          line(
-            [
-              [-29, 10],
-              [-8, 2],
-            ],
-            '#75583f',
-            6,
+            '#b8a083',
+            2,
           );
           break;
         case 'wagon':
@@ -17310,6 +17987,62 @@
         1.6,
       );
     }
+    function wagonHorse() {
+      const bay = '#916848';
+      shaped('#594236', () => {
+        ctx.moveTo(-23, -14);
+        ctx.quadraticCurveTo(-42, -12, -34, 14);
+        ctx.quadraticCurveTo(-30, 4, -25, -2);
+      });
+      for (const [x, y, bend, color] of [
+        [-17, -4, -5, '#70503c'], [17, -5, 2, '#70503c'],
+        [-23, 1, -6, bay], [23, -1, 2, bay],
+      ]) {
+        shaped(color, () => {
+          ctx.moveTo(x - 5, y);
+          ctx.lineTo(x + 5, y);
+          ctx.quadraticCurveTo(x + bend + 3, y + 11, x + bend + 2, y + 16);
+          ctx.lineTo(x + bend + 3, y + 25);
+          ctx.lineTo(x + bend - 3, y + 25);
+          ctx.lineTo(x + bend - 4, y + 13);
+        });
+        softRect(x + bend - 4, y + 23, 8, 5, '#433a32', 1);
+      }
+      shaped(bay, () => {
+        ctx.moveTo(-28, -7);
+        ctx.bezierCurveTo(-36, -26, -15, -28, 0, -24);
+        ctx.quadraticCurveTo(14, -23, 24, -28);
+        ctx.quadraticCurveTo(37, -22, 29, -5);
+        ctx.quadraticCurveTo(15, 6, -21, 3);
+      });
+      shaped('#a77853', () => {
+        ctx.moveTo(16, -8);
+        ctx.quadraticCurveTo(17, -24, 32, -40);
+        ctx.quadraticCurveTo(36, -44, 44, -36);
+        ctx.quadraticCurveTo(39, -23, 31, -8);
+        ctx.quadraticCurveTo(26, 0, 16, -8);
+      });
+      shaped('#513b32', () => {
+        ctx.moveTo(13, -22);
+        ctx.quadraticCurveTo(19, -39, 36, -44);
+        ctx.lineTo(39, -36);
+        ctx.quadraticCurveTo(28, -35, 20, -23);
+      });
+      shaped('#ab7b56', () => {
+        ctx.moveTo(35, -41);
+        ctx.lineTo(34, -50);
+        ctx.quadraticCurveTo(39, -51, 40, -42);
+        ctx.quadraticCurveTo(47, -42, 49, -38);
+        ctx.lineTo(57, -30);
+        ctx.quadraticCurveTo(57, -23, 49, -23);
+        ctx.lineTo(39, -32);
+        ctx.quadraticCurveTo(32, -35, 35, -41);
+      });
+      oval(51, -27, 5, 3, '#725140');
+      oval(43, -37, 1.3, 1.3, '#302b23');
+      line([[37, -40], [41, -31], [51, -27], [53, -33]], '#5e4132', 2);
+      oval(49, -29, 1.3, 1.3, '#c5a26c');
+    }
     function craftedTransport() {
       if (e.icon === '🐉' || /Dragon/.test(e.name || '')) {
         dragon('#8b9980');
@@ -17484,33 +18217,69 @@
         );
         return;
       }
-      craftAt(-28, 1, 0.95, () => cartBody(true));
-      shaped('#c7b48a', () => {
-        ctx.moveTo(-58, -16);
-        ctx.bezierCurveTo(-65, -54, 5, -56, 8, -18);
-        ctx.lineTo(0, -13);
-        ctx.quadraticCurveTo(-29, -8, -56, -12);
+      // Timber underframe, rear axle and smaller steering wheels.
+      timber([-52, 6], [13, 2], 5, '#634e38');
+      wheel(-42, 5, 11);
+      wheel(9, 2, 8);
+      wheel(-47, 13, 13);
+      wheel(-5, 11, 10);
+      boards(-60, -14, 69, 17, '#94663e', true);
+      softPoly([[-60, -14], [-51, -20], [16, -20], [9, -14]], '#b58c5b', 1);
+      softPoly([[9, -14], [16, -20], [16, -4], [9, 3]], '#725339', 1);
+      for (const x of [-55, -38, -21, 3]) {
+        timber([x, -15], [x, 2], 2, '#70533a');
+        oval(x, -11, 0.9, 0.9, '#c4ad79');
+      }
+      // The long canvas flank and the front hoop are separate planes.
+      shaped('#b4a078', () => {
+        ctx.moveTo(-60, -15);
+        ctx.bezierCurveTo(-64, -27, -60, -42, -51, -46);
+        ctx.lineTo(0, -51);
+        ctx.quadraticCurveTo(7, -40, -3, -20);
+        ctx.lineTo(-58, -15);
       });
-      for (const x of [-48, -28, -9])
-        line(
-          [
-            [x, -42],
-            [x + 4, -17],
-          ],
-          '#9b8a64',
-          1.4,
-        );
-      craftAt(56, 0, 0.8, () => draftAnimal());
-      timber([0, -2], [45, 2], 3);
-      line(
-        [
-          [-4, -26],
-          [32, -28],
-          [85, -30],
-        ],
-        '#d4bd91',
-        1.5,
-      );
+      shaped('#d8c59a', () => {
+        ctx.moveTo(-52, -46);
+        ctx.bezierCurveTo(-46, -53, -40, -53, -32, -53);
+        ctx.lineTo(16, -58);
+        ctx.quadraticCurveTo(8, -56, 0, -51);
+        ctx.lineTo(-52, -46);
+      });
+      shaped('#504538', () => {
+        ctx.moveTo(-3, -20);
+        ctx.bezierCurveTo(-6, -34, -4, -50, 9, -55);
+        ctx.bezierCurveTo(21, -62, 29, -43, 23, -24);
+        ctx.lineTo(-3, -20);
+      });
+      for (const x of [-56, -39, -22]) {
+        line([[x + 5, -44 - (x + 56) * 0.1], [x, -34], [x - 1, -17 - (x + 56) * 0.1]],
+          '#8b785b', 1);
+        line([[x - 1, -17 - (x + 56) * 0.1], [x + 3, -11]], '#dfcc9e', 1.3);
+      }
+      ctx.beginPath();
+      ctx.moveTo(-3, -20);
+      ctx.bezierCurveTo(-6, -34, -4, -50, 9, -55);
+      ctx.bezierCurveTo(21, -62, 29, -43, 23, -24);
+      ctx.strokeStyle = '#d8c49b';
+      ctx.lineWidth = 2.3;
+      ctx.stroke();
+      sack(5, -23, 0.54, '#b49a71');
+      craftAt(14, -25, 0.45, () => crateBody(0, 0));
+      timber([8, -14], [25, -16], 3.5, '#a77f51');
+      // Shaft, breast collar and traces connect the horse to the underframe.
+      timber([10, -3], [57, 0], 2.6, '#7c593c');
+      craftAt(56, -1, 0.74, wagonHorse);
+      shaped('#5b4032', () => {
+        ctx.moveTo(77, -36);
+        ctx.quadraticCurveTo(68, -29, 70, -13);
+        ctx.lineTo(64, -17);
+        ctx.quadraticCurveTo(66, -33, 77, -36);
+      });
+      timber([9, 3], [67, 7], 3, '#9d754a');
+      line([[27, 1], [60, -1], [74, -13]], '#48382c', 2);
+      line([[72, -18], [77, -11], [73, -4]], '#543c30', 3);
+      oval(74, -10, 1.8, 1.8, '#ba9b66');
+      line([[20, -19], [39, -15], [62, -18], [92, -22]], '#b29975', 1.2);
       craftAt(-58, 3, 0.4, () => lantern(0, -20));
     }
 
@@ -18165,7 +18934,8 @@
     } else if (e.kind === 'landmark') {
       landmark();
     } else if (type === 'npc') {
-      if (e.family && ['teacher', 'smith', 'alchemist'].includes(e.kind)) specialist(e);
+      if (e.presentation === 'goblin-resident') goblinBody(false, false, false, true);
+      else if (e.family && ['teacher', 'smith', 'alchemist'].includes(e.kind)) specialist(e);
       else {
         const smith = ['smith', 'alchemist'].includes(e.kind);
         humanoid(smith ? '#8b7770' : '#8b9c7b');
@@ -18704,6 +19474,9 @@
   function unscaledHeight(e) {
     if (e.greenwoodNature === 'tree') return 140;
     if (e.greenwoodFacility === 'mill') return 160;
+    if (e.greenwoodFacility === 'thorn-lodge') return 180;
+    if (e.greenwoodFacility === 'thorn-rest-bay') return 105;
+    if (e.greenwoodFacility?.startsWith('thorn-')) return 80;
     if (e.miningFacility) return 90;
     if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
@@ -18981,7 +19754,7 @@
           ctx.fill();
         }
         // Open filaments and little parachute tips, rather than a solid disc.
-        const radius = 3.5 + (seed % 2) * 0.5;
+        const radius = 4.8 + (seed % 2) * 0.6;
         dot(headX, headY, radius * 0.8, '#f1eed914');
         for (let j = 0; j < 16; j++) {
           const angle = (j / 16) * Math.PI * 2 + (seed % 7) * 0.14,
@@ -19179,6 +19952,25 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
     }
+    if (outdoor && region === 0 && !blocked) {
+      // Stable low-contrast mineral/litter/grass grain lives in the existing
+      // static ground cache. No projected image, noise per frame or collision.
+      ctx.save();
+      ctx.lineWidth = 0.8;
+      const density = seed % 5;
+      for (let j = 0; j < density; j++) {
+        const h = Math.imul(seed ^ (j * 374761393), 668265263) >>> 0;
+        const u = ((h & 255) / 255 - 0.5) * 60;
+        const v = 10 + (((h >>> 8) & 255) / 255) * 21;
+        ctx.strokeStyle = j % 3 === 0 ? '#a6aa6c30' : '#78955445';
+        ctx.beginPath();
+        ctx.moveTo(p.x + u, p.y + v);
+        ctx.lineTo(p.x + u - 2, p.y + v - 2 - (h % 4));
+        if (j % 2) ctx.lineTo(p.x + u + 1, p.y + v - 1);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
     if (
       !blocked &&
       materials &&
@@ -19315,7 +20107,18 @@
         if (water) {
           const x = lo + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
-          line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+          if (region === 0 && R.greenwoodLayout?.version === 2 && banks) {
+            const a = banks(Math.max(y1, y - 14)),
+              b = banks(Math.min(y2, y + 14)),
+              dx = (b[0] + b[1] - a[0] - a[1]) * 0.38;
+            line(
+              { x: x - dx * 0.5, y: y - 11 + phase * 2 },
+              { x: x + dx * 0.5, y: y + 11 + phase * 2 },
+              '#9abeb772',
+              1,
+            );
+          } else
+            line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
         } else {
           const mid = lo + localWidth * (0.4 + (seed % 3) * 0.08);
           line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
@@ -19437,6 +20240,7 @@
       const water = kind === 'water',
         lava = kind === 'lava',
         cliff = kind === 'cliff',
+        greenwoodShore = water && region === 0 && R.greenwoodLayout?.version === 2,
         width = x2 - x1,
         bank = water ? (region === 1 ? '#677561' : '#64725a') : lava ? '#54413e' : '#726c5d';
       const ribbon = (inset, color, material = null) => {
@@ -19451,48 +20255,98 @@
         }
         poly([...left, ...right.reverse()], color, material);
       };
-      // Collision and the continuous curved bank use the same authored function.
-      ribbon(-8, bank);
-      ribbon(0, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
-      ribbon(
-        7,
-        water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
-        water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
-      );
-      for (let y = y1; y < y2; y += 58) {
-        const end = Math.min(y2, y + 58),
-          seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
-          tooth = 8 + (seed % 12);
-        for (const side of [-1, 1]) {
-          const local = banks ? banks(y) : [x1, x2],
-            edge = side < 0 ? local[0] : local[1],
-            inside = edge - side * Math.min(tooth, width * 0.25),
-            mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
-          poly(
-            [
-              { x: edge, y },
-              { x: inside, y: mid },
-              { x: edge - side * 6, y: end },
-              { x: edge, y: end },
-            ],
-            water
-              ? side < 0
-                ? '#536a57'
-                : '#6a7c64'
-              : lava
-                ? seed % 2
-                  ? '#423b3b'
-                  : '#574039'
-                : side < 0
-                  ? '#696b61'
-                  : '#4b514c',
-          );
-          if (!water && !lava)
-            line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
-          if (water)
-            line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
-          else if (lava)
-            line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
+      // The bank contour is the *same* profile used by collision. Greenwood's
+      // graded material shoulders replace the old repetitive triangular teeth;
+      // all other region art is deliberately unchanged.
+      if (greenwoodShore) {
+        ribbon(-22, '#465a49');
+        ribbon(-15, '#61705a');
+        ribbon(-8, '#718066');
+        ribbon(-3, '#3d6064');
+        ribbon(0, '#285d70');
+        ribbon(7, '#397783');
+      } else {
+        ribbon(-8, bank);
+        ribbon(0, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
+        ribbon(
+          7,
+          water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
+          water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
+        );
+      }
+      if (greenwoodShore) {
+        // Sparse dry-land patches rooted outside the legal river. Vary spacing,
+        // side, scale and hue without per-frame RNG or new collidable props.
+        for (let y = y1 + 43; y < y2 - 34; y += 91) {
+          if (R.barriers[region].gaps.some(([lo, hi]) => y >= lo - 65 && y <= hi + 65)) continue;
+          for (const side of [-1, 1]) {
+            const index = Math.floor(y / 91);
+            const seed =
+              (Math.imul(index + (side + 2) * 17, 73856093) ^ Math.imul(index + 37, 19349663)) >>>
+              0;
+            if (seed % 6 === 0) continue;
+            const [lo, hi] = banks ? banks(y) : [x1, x2],
+              edge = side < 0 ? lo : hi,
+              cx = edge + side * (26 + (seed % 17)),
+              cy = y + ((seed >>> 7) % 21) - 10,
+              rx = 9 + ((seed >>> 12) % 7),
+              ry = 10 + ((seed >>> 16) % 13);
+            if (!visible({ x: cx, y: cy })) continue;
+            poly(
+              Array.from({ length: 12 }, (_, j) => {
+                const a = (j * Math.PI) / 6,
+                  variation = 1 + Math.sin(a * 3 + (seed % 11)) * 0.09;
+                return { x: cx + Math.cos(a) * rx * variation, y: cy + Math.sin(a) * ry };
+              }),
+              seed % 3 === 0 ? '#596f4b99' : '#4c694d88',
+            );
+            // A few low temperate grass/fern strokes; not a Marches reed wall.
+            if (seed % 3 !== 1)
+              for (let j = -1; j <= 1; j++)
+                line(
+                  { x: cx + j * 5, y: cy + 2 },
+                  { x: cx + j * 4 + (seed % 5) - 2, y: cy - 8 - ((seed >>> (j + 3)) % 6) },
+                  '#879c6988',
+                  0.9,
+                );
+          }
+        }
+      } else {
+        for (let y = y1; y < y2; y += 58) {
+          const end = Math.min(y2, y + 58),
+            seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
+            tooth = 8 + (seed % 12);
+          for (const side of [-1, 1]) {
+            const local = banks ? banks(y) : [x1, x2],
+              edge = side < 0 ? local[0] : local[1],
+              inside = edge - side * Math.min(tooth, width * 0.25),
+              mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
+            poly(
+              [
+                { x: edge, y },
+                { x: inside, y: mid },
+                { x: edge - side * 6, y: end },
+                { x: edge, y: end },
+              ],
+              water
+                ? side < 0
+                  ? '#536a57'
+                  : '#6a7c64'
+                : lava
+                  ? seed % 2
+                    ? '#423b3b'
+                    : '#574039'
+                  : side < 0
+                    ? '#696b61'
+                    : '#4b514c',
+            );
+            if (!water && !lava)
+              line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
+            if (water)
+              line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
+            else if (lava)
+              line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
+          }
         }
       }
       for (let y = y1 + 24; y < y2 - 8; y += water ? 62 : 48) {
@@ -19505,14 +20359,35 @@
         if (water) {
           const x = localX1 + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
-          if (!omitTerrainMotion)
-            line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
-          line(
-            { x: x + span * 0.15, y: y + 12 },
-            { x: x + span * 0.65, y: y + 14 },
-            '#c0d6c044',
-            0.8,
-          );
+          if (greenwoodShore && banks) {
+            // Travel along the watercourse, not a fixed screen-horizontal dash.
+            const a = banks(Math.max(y1, y - 14)),
+              b = banks(Math.min(y2, y + 14)),
+              dx = (b[0] + b[1] - a[0] - a[1]) * 0.38,
+              drift = phase * 2;
+            if (!omitTerrainMotion)
+              line(
+                { x: x - dx * 0.5, y: y - 11 + drift },
+                { x: x + dx * 0.5, y: y + 11 + drift },
+                '#9abeb772',
+                1,
+              );
+            line({ x: x + 8, y: y - 4 }, { x: x + 8 + dx * 0.55, y: y + 8 }, '#c0d6c033', 0.8);
+          } else {
+            if (!omitTerrainMotion)
+              line(
+                { x, y: y + phase * 3 },
+                { x: x + span, y: y + 5 + phase * 3 },
+                '#9abeb788',
+                1.2,
+              );
+            line(
+              { x: x + span * 0.15, y: y + 12 },
+              { x: x + span * 0.65, y: y + 14 },
+              '#c0d6c044',
+              0.8,
+            );
+          }
         } else if (lava) {
           const mid = localX1 + localWidth * (0.4 + (seed % 3) * 0.08);
           if (!omitTerrainMotion) {
@@ -19544,12 +20419,15 @@
           const end = Math.min(y2, y + 24),
             lo = banks ? banks(y)[side] : [x1, x2][side],
             hi = banks ? banks(end)[side] : [x1, x2][side];
-          line(
-            { x: lo, y },
-            { x: hi, y: end },
-            water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99',
-            1.5,
-          );
+          // Avoid drawing a hard continuous bright outline down both Greenwood banks.
+          const quiet = greenwoodShore && (Math.floor(y / 24) * 13 + side * 7) % 9 < 4;
+          if (!quiet)
+            line(
+              { x: lo, y },
+              { x: hi, y: end },
+              greenwoodShore ? '#99b49b4d' : water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99',
+              greenwoodShore ? 1.1 : 1.5,
+            );
         }
       }
     };
@@ -19918,6 +20796,59 @@
         continue;
       }
       if (kind === 'rain-pools') {
+        if (region === 0 && p.wetland && R.greenwoodLayout?.version === 2) {
+          // One hydraulic composition: paint *all* earth rims first, then all
+          // water surfaces. Per-shape rim/interior painting used to overdraw
+          // connected channels at the pond, wheel and river confluence.
+          for (let index = 0; index < p.pools.length; index++) {
+            const pool = p.pools[index],
+              rim = pool.points.map((q) => ({
+                x: pool.x + (q.x - pool.x) * 1.055,
+                y: pool.y + (q.y - pool.y) * 1.055,
+              }));
+            if (index === 3) {
+              // The tailrace is one continuous water surface with the river.
+              // Its earthy outer rim stops at the *real* western riverbank,
+              // instead of making a triangular wedge over the flowing river.
+              // Clip the visual rim only; the identical source water polygon
+              // continues to own navigation/collision at the confluence.
+              const lo = Math.max(0, pool.y - pool.ry - 30),
+                hi = Math.min(size, pool.y + pool.ry + 30),
+                land = [{ x: 0, y: lo }];
+              for (let y = lo; y < hi; y += 16) land.push({ x: R.channelBanks(0, y)[0], y });
+              land.push({ x: R.channelBanks(0, hi)[0], y: hi }, { x: 0, y: hi });
+              ctx.save();
+              ctx.beginPath();
+              land.map(screen).forEach((v, j) => (j ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y)));
+              ctx.closePath();
+              ctx.clip();
+              poly(rim, '#68745b');
+              ctx.restore();
+            } else poly(rim, pool.shallow ? '#71806a' : '#68745b');
+          }
+          for (const pool of p.pools)
+            poly(pool.points, pool.shallow ? '#3c6b6d' : '#285d70');
+          for (const pool of p.pools)
+            poly(pool.points, pool.shallow ? '#4c7b79' : '#397783');
+          // A few subdued strokes distinguish the shallow woodland feeder
+          // from the deep, quiet millpond without permanent animation.
+          const feeder = R.greenwoodLayout.upperCreek || [];
+          for (let j = 1; j < feeder.length - 1; j += 2) {
+            const q = feeder[j];
+            if (visible(q))
+              line({ x:q.x-7, y:q.y+2 }, { x:q.x+6, y:q.y-1 },
+                '#b1c2ac70', 0.9);
+          }
+          // Quiet pond reflections; directed channels stay unobstructed.
+          const pond = p.pools[0];
+          for (let j = -1; j <= 1; j++) {
+            const y = pond.y + j * pond.ry * 0.28,
+              x = pond.x - pond.rx * 0.24;
+            if (visible({ x, y }))
+              line({ x, y }, { x: x + pond.rx * 0.28, y: y + 4 }, '#a5bdb15c', 1);
+          }
+          continue;
+        }
         for (const pool of p.pools) {
           const rim = pool.points.map((q) => ({
             x: pool.x + (q.x - pool.x) * 1.075,
@@ -20197,6 +21128,100 @@
           ctx.fillStyle = stone ? '#666558' : '#6a5139';
           ctx.fillRect(p.x - 2, p.y - 1, 3, 2);
         }
+    }
+    if (region === 0 && R.greenwoodLayout?.version === 2) {
+      // Mill service geometry is owned by the current region layout. The
+      // culvert is a dirt road over a creek, not another stone bridge.
+      // The timber crossing is much smaller than either named river bridge.
+      for (const deck of [
+        R.greenwoodLayout.creekCulvert,
+        R.greenwoodLayout.woodlandCulvert,
+        R.greenwoodLayout.millBridge,
+      ]) {
+        if (!deck) continue;
+        const a = deck.from, b = deck.to,
+          length = Math.hypot(b.x - a.x, b.y - a.y) || 1,
+          tx = (b.x - a.x) / length, ty = (b.y - a.y) / length,
+          nx = -ty, ny = tx,
+          half = deck.width / 2,
+          culvert = deck.kind === 'stone-culvert';
+        if (viewport && outsideScreen([a,b].map(screen), viewport, 130)) continue;
+        const corners = (w, ext = 0) => [
+          { x: a.x + nx*w - tx*ext, y: a.y + ny*w - ty*ext },
+          { x: b.x + nx*w + tx*ext, y: b.y + ny*w + ty*ext },
+          { x: b.x - nx*w + tx*ext, y: b.y - ny*w + ty*ext },
+          { x: a.x - nx*w - tx*ext, y: a.y - ny*w - ty*ext },
+        ];
+        if (culvert) {
+          // A compacted roadbed continues across the shallow feeder. Only
+          // the two *banks* show masonry cheeks and dark water portals.
+          // Draw nothing that changes the authoritative walkable shallows.
+          // Match Greenwood's existing compacted-earth farm road. The
+          // culvert reads as uninterrupted ground, not a timber bridge.
+          polygon(corners(half + 5, 3), '#766e55');
+          polygon(corners(half, 2), '#ac8d66');
+          for (const track of [-0.42, 0.42]) {
+            line(
+              { x: a.x + nx*half*track, y: a.y + ny*half*track },
+              { x: b.x + nx*half*track, y: b.y + ny*half*track },
+              '#7d674d', 1.25,
+            );
+          }
+          const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+          // For a diagonal creek, follow the water centerline out from each shoulder.
+          const flowAcross = deck.flow ? deck.flow.x * nx + deck.flow.y * ny : 0;
+          const flowX = flowAcross ? deck.flow.x / flowAcross : nx;
+          const flowY = flowAcross ? deck.flow.y / flowAcross : ny;
+          for (const side of [-1, 1]) {
+            const rim = {
+              x: mid.x + flowX * (half + 3) * side,
+              y: mid.y + flowY * (half + 3) * side,
+            };
+            const outer = {
+              x: rim.x + flowX * 9 * side,
+              y: rim.y + flowY * 9 * side,
+            };
+            // The mouth is a small water-darkened gap between stone cheeks,
+            // not a solid black stripe through the middle of the road.
+            const wing = (p, n) => ({ x:p.x + tx*n, y:p.y + ty*n });
+            polygon([wing(rim,-12),wing(rim,12),wing(outer,12),wing(outer,-12)],
+              '#354c4d');
+            line(wing(rim,-12), wing(outer,-12), '#b5a68a', 2.2);
+            line(wing(rim,12), wing(outer,12), '#b5a68a', 2.2);
+            line(wing(outer,-12), wing(outer,12), '#857c68', 1.5);
+          }
+          continue;
+        }
+        // A low timber deck with visible edges, plank rhythm and dry-bank
+        // abutments. The deep millrace remains impassable away from this deck.
+        polygon(corners(half + 6, 2), '#544331');
+        polygon(corners(half), '#a8895e');
+        for (let t = 10; t < length - 7; t += 17) {
+          const x = a.x + tx*t, y = a.y + ty*t;
+          line(
+            { x:x+nx*(half-5), y:y+ny*(half-5) },
+            { x:x-nx*(half-5), y:y-ny*(half-5) },
+            '#71573e', 2,
+          );
+        }
+        for (const side of [-1,1]) {
+          const edge = (p) => ({
+            x: p.x + nx*(half+2)*side, y: p.y + ny*(half+2)*side,
+          });
+          line(edge(a), edge(b), '#c7a97e', 2.7);
+          for (const t of [0.07,0.93]) {
+            const p = edge({ x:a.x+tx*length*t, y:a.y+ty*length*t });
+            const q = screen(p);
+            ctx.strokeStyle='#65513b';ctx.lineWidth=3;
+            ctx.beginPath();ctx.moveTo(q.x,q.y+2);ctx.lineTo(q.x,q.y-10);ctx.stroke();
+          }
+        }
+        for (const bank of [a,b]) {
+          line({ x:bank.x+nx*(half+5), y:bank.y+ny*(half+5) },
+            { x:bank.x-nx*(half+5), y:bank.y-ny*(half+5) },
+            '#847a64', 2.4);
+        }
+      }
     }
     ctx.restore();
   }
@@ -20694,7 +21719,8 @@
     }
     return commands;
   }
-  function footpaths(ctx, paths, screen) {
+  function footpaths(ctx, paths, screen, region = -1) {
+    if (region === 0 && R.greenwoodLayout?.version === 2) return;
     ctx.save();
     ctx.lineJoin = 'round';
     for (const path of paths || [])
@@ -20719,9 +21745,18 @@
       }
     ctx.restore();
   }
-  function roads(ctx, paths, screen, region = 0, materials = null, viewport = null) {
+  function roads(
+    ctx,
+    paths,
+    screen,
+    region = 0,
+    materials = null,
+    viewport = null,
+    greenwoodPaths = [],
+    greenwoodKinds = [],
+  ) {
     if (region === 0 && R.greenwoodLayout?.version === 2)
-      return GreenwoodLandscape.drawRoads(ctx, paths, screen);
+      return GreenwoodLandscape.drawRoads(ctx, paths, screen, greenwoodPaths, greenwoodKinds);
     const barrier = R.barriers[region];
     let commands;
     if (roadCacheMatches(paths, region, barrier)) commands = roadCache.commands;
@@ -20813,7 +21848,7 @@
   } = {}) {
     if (optimized) return [];
     const dayMotes = ['#eadf9e', '#b8d8ca', '#dedcc7', '#b98569', '#aa8ec0'],
-      nightMotes = ['#dcefa8', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
+      nightMotes = ['#c5cbda', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
       count = dungeon || room ? 8 : region === 3 || region === 4 ? 18 : 14,
       fade = Math.max(0, Math.min(1, darkness)),
       day = dayMotes[region] || dayMotes[0],
@@ -20841,49 +21876,38 @@
   }
 
   function drawLightFixtures(ctx, renderedLights) {
+    // Small flame inside the actual painted glass. No new pane, post or wall
+    // appears at night, and the effect cannot overpaint the physical frame.
     for (const p of renderedLights) {
-      if (p.kind === 'window') {
-        ctx.fillStyle = '#483d31';
-        ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
-        ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
-        ctx.fillStyle = '#f2cb81';
-        ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
-        ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
-        ctx.strokeStyle = '#8d6543';
-        ctx.lineWidth = 1.3;
-        ctx.beginPath();
-        for (const x of [p.x - 9, p.x + 12]) {
-          ctx.moveTo(x, p.y - 42);
-          ctx.lineTo(x, p.y - 32);
-        }
-        ctx.stroke();
-      } else if (p.kind === 'lantern' && p.fixture === 'post') {
-        // Illuminate the glass already painted on the actual post. Do not
-        // manufacture a second floating service lantern beside it.
-        ctx.fillStyle = '#f4c57e';
-        ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
-      } else if (p.kind === 'lantern') {
-        // A modest iron hook and glazed hanging lamp by the service stand.
-        const x = p.x + 19,
-          y = p.y - 22;
-        ctx.strokeStyle = '#817c69';
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.moveTo(x - 7, y + 17);
-        ctx.lineTo(x - 7, y - 14);
-        ctx.lineTo(x + 1, y - 14);
-        ctx.lineTo(x + 1, y - 9);
-        ctx.stroke();
-        ctx.fillStyle = '#574b40';
-        ctx.fillRect(x - 6, y - 9, 14, 4);
-        ctx.fillStyle = '#f4c57e';
-        ctx.fillRect(x - 5, y - 5, 12, 12);
-        ctx.strokeStyle = '#635a4b';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x - 5, y - 5, 12, 12);
-        ctx.fillStyle = '#7a6450';
-        ctx.fillRect(x - 6, y + 7, 14, 3);
-      }
+      if (p.kind !== 'lantern' || p.fixture !== 'glass' || p.lit === false) continue;
+      const scale = Math.max(0.2, Math.min(2.5, Number(p.scale) || 1));
+      const street = p.role === 'street',
+        refuge = p.role === 'refuge';
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.scale(scale, scale);
+      // Restrained internal candle: curved silhouette, never a solid panel.
+      // Preserve the approved translucent glass color, but encode opacity
+      // via globalAlpha. Pixi's canonical vector accessory adapter accepts
+      // hex fills plus alpha, not CSS rgba(...) paint strings.
+      const baseAlpha = ctx.globalAlpha;
+      ctx.globalAlpha = baseAlpha * (street ? 0.18 : 0.15);
+      ctx.fillStyle = street ? '#edb562' : '#eeac57';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, street ? 3.5 : 2.8, street ? 4.1 : 3.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = baseAlpha;
+      ctx.fillStyle = refuge ? '#eac282' : '#e1a864';
+      ctx.beginPath();
+      ctx.moveTo(0, -3.3);
+      ctx.bezierCurveTo(-2.2, -0.7, -1.6, 2.7, 0, 2.9);
+      ctx.bezierCurveTo(1.9, 2.2, 2.4, -0.8, 0, -3.3);
+      ctx.fill();
+      ctx.fillStyle = '#fff0bc';
+      ctx.beginPath();
+      ctx.ellipse(0, 0.6, 0.75, 1.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
   }
   function atmosphere(ctx, canvas, region = 0, opts = {}) {
@@ -20907,7 +21931,7 @@
       'rgba(166,146,196,.05)',
     ];
     const nightTints = [
-      'rgba(11,25,42,.48)', // Greenwood: moonlit blue-greens, not a blackout
+      'rgba(39,47,67,.64)', // Greenwood: moonlit slate-blue neutralizes olive grass
       'rgba(12,32,44,.48)', // Marches: wet blue reflections
       'rgba(19,29,42,.50)', // Ironroot: cool altitude, warm occupied windows
       'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
@@ -20928,7 +21952,9 @@
       g.addColorStop(0, nightTints[region] || nightTints[0]);
       g.addColorStop(
         1,
-        `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
+        region === 0
+          ? `rgba(${31 - 9 * peaceBlend},${40 - 9 * peaceBlend},${60 - 11 * peaceBlend},${0.64 - 0.34 * peaceBlend})`
+          : `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
       );
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -20943,11 +21969,26 @@
         const carried = p.kind === 'carried-lantern',
           window = p.kind === 'window',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
-          radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
-          y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
+          radius = carried
+            ? 64
+            : window
+              ? 70
+              : p.kind === 'work-fire'
+                ? 105
+                : fire
+                  ? 90
+                  : p.fixture === 'glass'
+                    ? p.radius || 80
+                    : 85,
+          y = carried || p.fixture === 'glass' ? p.y : p.y - (window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
-        glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
+        glow(
+          source,
+          radius,
+          window ? 0.27 : fire ? 0.3 : p.fixture === 'glass' ? p.alpha || 0.25 : 0.25,
+          tint,
+        );
         if (carried) glow(source, 10, 0.5, '255,221,150');
       }
       ctx.globalCompositeOperation = 'source-over';
@@ -20988,7 +22029,7 @@
         canvas.width,
         canvas.height * (sunset ? 0.9 : 0.1),
       );
-      const strength = daylight.warmth * (victory ? 1.25 : 1);
+      const strength = daylight.warmth * (victory ? 1.25 : 1) * (region === 0 && sunset ? 0.76 : 1);
       wash.addColorStop(
         0,
         sunset ? `rgba(244,139,70,${0.23 * strength})` : `rgba(248,185,177,${0.18 * strength})`,
@@ -21053,8 +22094,58 @@
       e.ranged && ['mireling', 'ogre', 'orc', 'ashbeast', 'crownguard'].includes(e.species);
     return e.species + (rangedClass ? ':ranged' : '');
   }
+  function drawDarkLordProfile(ctx, cloth = false) {
+    // The ruler's right-facing head and identifiable nose, chin and shoulder.
+    // The same portrait grammar is used on Stonecross's striking-die tray.
+    ctx.fillStyle = cloth ? '#d8b477' : '#586d77';
+    ctx.beginPath();
+    ctx.moveTo(-5, -3);
+    ctx.lineTo(2, -5);
+    ctx.lineTo(4, -2);
+    ctx.lineTo(7, 0);
+    ctx.lineTo(4, 1);
+    ctx.lineTo(3, 4);
+    ctx.lineTo(1, 5);
+    ctx.lineTo(-3, 4);
+    ctx.lineTo(-6, 6);
+    ctx.lineTo(-7, 5);
+    ctx.lineTo(-4, 2);
+    ctx.closePath();
+    ctx.fill();
+    // The ruler's own tall pointed helm and broad three-tipped crown,
+    // miniaturized from the actual Dark Lord silhouette, not generic royalty.
+    ctx.fillStyle = cloth ? '#c19a65' : '#596274';
+    ctx.beginPath();
+    ctx.moveTo(-5, -3);
+    ctx.lineTo(-4, -6);
+    ctx.lineTo(0, -8);
+    ctx.lineTo(4, -5);
+    ctx.lineTo(5, -3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = cloth ? '#eed5a4' : '#4e646e';
+    ctx.beginPath();
+    ctx.moveTo(-5.5, -4);
+    ctx.lineTo(-8, -8.6);
+    ctx.lineTo(-3, -6.2);
+    ctx.lineTo(0, -9.5);
+    ctx.lineTo(3, -6.2);
+    ctx.lineTo(7.8, -8.6);
+    ctx.lineTo(5.8, -4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = cloth ? '#604457' : '#e3e9e7';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(-4, -4);
+    ctx.lineTo(3, -4);
+    ctx.stroke();
+    ctx.fillStyle = cloth ? '#604457' : '#e3e9e7';
+    ctx.fillRect(1, -2, 1.2, 1.2);
+  }
   root.PrototypeVisuals = {
     draw,
+    drawDarkLordProfile,
     frontierTreeShoots,
     frontierGroundRecoveryAt,
     height,
@@ -21070,6 +22161,7 @@
     bridges,
     atmosphere,
     drawLightFixtures,
+    lightingFixtures,
     atmosphereMotes,
     allyBodyKind,
     enemyBodyKind,

@@ -479,6 +479,10 @@
             throw Error('Invalid Treasury recovery account');
           finite(account.crowns, 0, 1e9);
           finite(account.respawnAt, 0, 1e9);
+          if (account.captainVictories !== undefined &&
+              (!Number.isInteger(account.captainVictories) ||
+               account.captainVictories < 0 || account.captainVictories > 3))
+            throw Error('Invalid captain victory history');
           if (account.cachePoint !== undefined) {
             if (
               !account.cachePoint ||
@@ -818,6 +822,9 @@
             seen.add(e.id);
             for (const f of ['x', 'y', 'hp', 'maxHp', 'baseHp', 'baseDamage', 'gold', 'xp'])
               finite(e[f], 0, 1e9);
+            if (e.rematchTier !== undefined &&
+                (!Number.isInteger(e.rematchTier) || e.rematchTier < 0 || e.rematchTier > 2))
+              throw Error('Invalid rematch tier');
             if (e.hp > e.maxHp || !e.home) throw Error('Invalid enemy health');
             if (
               s.phase === 'peace' &&

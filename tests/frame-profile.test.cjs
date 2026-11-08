@@ -100,6 +100,39 @@ assert(!JSON.stringify(slow).includes('undefined'));
 p.clearSlowdowns();
 assert.equal(p.report().slowdownIncidents.records.length, 0);
 assert.equal(p.report().slowdownIncidents.dropped, 0);
+// #783 dev.257 exposed an ordinary slow draw where renderer averages existed,
+// but the exceptional callback omitted the already-measured Pixi/Canvas split.
+// Preserve those actual surface costs, including in preceding callback context,
+// without enabling the more expensive per-Pixi-stage opt-in recorder.
+const exceptional = Runtime.createFrameProfile();
+exceptional.record({
+  drawn: true, frameWorkMs: 70, intervalMs: 16, renderMs: 65,
+  pixiAttempted: true, pixiMs: 60, canvasOverlayDrawn: true, canvasOverlayMs: 4,
+});
+exceptional.record({drawn: false, frameWorkMs: 3, intervalMs: 140});
+let snapshots = exceptional.report().slowdownIncidents.records;
+assert.equal(snapshots.length, 2);
+assert.equal(snapshots[0].current.pixiMs, 60);
+assert.equal(snapshots[0].current.canvasOverlayMs, 4);
+assert.equal(snapshots[0].current.canvasWorldMs, null);
+assert.equal(snapshots[1].previous.pixiMs, 60, 'callback gap retains preceding renderer split');
+assert.equal(snapshots[1].current.pixiMs, null, 'skipped frame is not a zero-ms Pixi draw');
+assert.equal(snapshots[1].current.canvasOverlayMs, null);
+assert.equal(snapshots[1].current.canvasWorldMs, null);
+exceptional.record({
+  drawn: true, frameWorkMs: 88, intervalMs: 17, renderMs: 76,
+  pixiAttempted: true, pixiMs: 38, canvasWorldDrawn: true, canvasWorldMs: 37,
+});
+exceptional.record({
+  drawn: true, frameWorkMs: 57, intervalMs: 17, renderMs: 53,
+  canvasWorldDrawn: true, canvasWorldMs: 50,
+});
+snapshots = exceptional.report().slowdownIncidents.records;
+assert.equal(snapshots[2].current.pixiMs, 38, 'fallback preserves attempted Pixi time');
+assert.equal(snapshots[2].current.canvasWorldMs, 37, 'fallback preserves full Canvas time');
+assert.equal(snapshots[2].current.canvasOverlayMs, null, 'fallback did not draw overlay');
+assert.equal(snapshots[3].current.pixiMs, null, 'Canvas-only draw is not a zero-ms Pixi draw');
+assert.equal(snapshots[3].current.canvasWorldMs, 50);
 const diagnostics = Runtime.create(()=>100);
 assert(diagnostics.describe({measuredLayer:'canvas-combat-overlay'})
   .includes('Canvas combat overlay only'));

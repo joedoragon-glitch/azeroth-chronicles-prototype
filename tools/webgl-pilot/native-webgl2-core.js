@@ -1,7 +1,7 @@
-/* STAGING ONLY — genuine WebGL2 drawing primitives, not a game renderer.
-   Not included in the playable PWA's scripts or offline inventory.
-   Input commands are pixels/projected world art and original asset images.
-   No Canvas draw calls are made by any frame or lamp command. */
+/* Live WebGL2 drawing primitives used by the primary PixiJS compositor.
+   Loaded in the playable PWA; not a standalone renderer.
+   Inputs are projected world art and original asset images.
+   Frame and lamp GPU commands do not use Canvas 2D drawing calls. */
 (function (root) {
   'use strict';
   const DEFAULT_CLEAR = Object.freeze([12 / 255, 25 / 255, 19 / 255, 1]);
@@ -80,14 +80,16 @@
         window = lamp.kind === 'window',
         fire = lamp.kind === 'fire' || lamp.kind === 'work-fire';
       const radius = carried ? 64 : window ? 70 :
-        lamp.kind === 'work-fire' ? 105 : fire ? 90 : 85;
-      const y = carried ? lamp.y : lamp.y -
-        (lamp.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28);
+        lamp.kind === 'work-fire' ? 105 : fire ? 90 :
+        lamp.fixture === 'glass' ? (lamp.radius || 80) : 85;
+      const y = carried || lamp.fixture === 'glass' ? lamp.y : lamp.y -
+        (window ? 32 : fire ? 13 : 28);
       cmds.push({
         kind: 'screenGlow', x: lamp.x, y, radius,
         rgb: region === 1 ? [245, 208, 150] :
           region === 4 ? [247, 194, 147] : [255, 207, 132],
-        alpha: (window ? 0.27 : fire ? 0.30 : 0.25) * clamp(darkness, 0, 1)
+        alpha: (window ? 0.27 : fire ? 0.30 :
+          lamp.fixture === 'glass' ? (lamp.alpha || 0.25) : 0.25) * clamp(darkness, 0, 1)
       });
       if (carried) {
         cmds.push({

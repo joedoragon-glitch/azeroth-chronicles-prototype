@@ -10,7 +10,11 @@ const game = {
   hero: { id: 'hero', x: 334, y: 298 },
   zoneId: 'vale',
   s: { rescued: {}, loot: [], projectiles: [], throneClaimed: false, statistics: { deaths: 0 } },
-  zone: () => ({ props: game.props || [], enemies: game.enemies || [], buildings: [] }),
+  zone: () => ({
+    props: game.props || [],
+    enemies: game.enemies || [],
+    buildings: game.buildings || [],
+  }),
   visibleNPCs: () => game.npcs || [],
   visibleResourceNodes: () => [],
   activeLivingParty: () => [],
@@ -72,8 +76,7 @@ const inits = [],
   resources = new Set(),
   approvedTextures = new Map();
 const gpuUploadBatches = [],
-  worldIndicatorFrames = [],
-  crownWorkBakeCalls = [];
+  worldIndicatorFrames = [];
 let idleCallback = null,
   backgroundCopies = 0,
   textureUpdates = 0,
@@ -91,7 +94,9 @@ let currentActorTextures = new Set(),
   destroyedProcedural = 0,
   lastApplicationCanvas = null,
   rejectWebGLContext = false,
-  failSceneDraw = false;
+  failApplicationInit = false,
+  failSceneDraw = false,
+  syntheticSceneDelayMs = 0;
 function canvas() {
   const surface = {
     width: 0,
@@ -131,7 +136,34 @@ class Application {
   constructor() {
     this.canvas = canvas();
     lastApplicationCanvas = this.canvas;
-    this.canvas.getContext = (type) => (type === 'webgl2' && !rejectWebGLContext ? {} : null);
+    this.canvas.getContext = (type) =>
+      type === 'webgl2' && !rejectWebGLContext
+        ? {
+            VERSION: 1,
+            RENDERER: 2,
+            VENDOR: 3,
+            SHADING_LANGUAGE_VERSION: 4,
+            MAX_TEXTURE_SIZE: 5,
+            MAX_RENDERBUFFER_SIZE: 6,
+            getParameter(token) {
+              return {
+                1: 'WebGL 2.0 test',
+                2: 'Test masked renderer',
+                3: 'Test vendor',
+                4: 'GLSL test',
+                5: 4096,
+                6: 8192,
+                7: 'Test GPU',
+                8: 'Test GPU vendor',
+              }[token];
+            },
+            getExtension(name) {
+              return name === 'WEBGL_debug_renderer_info'
+                ? { UNMASKED_RENDERER_WEBGL: 7, UNMASKED_VENDOR_WEBGL: 8 }
+                : null;
+            },
+          }
+        : null;
     this.renderer = {
       prepare: {
         upload: (textures) => {
@@ -157,6 +189,15 @@ class Application {
   }
   async init(options) {
     inits.push(options);
+    if (failApplicationInit) {
+      this.renderer = undefined;
+      Object.defineProperty(this, 'canvas', {
+        get() {
+          return this.renderer.canvas;
+        },
+      });
+      throw Error('No available renderer for the current environment');
+    }
     this.renderer.resize(options.width, options.height, options.resolution);
   }
   destroy() {}
@@ -212,11 +253,9 @@ const runtime = {
   },
   PrototypeSprites: { timeMs: () => 1000 },
   PrototypeVisuals: {
-    draw(_ctx, visual) {
-      if (visual.crownFoundryWorker || visual.crownFoundryExterior)
-        crownWorkBakeCalls.push({ id: visual.id, t: visual.ambientTime });
-    },
+    draw() {},
     atmosphereMotes: Visuals.atmosphereMotes,
+    barracksVisualState: Visuals.barracksVisualState,
     terrainMotionLines: () => [],
   },
   AzerothNativeWebGLCore: { lampGlowCommands: () => [] },
@@ -225,7 +264,8 @@ const runtime = {
       commandFor: (entity, point, { facing = 1 } = {}) => {
         facingOptions.push({ id: entity.id, facing });
         return (entity.renderKind === 'prop' && entity.structure !== 'dead-tree') ||
-          entity.species === 'orc'
+          entity.species === 'orc' ||
+          entity.renderKind === 'building'
           ? { supported: false, reason: 'original-game-procedural-art' }
           : {
               supported: true,
@@ -275,6 +315,10 @@ const runtime = {
       syncLiquidMotion() {},
       setVignette() {},
       draw() {
+        if (syntheticSceneDelayMs > 0) {
+          const until = Date.now() + syntheticSceneDelayMs;
+          while (Date.now() < until) {} // Deliberate short test-only stage delay.
+        }
         if (failSceneDraw)
           throw Error(
             failSceneDraw === 'context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error',
@@ -304,8 +348,10 @@ vm.runInNewContext(
   { filename: 'pixi-experimental.js' },
 );
 const canvasSurface = { width: 1368, height: 630, parentNode: { insertBefore() {} } };
+let r783TraceActive = false;
 const gpuOptions = {
   worldCanvas: canvasSurface,
+  getDiagnosticRecording: () => r783TraceActive,
   viewport: view,
   platform,
   getGame: () => game,
@@ -333,7 +379,11 @@ game.props = [
 ];
 const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
 (async () => {
+  assert.equal(gpu.status().deviceGraphics, null, 'reading status before startup never probes GPU');
   assert.equal(await gpu.prepare(), true, 'retina Pixi scene must prepare');
+  assert.equal(gpu.status().deviceGraphics.source, 'existing-game-webgl2-context');
+  assert.equal(gpu.status().deviceGraphics.unmaskedRenderer, 'Test GPU');
+  assert.equal(gpu.status().deviceGraphics.maxTextureSize, 4096);
   assert.equal(
     gpu.status().neighborhoodPrepared,
     1,
@@ -397,6 +447,33 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   );
   game.hero.x = heroStartX;
   game.props = [];
+  const barracks = { id: 'test-barracks', kind: 'barracks', x: game.hero.x + 85, y: game.hero.y };
+  game.buildings = [barracks];
+  const barracksTextures = new Set();
+  for (const [progress, full] of [
+    [0, false],
+    [1, false],
+    [2, false],
+    [3, false],
+    [4, false],
+    [4, true],
+  ]) {
+    Object.assign(barracks, { progress, full });
+    gpu.draw();
+    const texture = frames.at(-1).find((actor) => actor.key === 'building:test-barracks').textureId;
+    assert(!barracksTextures.has(texture), 'each visible Barracks stage needs fresh art');
+    barracksTextures.add(texture);
+    if (progress < 4) {
+      barracks.progress += 0.5;
+      gpu.draw();
+      assert.equal(
+        frames.at(-1).find((actor) => actor.key === 'building:test-barracks').textureId,
+        texture,
+        'progress within one visual stage reuses the texture',
+      );
+    }
+  }
+  game.buildings = [];
   // New Stage 5 hostile-entry GPU path: cold nearby procedural art must
   // receive an actual Pixi PrepareSystem upload while the game remains still.
   game.props = [
@@ -686,6 +763,186 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'cold and warm visible draws must hit the prepared texture cache',
   );
   coldCrowdGpu.release();
+  // #783 R1: reproduce the reported *scene shape* at night in Greenwood.
+  // This is a Pixi/Canvas mock, not a real Safari GPU/CPU timing benchmark.
+  // The historical #481 westward crowd above remains an independent control.
+  const previousNight = game.night;
+  const previousDaylight = game.daylightPhase;
+  const previousNpcs = game.npcs;
+  game.night = () => true;
+  game.daylightPhase = () => ({ phase: 'night', darkness: 1 });
+  game.zoneId = 'vale';
+  game.hero.x = 2160;
+  game.hero.y = 2359;
+  game.props = Array.from({ length: 4 }, (_, i) => ({
+    id: 'r783-vale-prop-' + i,
+    x: 2160 + (i - 2) * 26,
+    y: 2359 + (i % 2) * 24,
+    structure: 'cart',
+    decorative: true,
+  }));
+  game.npcs = Array.from({ length: 15 }, (_, i) => ({
+    id: 'r783-vale-npc-' + i,
+    kind: 'service',
+    x: 2160 + ((i % 5) - 2) * 22,
+    y: 2359 + (Math.floor(i / 5) - 1) * 20,
+  }));
+  game.enemies = Array.from({ length: 2 }, (_, i) => ({
+    id: 'r783-vale-skeleton-' + i,
+    species: 'skeleton',
+    type: 'mob',
+    hp: 20,
+    maxHp: 20,
+    x: 2250 + i * 24,
+    y: 2360 + i * 24,
+  }));
+  view.width = 912;
+  view.height = 420;
+  canvasSurface.width = 912;
+  canvasSurface.height = 420;
+  const r783State = JSON.stringify({
+    hero: game.hero,
+    props: game.props,
+    npcs: game.npcs,
+    enemies: game.enemies,
+    state: game.s,
+  });
+  const valeNightGpu = runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await valeNightGpu.prepare(), true, 'R783 night Vale scene must prepare');
+  const r783Prepared = valeNightGpu.status();
+  assert.equal(r783Prepared.pixelRatio, 1, 'reported optimized iPhone backing ratio is 1');
+  assert.equal(r783Prepared.proceduralBakes, 4, 'all four distinct Vale props are staged');
+  assert.equal(r783Prepared.proceduralGpuPrepared, 4, 'prepared prop sources are submitted for upload');
+  assert.equal(
+    JSON.stringify({
+      hero: game.hero,
+      props: game.props,
+      npcs: game.npcs,
+      enemies: game.enemies,
+      state: game.s,
+    }),
+    r783State,
+    'night-time graphics preparation must never mutate the campaign',
+  );
+  valeNightGpu.activate();
+  r783TraceActive = true;
+  let r783FirstTrace = null;
+  for (const dx of [0, -30, -60, -30, 0]) {
+    game.hero.x = 2160 + dx;
+    const trace = valeNightGpu.draw();
+    if (!r783FirstTrace) r783FirstTrace = trace;
+  }
+  assert(r783FirstTrace, 'opt-in trace returns exact draw stages in normal mode');
+  assert.equal(r783FirstTrace.bakesDuringDraw, 0);
+  assert.equal(r783FirstTrace.ratioBefore, 1);
+  assert.equal(r783FirstTrace.ratioAfter, 1);
+  for (const stageName of [
+    'viewport', 'resolution', 'background', 'actors', 'liquid',
+    'atmosphere', 'scene', 'predictive',
+  ])
+    assert(Number.isFinite(r783FirstTrace.phaseMs[stageName]),
+      'opt-in capture measures synchronous Pixi stage: ' + stageName);
+  const r783Cold = valeNightGpu.status();
+  const r783Visible = frames.at(-1);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('npc:r783-')).length, 15);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('enemy:r783-')).length, 2);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('prop:r783-')).length, 4);
+  assert.equal(r783Cold.proceduralBakes, 4, 'camera motion at fixed quality reuses prepared art');
+  assert.ok(!r783Cold.lastFailure, 'mocked night scene has no render exception');
+  const r783BeforeRevisit = r783Cold.proceduralBakes;
+  for (const dx of [-60, 0, -60, 0]) {
+    game.hero.x = 2160 + dx;
+    valeNightGpu.draw();
+  }
+  assert.equal(
+    valeNightGpu.status().proceduralBakes,
+    r783BeforeRevisit,
+    'warm Vale revisit must not create new procedural images',
+  );
+  // Manually vary the existing Canvas backing ratio to exercise the SAME
+  // Pixi resolution-change path, without claiming to exercise app.js Auto policy.
+  canvasSurface.width = 1368;
+  canvasSurface.height = 630;
+  const r783SharperTrace = valeNightGpu.draw();
+  const r783Sharper = valeNightGpu.status();
+  assert.equal(r783SharperTrace.resolutionChanged, true);
+  assert.equal(r783SharperTrace.ratioAfter, 1.5);
+  assert.equal(r783SharperTrace.bakesDuringDraw, 4);
+  assert.equal(r783Sharper.pixelRatio, 1.5);
+  assert(
+    r783Sharper.proceduralBakes > r783BeforeRevisit,
+    'new backing density requires separate procedural revisions in native Pixi source',
+  );
+  canvasSurface.width = 912;
+  canvasSurface.height = 420;
+  const r783ReturnedTrace = valeNightGpu.draw();
+  const r783Returned = valeNightGpu.status();
+  assert.equal(r783ReturnedTrace.resolutionChanged, true);
+  assert.equal(r783ReturnedTrace.ratioAfter, 1);
+  assert.equal(r783ReturnedTrace.bakesDuringDraw, 0);
+  assert.equal(r783Returned.pixelRatio, 1);
+  assert.equal(
+    r783Returned.proceduralBakes,
+    r783Sharper.proceduralBakes,
+    'returning to retained 1x density reuses its original textures',
+  );
+  assert.equal(r783Returned.proceduralEvictions, 0);
+  assert.ok(!r783Returned.lastFailure);
+  game.hero.x = 2160;
+  assert.equal(
+    JSON.stringify({
+      hero: game.hero,
+      props: game.props,
+      npcs: game.npcs,
+      enemies: game.enemies,
+      state: game.s,
+    }),
+    r783State,
+    'cold/warm and resolution-only drawing must preserve simulation state',
+  );
+  console.log(
+    'PIXI_783_R1_JSON ' +
+      JSON.stringify({
+        scenario: 'mocked-vale-night-912x420-zoom1.5',
+        npcs: game.npcs.length,
+        skeletons: game.enemies.length,
+        props: game.props.length,
+        preparedBakes: r783Prepared.proceduralBakes,
+        coldBakes: r783Cold.proceduralBakes,
+        resolutionUpBakes: r783Sharper.proceduralBakes,
+        resolutionDownBakes: r783Returned.proceduralBakes,
+        texturesRetained: r783Returned.proceduralTextures,
+        failures: r783Returned.lastFailure,
+        measurement: 'mock-only; no real GPU or iPhone frame timing',
+      }),
+  );
+  // One new cold procedural identity proves that the measured actor substage
+  // is emitted only on-demand, and never during subsequent ordinary draws.
+  game.props.push({
+    id: 'r783-unique-unprepared',
+    x: 2160, y: 2359, structure: 'lumber-pile',
+  });
+  const newTrace = valeNightGpu.draw();
+  assert.equal(newTrace.bakesDuringDraw, 1);
+  assert(Number.isFinite(newTrace.phaseMs.proceduralRasterMs));
+  assert(Number.isFinite(newTrace.phaseMs.proceduralRegisterMs));
+  assert(Number.isFinite(newTrace.phaseMs.actorCandidatesMs));
+  assert(Number.isFinite(newTrace.phaseMs.actorSubmitMs));
+  syntheticSceneDelayMs = 18;
+  const syntheticStall = valeNightGpu.draw();
+  syntheticSceneDelayMs = 0;
+  assert(syntheticStall.phaseMs.scene >= 15,
+    'opt-in timings expose a deliberate 18ms Pixi scene submission stall');
+  assert(syntheticStall.phaseMs.scene > syntheticStall.phaseMs.actors,
+    'scene delay is not falsely classified as actor rasterization');
+  r783TraceActive = false;
+  assert.equal(valeNightGpu.draw(), undefined, 'opt-out leaves ordinary draws untimed');
+  assert.equal(valeNightGpu.status().drawCpuProfile.sampledFrames, 0,
+    'normal-mode capture must not contaminate sampled developer percentiles');
+  valeNightGpu.release();
+  game.night = previousNight;
+  game.daylightPhase = previousDaylight;
+  game.npcs = previousNpcs;
   game.hero.x = coldStart.x;
   game.hero.y = coldStart.y;
   game.enemies = [];
@@ -1103,6 +1360,27 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(startupGpu.failureDetails().type, 'context-unavailable');
   assert.equal(startupGpu.failureDetails().stage, 'webgl2-context');
   assert.match(startupGpu.failureDetails().message, /WebGL2 context not available/);
+  failApplicationInit = true;
+  const partialGpu = runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(
+    await partialGpu.prepare(),
+    false,
+    'partial init cleanup must not throw over the first error',
+  );
+  assert.equal(partialGpu.failureDetails().type, 'preparation-failed');
+  assert.equal(partialGpu.failureDetails().stage, 'application-init');
+  assert.equal(
+    partialGpu.failureDetails().message,
+    'No available renderer for the current environment',
+  );
+  assert.doesNotThrow(() => partialGpu.release(), 'failed partial app is safely releasable twice');
+  failApplicationInit = false;
+  assert.equal(
+    await partialGpu.prepare(),
+    true,
+    'a later supported attempt must not be stranded on partial cleanup',
+  );
+  partialGpu.release();
   // Narrow presentation acceptance on the real Pixi actorFrame path.
   resources.clear();
   currentActorTextures.clear();
@@ -1157,54 +1435,6 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'procedural reflection uses the ground anchor',
   );
   assert.equal(coinStampPaints, priorCoinStamps + 1, 'steady frames reuse the coin stamp');
-  // The new native Crownwork gestures must visibly advance on Pixi too:
-  // one quantized procedural pose per small motion slice, not an immutable
-  // first-frame texture nor an unbounded texture for every animation tick.
-  const priorProps = game.props;
-  const originalTimeMs = sprites.timeMs;
-  let crownClockMs = 0;
-  sprites.timeMs = () => crownClockMs;
-  game.props = [
-    { id: 'crown-foundry-work-forming', x: game.hero.x + 20,
-      y: game.hero.y + 20, structure: 'crown-foundry-forming',
-      renderKind: 'prop', r: 0, decorative: true, crownFoundryWorker: true },
-    { id: 'side-entrance-side-crown-foundry-2', x: game.hero.x + 80,
-      y: game.hero.y + 30, structure: 'crown-foundry-yard-shipping',
-      renderKind: 'prop', r: 0, decorative: true, crownFoundryExterior: true },
-  ];
-  const crownFrame = (id) => {
-    const actor = frames.at(-1).find((item) => item.key === 'prop:' + id);
-    assert(actor, 'Crownwork figure must have a visible Pixi actor: ' + id);
-    return actor.textureId;
-  };
-  const workSnapshots = [];
-  const shippingSnapshots = [];
-  const firstBake = crownWorkBakeCalls.length;
-  for (let i = 0; i <= 28; i++) {
-    crownClockMs = i * 100;
-    parityGpu.draw();
-    workSnapshots.push(crownFrame('crown-foundry-work-forming'));
-    shippingSnapshots.push(crownFrame('side-entrance-side-crown-foundry-2'));
-  }
-  assert(new Set(workSnapshots).size > 1 && new Set(workSnapshots).size <= 8,
-    'Foundry artisan must animate using a bounded eight-frame Pixi texture cycle');
-  assert(new Set(shippingSnapshots).size > 1 && new Set(shippingSnapshots).size <= 8,
-    'Foundry freight attendant must animate without unlimited new textures');
-  const workBakes = crownWorkBakeCalls.slice(firstBake);
-  assert(workBakes.some((call) => call.id === 'crown-foundry-work-forming'));
-  assert(workBakes.some((call) => call.id === 'side-entrance-side-crown-foundry-2'));
-  assert(workBakes.every((call) => Number.isFinite(call.t) && call.t >= 0));
-  const seenAt = crownWorkBakeCalls.length;
-  crownClockMs = 0;
-  parityGpu.draw();
-  const repeatWork = crownFrame('crown-foundry-work-forming');
-  parityGpu.draw();
-  assert.equal(crownFrame('crown-foundry-work-forming'), repeatWork);
-  assert.equal(crownWorkBakeCalls.length, seenAt,
-    'Repeated Crownwork phase must reuse its baked texture, not rebake every frame');
-  game.props = priorProps;
-  sprites.timeMs = originalTimeMs;
-
   canvasSurface.width = 912;
   canvasSurface.height = 420;
   parityGpu.draw();

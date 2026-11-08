@@ -49,7 +49,7 @@ function fixture() {
     'obsolete ranged 10% bonus is removed');
   assert.equal(C.rules.balance.fortifications.rangeMultiplier, 1.3);
   for (const [species, legacyShotRange] of profiles) {
-    Object.assign(e, { species, ranged: true, x: 3250 });
+    Object.assign(e, { species, ranged: true, x: 3400 });
     if (legacyShotRange === null) delete e.shotRange;
     else e.shotRange = legacyShotRange;
     assert.equal(g.enemyFort(e), null, species + ': outside native fort');
@@ -60,7 +60,7 @@ function fixture() {
     assert.equal(g.enemyRangedRange(e), 416, species + ': garrison basic');
     assert.equal(g.enemyAcquisitionRange(e), 416, species + ': garrison detection');
   }
-  Object.assign(e, { species: 'goblin', ranged: true, hybrid: true, shotRange: 750, x: 3250 });
+  Object.assign(e, { species: 'goblin', ranged: true, hybrid: true, shotRange: 750, x: 3400 });
   assert.equal(g.enemyRangedRange(e), 320, 'hybrid old shotRange cannot alter basics');
   assert.equal(g.enemyAcquisitionRange(e), 320, 'hybrid actual detection equals basic');
   Object.assign(e, { ranged: false, shotRange: 900, species: 'skeleton' });
@@ -79,7 +79,7 @@ function fixture() {
     balance.enemyRangedBasicRange = 340;
     assert.equal(g.enemyRangedRange(e), 442, 'fortified basic follows configured distance');
     assert.equal(g.enemyAcquisitionRange(e), 442, 'fortified detection follows basic distance');
-    e.x = 3250;
+    e.x = 3400;
     assert.equal(g.enemyRangedRange(e), 340);
     assert.equal(g.enemyAcquisitionRange(e), 340);
     balance.enemyRangedBasicRange = 280;
@@ -116,6 +116,180 @@ function fixture() {
   g.updateEnemies(0.01);
   assert(e.aggro, 'idle fortified ranged actor auto-detects inside basic shot range');
 }
+// PR #817 global perimeter contract: the same 160-unit position-derived apron
+// applies to every defended outdoor region, not just Greenwood/Skeleton Watch.
+// Inspect actual generated polygons so moved forts remain covered.
+{
+  const cfg = C.rules.balance.fortifications, apron = cfg.outdoorLeeway;
+  assert.equal(apron, 160);
+  const ring = [
+    [-145, -105], [-70, -145], [70, -145], [145, -105], [155, 20],
+    [115, 120], [40, 155], [-40, 155], [-115, 120], [-155, 20],
+  ];
+  const regions = [...new Set(C.rules.creatureStrongholds.map((p) => p.region))];
+  assert.deepEqual(regions, ['vale', 'march', 'highlands', 'frontier', 'crown']);
+  let holds = 0, fields = 0, authoredFields = 0, crownParcels = 0;
+  for (const region of regions) {
+    const g = world(region), zone = g.zone(), areas = g.fortAreas();
+    for (const plan of C.rules.creatureStrongholds.filter((p) => p.region === region)) {
+      const area = areas.find((p) => p.id === plan.id);
+      assert(area, plan.id + ': native defended footprint is registered');
+      assert(zone.props.some((p) => p.stronghold === plan.id && !p.decorative && p.r > 0),
+        plan.id + ': a real wall is still required');
+      const authoredWalls = zone.props.filter((p) =>
+        p.stronghold === plan.id && p.greenwoodWall && p.r > 0);
+      if (authoredWalls.length >= 3) {
+        // The reconstructed Greenwood walls are long line segments rather
+        // than the legacy ten individual ring posts; protection must be
+        // derived from their actual endpoints and include the outdoor apron.
+        assert(area.points.length > ring.length,
+          plan.id + ': contour follows the authored line-wall exterior');
+        const endpoints = authoredWalls.flatMap((p) =>
+          [p.greenwoodWall.a, p.greenwoodWall.b]);
+        const box = (points) => ({
+          left: Math.min(...points.map((p) => p.x)),
+          right: Math.max(...points.map((p) => p.x)),
+          top: Math.min(...points.map((p) => p.y)),
+          bottom: Math.max(...points.map((p) => p.y)),
+        });
+        const wallsBox = box(endpoints),
+          contour = box(area.points.map(([x, y]) => ({ x, y })));
+        for (const side of ['left', 'right', 'top', 'bottom']) {
+          const delta = Math.abs(contour[side] - wallsBox[side]);
+          assert(delta >= apron - 2 && delta <= apron + 3,
+            plan.id + ': actual wall ' + side + ' has requested outdoor leeway');
+        }
+      } else if (plan.defenseStyle === 'fort') {
+        assert.equal(area.points[1][0] - area.points[0][0], 2 * (150 + apron),
+          plan.id + ': square fort horizontal margin');
+        assert.equal(area.points[2][1] - area.points[1][1], 2 * (150 + apron),
+          plan.id + ': square fort vertical margin');
+      } else {
+        assert.equal(area.points.length, ring.length);
+        // The midpoint of symmetrical outer vertices yields the current
+        // relocated wall-derived center, rather than the obsolete plan center.
+        const east = area.points[4], west = area.points[9];
+        const cx = (east[0] + west[0]) / 2;
+        const cy = east[1] - 20 * (1 + apron / Math.hypot(155, 20));
+        for (let i = 0; i < ring.length; i++) {
+          const [dx, dy] = ring[i], scale = 1 + apron / Math.hypot(dx, dy);
+          assert(Math.hypot(
+            area.points[i][0] - (cx + dx * scale),
+            area.points[i][1] - (cy + dy * scale),
+          ) < 1e-6, plan.id + ': enlarged vertex ' + i + ' follows relocated walls');
+        }
+      }
+      holds++;
+    }
+    for (const mini of (zone.minis || []).filter((m) => m.type === 'field')) {
+      authoredFields++;
+      const hasWall = zone.props.some((p) =>
+        p.mini === mini.id && String(p.id).startsWith('mini-wall-') && !p.decorative);
+      const a = areas.find((area) => area.id === mini.id);
+      if (!hasWall) {
+        // World generation can omit *all* walls at a blocked field site.
+        // A site label by itself must never grant fortified protection.
+        assert.equal(a, undefined, mini.id + ': unwalled field site is not a fort');
+        continue;
+      }
+      assert(a, mini.id + ': real walled field compound');
+      assert.deepEqual(a.points[0], [
+        mini.x - cfg.compoundHalfSize - apron,
+        mini.y - cfg.compoundHalfSize - apron,
+      ], mini.id + ': all field compounds use global margin');
+      assert.deepEqual(a.points[2], [
+        mini.x + cfg.compoundHalfSize + apron,
+        mini.y + cfg.compoundHalfSize + apron,
+      ], mini.id + ': opposite field edge also extended');
+      fields++;
+    }
+    for (const plan of cfg.outdoorAreas.filter((p) => p.zone === region)) {
+      const a = areas.find((area) => area.id === plan.id);
+      assert(a, plan.id + ': Crown outdoor parcel registered');
+      assert.deepEqual(a.points[0], [plan.bounds[0] - apron, plan.bounds[2] - apron]);
+      assert.deepEqual(a.points[2], [plan.bounds[1] + apron, plan.bounds[3] + apron]);
+      crownParcels++;
+    }
+  }
+  assert.equal(holds, C.rules.creatureStrongholds.length, 'all creature strongholds checked');
+  assert.equal(authoredFields, 5, 'all five authored field-boss sites inspected');
+  assert(fields >= 4 && fields <= authoredFields,
+    'every actually walled field compound uses the margin; unwalled sites remain exempt');
+  assert.equal(crownParcels, cfg.outdoorAreas.length, 'all Crown parcels checked');
+}
+{
+  const cfg = C.rules.balance.fortifications, g = world('vale');
+  const watch = g.fortAreas().find((area) => area.id === 'skeleton-watch');
+  const defender = g.zone().enemies.find(
+    (e) => e.hp > 0 && e.stronghold === 'skeleton-watch',
+  );
+  assert(watch && defender, 'real Skeleton Watch guard and live walls are present');
+  const oldPosition = { x: defender.x, y: defender.y };
+  const wallEnds = g.zone().props.filter((p) =>
+    p.stronghold === 'skeleton-watch' && p.greenwoodWall)
+    .flatMap((p) => [p.greenwoodWall.a, p.greenwoodWall.b]);
+  assert(wallEnds.length >= 6, 'Skeleton Watch has physical line-wall endpoints');
+  const eastX = Math.max(...wallEnds.map((p) => p.x)),
+    minY = Math.min(...wallEnds.map((p) => p.y)),
+    maxY = Math.max(...wallEnds.map((p) => p.y)),
+    eastY = (minY + maxY) / 2;
+  defender.x = eastX + cfg.outdoorLeeway - 10;
+  defender.y = eastY;
+  assert(defender.x > eastX, 'pursuer has stepped outside the actual visible eastern wall');
+  assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch', 'protection persists in the real wall apron');
+  assert.equal(g.enemyRangedRange(defender), 416, 'position grants the fortified ranged basic value');
+  // The natural Skeleton Watch guard in this fixture is melee. Its awareness
+  // stays governed by the independent melee rule, not the ranged 416-unit rule.
+  assert.equal(g.enemyAcquisitionRange(defender),
+    g.enemyRanged(defender) ? 416 :
+      C.rules.balance.enemyAcquisitionRange *
+      C.rules.balance.enemyAcquisitionRangeMultiplier,
+    'melee awareness remains separate from fortified ranged detection');
+  const ranged = { ...defender, id: 'apron-ranged-fixture', species: 'archer', ranged: true };
+  g.zone().enemies.push(ranged);
+  assert.equal(g.enemyAcquisitionRange(ranged), 416,
+    'a genuinely ranged guard detects targets at 416 while inside the apron');
+  g.zone().enemies.pop();
+  const shot = { source: 'enemy', sourceId: defender.id, x: defender.x, y: defender.y,
+    dx: 1, dy: 0, speed: 300, life: 2 };
+  g.prepareFortProjectile(shot, defender);
+  assert.equal(shot.fortId, 'skeleton-watch', 'apron shooter keeps own-wall launch rights');
+  const restored = C.restore(g.snapshot(), () => 0.9);
+  const restoredGuard = restored.zone().enemies.find((enemy) => enemy.id === defender.id);
+  assert.equal(restored.enemyFort(restoredGuard)?.id, 'skeleton-watch',
+    'restoring v4 save derives the same protection without saved timers');
+  defender.x = eastX + cfg.outdoorLeeway + 25;
+  assert.equal(g.enemyFort(defender), null, 'outside the true wall + outdoor apron removes protection');
+  assert.equal(g.enemyRangedRange(defender), 320, 'normal basic attack range returns');
+  const outside = { source: 'enemy', sourceId: defender.id, x: defender.x, y: defender.y,
+    dx: 1, dy: 0, speed: 300, life: 2 };
+  g.prepareFortProjectile(outside, defender);
+  assert.equal(outside.fortId, undefined, 'outside launches do not inherit fort wall rights');
+  Object.assign(defender, oldPosition);
+  assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch', 'returning home restores the passive');
+}
+{
+  // Interior rooms and Treasury passages must not acquire a 160-unit halo.
+  for (const id of ['abyss', 'citadel', 'side-highlands-signal', 'supply-vale']) {
+    const g = world(id),
+      arch = C.rules.dungeonArchitecture[id] || C.rules.treasuryArchitecture[id];
+    if (!arch?.walkable?.length) {
+      // Old Signal Keep uses the existing size/edge fallback, not an authored
+      // dungeonArchitecture.walkable collection. Its inner extent is unchanged.
+      assert.equal(id, 'side-highlands-signal');
+      const fallback = g.fortAreas().find((f) => f.id === id);
+      assert(fallback, 'Old Signal Keep preserves the interior fallback');
+      assert.deepEqual(fallback.points[0], [70, 70],
+        'legacy indoor fallback does not acquire outdoor leeway');
+      continue;
+    }
+    const room = arch.walkable[0], area = g.fortAreas().find((f) => f.id === id + '-' + room.id);
+    assert(area, id + ': unchanged interior region found');
+    assert.deepEqual(area.points[0], [room.bounds[0], room.bounds[2]],
+      id + ': no outdoor margin applied inside rooms or Treasuries');
+  }
+}
+
 // One catalog covers every regional hold, every field compound, fortified
 // interiors and Crown command/final courtyard, and survives save restoration.
 for (const id of [
@@ -169,7 +343,7 @@ for (const id of [
   assert(g.hero.hp < start, 'shot crosses stockade and damages hero');
   assert(!g.s.projectiles.length);
   // Position derived fresh on every use: no stale fort bonus when walking out.
-  e.x = 3250;
+  e.x = 3400;
   assert.equal(g.enemyFort(e), null);
   assert(Math.abs(g.enemyRangedRange(e) - 320) < 1e-8);
 }
@@ -211,10 +385,10 @@ for (const type of ['mob', 'boss']) {
   const hp = e.hp;
   assert(g.damage(e, 100));
   assert.equal(hp - e.hp, 60, '40% fort reduction for ' + type);
-  e.x = 3250;
+  e.x = 3400;
   e.y = 950;
   e.home = { x: e.x, y: e.y };
-  g.hero.x = 3270;
+  g.hero.x = 3420;
   g.hero.y = 950;
   const outside = e.hp;
   assert(g.damage(e, 100));
@@ -240,7 +414,7 @@ for (const type of ['mob', 'boss']) {
 }
 {
   const { g, e } = fixture();
-  e.x = 3250;
+  e.x = 3400;
   const p = { source: 'enemy', sourceId: e.id, x: e.x, y: e.y, speed: 300, life: 2 };
   g.prepareFortProjectile(p, e);
   assert(!p.fortId, 'outside launches never gain wall permissions');
@@ -270,7 +444,7 @@ for (const id of ['abyss', 'citadel']) {
   assert(g.fortShotBlocked({ x: 20, y: 20 }, area), 'boundary remains solid');
 }
 console.log(
-  'PASS regional/compound/interior fort coverage, AI range/wall aim, real impact/dodge, 40% damage, exit/piercing, obstacles and lifecycle',
+  'PASS global 160-unit outdoor fort coverage, AI range/wall aim, real impact/dodge, 40% damage, exit/piercing, obstacles and lifecycle',
 );
 // Low obstacles are enemy-only cover allowances in the field and interiors.
 for (const id of ['vale', 'crypt', 'archive', 'mine', 'supply-vale', 'side-highlands-signal']) {
@@ -431,7 +605,7 @@ console.log(
   const ordinary = { ...special, speed: 280, life: 2.8 };
   delete ordinary.fortBaseSpeed;
   delete ordinary.fortBaseLife;
-  e.x = 3250;
+  e.x = 3400;
   g.prepareFortProjectile(ordinary, e);
   assert.equal(ordinary.speed, 280, 'outside-fort speed unchanged');
 }

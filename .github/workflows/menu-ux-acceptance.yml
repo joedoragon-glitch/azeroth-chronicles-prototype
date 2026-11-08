@@ -1,0 +1,42 @@
+name: Focused menu UX acceptance (no deployment)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/prototype/app.js'
+      - 'styles/prototype.css'
+      - 'styles/phone.css'
+      - 'tests/menu-stage4-browser.test.cjs'
+      - '.github/workflows/menu-ux-acceptance.yml'
+permissions:
+  contents: read
+concurrency:
+  group: menu-ux-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  menus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node scripts/vendor-pixi.cjs --ensure
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Verify only bilingual menu geometry and navigation
+        env:
+          BROWSER_ENGINE: ${{ matrix.engine }}
+        run: node tests/menu-stage4-browser.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: menu-ux-${{ matrix.engine }}
+          path: test-artifacts/menu-stage4/
+          if-no-files-found: ignore

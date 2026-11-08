@@ -1,6 +1,7 @@
-/* PRE-INTEGRATION: PixiJS scene bridge. Actual sprite/terrain textures, actors
-   and lamp positions come from the real Azeroth pilot, not manufactured geometry.
-   Never loaded by the playable PWA. */
+/* Live PixiJS scene bridge loaded by the playable PWA.
+   Composes the game's real terrain, actors, sprites and lamp positions,
+   alongside the retained Canvas cue overlay and independent Canvas fallback.
+   The webgl-pilot directory name is preserved for historical compatibility. */
 (function (root) {
   'use strict';
   const assert = (x, msg) => {
@@ -11,7 +12,7 @@
   const hex = (rgb) => (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
   // Original PrototypeVisuals.atmosphere palettes, unmodified.
   const NIGHT = [
-    [11, 25, 42, 0.48],
+    [39, 47, 67, 0.64],
     [12, 32, 44, 0.48],
     [19, 29, 42, 0.5],
     [32, 20, 35, 0.52],
@@ -60,8 +61,10 @@
           {
             offset: 1,
             color: rgba(
-              [9 + 13 * peace, 17 + 14 * peace, 30 + 19 * peace],
-              (0.58 - 0.28 * peace) * night,
+              (i === 0
+                ? [31 - 9 * peace, 40 - 9 * peace, 60 - 11 * peace]
+                : [9 + 13 * peace, 17 + 14 * peace, 30 + 19 * peace]),
+              (i === 0 ? 0.64 - 0.34 * peace : 0.58 - 0.28 * peace) * night,
             ),
           },
         ],
@@ -94,7 +97,10 @@
     }
     if (warmth > 0) {
       const sunset = phase === 'sunset',
-        strength = clamp(warmth, 0, 1) * (phase === 'victory-sunrise' ? 1.25 : 1);
+        strength =
+          clamp(warmth, 0, 1) *
+          (phase === 'victory-sunrise' ? 1.25 : 1) *
+          (i === 0 && sunset ? 0.76 : 1);
       layers.push({
         type: 'warmth',
         style: 'linear',
@@ -289,6 +295,7 @@
     function groundGraphic(graphic, ground) {
       const { rx, ry, marker } = ground;
       const zoom = ground.scale || 1;
+      const shadowOpacity = ground.shadowOpacity ?? 1;
       graphic.clear();
       if (marker) {
         const important = !!marker.important;
@@ -307,12 +314,14 @@
         graphic
           .ellipse(0, 3 * zoom, 23 * zoom, 10 * zoom)
           .stroke({ color: 0xebc479, width: 2 * zoom });
-      graphic
-        .ellipse(4 * zoom, 13 * zoom, rx * 1.18 * zoom, ry * 1.35 * zoom)
-        .fill({ color: 0x05100c, alpha: 0x38 / 255 });
-      graphic
-        .ellipse(1 * zoom, 11 * zoom, rx * zoom, ry * zoom)
-        .fill({ color: 0x020906, alpha: 0x66 / 255 });
+      if (shadowOpacity > 0) {
+        graphic
+          .ellipse(4 * zoom, 13 * zoom, rx * 1.18 * zoom, ry * 1.35 * zoom)
+          .fill({ color: 0x05100c, alpha: (0x38 / 255) * shadowOpacity });
+        graphic
+          .ellipse(1 * zoom, 11 * zoom, rx * zoom, ry * zoom)
+          .fill({ color: 0x020906, alpha: (0x66 / 255) * shadowOpacity });
+      }
     }
     // #708: raster-tree regrowth is retained native geometry, not a new texture.
     // Match the unchanged Canvas frontierTreeShoots positions, leaf palette and
@@ -669,6 +678,7 @@
             rx: item.ground.rx,
             ry: item.ground.ry,
             scale: item.ground.scale,
+            shadowOpacity: item.ground.shadowOpacity,
             marker: item.ground.marker,
             ledgerMarked: item.ground.ledgerMarked,
           });
@@ -739,7 +749,7 @@
     }
     function syncLightFixtures(lights, zoom = 1, darkness = 0) {
       const list =
-        darkness > 0 ? lights.filter((p) => p.kind === 'window' || p.kind === 'lantern') : [];
+        darkness > 0 ? lights.filter((p) => p.kind === 'lantern' && p.fixture === 'glass') : [];
       const anchor = list[0] || { x: 0, y: 0 };
       const relative = list.map((p) => ({ ...p, x: p.x - anchor.x, y: p.y - anchor.y }));
       const signature = JSON.stringify([relative, zoom]);

@@ -62,8 +62,8 @@ for (const language of ['en', 'es']) {
     node.click();
   };
   elements.get('menu-button').click();
-  click('Game and settings', 'Juego y ajustes');
-  click('Screen and performance', 'Pantalla y rendimiento');
+  click('Settings', 'Ajustes');
+  click('Playtest tools', 'Herramientas de prueba');
   click('Export playtest report', 'Exportar informe de prueba');
   assert.equal(exported.length, 1);
   assert.equal(exported[0].type, 'application/json');

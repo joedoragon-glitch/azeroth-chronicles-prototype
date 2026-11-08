@@ -9,6 +9,7 @@
     for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
     return h;
   };
+  const wagonExit = [3200, 80];
   const plan = {
     town: [650, 600],
     hamlet: [550, 1750],
@@ -21,9 +22,11 @@
     cellars: [1080, 2510],
     den: [920, 2880],
     treasury: [2120, 1250],
-    cache: [2420, 1690],
+    // Scornfang's construction-freight depot: sheltered beside the Crypt approach,
+    // not sitting on the eastern trunk road or mistaken for collectible tribute.
+    cache: [2600, 2610],
     watch: [2670, 2220],
-    crypt: [2830, 2850],
+    crypt: [2830, 2940],
     wagon: [2880, 280],
   };
   const river = [
@@ -61,19 +64,64 @@
       }),
     };
   }
-  function ribbon(points, width) {
+  function ribbon(points, width, { roundedSource = false, subdivisions = 1 } = {}) {
+    // Low-sample Catmull–Rom interpolation rounds the natural water channels
+    // without large polygon counts in the real collision solver. Engineered
+    // gates/headraces retain straight edges.
+    let path = points;
+    if (subdivisions > 1) {
+      path = [];
+      for (let i = 0; i < points.length - 1; i++) {
+        const a = points[Math.max(i - 1, 0)],
+          b = points[i],
+          c = points[i + 1],
+          d = points[Math.min(i + 2, points.length - 1)];
+        for (let j = 0; j < subdivisions; j++) {
+          const t = j / subdivisions,
+            t2 = t * t,
+            t3 = t2 * t;
+          const sample = (key) =>
+            0.5 *
+            (2 * b[key] +
+              (c[key] - a[key]) * t +
+              (2 * a[key] - 5 * b[key] + 4 * c[key] - d[key]) * t2 +
+              (-a[key] + 3 * b[key] - 3 * c[key] + d[key]) * t3);
+          path.push({ x: sample('x'), y: sample('y') });
+        }
+      }
+      path.push(points.at(-1));
+    }
     const left = [],
       right = [];
-    for (let j = 0; j < points.length; j++) {
-      const a = points[Math.max(0, j - 1)],
-        b = points[Math.min(points.length - 1, j + 1)],
+    for (let j = 0; j < path.length; j++) {
+      const a = path[Math.max(0, j - 1)],
+        b = path[Math.min(path.length - 1, j + 1)],
         d = distance(a, b) || 1;
       const dx = (-(b.y - a.y) / d) * width,
         dy = ((b.x - a.x) / d) * width;
-      left.push({ x: points[j].x + dx, y: points[j].y + dy });
-      right.push({ x: points[j].x - dx, y: points[j].y - dy });
+      left.push({ x: path[j].x + dx, y: path[j].y + dy });
+      right.push({ x: path[j].x - dx, y: path[j].y - dy });
     }
-    const polygon = [...left, ...right.reverse()];
+    // An unconnected uphill stream source should end in a soft springhead,
+    // not a straight-edged blue trapezoid. Its exact polygon owns collision.
+    const cap = [];
+    if (roundedSource) {
+      const first = path[0],
+        next = path[1],
+        d = distance(first, next) || 1,
+        tx = (next.x - first.x) / d,
+        ty = (next.y - first.y) / d,
+        nx = -ty,
+        ny = tx;
+      for (let j = 1; j < 6; j++) {
+        const angle = (j * Math.PI) / 6;
+        cap.push({
+          x: first.x - nx * Math.cos(angle) * width - tx * Math.sin(angle) * width,
+          y: first.y - ny * Math.cos(angle) * width - ty * Math.sin(angle) * width,
+        });
+      }
+    }
+    const polygon = [...left, ...right.reverse(), ...cap];
     const xs = polygon.map((p) => p.x),
       ys = polygon.map((p) => p.y),
       x = (Math.min(...xs) + Math.max(...xs)) / 2,
@@ -146,6 +194,7 @@
       s[2] = p.x;
       s[3] = p.y;
       if (s[0] === 'orchard') s[1] = 'Orchard expansion';
+      if (s[0] === 'cache') s[1] = "Scornfang's Supply Depot";
     }
     const camps = R.creatureStrongholds.filter((h) => h.region === 'vale');
     for (const h of camps) if (h.id === 'skeleton-watch') h.center = [a.watch.x, a.watch.y];
@@ -180,9 +229,17 @@
       }
     const b = R.barriers[0];
     b.bounds = [1500 * scale, 1800 * scale, 0, size];
+    // The actual v2 authored river gaps ARE the walkable bridge widths.
+    // Deck painting and pathfinding share this table: no invisible water floor.
+    // Give the southern footbridge enough shoulder clearance for real
+    // patroller movement (the former 56-unit gap clipped radius-15 actors
+    // when their physically routed approach drifted ~17 units off center).
+    // Native pathfinding cells are
+    // centered at 25 + 50*n, NOT at 50*n; the legal crossing row is at
+    // y=2275 in the 3200-unit Vale. Tests verify both actual grid and routes.
     b.gaps = [
-      [a.north.y - 90, a.north.y + 90],
-      [a.south.y - 65, a.south.y + 65],
+      [a.north.y - 50, a.north.y + 50],
+      [a.south.y - 40, a.south.y + 40],
     ];
     const pond = ellipse(a.pond.x, a.pond.y, 140, 120),
       headrace = [
@@ -190,22 +247,63 @@
         [1040, 1390],
         [1110, 1415],
       ].map(q),
+      // The tailrace must end just *inside* the same actual river bank used
+      // by the collision solver. The old center-river endpoint left a pointed
+      // blue tongue and a soil-rim wedge across the water.
+      riverMouthY = 1550,
+      riverMouthX = riverBanks(riverMouthY * scale, size)[0] / scale + 24,
       tailrace = [
         [1110, 1415],
         [1180, 1510],
         [1320, 1570],
-        [1500, 1550],
+        [riverMouthX, riverMouthY],
       ].map(q),
       stream = [
         [900, 880],
         [875, 980],
         [930, 1090],
         [950, 1160],
+      ].map(q),
+      // An upstream, walkable shallow tributary connects to the real millpond.
+      upperCreek = [
+        [1220, 0], [1240, 180], [1280, 350], [1265, 515],
+        [1190, 680], [1090, 780], [940, 875], [900, 880],
+      ].map(q),
+      shallowCreek = { ...ribbon(upperCreek, 17, { subdivisions: 2 }), shallow: true },
+      waters = [
+        pond, ribbon(stream, 16, { subdivisions: 2 }),
+        ribbon(headrace, 12), ribbon(tailrace, 20, { subdivisions: 3 }), shallowCreek,
+      ],
+      millBridge = {
+        from: q([1210, 1575]), to: q([1250, 1495]),
+        width: 84 * scale, kind: 'timber',
+      },
+      creekCulvert = {
+        from: q([1070, 725]), to: q([1145, 805]),
+        width: 76 * scale, kind: 'stone-culvert',
+      },
+      woodlandCulvert = {
+        // The north woodland lane crosses the same creek upstream of Millhaven.
+        from: q([1232, 258]), to: q([1292, 290]),
+        width: 40 * scale, kind: 'stone-culvert',
+        flow: { x: 40, y: 170 },
+      },
+      // One genuine service road branches from the existing west-bank farm road,
+      // ends on dry ground; its NARROW footpath crosses the true
+      // millrace timber bridge before reaching the loading doorway.
+      millServiceLane = [
+        [650, 1550], [785, 1595], [990, 1655], [1200, 1660],
+      ].map(q),
+      // A 24-unit pedestrian trail, NOT a cart road, runs across the
+      // 84-unit-wide timber deck and then bends to the actual mill door.
+      millDoorFootpath = [
+        [1200, 1660], [1210, 1575], [1250, 1495],
+        [1400, 1490], [1290, 1490], [1210, 1485],
       ].map(q);
-    const waters = [pond, ribbon(stream, 16), ribbon(headrace, 12), ribbon(tailrace, 20)];
     R.terrain[0] = [
-      { kind: 'rain-pools', wetland: true, pools: waters },
-      { kind: 'water', x: 2720 * scale, y: 1320 * scale, r: 140 },
+      { kind: 'rain-pools', wetland: true, pools: waters,
+        blockingPools: waters.filter((pool) => !pool.shallow) },
+      // #806: isolated eastern blue disc retired for the dry wolf-scout homestead.
     ];
     R.forests[0] = []; // The authored stands below own nature, not circular forest stamps.
     R.landforms[0] = [
@@ -270,6 +368,13 @@
       waters,
       headrace,
       tailrace,
+      upperCreek,
+      millBridge,
+      creekCulvert,
+      woodlandCulvert,
+      millServiceLane,
+      millDoorFootpath,
+      millEntrance: q([1210, 1485]),
       map,
       groups: [],
       pond: { ...a.pond, r: 140 },
@@ -282,12 +387,461 @@
   }
   function install(C, { D, R }) {
     class Landscape {
+      // A one-time exterior-only correction for fresh Vale and saved scene-5
+      // campaigns. Repositions the existing dungeon entrance and construction
+      // props without regenerating terrain, bosses, player camps or paid state.
+      greenwoodEstateFacadeScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion ||
+            z.greenwoodEstateFacadeVersion === 1) return;
+        const entry = z.npcs.find((n) => n.id === 'entrance' &&
+          n.kind === 'dungeon' && n.family === 'crypt');
+        if (!entry) return;
+        const previous = {x: 2830 * cfg.scale, y: 2850 * cfg.scale};
+        const next = cfg.anchors.crypt;
+        // No replacement NPC or revised gameplay ID: old saves must still
+        // refer to the same enterable Crypt and the same associated quests.
+        if (distance(entry, previous) < 2 || distance(entry, next) < 2)
+          Object.assign(entry, next);
+        else return; // Preserve an unknown hand-placed or future location.
+        // The authoritative road/camera route and the separately serialized
+        // movement arrays may not share object identity after a v4 restore.
+        // The real depot apron starts on the old road at (2500,2660).
+        // Moving the entrance must preserve this *physical* junction.
+        const depotJunction = {x: 2500 * cfg.scale, y: 2660 * cfg.scale};
+        const reanchor = (path) => {
+          if (!Array.isArray(path) || path.length < 2 ||
+              distance(path.at(-1), previous) >= 2) return;
+          if (distance(path.at(-2), depotJunction) > 1)
+            path.splice(path.length - 1, 0, {...depotJunction});
+          Object.assign(path.at(-1), next);
+        };
+        for (const r of z.greenwoodRoutes || [])
+          if (r.kind === 'farm') reanchor(r.points);
+        for (const road of z.roads || []) reanchor(road);
+        for (const path of z.footpaths || []) reanchor(path);
+        const work = [
+          ['estate-scaffold', 2970, 2830],
+          ['stacked-lumber', 2740, 3080],
+          ['tool-rack', 2640, 2970],
+          ['supply-stack', 3060, 3040],
+        ];
+        work.forEach(([structure, x, y], j) => {
+          const p = z.props.find((p) => p.id === 'greenwood-estate-' + j);
+          // User-owned content and unexpected replacement props are never
+          // teleported just to tidy an estate screenshot.
+          if (p && !p.playerOwned && !p.owned && !p.custom &&
+              p.structure === structure)
+            Object.assign(p, {x: x * cfg.scale, y: y * cfg.scale});
+        });
+        z.greenwoodEstateFacadeVersion = 1;
+      }
+      greenwoodWatermillScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion) return;
+        // A previously saved #824 bridge can still carry its old 56-unit
+        // visual deck even though the source river gap now permits 80.
+        // Sync ONLY that existing southern crossing on the v4 fast path.
+        if (z.bridgeApproaches?.[1] &&
+            z.bridgeApproaches[1].width !== 80)
+          z.bridgeApproaches[1].width = 80;
+        if (z.greenwoodWatermillVersion === 2) return;
+        const lane = cfg.millServiceLane, footpath = cfg.millDoorFootpath,
+          previousLane = [[1200,1660],[1290,1600],[1350,1530],[1400,1490]]
+            .map(([x,y])=>({x:x*cfg.scale,y:y*cfg.scale}));
+        const same = (path, expected) => Array.isArray(path) &&
+          path.length === expected.length &&
+          path.every((p,j) => distance(p,expected[j]) < 0.01);
+        // Preview v1 briefly contained a disconnected four-point farm lane.
+        // Replace ONLY that exact known authored shape, not a player route,
+        // command, established road or protected saved object.
+        if (z.greenwoodWatermillVersion === 1) {
+          z.roads = z.roads.filter((path)=>!same(path,previousLane));
+          if (Array.isArray(z.greenwoodRoutes))
+            z.greenwoodRoutes = z.greenwoodRoutes.filter((r)=>
+              !(r.kind==='farm' && same(r.points,previousLane)));
+          if (Array.isArray(z.greenwoodRoadKinds))
+            z.greenwoodRoadKinds.length = z.roads.length;
+        }
+        if (!z.roads.some((path)=>same(path,lane)))
+          z.roads.push(lane.map((p)=>({...p})));
+        if (!z.footpaths.some((path)=>same(path,footpath)))
+          z.footpaths.push(footpath.map((p)=>({...p})));
+        if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r)=>same(r.points,lane)))
+          z.greenwoodRoutes.push({kind:'farm',points:lane.map((p)=>({...p}))});
+        if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r)=>same(r.points,footpath)))
+          z.greenwoodRoutes.push({kind:'path',points:footpath.map((p)=>({...p}))});
+        const targets = [
+          ['greenwood-mill-0',1450,1410],
+          ['greenwood-mill-1',1410,1380],
+          ['greenwood-mill-2',1390,1410],
+        ];
+        // Move only replaceable legacy work scenery, never owner objects,
+        // actors, residents, saved orders, tribute or physical infrastructure.
+        for (const [id,x,y] of targets) {
+          const p=z.props.find((item)=>item.id===id);
+          if (!p || p.playerOwned || p.owned || p.custom) continue;
+          const point={x:x*cfg.scale,y:y*cfg.scale};
+          if (this.blocked(point.x,point.y,'vale',p.r||12,true) ||
+              z.buildings.some((b)=>distance(b,point)<130)) continue;
+          Object.assign(p,point);
+        }
+        // #824's original four typed roads retain their order/identity.
+        if (Array.isArray(z.greenwoodRoadKinds))
+          while(z.greenwoodRoadKinds.length<z.roads.length)
+            z.greenwoodRoadKinds.push('farm');
+        z.greenwoodWatermillVersion=2;
+      }
+      // #806: reconstruct the old eastern water circle as a coherent, dry
+      // wolf-scout homestead without re-running destructive regional generation.
+      greenwoodHomesteadScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodHomesteadVersion === 1
+        )
+          return;
+        const scale = cfg.scale;
+        const point = (x, y) => ({ x: x * scale, y: y * scale });
+        const clean = (p, clearance = 0) =>
+          !this.blocked(p.x, p.y, 'vale', clearance, true) &&
+          this.distanceToRoad(z, p) >= clearance + 42 &&
+          this.distanceToRoad({ roads: z.footpaths || [] }, p) >= clearance + 30 &&
+          !z.buildings.some((b) => distance(b, p) < clearance + 115) &&
+          !z.props.some(
+            (v) =>
+              (v.playerOwned || v.owned || v.custom) &&
+              distance(v, p) < clearance + (v.r || 25) + 45,
+          ) &&
+          !z.npcs.some((n) => distance(n.servicePoint || n, p) < clearance + 80) &&
+          !z.nodes.some((n) => distance(n, p) < clearance + 50) &&
+          !z.enemies.some((e) => e.hp > 0 && distance(e.home || e, p) < clearance + 85);
+        const alternatives = [
+          [0, 0],
+          [-65, -25],
+          [45, -40],
+          [-50, 45],
+        ];
+        const layouts = [
+          ['lodge', 2690, 1170, 55],
+          ['rest-bay', 2830, 1245, 23],
+          // The former loose gear/training props and two partial rail lengths
+          // cluttered this small yard. Existing surrounding farm equipment,
+          // shelter and Crown standard already communicate its occupation.
+        ];
+        const chosen = alternatives.find(([dx, dy]) =>
+          layouts.slice(0, 2).every(([, x, y, radius]) => clean(point(x + dx, y + dy), radius)),
+        );
+        const audit = { dryPond: true, constructed: false, skipped: [], offsets: chosen || null };
+        // The plot belongs to saved players and existing residents first.
+        // An occupied custom parcel must not be bulldozed to paint a homestead.
+        if (!chosen) {
+          z.greenwoodHomesteadAudit = {
+            ...audit,
+            reason: 'owned, road or actor plot needs inspection',
+          };
+          z.greenwoodHomesteadVersion = 1;
+          return;
+        }
+        const [dx, dy] = chosen;
+        const placements = layouts.filter(
+          ([kind, x, y, r], index) => index < 2 || clean(point(x + dx, y + dy), r),
+        );
+        // Remove only replaceable natural scatter from the immediate shelter
+        // footprints. No paid object, Quest NPC, beast or existing pasture asset.
+        const cleared = placements.filter(([kind]) => kind === 'lodge' || kind === 'rest-bay');
+        z.props = z.props.filter(
+          (p) =>
+            !(
+              p.greenwoodNature &&
+              cleared.some(
+                ([, x, y, r]) => distance(p, point(x + dx, y + dy)) < r * scale + 60 * scale,
+              )
+            ),
+        );
+        for (const [kind, x, y, radius] of placements) {
+          const blocking = kind === 'lodge' || kind === 'rest-bay';
+          z.props.push({
+            id: 'greenwood-thorn-homestead-' + kind,
+            ...point(x + dx, y + dy),
+            structure: 'thorn-homestead-' + kind,
+            greenwoodFacility: 'thorn-' + kind,
+            greenwoodDistrict: 'thorn-personal-homestead',
+            greenwoodAuthored: true,
+            r: blocking ? radius * scale : 0,
+            decorative: !blocking,
+            roadBlocker: blocking,
+          });
+        }
+        audit.constructed = true;
+        audit.skipped = layouts
+          .filter(([name]) => !placements.some(([kind]) => name === kind))
+          .map(([name]) => name);
+        z.greenwoodHomesteadAudit = audit;
+        z.greenwoodHomesteadVersion = 1;
+      }
+      greenwoodOwnerCompoundFinish(z) {
+        if (z.id === 'vale' && z.greenwoodDepartureClearanceVersion !== 2) {
+          const layout = R.greenwoodLayout;
+          const end = point(wagonExit.map((value) => value * layout.scale));
+          z.props = z.props.filter((p) =>
+            !p.greenwoodNature || p.owned || p.playerOwned || p.custom ||
+            distanceToRoadSegment(p, layout.anchors.wagon, end) > 105 * layout.scale,
+          );
+          z.greenwoodDepartureClearanceVersion = 2;
+        }
+        if (z.id === 'vale' && z.greenwoodOwnerHomesteadLayoutVersion !== 1) {
+          const bay = z.props.find((p) => p.id === 'greenwood-thorn-homestead-rest-bay');
+          const lodge = z.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
+          if (bay && lodge && !bay.owned && !bay.playerOwned && !bay.custom) {
+            const sc = R.greenwoodLayout.scale;
+            const at = { x: lodge.x + 110 * sc, y: lodge.y + 220 * sc };
+            if (
+              !this.blocked(at.x, at.y, 'vale', bay.r || 23, true) &&
+              this.distanceToRoad(z, at) > 65 * sc &&
+              !z.buildings.some((p) => distance(p, at) < 100 * sc)
+            )
+              Object.assign(bay, at);
+          }
+          z.greenwoodOwnerHomesteadLayoutVersion = 1;
+        }
+        // Recompose Scornfang's *existing* loose records/store props beside
+        // the farm loading apron. Keep exact IDs and never move player property.
+        // This is intentionally independent of the already-completed fort pass,
+        // so old version-4 saves also receive the modest visual arrangement.
+        if (z.id === 'vale' && z.greenwoodTreasuryYardLayoutVersion !== 1) {
+          const center = R.greenwoodLayout.anchors.treasury;
+          const moves = [
+            ['stronghold-treasury-yard-prop-2', -110, 73],
+            ['stronghold-treasury-yard-prop-3', -143, 84],
+          ];
+          const grouped = [];
+          const skipped = [];
+          for (const [id, dx, dy] of moves) {
+            const p = z.props.find((q) => q.id === id);
+            if (!p || p.playerOwned || p.owned || p.custom) {
+              skipped.push(id);
+              continue;
+            }
+            const at = { x: center.x + dx, y: center.y + dy };
+            if (
+              this.blocked(at.x, at.y, 'vale', p.r || 0, true) ||
+              this.distanceToRoad(z, at) < 45 ||
+              z.buildings.some((b) => distance(b, at) < 85) ||
+              z.npcs.some((n) => distance(n.servicePoint || n, at) < 65) ||
+              z.props.some(
+                (q) =>
+                  q !== p &&
+                  !q.greenwoodWall &&
+                  !q.greenwoodNature &&
+                  distance(q, at) < (q.r || 0) + (p.r || 0) + 24,
+              )
+            ) {
+              skipped.push(id);
+              continue;
+            }
+            Object.assign(p, at);
+            grouped.push(id);
+          }
+          z.greenwoodTreasuryYardLayoutAudit = { grouped, skipped };
+          z.greenwoodTreasuryYardLayoutVersion = 1;
+        }
+        // Cosmetic-only correction for existing v4 campaigns: remove exactly
+        // the four redundant authored homestead decorations. Preserve paid,
+        // custom and player-owned objects even if they reuse one of these IDs.
+        if (z.id === 'vale' && z.greenwoodHomesteadPresentationVersion !== 1 &&
+            z.greenwoodRedesignScene === R.greenwoodLayout?.sceneVersion) {
+          const obsolete = new Set([
+            'greenwood-thorn-homestead-gear',
+            'greenwood-thorn-homestead-training',
+            'greenwood-thorn-homestead-rear-rail',
+            'greenwood-thorn-homestead-east-rail',
+          ]);
+          z.props = z.props.filter((p) =>
+            !obsolete.has(p.id) || p.playerOwned || p.owned || p.custom);
+          z.greenwoodHomesteadPresentationVersion = 1;
+        }
+        if (
+          z.id !== 'vale' ||
+          z.greenwoodOwnerCompoundVersion === 2 ||
+          z.greenwoodRedesignScene !== R.greenwoodLayout?.sceneVersion
+        )
+          return;
+        const sc = R.greenwoodLayout.scale,
+          center = R.greenwoodLayout.anchors.goblin;
+        const audit = { shelters: [], standard: false };
+        // Joined endpoints transform identically; east gate stays in place.
+        if (z.greenwoodOwnerCompoundVersion !== 1)
+          for (const wall of z.props.filter(
+            (p) => p.stronghold === 'goblin-road-fort' && p.greenwoodWall,
+          )) {
+            for (const key of ['a', 'b']) {
+              const p = wall.greenwoodWall[key],
+                dx = p.x - center.x,
+                dy = p.y - center.y;
+              p.x = center.x + dx * (dx < 0 ? 1.15 : 1);
+              p.y = center.y + dy * (dy < 0 ? 1.3 : 1.08);
+            }
+            wall.x = (wall.greenwoodWall.a.x + wall.greenwoodWall.b.x) / 2;
+            wall.y = (wall.greenwoodWall.a.y + wall.greenwoodWall.b.y) / 2;
+          }
+        for (const [index, dx, dy] of [
+          [0, -115, -120],
+          [1, 85, -120],
+        ]) {
+          const p = z.props.find((p) => p.id === 'stronghold-goblin-road-fort-prop-' + index);
+          if (!p || p.owned || p.playerOwned || p.custom) continue;
+          Object.assign(p, {
+            x: center.x + dx * sc,
+            y: center.y + dy * sc,
+            structure: 'lean-to',
+            visualScale: 1.8,
+            greenwoodGoblinShelter: true,
+          });
+          audit.shelters.push(p.id);
+        }
+        // Real existing outdoor trap resolver, two avoidable defended flanks.
+        // The east gate itself remains a clear entry lane.
+        z.ownerDefensiveTraps = (z.ownerDefensiveTraps || []).filter(
+          (t) => t.owner !== 'goblin-road-fort',
+        );
+        for (const [j, dy] of [-105, 115].entries()) {
+          const at = { x: center.x + 260 * sc, y: center.y + dy * sc };
+          if (
+            this.blocked(at.x, at.y, 'vale', 45, true) ||
+            this.distanceToRoad(z, at) < 70 * sc ||
+            z.nodes.some((p) => distance(p, at) < 100 * sc)
+          )
+            continue;
+          z.ownerDefensiveTraps.push({
+            ...at,
+            kind: 'spikes',
+            index: 3100 + j,
+            owner: 'goblin-road-fort',
+          });
+        }
+        const lodge = z.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
+        if (lodge && !lodge.owned && !lodge.playerOwned && !lodge.custom) {
+          // A proportionate solid footprint; reserve former loading apron.
+          lodge.r = 40 * sc;
+          const id = 'greenwood-thorn-homestead-standard';
+          const at = { x: lodge.x - 90 * sc, y: lodge.y + 105 * sc };
+          if (
+            !z.props.some((p) => p.id === id) &&
+            !this.blocked(at.x, at.y, 'vale', 12, true) &&
+            !z.buildings.some((p) => distance(p, at) < 100 * sc)
+          ) {
+            z.props.push({
+              id,
+              ...at,
+              r: 0,
+              decorative: true,
+              structure: 'crown-banner',
+              greenwoodAuthored: true,
+              greenwoodDistrict: 'thorn-personal-homestead',
+            });
+            audit.standard = true;
+          }
+        }
+        // Authored civic anchors reuse existing lamps where their light covers
+        // the same public role; rejected points never masquerade as placements.
+        audit.publicLights = [];
+        for (const [key, x, y] of [
+          ['square', 650, 600],
+          ['market', 810, 730],
+          ['village-south', 650, 1400],
+          ['hamlet', 550, 1750],
+          ['freight-bridge', 1470, 990],
+        ]) {
+          const anchor = { x: x * sc, y: y * sc };
+          const existing = z.props.find(
+            (p) =>
+              ['roadside-lantern', 'grave-lamp'].includes(p.structure) &&
+              distance(p, anchor) < 130 * sc,
+          );
+          const service = z.npcs.find(
+            (p) =>
+              ['supplier', 'recruiter', 'quests'].includes(p.kind) &&
+              distance(p, anchor) < 150 * sc,
+          );
+          if (!existing && service && key === 'market') {
+            audit.publicLights.push({ key, id: service.id, status: 'existing-mounted-work-lamp' });
+            continue;
+          }
+          if (existing) {
+            audit.publicLights.push({ key, id: existing.id, status: 'existing' });
+            continue;
+          }
+          let at = null;
+          for (const [dx, dy] of [
+            [60, 45],
+            [-60, 45],
+            [90, -45],
+            [-90, -45],
+            [120, 100],
+            [-120, 100],
+          ]) {
+            const candidate = { x: anchor.x + dx * sc, y: anchor.y + dy * sc };
+            if (
+              this.blocked(candidate.x, candidate.y, 'vale', 15, true) ||
+              this.distanceToRoad(z, candidate) < 75 * sc ||
+              z.buildings.some((p) => distance(p, candidate) < 100 * sc) ||
+              z.npcs.some((p) => distance(p.servicePoint || p, candidate) < 60 * sc) ||
+              z.nodes.some((p) => distance(p, candidate) < 55 * sc)
+            )
+              continue;
+            at = candidate;
+            break;
+          }
+          const id = 'greenwood-owner-public-light-' + key;
+          if (at)
+            z.props.push({
+              id,
+              ...at,
+              r: 0,
+              decorative: true,
+              structure: 'roadside-lantern',
+              greenwoodAuthored: true,
+              greenwoodPublicLight: true,
+            });
+          audit.publicLights.push({
+            key,
+            id: at ? id : null,
+            status: at ? 'placed' : 'unresolved',
+          });
+        }
+        // Expanded roof footprints must remain readable; remove only generated
+        // replaceable trees already intruding into the new shelter yard.
+        const roofs = z.props.filter((p) => p.greenwoodGoblinShelter);
+        z.props = z.props.filter(
+          (p) =>
+            !(
+              p.greenwoodNature &&
+              p.greenwoodNature === 'tree' &&
+              roofs.some((q) => distance(p, q) < 100 * sc)
+            ),
+        );
+        // Replace the array so cached fort geometry observes changed walls.
+        z.props = z.props.slice();
+        z.greenwoodOwnerCompoundAudit = audit;
+        z.greenwoodOwnerCompoundVersion = 2;
+      }
       // GV-679 is an additive, nonblocking scene overlay. Never re-run the
       // layout's destructive scene generator or its enemy/home corrections to
       // deliver cosmetic refinements to an existing v4 campaign.
       greenwoodRefinementScene(z) {
-        if (z.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
-            z.greenwoodRefinementVersion === 1 || z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion)
+        this.greenwoodHomesteadScene(z);
+        this.greenwoodOwnerCompoundFinish(z);
+        if (
+          z.id !== 'vale' ||
+          R.greenwoodLayout?.version !== 2 ||
+          z.greenwoodRefinementVersion === 1 ||
+          z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion
+        )
           return;
         const scale = R.greenwoodLayout.scale;
         const cards = [
@@ -307,24 +861,225 @@
             audit.push({ id, placed: true, reason: 'existing candidate retained' });
             continue;
           }
-          const conflict = this.blocked(point.x, point.y, 'vale', 0, true) ||
+          const conflict =
+            this.blocked(point.x, point.y, 'vale', 0, true) ||
             this.distanceToRoad(z, point) < 45 ||
             this.distanceToRoad({ roads: z.footpaths || [] }, point) < 35 ||
             z.buildings.some((b) => distance(b, point) < 135) ||
-            z.props.some((p) => (p.owned || p.playerOwned || p.custom) && distance(p, point) < 85) ||
+            z.props.some(
+              (p) => (p.owned || p.playerOwned || p.custom) && distance(p, point) < 85,
+            ) ||
             z.npcs.some((n) => distance(n.servicePoint || n, point) < 65) ||
             z.nodes.some((n) => distance(n, point) < 35) ||
             z.enemies.some((e) => e.hp > 0 && distance(e.home || e, point) < 60);
           if (conflict) {
-            audit.push({ id, placed: false, reason: 'protected road, water, owner, service or actor clearance' });
+            audit.push({
+              id,
+              placed: false,
+              reason: 'protected road, water, owner, service or actor clearance',
+            });
             continue;
           }
-          z.props.push({ id, structure, ...point, r: 0, decorative: true,
-            greenwoodAuthored: true, greenwoodRefinement: 1 });
+          z.props.push({
+            id,
+            structure,
+            ...point,
+            r: 0,
+            decorative: true,
+            greenwoodAuthored: true,
+            greenwoodRefinement: 1,
+          });
           audit.push({ id, placed: true, reason });
         }
         z.greenwoodRefinementAudit = audit;
         z.greenwoodRefinementVersion = 1;
+      }
+      // Non-destructive, versioned landscape composition: never replay the
+      // original scene-5 generator on an established v4 game. Keep stable
+      // gameplay/owner IDs and place only bounded, static regional decoration.
+      greenwoodCompositionFinish(z) {
+        const cfg = R.greenwoodLayout;
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodCompositionVersion === 1
+        )
+          return;
+        const scale = cfg.scale;
+        const at = (x, y) => ({ x: x * scale, y: y * scale });
+        const near = (a, b) => distance(a, b);
+        const audit = [];
+        // Road/bridge topology and physical deck spans are independently
+        // owned by the dedicated Greenwood infrastructure PR #824.
+        // This scenery pass observes routes but never edits their geometry.
+        // Preserve all 17 #824 canonical corridor indices. The mill adds
+        // exactly one farm service spur and one narrow dry-side door footpath.
+        const routes = z.greenwoodRoutes || [],
+          lane = cfg.millServiceLane || [],
+          door = cfg.millDoorFootpath || [],
+          matches = (candidate, expected) =>
+            candidate?.points?.length === expected.length &&
+            candidate.points.every((point,j)=>distance(point,expected[j])<0.01),
+          includesMillPair = routes.length === 19 &&
+            z.greenwoodWatermillVersion === 2 &&
+            routes[17]?.kind === 'farm' && matches(routes[17],lane) &&
+            routes[18]?.kind === 'path' && matches(routes[18],door);
+        if (![16,17].includes(routes.length) && !includesMillPair) return;
+        const change = (id, expected, target, detail = {}) => {
+          const p = z.props.find((item) => item.id === id);
+          if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
+            audit.push({ id, placed: false, reason: 'missing, changed or owned scene object' });
+            return;
+          }
+          if (target) {
+            const desired = at(...target);
+            if (
+              this.blocked(desired.x, desired.y, 'vale', 4, true) ||
+              this.distanceToRoad(z, desired) < (detail.greenwoodField ? 125 : 55) ||
+              z.buildings.some((b) => near(b, desired) < 130)
+            ) {
+              audit.push({
+                id,
+                placed: false,
+                reason: 'target footprint conflicts; original retained',
+              });
+              return;
+            }
+            Object.assign(p, desired);
+          }
+          Object.assign(p, detail);
+          audit.push({ id, placed: true, reason: 'existing scene identity retained' });
+        };
+        // The tiny shared garden/furrow icon is now an intentional household
+        // bed or a multi-row rural field, without resizing other regions.
+        for (const id of [
+          'greenwood-homes-1',
+          'greenwood-homes-2',
+          'greenwood-homes-4',
+          'greenwood-hamlet-2',
+        ])
+          change(id, 'garden', null, { greenwoodKitchen: true });
+        for (const id of ['greenwood-homes-6', 'greenwood-homes-7'])
+          change(id, 'furrow-plot', null, { greenwoodField: true });
+        change('greenwood-orchard-6', 'furrow-plot', [510, 2080], { greenwoodField: true });
+        change('greenwood-refinement-den-thorn-bed', 'thorn-bed', [875, 3070], {
+          greenwoodNest: true,
+        });
+        // Move the entire isolated pond flock to the Hamlet's smallhold, not
+        // one animal away from its feed. Avoid the bank and forest occlusion.
+        change('greenwood-pasture-0', 'pasture-sheep', [350, 2460]);
+        change('greenwood-pasture-1', 'feed-trough', [430, 2500]);
+        change('greenwood-pasture-2', 'hay-rick', [250, 2510]);
+        const orchard = z.npcs.find((n) => n.id === 'orchard');
+        if (orchard) {
+          const positions = [
+            [1030, 2300],
+            [1070, 2360],
+            [1040, 2390],
+          ];
+          const chosen = positions
+            .map(([x, y]) => at(x, y))
+            .find(
+              (p) =>
+                !this.blocked(p.x, p.y, 'vale', 14, true) &&
+                this.distanceToRoad(z, p) > 88 &&
+                this.distanceToRoad({ roads: z.footpaths }, p) > 45 &&
+                !z.buildings.some((b) => near(b, p) < 130),
+            );
+          if (chosen) Object.assign(orchard, chosen);
+          audit.push({
+            id: 'orchard',
+            placed: !!chosen,
+            reason: chosen ? 'off-road planted site' : 'no legal marker location',
+          });
+        }
+        const candidates = [
+          ['fruit', 510, 1835],
+          ['fruit', 820, 1845],
+          ['fruit', 425, 2490],
+          ['fruit', 760, 2380],
+          ['fruit', 1050, 2410],
+          ['fruit', 1090, 2110],
+          ['fruit', 330, 1930],
+          ['fruit', 920, 2570],
+          ['fruit', 950, 1940],
+          ['fruit', 1180, 2300],
+          ['fruit', 670, 2550],
+          ['fruit', 1100, 2600],
+          ['flowers', 490, 980],
+          ['flowers', 730, 1150],
+          ['flowers', 350, 1440],
+          ['flowers', 470, 1590],
+          ['flowers', 1050, 1010],
+          ['flowers', 300, 1880],
+          ['flowers', 920, 2430],
+          ['flowers', 1070, 2630],
+          ['flowers', 440, 2700],
+          ['flowers', 2210, 640],
+          ['flowers', 2600, 790],
+          ['flowers', 2900, 1700],
+          ['flowers', 2060, 2020],
+          ['flowers', 2560, 2880],
+          ['flowers', 850, 920],
+          ['flowers', 1140, 800],
+          ['flowers', 340, 740],
+          ['flowers', 2320, 2120],
+          ['bush', 1120, 1100],
+          ['bush', 420, 1720],
+          ['bush', 1130, 2700],
+          ['bush', 2440, 650],
+          ['bush', 2850, 1800],
+          ['bush', 530, 2750],
+        ];
+        let fruit = 0;
+        for (const [i, [kind, x, y]] of candidates.entries()) {
+          const id = 'greenwood-composition-' + kind + '-' + i;
+          if (z.props.some((p) => p.id === id)) continue;
+          const p = at(x, y),
+            isTree = kind === 'fruit';
+          const limit = isTree ? 110 : kind === 'bush' ? 72 : 46;
+          const inUse =
+            this.blocked(p.x, p.y, 'vale', isTree ? 18 : 0, true) ||
+            this.distanceToRoad(z, p) < limit ||
+            this.distanceToRoad({ roads: z.footpaths }, p) < (isTree ? 70 : 28) ||
+            z.buildings.some((b) => near(b, p) < (isTree ? 175 : 130)) ||
+            z.npcs.some((n) => near(n.servicePoint || n, p) < (isTree ? 100 : 65)) ||
+            z.nodes.some((n) => near(n, p) < (isTree ? 65 : 32)) ||
+            z.props.some(
+              (q) =>
+                (q.owned || q.playerOwned || q.custom || q.roadBlocker) &&
+                near(q, p) < (isTree ? 155 : 85),
+            ) ||
+            (isTree &&
+              z.props.some(
+                (q) =>
+                  (q.structure === 'fruit-tree' || q.greenwoodNature === 'tree') &&
+                  near(q, p) < 105,
+              ));
+          if (inUse || z.props.length >= 390) {
+            audit.push({
+              id,
+              placed: false,
+              reason: inUse ? 'protected clearance' : 'prop budget',
+            });
+            continue;
+          }
+          z.props.push({
+            id,
+            structure: isTree ? 'fruit-tree' : kind === 'flowers' ? 'wildflowers' : 'bush',
+            ...p,
+            r: 0,
+            decorative: true,
+            greenwoodAuthored: true,
+            greenwoodComposition: 1,
+          });
+          if (isTree) fruit++;
+          audit.push({ id, placed: true, reason: 'land-use-aware placement' });
+        }
+        z.greenwoodCompositionAudit = audit;
+        z.greenwoodCompositionFruitCount = fruit;
+        z.greenwoodCompositionVersion = 1;
       }
       greenwoodRedesignMigrate(z) {
         const cfg = R.greenwoodLayout;
@@ -426,6 +1181,121 @@
           this.s.zone = previous;
         }
       }
+      // Independent route/bridge version: existing v4 saves must never replay
+      // greenwoodRedesignFinish's destructive scenery and placement passes.
+      greenwoodRoadBridgeFinish(z) {
+        const cfg = R.greenwoodLayout;
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodRoadBridgeVersion === 1
+        )
+          return;
+        const scale = cfg.scale;
+        // R07's eastern bank path must leave the south bridge straight before
+        // turning toward Skeleton Watch. R08 must not double-paint 200 units
+        // of the main cart line before reaching its own Treasury junction.
+        // Find the old geometry itself, not its position in the route array.
+        // The freight-depot apron added on main changes those positions; old
+        // scene-5 v4 saves can legitimately have either 16 or 17 corridors.
+        const replacePoints = (expected, newPoints) => {
+          const matches = (p, x, y) =>
+            Number.isFinite(p?.x) &&
+            Number.isFinite(p?.y) &&
+            Math.abs(p.x - x * scale) < 0.01 &&
+            Math.abs(p.y - y * scale) < 0.01;
+          const matchesOld = (points) => expected.every(([j, x, y]) => matches(points?.[j], x, y));
+          const route = z.greenwoodRoutes?.find((r) => r.kind === 'path' && matchesOld(r.points));
+          const pathIndex = z.footpaths?.findIndex(matchesOld) ?? -1;
+          if (!route || pathIndex < 0) return false;
+          const points = newPoints.map(([x, y]) => ({ x: x * scale, y: y * scale }));
+          z.footpaths[pathIndex] = points;
+          route.points = points;
+          return true;
+        };
+        // The farm cart lane ends on solid ground just before the south
+        // crossing. A short pedestrian approach takes over from there: carts
+        // should not visually continue across this deliberately timber footbridge.
+        const farm = z.roads?.[1];
+        if (
+          farm?.length === 7 &&
+          Math.abs(farm.at(-1).x - 1740 * scale) < 0.01 &&
+          Math.abs(farm.at(-1).y - 2280 * scale) < 0.01
+        ) {
+          const adjusted = [...farm.slice(0, -1), { x: 1560 * scale, y: 2280 * scale }];
+          z.roads[1] = adjusted;
+          if (z.greenwoodRoutes?.[1]?.kind === 'farm') z.greenwoodRoutes[1].points = adjusted;
+        }
+        replacePoints(
+          [
+            [0, 1740, 2280],
+            [1, 2150, 2350],
+          ],
+          [
+            [1560, 2280],
+            [1740, 2280],
+            [1950, 2280],
+            [2150, 2350],
+            [2300, 2220],
+            [2670, 2220],
+          ],
+        );
+        replacePoints(
+          [
+            [0, 2070, 1000],
+            [1, 1870, 1000],
+          ],
+          [
+            [1870, 1000],
+            [1870, 1250],
+            [2120, 1250],
+          ],
+        );
+        z.greenwoodRoadKinds = z.greenwoodRoutes
+          ?.filter((r) => r.kind !== 'path')
+          .map((r) => r.kind) || ['cart', 'farm', 'farm', 'farm'];
+
+        // Crossing width metadata, collision gap and illustrated deck now
+        // describe one physical width. Existing art IDs and discoveries stay.
+        if (Array.isArray(z.bridgeApproaches))
+          z.bridgeApproaches.forEach((bridge, j) => {
+            bridge.width = j === 0 ? 100 : 80;
+          });
+
+        // A save can place a traveling actor near the *old* broad bridge
+        // edge. Move only an actor stranded by the newly narrower water gap,
+        // into the same crossing at its centerline; do not teleport residents,
+        // loot, work orders, or owned buildings across the river.
+        const affected = [];
+        const gaps = R.barriers[0].gaps;
+        const actors = [
+          ...z.enemies.filter((p) => p.hp > 0),
+          ...(this.s.zone === 'vale' ? [this.hero, ...this.s.party] : []),
+        ];
+        for (const p of actors) {
+          if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
+          for (const [lo, hi] of gaps) {
+            const center = (lo + hi) / 2;
+            const [left, right] = riverBanks(center, cfg.size);
+            if (
+              Math.abs(p.y - center) > 90 ||
+              p.x < left - 18 ||
+              p.x > right + 18 ||
+              !this.blocked(p.x, p.y, 'vale', p.r || 12, true)
+            )
+              continue;
+            if (!this.blocked(p.x, center, 'vale', p.r || 12, true)) {
+              p.y = center;
+              for (const key of ['path', 'pathTarget', 'idleWanderTarget']) delete p[key];
+              affected.push(p.id || 'hero');
+            }
+            break;
+          }
+        }
+        z.greenwoodRoadBridgeAudit = { snappedActors: affected };
+        z.greenwoodRoadBridgeVersion = 1;
+      }
       greenwoodRedesignFinish(z) {
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 || z.greenwoodRedesignScene === cfg.sceneVersion)
@@ -473,7 +1343,7 @@
             ],
             [
               'farm',
-              [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], plan.crypt],
+              [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], [2500, 2660], plan.crypt],
             ],
             [
               'path',
@@ -489,6 +1359,8 @@
               ],
             ],
             ['path', [[650, 2640], [550, 2820], plan.goblin]],
+            // Short off-road freight apron from the existing Crypt approach.
+            ['path', [[2500, 2660], plan.cache]],
             [
               'path',
               [
@@ -607,7 +1479,6 @@
             'goblin-camp': plan.goblin,
             'supply-entrance': plan.treasury,
             'mini-field-thorn': [920, 2880],
-            'thorn-local-report': [850, 750],
           };
           for (const n of z.npcs) {
             if (npcPositions[n.id]) Object.assign(n, q(npcPositions[n.id]));
@@ -710,15 +1581,18 @@
               ['crate', 3030, 290],
             ],
             cache: [
-              ['cart', 2540, 1980],
-              ['supply-stack', 2490, 1830],
-              ['scribe-desk', 2560, 1700],
+              ['cart', 2515, 2570],
+              ['supply-stack', 2670, 2570],
+              ['scribe-desk', 2600, 2500],
+              ['stacked-lumber', 2690, 2660],
             ],
             estate: [
-              ['estate-scaffold', 2970, 2760],
-              ['stacked-lumber', 2860, 2920],
-              ['tool-rack', 2620, 2940],
-              ['supply-stack', 2860, 3050],
+              // A working west-side staging yard and active east-wing roof crew,
+              // leaving the approach to the actual doorway visibly open.
+              ['estate-scaffold', 2970, 2830],
+              ['stacked-lumber', 2740, 3080],
+              ['tool-rack', 2640, 2970],
+              ['supply-stack', 3060, 3040],
             ],
             cellars: [
               ['stump', 980, 2470],
@@ -1026,8 +1900,14 @@
               if (p && this.blocked(p.x, p.y, 'vale'))
                 Object.assign(p, this.safe(p.x, p.y, 'vale'));
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
-          if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
+          if (witness) this.positionThornWitness(witness);
+          // Shape authored routes and bridge corridors before positioning
+          // homestead and botanical overlays against their final road footprint.
+          // The method's own version guard keeps restore idempotent.
+          this.greenwoodRoadBridgeFinish(z);
+          this.greenwoodWatermillScene(z);
           this.greenwoodRefinementScene(z);
+          this.greenwoodCompositionFinish(z);
         } finally {
           this.s.zone = previous;
         }
@@ -1249,7 +2129,455 @@
     }
     ctx.restore();
   }
+  // A single coherent native painter for the homestead's actual silhouettes.
+  // Shared isometric axes and a fixed palette avoid disconnected box art.
+  function drawRoofCourses(stroke, ridge, eave, backRidge, backEave, seam, highlight) {
+    const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const at = (pitch, depth) => mix(mix(ridge, eave, pitch), mix(backRidge, backEave, pitch), depth);
+    for (let course = 1; course <= 5; course++) {
+      const pitch = course / 6;
+      stroke([at(pitch, 0.02), at(pitch, 0.98)], seam, 1.2);
+      stroke([at(pitch + 0.025, 0.03), at(pitch + 0.025, 0.97)], highlight, 0.65);
+      for (let depth = course % 2 ? 0.16 : 0.28; depth < 0.94; depth += 0.22)
+        stroke([at(pitch - 0.14, depth), at(pitch, depth)], seam, 0.8);
+    }
+  }
+  function drawThornHomestead(ctx, e, p) {
+    const kind = e.greenwoodFacility;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    const poly = (a, color) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      a.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+      ctx.closePath();
+      ctx.fill();
+    };
+    const stroke = (a, color, width = 2) => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      a.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+      ctx.stroke();
+    };
+    const oval = (x, y, rx, ry, color) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+    };
+    const wood = '#76563d',
+      beam = '#4d3c30',
+      edge = '#b6956a';
+    const lantern = (x, y) => {
+      stroke(
+        [
+          [x, y - 19],
+          [x, y - 9],
+        ],
+        beam,
+        2,
+      );
+      poly(
+        [
+          [x - 5, y - 9],
+          [x + 5, y - 9],
+          [x + 6, y + 3],
+          [x - 6, y + 3],
+        ],
+        '#493e32',
+      );
+      poly(
+        [
+          [x - 3, y - 6],
+          [x + 3, y - 6],
+          [x + 4, y],
+          [x - 4, y],
+        ],
+        '#e6b978',
+      );
+      stroke(
+        [
+          [x - 5, y + 4],
+          [x + 5, y + 4],
+        ],
+        edge,
+        2,
+      );
+    };
+    if (kind === 'thorn-lodge') {
+      // Appropriated agricultural store: the loading opening is retained at
+      // wolf scale while the surrounding monumental roof is reauthored.
+      // Small body contact under the actual barn walls, not a displaced oval.
+      poly(
+        [
+          [-60, -1],
+          [31, 16],
+          [85, -2],
+          [85, 2],
+          [31, 21],
+          [-60, 4],
+        ],
+        '#293a2f66',
+      );
+      poly(
+        [
+          [-63, 0],
+          [31, 19],
+          [87, 0],
+          [-7, -20],
+        ],
+        '#777561',
+      );
+      poly(
+        [
+          [-60, -63],
+          [31, -45],
+          [31, 15],
+          [-60, -3],
+        ],
+        '#927453',
+      );
+      poly(
+        [
+          [31, -45],
+          [84, -63],
+          [84, -3],
+          [31, 15],
+        ],
+        '#65513e',
+      );
+      poly(
+        [
+          [-60, -63],
+          [-14, -98],
+          [31, -45],
+        ],
+        '#9b7b56',
+      );
+      for (let j = 0; j < 7; j++) {
+        const x = -55 + j * 13;
+        stroke(
+          [
+            [x, -59 + (x + 55) * 0.2],
+            [x, -5 + (x + 55) * 0.2],
+          ],
+          '#71573f',
+          1,
+        );
+      }
+      // Raised stone sill and a pinned timber frame follow the wall planes.
+      poly([[-60, -9], [31, 9], [84, -9], [84, -3], [31, 15], [-60, -3]], '#83806d');
+      for (const x of [-54, -42, 23])
+        stroke([[x, -8 + (x + 60) * 0.2], [x, -3 + (x + 60) * 0.2]], '#555349', 1);
+      stroke([[-59, -59], [-39, -45]], beam, 4);
+      stroke([[31, -43], [82, -60]], '#9b7b59', 3);
+      for (const x of [43, 55, 67, 78]) {
+        const base = 15 - (x - 31) * 0.34;
+        stroke([[x, base - 52], [x, base - 6]], '#4e4033', 1);
+      }
+      // Broad old loading door, open for a quadruped, not a scaled-down pet door.
+      poly(
+        [
+          [-34, -49],
+          [17, -39],
+          [17, 11],
+          [-34, 1],
+        ],
+        '#27372e',
+      );
+      poly([[-32, -18], [-15, -24], [14, -17], [14, 9], [-32, 0]], '#465044');
+      stroke([[-25, -20], [-25, -5], [-15, -3]], '#6c6048', 2);
+      oval(-8, 4, 24, 7, '#b29a72');
+      for (let j = 0; j < 6; j++)
+        stroke(
+          [
+            [-28 + j * 8, 2],
+            [-23 + j * 8, 6],
+          ],
+          '#d8bf8d',
+          1,
+        );
+      stroke(
+        [
+          [-38, 1],
+          [-38, -54],
+          [21, -42],
+          [21, 13],
+        ],
+        beam,
+        5,
+      );
+      // Keep the reused granary's front gable solid and legible. The old
+      // dark diamond grain hatch overlapped the pitched roof as a false hole.
+      // Small side ventilation below remains sufficient farm-building detail.
+      for (let j = 0; j < 3; j++)
+        stroke(
+          [
+            [47, -42 + j * 5],
+            [69, -49 + j * 5],
+          ],
+          '#302d28',
+          2,
+        );
+      // Clean two-plane pitched roof: matching depth vectors and one
+      // front gable, with restrained weathering rather than overlapping
+      // diagonal shingles along the visible left eave.
+      const roofFrontLeft = [-64, -67],
+        roofFrontRidge = [-14, -98],
+        roofFrontRight = [36, -50],
+        roofRearLeft = [-16, -83],
+        roofRearRidge = [34, -114],
+        roofRearRight = [84, -66];
+      poly(
+        [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
+        '#94734f',
+      );
+      poly(
+        [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
+        '#624c38',
+      );
+      // Close the overhanging right eave onto the real side wall. Without
+      // this narrow fascia, the backdrop shows through as a green wedge.
+      poly([roofFrontRight, roofRearRight, [84, -63], [31, -45]], '#4b3b2d');
+      poly([roofFrontRidge, roofFrontRight, [31, -45], [-14, -95]], '#574332');
+      stroke([roofFrontLeft, roofFrontRidge, roofFrontRight], edge, 2.5);
+      stroke([roofFrontRidge, roofRearRidge], '#b6956a', 2);
+      stroke([roofFrontLeft, roofRearLeft], '#a98c64', 1.6);
+      stroke([roofFrontRight, roofRearRight], '#a98c64', 1.6);
+      drawRoofCourses(stroke, roofFrontRidge, roofFrontRight, roofRearRidge, roofRearRight,
+        '#493a30', '#a68058');
+      drawRoofCourses(stroke, roofFrontRidge, roofFrontLeft, roofRearRidge, roofRearLeft,
+        '#705238', '#b39266');
+      stroke(
+        [
+          [-61, -61],
+          [-61, -1],
+        ],
+        beam,
+        4,
+      );
+      stroke(
+        [
+          [83, -61],
+          [83, -2],
+        ],
+        beam,
+        4,
+      );
+      lantern(40, -25);
+    } else if (kind === 'thorn-rest-bay') {
+      // Lower former livestock lean-to, now a wolf rest bay: one continuous
+      // single-pitch roof on four grounded posts, no fake enclosed cottage.
+      // The entrance and dry bedding remain fully visible from the yard.
+      poly(
+        [
+          [-47, -5],
+          [7, 13],
+          [57, -5],
+          [3, -22],
+        ],
+        '#786f56',
+      );
+      poly(
+        [
+          [-44, -3],
+          [6, 10],
+          [53, -5],
+          [3, -19],
+        ],
+        '#80785c',
+      );
+      // A short rear windbreak, below the open eaves.
+      poly(
+        [
+          [-40, -40],
+          [5, -61],
+          [5, -26],
+          [-40, -7],
+        ],
+        '#68513c',
+      );
+      stroke([[-38, -32], [4, -50]], '#a78a64', 2);
+      for (const [x, y, topY] of [
+        [3, -19, -78],
+        [54, -7, -55],
+      ]) {
+        oval(x, y + 2, 6, 2.5, '#24372766');
+        stroke([[x, y], [x, topY]], beam, 6);
+      }
+      // Raised, dry bed with a neat bank of old straw behind the open front.
+      poly(
+        [
+          [-34, 0],
+          [5, 8],
+          [35, -2],
+          [-4, -12],
+        ],
+        '#4e4638',
+      );
+      oval(0, -3, 30, 8, '#b5a074');
+      oval(-2, -5, 25, 5, '#d1bc8b');
+      for (let j = 0; j < 5; j++)
+        stroke(
+          [
+            [-25 + j * 11, -4],
+            [-19 + j * 11, 1],
+          ],
+          '#ddc998',
+          1.5,
+        );
+      for (const [x, y, topY] of [
+        [-43, -2, -60],
+        [7, 12, -32],
+      ]) {
+        oval(x, y + 2, 6, 2.5, '#24372766');
+        stroke([[x, y], [x, topY]], beam, 6);
+      }
+      stroke([[-43, -48], [-30, -59]], '#8d6947', 4);
+      stroke([[7, -19], [21, -40]], '#8d6947', 4);
+      // Four eaves are a parallelogram, never crossed roof slopes.
+      const restRoof = [
+        [-48, -62],
+        [4, -86],
+        [60, -62],
+        [8, -38],
+      ];
+      poly(restRoof, '#896645');
+      poly(
+        [
+          restRoof[3],
+          restRoof[2],
+          [60, -56],
+          [8, -32],
+        ],
+        '#4a3b2d',
+      );
+      stroke(restRoof.concat([restRoof[0]]), '#c5a477', 3);
+      for (let j = 1; j < 4; j++) {
+        const t = j / 4;
+        stroke(
+          [
+            [-48 + 52 * t, -62 - 24 * t],
+            [8 + 52 * t, -38 - 24 * t],
+          ],
+          '#ad875b',
+          1.2,
+        );
+      }
+      stroke([[43, -28], [53, -33]], '#b39a6f', 2);
+      oval(44, -26, 3, 4, '#c7a572');
+    } else if (kind === 'thorn-gear') {
+      // A low open gear rack on the former threshing edge, not another roof.
+      poly(
+        [
+          [-35, 7],
+          [4, 14],
+          [39, 4],
+          [0, -3],
+        ],
+        '#7e7559',
+      );
+      for (const [x, ground, top] of [
+        [-26, 9, -43],
+        [27, 4, -46],
+      ]) {
+        oval(x, ground + 1, 5, 2.3, '#24372766');
+        stroke([[x, ground], [x, top]], beam, 5);
+      }
+      stroke([[-30, -47], [32, -50]], edge, 6);
+      stroke([[-26, -29], [28, -31]], '#ab9066', 3);
+      stroke([[-25, 6], [27, -29]], '#634b38', 2);
+      for (const x of [-12, 5, 19]) {
+        stroke([[x, -47], [x, -25]], '#4a4030', 2);
+        oval(x, -23, 4, 2.5, '#aa8a5c');
+      }
+      // Two rolled canvas bundles and the scout's compact field equipment.
+      poly([[-21, 3], [-2, 6], [10, 0], [-8, -3]], '#76664d');
+      poly([[7, 5], [23, 7], [31, 2], [15, 0]], '#ac956f');
+      stroke([[-18, 1], [-3, 4]], '#c3ac81', 1.5);
+    } else if (kind === 'thorn-training') {
+      // A coherent practice rail with two low targets; open yard remains clear.
+      poly(
+        [
+          [-42, 7],
+          [2, 18],
+          [44, 7],
+          [0, -5],
+        ],
+        '#82775a',
+      );
+      stroke([[-34, -20], [33, -24]], '#836848', 4);
+      for (const [x, y, height] of [
+        [-32, 8, 36],
+        [32, 5, 31],
+      ]) {
+        oval(x, y + 2, 5, 2.4, '#22352666');
+        stroke([[x, y], [x, y - height]], wood, 6);
+        poly(
+          [
+            [x - 8, y - height + 4],
+            [x + 8, y - height + 4],
+            [x + 10, y - height + 19],
+            [x - 10, y - height + 19],
+          ],
+          '#998369',
+        );
+        stroke([[x - 6, y - height + 11], [x + 6, y - height + 11]], '#5b5142', 1.5);
+      }
+      // The practice line meets the posts, not a free-standing row of stakes.
+      stroke([[-32, 5], [32, 2]], '#ac8e63', 2);
+    } else if (kind === 'thorn-rear-rail' || kind === 'thorn-east-rail') {
+      const lean = kind === 'thorn-rear-rail' ? -1 : 1;
+      const x1 = -52,
+        x2 = 52,
+        y1 = lean * 11,
+        y2 = -lean * 11;
+      stroke(
+        [
+          [x1, y1 - 13],
+          [x2, y2 - 13],
+        ],
+        '#785e45',
+        5,
+      );
+      stroke(
+        [
+          [x1, y1 - 27],
+          [x2, y2 - 27],
+        ],
+        '#a2825a',
+        4,
+      );
+      for (let i = 0; i < 4; i++) {
+        const x = x1 + i * 34,
+          y = y1 + ((y2 - y1) * i) / 3;
+        oval(x, y + 7, 5, 2.2, '#24372766');
+        stroke(
+          [
+            [x, y + 6],
+            [x, y - 38],
+          ],
+          '#534435',
+          6,
+        );
+        stroke(
+          [
+            [x - 4, y - 38],
+            [x + 4, y - 38],
+          ],
+          '#c2a47a',
+          3,
+        );
+      }
+    }
+    ctx.restore();
+  }
+
   function drawFacility(ctx, e, p) {
+    if (e.greenwoodFacility?.startsWith('thorn-')) return drawThornHomestead(ctx, e, p);
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.lineJoin = 'round';
@@ -1269,108 +2597,325 @@
       ctx.stroke();
     };
     if (e.greenwoodFacility === 'mill') {
+      // One timber-on-stone industrial building with a single coherent
+      // three-quarter projection. The old overlapping roof/wall rectangles
+      // looked like multiple unrelated houses sharing a wheel.
+      ctx.fillStyle = '#17291e66';
+      ctx.beginPath();
+      ctx.ellipse(2, 16, 86, 20, -0.08, 0, Math.PI * 2);
+      ctx.fill();
+      // Two masonry foundation faces meet at the same front corner.
       poly(
         [
-          [-62, 7],
-          [-64, -88],
-          [8, -111],
-          [69, -87],
-          [69, -4],
-          [0, 18],
+          [-68, -32],
+          [0, -9],
+          [0, 20],
+          [-68, -3],
         ],
-        '#725940',
+        '#a5a18b',
       );
       poly(
         [
-          [-64, -88],
-          [0, -66],
-          [69, -87],
-          [7, -112],
+          [0, -9],
+          [69, -32],
+          [69, -3],
+          [0, 20],
         ],
-        '#a98b5d',
+        '#7a8275',
+      );
+      for (let row = 0; row < 3; row++) {
+        const rise = row * 8;
+        line([-67, -27 + rise], [-1, -5 + rise], '#626e64', 1.2);
+        line([1, -5 + rise], [68, -27 + rise], '#515d56', 1.1);
+        for (let j = 0; j < 4; j++) {
+          const f = (j + (row % 2) * 0.5) / 4;
+          line(
+            [-67 + 66 * f, -27 + rise + 22 * f],
+            [-67 + 66 * f, -20 + rise + 22 * f],
+            '#6e7769',
+            0.7,
+          );
+        }
+      }
+      // Timber walls have different sun/shade values but identical construction.
+      poly(
+        [
+          [-65, -98],
+          [0, -76],
+          [0, -9],
+          [-65, -31],
+        ],
+        '#b79b6b',
       );
       poly(
         [
-          [-78, -86],
-          [-5, -143],
-          [82, -104],
-          [5, -56],
+          [0, -76],
+          [67, -98],
+          [67, -31],
+          [0, -9],
         ],
-        '#624332',
+        '#927651',
       );
+      // Vertical planking follows each wall plane, not world-aligned decals.
+      for (let j = 1; j < 9; j++) {
+        const f = j / 9,
+          x = -65 + 65 * f,
+          top = -98 + 22 * f,
+          foot = -31 + 22 * f;
+        line([x, top + 3], [x, foot - 2], j % 3 ? '#927b55' : '#c9b082', 0.9);
+      }
+      for (let j = 1; j < 8; j++) {
+        const f = j / 8,
+          x = 67 * f,
+          top = -76 - 22 * f,
+          foot = -9 - 22 * f;
+        line([x, top + 3], [x, foot - 2], j % 3 ? '#725a3d' : '#af8f63', 0.8);
+      }
+      // Shared corner posts and two level courses prove load continuity.
+      for (const [a, b] of [
+        [
+          [-64, -99],
+          [-64, -31],
+        ],
+        [
+          [0, -77],
+          [0, -9],
+        ],
+        [
+          [67, -99],
+          [67, -31],
+        ],
+        [
+          [-32, -88],
+          [-32, -20],
+        ],
+        [
+          [34, -87],
+          [34, -20],
+        ],
+      ])
+        line(a, b, '#624b32', 5);
+      for (const [a, b] of [
+        [
+          [-65, -62],
+          [0, -40],
+        ],
+        [
+          [0, -40],
+          [67, -62],
+        ],
+        [
+          [-65, -32],
+          [0, -10],
+        ],
+        [
+          [0, -10],
+          [67, -32],
+        ],
+      ])
+        line(a, b, '#664e34', 4);
+      line([-62, -96], [-1, -75], '#e0c797', 1.5);
+      line([2, -76], [65, -97], '#b5986a', 1.2);
+      // The live facility painter owns the entrance (Visuals.draw dispatches
+      // here before the legacy decoration). Cut it down through the plinth
+      // to the dry loading apron, not a closed panel above the foundation.
+      poly([[-51, -47], [-18, -36], [-18, 16], [-51, 5]], '#66523b');
+      poly([[-47, -43], [-22, -35], [-22, 12], [-47, 4]], '#26362e');
+      // A narrow inner jamb gives the opening depth; the timber leaf swings
+      // outward from the right hinge and leaves the dark opening visible.
+      poly([[-27, -36], [-22, -35], [-22, 12], [-27, 10]], '#413b2e');
+      poly([[-21, -35], [-7, -28], [-7, 21], [-21, 12]], '#98764e');
+      for (const x of [-17, -12])
+        line([x, -33 + (x + 21) * .5], [x, 12 + (x + 21) * .64], '#705638', 1);
+      for (const y of [-24, 6])
+        line([-20, y], [-8, y + 7], '#514936', 2);
+      line([-50, -46], [-18, -35], '#c4a77c', 3);
+      line([-49, -45], [-49, 5], '#73583b', 3);
+      line([-20, -35], [-20, 15], '#71563a', 2.5);
+      ctx.fillStyle = '#d4bc86';
+      ctx.beginPath();
+      ctx.arc(-10, -3, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      // Windows are projected in the orientation of their actual walls.
       poly(
         [
-          [-78, -86],
-          [-5, -143],
-          [6, -56],
+          [-57, -82],
+          [-44, -78],
+          [-44, -64],
+          [-57, -68],
         ],
-        '#a46e45',
+        '#304239',
       );
-      poly(
-        [
-          [6, -56],
-          [82, -104],
-          [82, -96],
-          [6, -48],
-        ],
-        '#443a2c',
-      );
-      for (let j = 0; j < 7; j++) line([-62, -76 + j * 11], [3, -54 + j * 10], '#ba9b67', 2);
-      for (const x of [-56, -7, 58]) line([x, -67], [x, 5], '#463c2b', 5);
-      poly(
-        [
-          [-4, -31],
-          [18, -37],
-          [18, 10],
-          [-4, 16],
-        ],
-        '#282f26',
-      );
+      line([-57, -82], [-44, -78], '#e2c18a', 2);
+      line([-57, -69], [-44, -65], '#6b5035', 2);
+      line([-50, -80], [-50, -66], '#ae9469', 1.5);
       for (const [x, y] of [
-        [-38, -56],
-        [32, -64],
+        [18, -77],
+        [47, -86],
       ]) {
         poly(
           [
             [x, y],
-            [x + 15, y - 5],
-            [x + 15, y + 15],
-            [x, y + 20],
+            [x + 14, y - 5],
+            [x + 14, y + 13],
+            [x, y + 18],
           ],
-          '#293f35',
+          '#2d4037',
         );
-        line([x + 7, y - 2], [x + 7, y + 17], '#b3a578', 2);
+        line([x, y], [x + 14, y - 5], '#cead79', 2);
+        line([x + 7, y - 2], [x + 7, y + 15], '#b59c71', 1.3);
+        line([x, y + 17], [x + 14, y + 12], '#634f39', 2);
       }
-      // Wheel root matches the shared world-space head/tailrace junction:
-      // (-90,+15) world = (-79.8,-20.25) screen relative to this body.
-      const wx = -79.8,
-        wy = -56.25;
-      ctx.strokeStyle = '#453c2d';
-      ctx.lineWidth = 8;
-      ctx.beginPath();
-      ctx.ellipse(wx, wy, 23, 36, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.strokeStyle = '#ba9c66';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      for (let j = 0; j < 12; j++) {
-        const a = (j * Math.PI) / 6;
-        line([wx, wy], [wx + Math.cos(a) * 23, wy + Math.sin(a) * 36], '#b49a68', 3);
-      }
-      for (const dy of [-14, 0, 14]) line([wx - 25, wy + dy], [wx - 19, wy + dy + 8], '#d4bc83', 4);
-      line([wx, wy], [0, -16], '#51412d', 6);
+      // A coherent hipped roof closes onto both walls. The previous trial
+      // left a visible gap between eaves and timber facade; now every eave
+      // follows the two actual wall planes and one connected front corner.
+      // The material is weathered wooden shingles, lighter on the left face.
       poly(
         [
-          [-62, 7],
-          [0, 26],
-          [72, 4],
-          [70, -4],
-          [0, 17],
-          [-62, 0],
+          [-73, -107],
+          [0, -150],
+          [0, -84],
         ],
-        '#8a8970',
+        '#a48052',
       );
-      line([-58, 10], [2, 28], '#b0ac89', 3);
+      poly(
+        [
+          [0, -150],
+          [74, -107],
+          [0, -84],
+        ],
+        '#76573d',
+      );
+      for (let row = 1; row < 5; row++) {
+        const t = row / 5;
+        // Roof courses radiate down each slope, meeting continuously at the
+        // front hip seam rather than crossing onto an unrelated roof surface.
+        line(
+          [-73 * t, -150 + 43 * t],
+          [0, -150 + 66 * t],
+          row % 2 ? '#c4a16d99' : '#664b35aa',
+          1.3,
+        );
+        line([0, -150 + 66 * t], [74 * t, -150 + 43 * t], row % 2 ? '#93704d99' : '#4a3a30aa', 1.2);
+      }
+      // Connected timber fascia physically sits beneath both roof planes.
+      poly(
+        [
+          [-73, -107],
+          [0, -84],
+          [0, -79],
+          [-73, -102],
+        ],
+        '#584231',
+      );
+      poly(
+        [
+          [0, -84],
+          [74, -107],
+          [74, -102],
+          [0, -79],
+        ],
+        '#49372d',
+      );
+      line([-73, -107], [0, -84], '#d1ad7b', 1.5);
+      line([0, -84], [74, -107], '#ad8864', 1.3);
+      line([0, -150], [0, -84], '#533d2b', 2.7);
+      // Bank-side wheel and its real wood axle; the authored channel meets
+      // the wheel near the shared headrace/tailrace coordinate.
+      const wx = -79.8,
+        wy = -56.25;
+      line([-62, -56], [wx + 4, wy], '#4b4130', 7);
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = '#513b2c';
+      ctx.beginPath();
+      ctx.ellipse(wx, wy, 25, 36, -0.13, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = '#b59a69';
+      ctx.stroke();
+      for (let j = 0; j < 12; j++) {
+        const a = (j * Math.PI) / 6,
+          sx = wx + Math.cos(a) * 24,
+          sy = wy + Math.sin(a) * 35;
+        line([wx, wy], [sx, sy], j % 2 ? '#bfa576' : '#92734b', 2.6);
+        line(
+          [sx - Math.sin(a) * 6, sy + Math.cos(a) * 6],
+          [sx + Math.sin(a) * 6, sy - Math.cos(a) * 6],
+          '#c2a77a',
+          3.2,
+        );
+      }
+      ctx.fillStyle = '#d1bc8c';
+      ctx.beginPath();
+      ctx.arc(wx, wy, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#574a36';
+      ctx.beginPath();
+      ctx.arc(wx, wy, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      // Understated functional lantern on the dry-side door post, not the roof.
+      line([-15, -58], [-8, -63], '#544b3b', 2.8);
+      line([-8, -63], [-8, -58], '#544b3b', 2);
+      poly(
+        [
+          [-12, -58],
+          [-4, -58],
+          [-5, -54],
+          [-11, -54],
+        ],
+        '#393b32',
+      );
+      poly(
+        [
+          [-11, -54],
+          [-5, -54],
+          [-6, -42],
+          [-10, -42],
+        ],
+        '#d5ae66',
+      );
+      line([-12, -42], [-4, -42], '#514d3b', 2);
+      // Short sill and worn loading boards lead toward the real dry landing
+      // at millEntrance; they do not expand the solid building footprint.
+      poly([[-51, 4], [-18, 15], [-25, 21], [-58, 10]], '#aaa087');
+      poly([[-57, 11], [-25, 22], [-42, 31], [-73, 21]], '#987d57');
+      for (let j = 0; j < 3; j++)
+        line([-60 + j * 10, 13 + j * 3.4], [-71 + j * 10, 20 + j * 3.4], '#604b36', 1.1);
+    } else if (e.greenwoodFacility === 'weir') {
+      // A working timber gate and retaining bank *at the real channel mouth*.
+      poly(
+        [
+          [-36, 7],
+          [-33, -5],
+          [33, -22],
+          [39, -9],
+          [7, 16],
+        ],
+        '#858b75',
+      );
+      poly(
+        [
+          [-29, -6],
+          [33, -22],
+          [32, -14],
+          [-29, 2],
+        ],
+        '#5d665a',
+      );
+      for (const [x, y] of [
+        [-22, -10],
+        [26, -24],
+      ]) {
+        line([x, y + 9], [x, y - 26], '#5c4934', 6);
+        line([x + 1, y - 23], [x + 1, y + 6], '#a48b61', 1.2);
+      }
+      for (let j = 0; j < 6; j++) {
+        const x = -19 + j * 9;
+        line([x, -13 - j * 2.1], [x, 2 - j * 2.1], '#aa8b5e', 6);
+      }
+      line([-29, -32], [35, -48], '#765839', 4);
+      line([-2, -40], [-2, -26], '#4c5048', 2.5);
+      line([-8, -39], [4, -42], '#adab91', 2);
     } else if (e.greenwoodFacility === 'new-planting') {
       for (const [x, y] of [
         [-26, 4],
@@ -1425,56 +2970,309 @@
     }
     ctx.restore();
   }
-  function drawRoads(ctx, paths, screen) {
-    const poly = (points, color) => {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      points.map(screen).forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
-      ctx.closePath();
-      ctx.fill();
-    };
-    for (const [index, path] of paths.entries()) {
-      const width = index === 0 ? 31 : 17,
-        base = index === 0 ? '#9a7250' : '#968562';
-      for (const [w, color] of [
-        [width + 5, '#58624988'],
-        [width, base],
-        [width * 0.6, index === 0 ? '#ae855f' : '#a3906c'],
-      ]) {
-        for (let j = 1; j < path.length; j++) {
-          const a = path[j - 1],
-            b = path[j],
-            d = distance(a, b) || 1,
-            nx = (-(b.y - a.y) / d) * w,
-            ny = ((b.x - a.x) / d) * w;
-          poly(
-            [
-              { x: a.x + nx, y: a.y + ny },
-              { x: b.x + nx, y: b.y + ny },
-              { x: b.x - nx, y: b.y - ny },
-              { x: a.x - nx, y: a.y - ny },
-            ],
-            index === 0 && (j === 2 || j === 3) && w <= width
-              ? w === width
-                ? '#93674f'
-                : '#b17a57'
-              : color,
-          );
-        }
-        for (const [j, p] of path.entries())
-          poly(
-            Array.from({ length: 16 }, (_, j) => ({
-              x: p.x + Math.cos((j * Math.PI) / 8) * w,
-              y: p.y + Math.sin((j * Math.PI) / 8) * w,
-            })),
-            index === 0 && j >= 1 && j <= 3 && w <= width
-              ? w === width
-                ? '#93674f'
-                : '#b17a57'
-              : color,
-          );
+  // The regional roads are a small static map. Precompute smooth centerlines
+  // and the non-overlapping path fragments once per real geometry revision.
+  // Canvas and Pixi consume this same painter; no on-tick pathfinding or meshes.
+  let roadPaintCache = null;
+  const roadWidths = Object.freeze({ cart: 44, farm: 26, path: 20 });
+  function smoothRoad(path, kind) {
+    if (!Array.isArray(path) || path.length < 3) return (path || []).slice();
+    const limit = kind === 'cart' ? 85 : kind === 'farm' ? 54 : 32;
+    const output = [{ ...path[0] }];
+    for (let i = 1; i < path.length - 1; i++) {
+      const a = path[i - 1],
+        b = path[i],
+        c = path[i + 1];
+      const u = { x: b.x - a.x, y: b.y - a.y };
+      const v = { x: c.x - b.x, y: c.y - b.y };
+      const la = Math.hypot(u.x, u.y),
+        lb = Math.hypot(v.x, v.y);
+      if (la < 1 || lb < 1) {
+        output.push({ ...b });
+        continue;
+      }
+      const cross = Math.abs(u.x * v.y - u.y * v.x) / (la * lb);
+      const dot = (u.x * v.x + u.y * v.y) / (la * lb);
+      if (cross < 0.1 && dot > 0) {
+        output.push({ ...b });
+        continue;
+      }
+      // The curve stays inside the old corridor by limiting both tangents;
+      // short village doorpaths should never become sweeping rural arcs.
+      const reach = Math.min(limit, la * 0.26, lb * 0.26);
+      const enter = { x: b.x - (u.x * reach) / la, y: b.y - (u.y * reach) / la };
+      const leave = { x: b.x + (v.x * reach) / lb, y: b.y + (v.y * reach) / lb };
+      output.push(enter);
+      const steps = 6;
+      for (let k = 1; k < steps; k++) {
+        const t = k / steps,
+          s = 1 - t;
+        output.push({
+          x: s * s * enter.x + 2 * s * t * b.x + t * t * leave.x,
+          y: s * s * enter.y + 2 * s * t * b.y + t * t * leave.y,
+        });
+      }
+      output.push(leave);
+    }
+    output.push({ ...path[path.length - 1] });
+    return output;
+  }
+  function distanceToRoadSegment(p, a, b) {
+    const dx = b.x - a.x,
+      dy = b.y - a.y;
+    const n = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / n));
+    return Math.hypot(p.x - (a.x + dx * t), p.y - (a.y + dy * t));
+  }
+  function nearWideRoad(a, b, roads) {
+    // Split a footpath finely only where it could meet a broad road. Most
+    // woodland trails are far from carriageways and keep their original,
+    // much cheaper curved segments.
+    const cross = (p, q, t) => (q.x - p.x) * (t.y - p.y) - (q.y - p.y) * (t.x - p.x);
+    for (const road of roads) {
+      const cutoff = roadWidths[road.kind] + roadWidths.path + 12;
+      for (let i = 1; i < road.points.length; i++) {
+        const c = road.points[i - 1],
+          d = road.points[i];
+        if (
+          distanceToRoadSegment(a, c, d) <= cutoff ||
+          distanceToRoadSegment(b, c, d) <= cutoff ||
+          distanceToRoadSegment(c, a, b) <= cutoff ||
+          distanceToRoadSegment(d, a, b) <= cutoff ||
+          (cross(a, b, c) * cross(a, b, d) < 0 && cross(c, d, a) * cross(c, d, b) < 0)
+        )
+          return true;
       }
     }
+    return false;
+  }
+  function prepareRoadPaint(roads, footpaths = [], kinds = []) {
+    const wide = (roads || []).map((points, i) => ({
+      kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
+      points: smoothRoad(points, kinds[i] === 'cart' || i === 0 ? 'cart' : 'farm'),
+    }));
+    // Extend the existing carriageway past the wagon at full width. This
+    // presentation keeps the wagon as the travel interaction at the same stop.
+    const source = roads?.[0],
+      destination = source?.at(-1),
+      scale = destination?.x / 2880;
+    if (wide[0]?.kind === 'cart' && source?.length >= 3 &&
+        Number.isFinite(scale) && scale >= 1 && scale <= 1.25 &&
+        Math.abs(destination.y - 280 * scale) < 1 &&
+        Math.abs(source.at(-2).x - 2480 * scale) < 1 &&
+        Math.abs(source.at(-2).y - 650 * scale) < 1) {
+      const westStart = source[0];
+      const millhavenWest =
+        Math.abs(westStart.x - 250 * scale) < 1 && Math.abs(westStart.y - 600 * scale) < 1
+          ? [{ x: 0, y: westStart.y }]
+          : [];
+      const exit = point(wagonExit.map((value) => value * scale));
+      wide[0].points = smoothRoad([...millhavenWest, ...source, exit], 'cart');
+      wide[0].endsAtEastEdge = true;
+    }
+    const fragments = [];
+    for (const path of footpaths || []) {
+      // Keep the actual saved route and its pedestrian classification intact.
+      // The southern crossing approaches a wider timber deck from a farm lane;
+      // presenting its continuation as a 24-unit stripe creates an abrupt pinch.
+      // Paint both banks at farm-lane breadth without altering collision, bridge
+      // clearance, navigation, or any historical save.
+      // Derive scale from authored route coordinates. The painter is a
+      // standalone module and must not depend on a Campaign rules object.
+      const southScale = path[0]?.x / 1560;
+      const southCrossing =
+        path.length === 6 &&
+        southScale > 0 &&
+        distance(path[0], { x: 1560 * southScale, y: 2280 * southScale }) < 1 &&
+        distance(path[1], { x: 1740 * southScale, y: 2280 * southScale }) < 1 &&
+        distance(path[2], { x: 1950 * southScale, y: 2280 * southScale }) < 1;
+      if (southCrossing) {
+        wide.push({ kind: 'farm', points: smoothRoad(path, 'farm') });
+        continue;
+      }
+      // The northern woodland connector formerly doubled back parallel to
+      // the freight road just before its junction. A short, direct approach
+      // makes a proper Y-join without moving the source path or any actors.
+      const northScale = path[0]?.x / 250;
+      const northernConnector =
+        path.length === 9 &&
+        northScale > 0 &&
+        distance(path[0], { x: 250 * northScale, y: 600 * northScale }) < 1 &&
+        distance(path.at(-1), { x: 1330 * northScale, y: 1000 * northScale }) < 1;
+      const paintedPath = northernConnector
+        ? [
+            // Merge into the straight westbound carriageway at a shallow angle.
+            { x: 315 * northScale, y: 600 * northScale },
+            { x: 225 * northScale, y: 577 * northScale },
+            { x: 155 * northScale, y: 515 * northScale },
+            { x: 112 * northScale, y: 404 * northScale },
+            { x: 108 * northScale, y: 265 * northScale },
+            { x: 153 * northScale, y: 187 * northScale },
+            ...path.slice(3, -2),
+            { x: 1510 * northScale, y: 885 * northScale },
+            { x: 1510 * northScale, y: 1000 * northScale },
+          ]
+        : path;
+      const points = smoothRoad(paintedPath, 'path');
+      // Short village/service spurs are maintained roads, not moss-colored
+      // trails. Include them in the same unioned earth paint as cart/farm
+      // roads, retaining their narrower world-space footprint.
+      const length = path.reduce(
+        (sum, point, i) => (i ? sum + distance(point, path[i - 1]) : sum),
+        0,
+      );
+      const local =
+        path.length === 2 && length <= 270 && path.every((p) => p.x < 1250 && p.y < 2050);
+      if (local) {
+        wide.push({ kind: 'path', points });
+        continue;
+      }
+      let run = [];
+      for (let i = 1; i < points.length; i++) {
+        const a = points[i - 1],
+          b = points[i];
+        const len = distance(a, b);
+        const count = nearWideRoad(a, b, wide) ? Math.max(1, Math.ceil(len / 16)) : 1;
+        for (let j = 0; j < count; j++) {
+          const at = j / count,
+            bt = (j + 1) / count;
+          const p = { x: a.x * (1 - at) + b.x * at, y: a.y * (1 - at) + b.y * at };
+          const q = { x: a.x * (1 - bt) + b.x * bt, y: a.y * (1 - bt) + b.y * bt };
+          const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
+          const withinRoad = wide.some((road) =>
+            road.points.some(
+              (end, k) =>
+                k > 0 &&
+                // Carry the narrow track through the shoulder to the inner
+                // worn surface, avoiding a rounded, detached-looking cap.
+                distanceToRoadSegment(mid, road.points[k - 1], end) <
+                  roadWidths[road.kind] * 0.58,
+            ),
+          );
+          if (withinRoad) {
+            if (run.length > 1) fragments.push(run);
+            run = [];
+          } else {
+            if (!run.length) run.push(p);
+            run.push(q);
+          }
+        }
+      }
+      if (run.length > 1) fragments.push(run);
+    }
+    return { wide, fragments, widths: roadWidths };
+  }
+  function appendRoadRibbon(ctx, screen, points, width, endsAtEastEdge = false) {
+    if (points.length < 2) return;
+    const normals = [];
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i - 1],
+        b = points[i],
+        dx = b.x - a.x,
+        dy = b.y - a.y,
+        len = Math.hypot(dx, dy) || 1;
+      normals.push({ x: -dy / len, y: dx / len });
+    }
+    const left = [],
+      right = [];
+    for (let i = 0; i < points.length; i++) {
+      const before = normals[Math.max(0, i - 1)],
+        after = normals[Math.min(normals.length - 1, i)];
+      const nx = before.x + after.x,
+        ny = before.y + after.y,
+        len = Math.hypot(nx, ny) || 1;
+      const dx = nx / len,
+        dy = ny / len,
+        denominator = Math.max(0.65, dx * after.x + dy * after.y),
+        reach = width / denominator;
+      const p = points[i];
+      if (endsAtEastEdge && i === points.length - 1) {
+        const before = points[i - 1];
+        const slope = (p.y - before.y) / (p.x - before.x);
+        const edgeOffset = (dy - dx * slope) * reach;
+        left.push(screen({ x: p.x, y: p.y + edgeOffset }));
+        right.push(screen({ x: p.x, y: p.y - edgeOffset }));
+      } else {
+        left.push(screen({ x: p.x + dx * reach, y: p.y + dy * reach }));
+        right.push(screen({ x: p.x - dx * reach, y: p.y - dy * reach }));
+      }
+    }
+    left.concat(right.reverse()).forEach((p, i) => {
+      if (i) ctx.lineTo(p.x, p.y);
+      else ctx.moveTo(p.x, p.y);
+    });
+    ctx.closePath();
+  }
+  function appendRoadCap(ctx, screen, point, width) {
+    // Match the clockwise winding of each quad. Opposite winding would
+    // cancel in Canvas's nonzero fill and punch holes at bend/junction caps.
+    for (let k = 0; k < 12; k++) {
+      const a = (-k * Math.PI) / 6;
+      const p = screen({ x: point.x + Math.cos(a) * width, y: point.y + Math.sin(a) * width });
+      if (k) ctx.lineTo(p.x, p.y);
+      else ctx.moveTo(p.x, p.y);
+    }
+    ctx.closePath();
+  }
+  function roadPaintCacheMatches(cache, paths, footpaths, kinds) {
+    if (
+      !cache ||
+      cache.paths.length !== paths.length ||
+      cache.footpaths.length !== footpaths.length ||
+      cache.kinds.length !== kinds.length
+    )
+      return false;
+    for (let i = 0; i < kinds.length; i++) if (cache.kinds[i] !== kinds[i]) return false;
+    for (const [current, saved] of [
+      [paths, cache.paths],
+      [footpaths, cache.footpaths],
+    ])
+      for (let i = 0; i < current.length; i++) {
+        if (current[i].length !== saved[i].length) return false;
+        for (let j = 0; j < current[i].length; j++)
+          if (current[i][j].x !== saved[i][j][0] || current[i][j].y !== saved[i][j][1])
+            return false;
+      }
+    return true;
+  }
+  function drawRoads(ctx, paths, screen, footpaths = [], kinds = []) {
+    // Canvas can paint every frame. Validate a tiny numerical snapshot
+    // instead of serializing world routes into a fresh JSON string at 60 FPS.
+    // In-place saved-route edits still invalidate the precomputed curves.
+    if (!roadPaintCacheMatches(roadPaintCache, paths, footpaths, kinds))
+      roadPaintCache = {
+        paths: paths.map((p) => p.map(({ x, y }) => [x, y])),
+        footpaths: footpaths.map((p) => p.map(({ x, y }) => [x, y])),
+        kinds: [...kinds],
+        geometry: prepareRoadPaint(paths, footpaths, kinds),
+      };
+    const { wide, fragments } = roadPaintCache.geometry;
+    const paint = (widthFactor, color) => {
+      ctx.beginPath();
+      // All roads and narrow tracks contribute to ONE ground shape per
+      // material layer. Separate footpath painting used to lay one colored
+      // strip on top of another and left visible seams at T/Y junctions.
+      for (const road of wide) {
+        const w = roadWidths[road.kind] * widthFactor;
+        appendRoadRibbon(ctx, screen, road.points, w, road.endsAtEastEdge);
+        // A west-boundary carriageway ends flush with the map edge.
+        if (road.points[0].x !== 0) appendRoadCap(ctx, screen, road.points[0], w);
+        if (!road.endsAtEastEdge) appendRoadCap(ctx, screen, road.points.at(-1), w);
+      }
+      const footWidth = roadWidths.path * widthFactor;
+      for (const run of fragments) {
+        appendRoadRibbon(ctx, screen, run, footWidth);
+        appendRoadCap(ctx, screen, run[0], footWidth);
+        appendRoadCap(ctx, screen, run[run.length - 1], footWidth);
+      }
+      ctx.fillStyle = color;
+      ctx.fill();
+    };
+    ctx.save();
+    paint(1.12, '#755e49');
+    paint(1, '#a27a58');
+    paint(0.63, '#b68d66');
+    ctx.restore();
   }
   function drawWall(ctx, e, p) {
     const w = e.greenwoodWall,
@@ -1530,6 +3328,68 @@
     }
     ctx.restore();
   }
+  // Stable unscaled meadow geometry is created once, outside the frame loop.
+  // No save fields, runtime noise or per-frame RNG state are involved.
+  const meadowSamples = [
+    [460, 970, 115, 85],
+    [805, 910, 150, 110],
+    [345, 1390, 130, 100],
+    [450, 1880, 135, 125],
+    [735, 2440, 125, 115],
+    [1060, 2550, 135, 140],
+    [1140, 1010, 135, 95],
+    [2250, 740, 190, 135],
+    [2420, 2040, 135, 100],
+    [2930, 1740, 110, 120],
+    [500, 2750, 145, 110],
+    [230, 625, 150, 155],
+    [940, 420, 155, 125],
+    [920, 1470, 135, 140],
+    [330, 2200, 165, 145],
+    [1160, 2170, 150, 130],
+    [1900, 485, 190, 165],
+    [2480, 440, 135, 150],
+    [2050, 1560, 160, 145],
+    [2610, 1650, 180, 160],
+    [2750, 2375, 145, 125],
+    [2000, 2770, 155, 135],
+  ].map(([cx, cy, rx, ry], index) => ({
+    cx,
+    cy,
+    flowers: Array.from({ length: 19 }, (_, j) => {
+      const h = hash('greenwood-meadow-' + index + '-' + j);
+      const a = j * 2.3999632297 + (h % 23) * 0.017;
+      const r = Math.sqrt(((h >>> 8) % 997) / 997);
+      const dandelion = j % 7 === 0;
+      return {
+        x: cx + Math.cos(a) * rx * r,
+        y: cy + Math.sin(a) * ry * r,
+        h,
+        dandelion,
+        stem: dandelion ? 13 + (h % 4) : 8 + (h % 5),
+        lean: ((h >>> 5) % 7) - 3,
+      };
+    }),
+  }));
+  // Jittered patches give rural ground continuous cover with irregular clumps.
+  // These samples are paint only and are shared by Canvas and Pixi terrain.
+  const groundTufts = Array.from({ length: 20 * 20 }, (_, index) => {
+    const seed = hash('vale-tuft-' + index);
+    const x = (index % 20) * 160 + 24 + (seed % 111);
+    const y = Math.floor(index / 20) * 160 + 24 + ((seed >>> 8) % 111);
+    return { x, y, tufts: Array.from({ length: 8 + (seed % 5) }, (_, i) => {
+      const h = hash('vale-blade-' + index + '-' + i);
+      return {
+        x: x + (h % 135) - 67,
+        y: y + ((h >>> 8) % 135) - 67,
+        height: 4 + ((h >>> 18) % 8),
+        tone: (h >>> 26) % 3,
+        leaf: i % 5 === 0,
+        bloom: i === 0 && (seed >>> 16) % 3 === 0 ? h : 0,
+      };
+    }) };
+  });
+  const litterCache = new Map(); // twelve fixed native ground patches, bounded
   function drawGround(ctx, screen, cfg, bounds) {
     const s = cfg.scale;
     const patches = [
@@ -1544,7 +3404,7 @@
       [2020, 1780, 390, 370, '#34492e'],
       [650, 780, 500, 330, '#78894c'],
       [480, 1900, 420, 490, '#8d8250'],
-      [2780, 1320, 390, 320, '#84934f'],
+      [2790, 1310, 365, 295, '#7d8752'],
     ];
     ctx.save();
     for (const [x, y, rx, ry, color] of patches) {
@@ -1561,23 +3421,179 @@
       ctx.translate(p.x, p.y);
       ctx.scale(1, 0.355);
       const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
-      g.addColorStop(0, color + 'dd');
-      g.addColorStop(0.55, color + '88');
+      g.addColorStop(0, color + 'aa');
+      g.addColorStop(0.55, color + '66');
       g.addColorStop(1, color + '00');
       ctx.fillStyle = g;
       ctx.fillRect(-r, -r, r * 2, r * 2);
       ctx.restore();
-      // Stable leaf litter and grass flecks have world phase, never screen noise.
-      for (let j = 0; j < 34; j++) {
-        const a = j * 2.39996,
-          h = hash(x + ':' + y + ':' + j),
-          d = Math.sqrt((h % 991) / 991),
-          q = screen({ x: (x + Math.cos(a) * rx * d) * s, y: (y + Math.sin(a) * ry * d) * s });
-        ctx.fillStyle = color === '#8d8250' ? '#b39c6355' : '#b3aa6844';
+      // Broken leaves/blades, not a metallic scatter of identical highlights.
+      const key = x + ':' + y;
+      if (!litterCache.has(key))
+        litterCache.set(
+          key,
+          Array.from({ length: 34 }, (_, j) => {
+            const h = hash(key + ':' + j),
+              a = j * 2.39996,
+              d = Math.sqrt((h % 991) / 991);
+            return { x: x + Math.cos(a) * rx * d, y: y + Math.sin(a) * ry * d, h };
+          }),
+        );
+      ctx.fillStyle = color === '#8d8250' ? '#8b79484a' : '#83915d4a';
+      ctx.beginPath();
+      for (const sample of litterCache.get(key)) {
+        const q = screen({ x: sample.x * s, y: sample.y * s });
+        if (q.x < -12 || q.x > bounds.width + 12 || q.y < -12 || q.y > bounds.height + 12) continue;
+        const h = sample.h,
+          lean = h % 2 ? 1 : -1,
+          length = 3 + (h % 4);
+        ctx.moveTo(q.x - length, q.y);
+        ctx.quadraticCurveTo(q.x, q.y - 2 * lean, q.x + length, q.y + lean);
+        ctx.quadraticCurveTo(q.x, q.y + 2 * lean, q.x - length, q.y);
+        ctx.closePath();
+        if (h % 3 === 0) {
+          ctx.moveTo(q.x + 3, q.y);
+          ctx.lineTo(q.x + 1, q.y - 5);
+          ctx.lineTo(q.x + 4, q.y - 2);
+          ctx.closePath();
+        }
+      }
+      ctx.fill();
+    }
+    // Dry, asymmetric worn ground in the former east pond's actual footprint.
+    // Ground is cached with terrain; no added frame animation or water overlay.
+    const dirt = [
+      [2560, 1270],
+      [2625, 1165],
+      [2780, 1090],
+      [2910, 1180],
+      [2925, 1295],
+      [2820, 1420],
+      [2710, 1460],
+      [2590, 1400],
+    ].map(([x, y]) => screen({ x: x * s, y: y * s }));
+    ctx.fillStyle = '#88704a44';
+    ctx.beginPath();
+    dirt.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+    ctx.closePath();
+    ctx.fill();
+    const visibleTufts = [[], [], []];
+    const meadowVisible = [];
+    for (const patch of groundTufts) {
+      const center = screen({ x: patch.x * s, y: patch.y * s });
+      if (center.x < -130 || center.x > bounds.width + 130 ||
+          center.y < -75 || center.y > bounds.height + 75) continue;
+      for (const tuft of patch.tufts) {
+        if (tuft.x < 10 || tuft.y < 10 || tuft.x > 3190 || tuft.y > 3190) continue;
+        const p = screen({ x: tuft.x * s, y: tuft.y * s });
+        if (p.x < -10 || p.x > bounds.width + 10 || p.y < -14 || p.y > bounds.height + 10)
+          continue;
+        visibleTufts[tuft.tone].push({ ...p, height: tuft.height, leaf: tuft.leaf });
+        if (tuft.bloom)
+          meadowVisible.push({ ...p, h: tuft.bloom, stem: 8 + tuft.height / 3, lean: 2 });
+
+      }
+    }
+    for (const [tone, color] of ['#829456b5', '#a6a9699e', '#5d804ec9'].entries()) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      for (const { x, y, height, leaf } of visibleTufts[tone]) {
+        ctx.moveTo(x - 3, y);
+        ctx.quadraticCurveTo(x - 4, y - height * 0.7, x - 7, y - height);
+        ctx.quadraticCurveTo(x - 1, y - height * 0.8, x, y);
+        ctx.lineTo(x + 2, y);
+        ctx.quadraticCurveTo(x + 3, y - height, x + 7, y - height - 1);
+        ctx.quadraticCurveTo(x + 5, y - height * 0.5, x + 4, y);
+        ctx.closePath();
+        if (leaf) {
+          ctx.moveTo(x - 1, y - 2);
+          ctx.quadraticCurveTo(x - 9, y - 3, x - 10, y - 7);
+          ctx.quadraticCurveTo(x - 3, y - 9, x - 1, y - 2);
+          ctx.closePath();
+        }
+      }
+      ctx.fill();
+    }
+    // These meadow samples are computed once and shared by every draw.
+    // A bounded number of batched Canvas paths replaces hundreds of
+    // per-flower strokes, fills and trig/hash calls on each painted scene.
+    for (const patch of meadowSamples) {
+      const center = screen({ x: patch.cx * s, y: patch.cy * s });
+      if (
+        center.x < -240 ||
+        center.x > bounds.width + 240 ||
+        center.y < -160 ||
+        center.y > bounds.height + 160
+      )
+        continue;
+      for (const flower of patch.flowers) {
+        const p = screen({ x: flower.x * s, y: flower.y * s });
+        if (p.x < -18 || p.x > bounds.width + 18 || p.y < -26 || p.y > bounds.height + 18) continue;
+        meadowVisible.push({ ...flower, x: p.x, y: p.y });
+      }
+    }
+    if (meadowVisible.length) {
+      ctx.strokeStyle = '#87a267cc';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      for (const f of meadowVisible) {
+        ctx.moveTo(f.x, f.y + 4);
+        ctx.quadraticCurveTo(f.x + f.lean * 0.2, f.y - f.stem * 0.4, f.x + f.lean, f.y - f.stem);
+      }
+      ctx.stroke();
+      ctx.fillStyle = '#f1eadc33';
+      ctx.beginPath();
+      for (const f of meadowVisible)
+        if (f.dandelion) {
+          ctx.moveTo(f.x + f.lean + 4.6, f.y - f.stem);
+          ctx.arc(f.x + f.lean, f.y - f.stem, 4.6, 0, Math.PI * 2);
+        }
+      ctx.fill();
+      ctx.strokeStyle = '#eee9d4be';
+      ctx.lineWidth = 0.65;
+      ctx.beginPath();
+      for (const f of meadowVisible)
+        if (f.dandelion)
+          for (let k = 0; k < 12; k++) {
+            const a = (Math.PI * 2 * k) / 12,
+              r = 4.5 + (f.h % 3) * 0.2;
+            const x = f.x + f.lean,
+              y = f.y - f.stem;
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+          }
+      ctx.stroke();
+      const petalColors = ['#d4be9b', '#c8b0b4', '#b7bdd0', '#e1cc94'];
+      for (let color = 0; color < petalColors.length; color++) {
+        ctx.fillStyle = petalColors[color];
         ctx.beginPath();
-        ctx.ellipse(q.x, q.y, 3 + (h % 3), 1.2, 0.3, 0, Math.PI * 2);
+        for (const f of meadowVisible) {
+          if (f.dandelion || (f.h >>> 3) % petalColors.length !== color) continue;
+          const x = f.x + f.lean,
+            y = f.y - f.stem;
+          // One small scalloped silhouette avoids overlapping antialiased petals.
+          ctx.moveTo(x - 3, y - 1);
+          ctx.lineTo(x - 1, y - 2);
+          ctx.lineTo(x, y - 4);
+          ctx.lineTo(x + 2, y - 2);
+          ctx.lineTo(x + 4, y);
+          ctx.lineTo(x + 2, y + 3);
+          ctx.lineTo(x, y + 2);
+          ctx.lineTo(x - 2, y + 3);
+          ctx.closePath();
+        }
         ctx.fill();
       }
+      ctx.fillStyle = '#9f9866';
+      ctx.beginPath();
+      for (const f of meadowVisible)
+        if (!f.dandelion) {
+          const x = f.x + f.lean,
+            y = f.y - f.stem;
+          ctx.moveTo(x + 1.05, y);
+          ctx.arc(x, y, 1.05, 0, Math.PI * 2);
+        }
+      ctx.fill();
     }
     ctx.restore();
   }
@@ -1589,7 +3605,9 @@
     plan,
     drawNature,
     drawFacility,
+    drawRoofCourses,
     drawRoads,
+    prepareRoadPaint,
     drawWall,
     drawGround,
   };

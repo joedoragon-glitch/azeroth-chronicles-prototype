@@ -8,8 +8,10 @@ const { scripts, core } = require('../scripts/site-assets.cjs');
 const scriptOrder = (page) =>
   [...read(page).matchAll(/<script src="\.\/([^"]+)"/g)].map((match) => match[1]);
 
-for (const page of ['templates/game.html', 'index.html', 'prototype.html', 'phone.html'])
+for (const page of ['templates/game.html', 'index.html', 'prototype.html', 'phone-game.html'])
   assert.deepEqual(scriptOrder(page), scripts, page + ' must follow script inventory');
+assert.equal(scriptOrder('phone.html').length, 0, 'wrapper must not mount a second game');
+assert(read('phone.html').includes('phone-game.html'), 'wrapper loads the canonical game frame');
 
 const sw = read('sw.js');
 const manifest = /const APP_FILES = (\[[^\n]*\])/.exec(sw);
@@ -71,11 +73,11 @@ assert(
   'World labels and recruitment cues must remain visible',
 );
 assert(
-  app.includes("document.addEventListener('visibilitychange'"),
+  /document\.addEventListener\(\s*'visibilitychange'/.test(app),
   'iOS PWA visibility changes must be handled on document',
 );
 assert(
-  app.includes("addEventListener('pagehide'"),
+  /addEventListener\(\s*'pagehide'/.test(app),
   'Interrupted PWA trials must be cancelled on pagehide',
 );
 assert(

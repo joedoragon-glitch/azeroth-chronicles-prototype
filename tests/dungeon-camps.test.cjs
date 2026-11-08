@@ -43,7 +43,8 @@ for (const r of C.data.regions) {
     h.die();
     assert.equal(h.zoneId, r.id);
     assert.equal(h.selectedBarracksRespawn().barracks.id, camp.id);
-    assert(distance(h.hero, camp) < 120, 'dungeon defeat uses outside camp');
+    const landing = h.safe(camp.x + 85, camp.y + 50, r.id);
+    assert.deepEqual({ x: h.hero.x, y: h.hero.y }, landing, 'dungeon defeat uses the selected camp frontage');
     plots++;
   }
 }
@@ -65,7 +66,10 @@ for (const r of C.data.regions) {
   assert(g.prepareDungeonCamp(n));
   const b = g.dungeonCamp(n);
   g.recallParty();
-  assert(g.prepareDungeonCamp(n), 'resumes cancelled construction');
+  assert(!g.prepareDungeonCamp(n), 'Recall temporarily blocks assigning construction');
+  g.s.time += g.recallSecondsRemaining() + 0.1;
+  g.s.recallActive = false;
+  assert(g.prepareDungeonCamp(n), 'resumes cancelled construction after Recall');
   assert.equal(g.zone().buildings.length, 1);
   const bad = g.snapshot();
   bad.zones.vale.buildings[0].recoveryOnComplete = 'yes';
@@ -88,7 +92,8 @@ for (const r of C.data.regions) {
     finaleMenu() {},
   });
   catalog.dungeonEntranceMenu(n);
-  assert.equal(menu, undefined, 'already requested camp skips entrance prompt');
+  assert(menu.description.includes('The Lifebinder'), 'the entrance briefing remains available after preparing a camp');
+  menu.actions[0].action();
   assert(closed);
   assert.equal(g.zoneId, n.family);
   g.enter('vale', { x: n.x, y: n.y });
@@ -274,14 +279,14 @@ for (const site of C.rules.treasuryRecovery.sites.filter((s) => s.zone !== s.reg
     'a genuinely nearby ordinary camp qualifies',
   );
   const selectedBefore = g.s.barracksRespawn;
-  let opened = false;
+  let opened;
   const catalog = Menus.create({
     getGame: () => g,
     Campaign: C,
     D: C.data,
-    action: () => {},
-    openMenu: () => {
-      opened = true;
+    action: (label, action) => ({ label, action }),
+    openMenu: (_title, _description, actions) => {
+      opened = actions;
     },
     closeMenu() {},
     recallSquad() {},
@@ -289,12 +294,13 @@ for (const site of C.rules.treasuryRecovery.sites.filter((s) => s.zone !== s.reg
     finaleMenu() {},
   });
   catalog.dungeonEntranceMenu(n);
-  assert(!opened);
+  assert(opened);
+  opened.find((item) => item.label === 'Enter dungeon').action();
   assert.equal(g.zoneId, 'crypt');
   assert.deepEqual(
     g.s.barracksRespawn,
     selectedBefore,
-    'auto-entry preserves the chosen recovery point',
+    'entering preserves the chosen recovery point',
   );
 }
 console.log(

@@ -309,12 +309,14 @@
         context: 'confiscated orchard stores',
       },
       {
+        // Retain the stable tribute ID and finite 180-crown allocation, but
+        // make the guarded Goblin fort the actual recovery objective.
         id: 'woodland-cache',
-        site: 'cache',
+        site: 'goblin-camp',
         amount: 180,
         hidden: false,
-        offset: [50, -250],
-        context: 'collector cache',
+        offset: [50, 5],
+        context: 'tribute stockpiled inside the Goblin fort',
       },
       {
         id: 'pond-strongbox',
@@ -2557,7 +2559,7 @@
       enemyCount: 14,
       theme: 'foundry',
       species: 'crownguard',
-      lore: "Repaired stone courts surround a maintained working forge. Materials are received, heated, shaped, checked and dispatched by working artisans while Crown guards keep their original patrols. The old barracks and equipment racks still serve the military.",
+      lore: 'Repaired stone courts surround a maintained working forge. Receiving bays, furnace tools and finishing racks stand ready behind the guarded entrance. The Crownguards have left the work floor clear to defend it.',
       decor: [
         [180, 215, 'forge'],
         [315, 210, 'supply-stack'],
@@ -2640,8 +2642,9 @@
       {
         id: 'goblin-paid-preserves',
         name: 'Purchased preserves',
-        x: 425,
-        y: 245,
+        x: 350,
+        y: 310,
+        presentation: 'goblin-resident',
         icon: '🍯',
         narrativeId: 'I01',
       },
@@ -6987,6 +6990,8 @@
       rangeMultiplier: 1.3,
       projectileSpeedMultiplier: 1.3,
       compoundHalfSize: 190,
+      // Global outdoor garrison pursuit leeway, derived from position (no saved timer).
+      outdoorLeeway: 160,
       interiorZones: ['abyss', 'citadel', 'side-highlands-signal', ...supplyRooms.map((r) => r.id)],
       outdoorAreas: [
         {
@@ -7872,6 +7877,17 @@
       specialRange: bossCadence.specialRange * balance.enemySpecialReachMultiplier,
       areaRangeMultiplier: bossCadence.areaRangeMultiplier * balance.enemySpecialReachMultiplier,
     },
+    // Rematches change readiness and warning windows, not boss health or damage.
+    // Floors keep already brief warnings readable at the game's ~20 FPS target.
+    rematchAdaptation: Object.freeze({
+      field: Object.freeze({ warningScale: 0.9, recoveryScale: 0.92, warningFloor: 0.62 }),
+      captain: Object.freeze([
+        Object.freeze({ warningScale: 1, cooldownScale: 1 }),
+        Object.freeze({ warningScale: 0.9, cooldownScale: 0.88 }),
+        Object.freeze({ warningScale: 0.82, cooldownScale: 0.76 }),
+      ]),
+      captainWarningFloor: 0.62,
+    }),
     bossSummoning,
     bossBehavior,
     greenwoodPassives,

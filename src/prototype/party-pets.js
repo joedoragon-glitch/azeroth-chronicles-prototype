@@ -417,7 +417,7 @@
           return false;
         const ranged = def.role === 'ranged';
         const distance = dist(u, target);
-        if (distance > (ranged ? R.balance.companions.petBasicRange : R.balance.companions.petMeleeBasicRange) || !this.line(u, target))
+        if (distance > (ranged ? R.balance.companions.petBasicRange : R.balance.companions.petMeleeBasicRange) || !(ranged ? this.rangedLine(u, target) : this.line(u, target)))
           return false;
         const criticalReceipt = this.petCriticalRelease(u, 'basic');
         u.cd = R.balance.companions.petBasicInterval / this.companionRallyAttackSpeed(u);
@@ -491,7 +491,7 @@
         const ranged = def.role === 'ranged',
           cfg = R.balance.companions,
           d = dist(u, target),
-          visible = this.line(u, target);
+          visible = ranged ? this.rangedLine(u, target) : this.line(u, target);
         // Like Soldiers, melee pets can start a legal skill before closing to
         // basic-attack distance. Each skill still owns its range/line checks.
         if (!ranged && visible && this.companionTrySkill(u, target)) return;
@@ -532,7 +532,7 @@
         }
         // A shorter second skill must not suppress an otherwise usable first/basic.
         const attackDistance = dist(u, target);
-        if (attackDistance > (ranged ? cfg.petBasicRange : cfg.petMeleeBasicRange) || !this.line(u, target)) return;
+        if (attackDistance > (ranged ? cfg.petBasicRange : cfg.petMeleeBasicRange) || !(ranged ? this.rangedLine(u, target) : this.line(u, target))) return;
         if (this.companionTrySkill(u, target)) return;
         if (u.cd > 0) return;
         const criticalReceipt = this.petCriticalRelease(u, 'basic');

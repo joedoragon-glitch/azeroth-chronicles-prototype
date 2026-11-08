@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "greenwood-thornfang-homestead-proportions",
+  "name": "Thornfang's appropriated granary homestead and Crown standard",
+  "kind": "structure",
+  "nextAction": "Complete native/Canvas/Pixi visual and focused functional review of the joint Priority 1–4 artistic candidate in draft PR #832. No merge, deployment, new raster production or owner's visual acceptance is claimed.",
+  "context": {
+    "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
+    "decisionSummary": "Owner's latest direction: Thornfang came from elsewhere and has appropriated an existing granary or suitable farm structure; adapt a modest granary/store barn into his local residence, develop the freed courtyard, finish the design and add one existing Dark Crown standard to reinforce authority.",
+    "decisionDate": "2026-11-05",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/828",
+    "contentDocuments": [
+      "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
+    ],
+    "locationAndLore": "Thornfang's existing dry wolf-scout homestead in Greenwood; preserve Mira/patrol, quests and established site."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner explicitly selected appropriated agricultural structure and proposed the Dark Crown authority standard; design records adopt both. No unseen procedural/raster appearance acceptance.",
+    "proceduralDesignAcceptance": "Priority 1–4 structural and compositional candidates authored in shared procedural art; original identities preserved. Focused tests and direct owner visual acceptance remain separate gates.",
+    "spriteProductionAuthorization": "Not requested in this task.",
+    "generatedAppearanceAcceptance": "None.",
+    "pendingCorrections": [
+      "Bring lodge into regional domestic proportions without shrinking wolf opening/fixture usability",
+      "Use freed space for circulation, subordinate rest bay, grouped work and domestic service areas",
+      "Finish roofs, gable/fascia, posts, thresholds, rails, perspective, grounding and lantern mount",
+      "Reauthor main structure as an existing granary/store barn adapted for Thornfang, not a purpose-built lodge",
+      "Place one established crown-banner beside the farmyard approach",
+      "Check roof joins, open rest bay, yard clusters, and restrained post grounding in both renderers at 150% camera before visual signoff"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "85ffe148",
+    "ownerFilesAndBranches": [
+      {
+        "path": "src/prototype/greenwood-landscape.js",
+        "branch": "fix/greenwood-owner-visual-review-20261105"
+      },
+      {
+        "path": "src/prototype/visuals.js",
+        "branch": "fix/greenwood-owner-visual-review-20261105"
+      }
+    ],
+    "exactEntityState": "dev.262 procedural implementation; native 852x393 camera at 150%, day clock120/night500, existing v4 scene. See committed scene receipt and coverage record.",
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "docs/evidence/greenwood-owner-environment-20261105/homestead-day.png",
+      "docs/evidence/greenwood-owner-environment-20261105/homestead-night.png"
+    ],
+    "traitsToPreserve": [
+      "Large wolf-bodied occupant and usable open bedding entrance",
+      "Existing dry parcel, stable IDs, road access and Thornfang/Mira continuity",
+      "Greenwood timber/stone identity and practical mounted lighting",
+      "Recognizable agricultural origin and practical later wolf adaptations",
+      "Existing general Crown standard design; not royal flight insignia"
+    ],
+    "assetSpecificDependencies": [
+      "PR #828 controlling handoff and docs/evidence/greenwood-owner-environment-20261105/README.md; implementation source is a candidate, not released art."
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "crown-banner"
+    ],
+    "requiredVisibleAssets": [
+      "Thornfang's appropriated granary homestead and Crown standard"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Day/night, Canvas/Pixi and fresh/restored v4 worlds as applicable."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "path": "src/prototype/greenwood-landscape.js",
+        "reason": "Reauthor native lodge/rest-bay art and existing homestead arrangement; no new raster production."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "no new animation requested",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "docs/evidence/greenwood-owner-environment-20261105/README.md",
+      "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "main@e25ad8e800f385a8c5591a8373edb04c2f85a1b8",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

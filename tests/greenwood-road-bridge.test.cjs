@@ -1,0 +1,210 @@
+'use strict';
+// Focused Greenwood road/bridge acceptance. No browser matrix or broad suite.
+const assert = require('node:assert/strict');
+const Campaign = require('../src/prototype/engine.js');
+const Landscape = require('../src/prototype/greenwood-landscape.js');
+
+const rng = () => 0.73;
+const g = new Campaign('normal', 'paladin', rng);
+const z = g.zone();
+assert.equal(Campaign.rules.greenwoodLayout.version, 2);
+assert.equal(z.greenwoodRoadBridgeVersion, 1, 'separate non-destructive road migration');
+assert.equal(z.greenwoodHomesteadVersion, 1, 'published Thornfang homestead retained alongside roads');
+assert.equal(z.greenwoodCompositionVersion, 1, 'botanical overlay runs after completed route shaping');
+assert.equal(z.greenwoodRoutes.length, 19,
+  '17 canonical routes remain indexed; mill farm and door footpath append last');
+assert.equal(z.greenwoodRoutes.at(-2).kind, 'farm', 'mill farm access appends after canonical routes');
+assert.equal(z.greenwoodRoutes.at(-1).kind, 'path', 'mill doorway uses a narrow footpath');
+assert.equal(z.greenwoodRoutes[6].kind, 'path', 'independent freight apron retained');
+assert.deepEqual(z.greenwoodRoutes[6].points.at(-1), Campaign.rules.greenwoodLayout.anchors.cache);
+assert.deepEqual(z.greenwoodRoadKinds, ['cart', 'farm', 'farm', 'farm', 'farm'],
+  'fifth source-owned road kind is the appended mill spur');
+assert.equal(z.greenwoodRoutes[7].points.length, 6, 'south footpath spans both banks and exits deck straight');
+assert.equal(Math.round(z.roads[1].at(-1).x / Campaign.rules.greenwoodLayout.scale), 1560,
+  'farm cart traffic stops on solid ground before the timber pedestrian bridge');
+assert.equal(Math.round(z.footpaths[3][0].x / Campaign.rules.greenwoodLayout.scale), 1560,
+  'walking path continues seamlessly from the farm lane to the southern deck');
+assert.equal(z.greenwoodRoutes[8].points.length, 3, 'Treasury spur has no duplicated cart segment');
+
+const gaps = Campaign.rules.barriers[0].gaps;
+assert.deepEqual(gaps.map(([a, b]) => Math.round(b - a)), [100, 80]);
+for (const [i, bridge] of z.bridgeApproaches.entries()) {
+  assert.equal(bridge.width, [100, 80][i], 'physical and documented deck widths agree');
+  const [lo, hi] = gaps[i];
+  const mid = (lo + hi) / 2;
+  const nearestGrid = Math.round((mid - 25) / 50) * 50 + 25;
+  assert(nearestGrid > lo + 15 && nearestGrid < hi - 15,
+    'real 25+50n route grid retains a radius-15 crossing row');
+  assert(g.clearSegment(bridge.west, bridge.east, 15), 'bridge centerline traversable');
+  assert(g.clearSegment(bridge.east, bridge.west, 15), 'reverse bridge centerline traversable');
+  assert(g.route(bridge.west, bridge.east).length, 'native solver crosses west to east');
+  assert(g.route(bridge.east, bridge.west).length, 'native solver crosses east to west');
+}
+// Reproduce the actual boss patrol step that the previous narrow south
+// bridge blocked at ~17 units off center (focused CI #42042501901).
+// Actors must use the illustrated deck, not an invisible water shortcut.
+assert(g.clearSegment(
+  {x:1664.444437970413,y:2292.850355197068},
+  {x:1658.0060039246753,y:2297.9284027587482},
+  15,
+), 'Thornfang can physically complete the formerly obstructed south-bridge stride');
+assert(g.clearSegment(
+  {x:1530,y:2297}, {x:1940,y:2297}, 15, true,
+), 'southern footbridge has body clearance even with modest off-center walking');
+const prepared = Landscape.prepareRoadPaint(z.roads, z.footpaths, z.greenwoodRoadKinds);
+assert.deepEqual(prepared.wide[0].points[0], { x: 0, y: 600 },
+  'Millhaven carriageway extends all the way to the west boundary');
+assert.deepEqual(z.roads[0][0], { x: 250, y: 600 },
+  'west continuation is presentation-only');
+const millhavenLane = prepared.fragments.find((run) =>
+  run.some((point) => point.x < 180 && point.y > 300 && point.y < 500));
+assert(millhavenLane, 'woodland lane curves into the west approach');
+assert(millhavenLane[0].x > 200 && millhavenLane[0].y > 560,
+  'the narrow lane meets the cart surface well before the map edge');
+const cartRoad = prepared.wide[0];
+const wagon = z.npcs.find((npc) => npc.id === 'outbound');
+const exit = cartRoad.points.at(-1);
+assert.deepEqual(exit, { x: g.zoneSize(), y: 80 });
+assert(cartRoad.endsAtEastEdge);
+assert(cartRoad.points.some((p) => Math.hypot(p.x - wagon.x, p.y - wagon.y) < 20),
+  'the carriageway reaches the wagon at full width before leaving Greenwood');
+assert(!prepared.wide.some((road) => road.kind === 'farm' &&
+  road.points.some((p) => Math.hypot(p.x - wagon.x, p.y - wagon.y) < 10)),
+  'the wagon is on the carriageway');
+assert.deepEqual(z.roads[0].at(-1), { x: wagon.x, y: wagon.y });
+const exitLength = Math.hypot(exit.x - wagon.x, exit.y - wagon.y);
+assert(!z.props.some((p) => {
+  if (!p.greenwoodNature) return false;
+  const along = ((p.x - wagon.x) * (exit.x - wagon.x) +
+    (p.y - wagon.y) * (exit.y - wagon.y)) / exitLength;
+  const across = ((p.x - wagon.x) * (exit.y - wagon.y) -
+    (p.y - wagon.y) * (exit.x - wagon.x)) / exitLength;
+  return along > 0 && along < exitLength && Math.abs(across) < 100;
+}), 'trees and natural scatter stay clear beyond the wagon');
+const oldDeparture = g.snapshot();
+const savedVale = oldDeparture.zones.vale;
+savedVale.greenwoodDepartureClearanceVersion = 1;
+const tree = { id: 'old-departure-tree', x: (wagon.x + exit.x) / 2,
+  y: (wagon.y + exit.y) / 2, r: 18, icon: '🌲', greenwoodNature: true };
+savedVale.props.push(tree);
+const revisedVale = Campaign.restore(oldDeparture, rng).zone();
+assert(!revisedVale.props.some((p) => p.id === tree.id), 'v4 restore clears old roadside scatter');
+assert.deepEqual(revisedVale.npcs.find((n) => n.id === 'outbound'), wagon);
+
+assert(prepared.wide.some((road) => road.kind === 'path'),
+  'short maintained Millhaven side lanes share cart/farm earth painting');
+const southPaint = prepared.wide.find((road) =>
+  road.kind === 'farm' &&
+  Math.abs(road.points[0].x / Campaign.rules.greenwoodLayout.scale - 1560) < 0.01 &&
+  Math.abs(road.points[0].y / Campaign.rules.greenwoodLayout.scale - 2280) < 0.01);
+assert(southPaint, 'south bridge has one consistent farm-width approach on both banks');
+assert.equal(Math.round(southPaint.points.at(-1).x / Campaign.rules.greenwoodLayout.scale), 2670,
+  'the matching road remains wide until it joins the eastern network');
+assert.deepEqual(z.greenwoodRoutes[7].points, z.footpaths[3],
+  'visual shoulder widening never changes saved roads or route classification');
+assert(prepared.fragments.length > 0,
+  'long woodland tracks keep their quieter, separate footpath treatment');
+assert.equal(prepared.widths.cart * 2, 88);
+assert.equal(prepared.widths.farm * 2, 52);
+assert.equal(prepared.widths.path * 2, 40);
+assert(prepared.wide[0].points.length > z.roads[0].length, 'cart bends are smoothly sampled');
+assert(prepared.fragments.length > 0, 'woodland paths survive main-road junction clipping');
+// Independent designer acceptance: major routes must not retain a jagged
+// sequence of discrete steering elbows, even when centerlines still connect.
+const largestHeadingJump = (points) => {
+  let peak = 0;
+  for (let i = 1; i + 1 < points.length; i++) {
+    const a = points[i - 1], b = points[i], c = points[i + 1],
+      incoming = Math.atan2(b.y - a.y, b.x - a.x),
+      outgoing = Math.atan2(c.y - b.y, c.x - b.x),
+      turn = Math.abs(Math.atan2(Math.sin(outgoing - incoming), Math.cos(outgoing - incoming)));
+    peak = Math.max(peak, turn);
+  }
+  return (peak * 180) / Math.PI;
+};
+for (const road of prepared.wide)
+  assert(largestHeadingJump(road.points) <= 15,
+    'roadbed has flowing turn samples rather than sharp disconnected elbows');
+assert(prepared.fragments.reduce((n, run) => n + run.length - 1, 0) <= 420,
+  'bounded pedestrian rendering subdivision keeps per-frame road draw overhead small');
+const south = Campaign.rules.greenwoodLayout.anchors.south;
+const westBank = Landscape.riverBanks(south.y, Campaign.rules.greenwoodLayout.size)[0];
+assert(z.roads[1].at(-1).x < westBank,
+  'farm traffic terminates on dry land, leaving a separate approach to the timber bridge');
+assert(g.route(
+  { x: 1560 * Campaign.rules.greenwoodLayout.scale, y: south.y },
+  { x: 1950 * Campaign.rules.greenwoodLayout.scale, y: south.y },
+).length, 'native route traverses actual narrow south-bank path and both bridge shoulders');
+for (const road of prepared.wide)
+  for (const p of road.points)
+    assert(Number.isFinite(p.x) && Number.isFinite(p.y), 'every curve vertex finite');
+const sampleCtx = {
+  save() {}, restore() {}, beginPath() {}, moveTo() {}, lineTo() {}, closePath() {},
+  fill() { this.fills = (this.fills || 0) + 1; },
+};
+Landscape.drawRoads(sampleCtx, z.roads, (p) => p, z.footpaths, z.greenwoodRoadKinds);
+Landscape.drawRoads(sampleCtx, z.roads, (p) => p, z.footpaths, z.greenwoodRoadKinds);
+assert.equal(sampleCtx.fills, 6, 'three unioned soil layers per draw; no second path painted over a junction');
+
+const original = g.snapshot(),
+  ids = (zone) => ({
+    npcs: zone.npcs.map((n) => n.id),
+    buildings: zone.buildings.map((b) => b.id),
+    enemies: zone.enemies.map((e) => [e.id, e.hp, e.home?.x, e.home?.y]),
+    tribute: zone.nodes.map((n) => [n.id, n.amount]),
+  });
+const restored = Campaign.restore(original, rng);
+assert.deepEqual(ids(restored.zone()), ids(z), 'save retains actors, constructions and tribute');
+const once = restored.snapshot(), twice = Campaign.restore(once, rng).snapshot();
+assert.equal(twice.zones.vale.greenwoodRoadBridgeVersion, 1);
+assert.deepEqual(ids(twice.zones.vale), ids(once.zones.vale), 'second load remains stable');
+const oldNarrowBridge = structuredClone(original);
+oldNarrowBridge.zones.vale.bridgeApproaches[1].width = 56;
+const widened = Campaign.restore(oldNarrowBridge, rng);
+assert.equal(widened.zone().bridgeApproaches[1].width, 80,
+  'an already-upgraded v4 save gets the same widened physical south deck');
+assert.equal(Campaign.restore(widened.snapshot(), rng).zone().bridgeApproaches[1].width, 80,
+  'south bridge width remains stable across repeat save loads');
+assert.deepEqual(twice.zones.vale.footpaths, once.zones.vale.footpaths, 'road correction idempotent');
+assert.deepEqual(twice.quests, once.quests, 'quests unchanged');
+assert.deepEqual(twice.paid, once.paid, 'paid progress unchanged');
+// Existing v4 campaigns with their completed Greenwood scene take zone()'s
+// saved-scene fast path. A new road pass must still run there exactly once.
+const legacy = JSON.parse(JSON.stringify(original)), oldVale = legacy.zones.vale;
+const at = (x, y) => ({
+  x: x * Campaign.rules.greenwoodLayout.scale,
+  y: y * Campaign.rules.greenwoodLayout.scale,
+});
+delete oldVale.greenwoodRoadBridgeVersion;
+delete oldVale.greenwoodRoadKinds;
+oldVale.roads[1][oldVale.roads[1].length - 1] = at(1740, 2280);
+oldVale.footpaths[3] = [at(1740, 2280), at(2150, 2350),
+  at(2300, 2220), at(2670, 2220)];
+oldVale.footpaths[4] = [at(2070, 1000), at(1870, 1000),
+  at(1870, 1250), at(2120, 1250)];
+for (const [index, points] of [
+  [1, oldVale.roads[1]], [7, oldVale.footpaths[3]], [8, oldVale.footpaths[4]],
+]) oldVale.greenwoodRoutes[index].points = points;
+oldVale.bridgeApproaches[0].width = 180;
+oldVale.bridgeApproaches[1].width = 130;
+const pristine = JSON.stringify(legacy);
+const migrated = Campaign.restore(legacy, rng);
+const migratedZone = migrated.zone();
+assert.equal(JSON.stringify(legacy), pristine, 'old v4 input snapshot unchanged');
+assert.equal(migratedZone.greenwoodRoadBridgeVersion, 1,
+  'completed v4 scene receives independent road pass on zone fast path');
+assert.equal(migratedZone.footpaths[3].length, 6, 'old south approach adapted');
+assert.equal(migratedZone.greenwoodRoutes[8].points.length, 3,
+  'old Treasury overlap reconciled without losing destination');
+assert.deepEqual(ids(migratedZone), ids(z),
+  'legacy migration preserves NPCs, buildings, enemies and tribute');
+assert.equal(migratedZone.greenwoodCompositionVersion, z.greenwoodCompositionVersion,
+  'published botanical scene is not rebuilt by road migration');
+const migratedSnap = migrated.snapshot(),
+  replay = Campaign.restore(migratedSnap, rng).zone();
+assert.deepEqual(replay.footpaths, migratedZone.footpaths,
+  'second restore cannot shift old saved footpaths again');
+assert.deepEqual(replay.greenwoodRoutes, migratedZone.greenwoodRoutes,
+  'second restore cannot reprocess old route data');
+
+console.log('PASS Greenwood road hierarchy, 17 canonical routes plus two mill paths, two bridge gaps, v4 idempotence');

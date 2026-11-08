@@ -140,6 +140,9 @@ function audit(options = {}) {
     'src/prototype/data.js',
     'src/prototype/sprites.js',
     'src/prototype/renderer.js',
+    // Greenwood's procedural terrain/roads are an authored visual surface.
+    // Source drift must be reviewed just like the core renderer sources.
+    'src/prototype/greenwood-landscape.js',
   ])
     sources[file] = crypto.createHash('sha256').update(read(file)).digest('hex');
   return {

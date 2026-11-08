@@ -1,8 +1,259 @@
 /* Specialist, expedition, inventory and training menu catalog. Shell services are injected. */
 (function (root) {
   'use strict';
+  // Brief observable clues here; deeper historical accounts belong to the Keeper.
+  const siteBriefings = {
+  "supply-vale": [
+    "Scornfang's Goblins record what they remove, repair, or preserve from the Forest Crypt. He wants the Dark Lord's winter retreat built without erasing the old place's history.",
+    "Los goblins de Scornfang llevan aquí el registro de lo que retiran, reparan o conservan de la Cripta del Bosque. Él quiere construir la residencia invernal sin borrar la historia del lugar."
+  ],
+  "supply-march": [
+    "Mooring posts carry marks for high water. Direjaw's guards watch this landing and the provisions crossing Mirejaw's marsh channels.",
+    "Los postes de amarre tienen marcas de las crecidas. Los guardias de Direjaw vigilan el embarcadero y las provisiones que cruzan los canales de Mirejaw."
+  ],
+  "supply-highlands": [
+    "Crag Tyrant's Treasury is a guarded household as well as a store. Armored direwolf riders wait beside coin chests and shipment ledgers.",
+    "El Tesoro de Crag Tyrant es tanto una residencia vigilada como un almacén. Jinetes sobre lobos terribles acorazados custodian cofres y registros de envíos."
+  ],
+  "supply-crown": [
+    "Grain, fish and livestock wagons pass beneath the seals of Agriculture and Interior. Dreadmaw guards the Inner Vault of the Treasury he shares with Cindermaw.",
+    "Carros de grano, pescado y ganado pasan bajo los sellos de Agricultura e Interior. Dreadmaw guarda la cámara interior del Tesoro que comparte con Cindermaw."
+  ],
+  "crypt": [
+    "Old burial stone stands among new scaffolds. The Forest Crypt is being converted into the Dark Lord's unfinished winter retreat.",
+    "La piedra funeraria antigua asoma entre nuevos andamios. La Cripta del Bosque se está convirtiendo en la residencia invernal, todavía inacabada, del Dark Lord."
+  ],
+  "archive": [
+    "Wet books, raised shelves and drying racks crowd the Sunken Archive's entrance. Someone inside is fighting to save the collection.",
+    "Libros mojados, estantes elevados y tendederos de páginas llenan la entrada de Sunken Archive. Alguien dentro intenta salvar la colección."
+  ],
+  "mine": [
+    "Ore carts and repair benches line Colossus Mine's approach. Ogre wardens and Crown riders on armored direwolves guard the deeper workings.",
+    "Vagonetas de mineral y bancos de reparación bordean la entrada de Colossus Mine. Ogros guardianes y jinetes de la Corona sobre lobos terribles acorazados protegen las galerías interiores."
+  ],
+  "abyss": [
+    "An unfinished launch platform rises above dragon harness stations and hatchery sheds. Veyrith's military air project is still taking shape.",
+    "Una plataforma de despegue inacabada se eleva sobre los arneses y las instalaciones de cría de dragones. La fuerza aérea de Veyrith sigue en preparación."
+  ],
+  "citadel": [
+    "Mixed ranks of Goblins, Ogres and Humans drill behind the Citadel walls. Marshal Veyra's banners fly over the parade ground.",
+    "Filas de goblins, ogros y humanos se entrenan tras los muros de la Ciudadela. Los estandartes de la mariscal Veyra ondean sobre el patio de armas."
+  ],
+  "side-vale-cellars": [
+    "The old orchard cellars still show the marks of fruit storage, though the orchard now uses newer buildings.",
+    "Las viejas bodegas conservan huellas del almacenamiento de fruta, aunque el huerto ya utiliza edificios más nuevos."
+  ],
+  "side-march-watchhouse": [
+    "Reed Beasts have made a home in a waterlogged human watchhouse along the marsh routes.",
+    "Las bestias del carrizal se han instalado en una antigua garita humana anegada junto a los caminos de las marismas."
+  ],
+  "side-highlands-signal": [
+    "A ridge-top signal keep still watches the roads between Ironroot's ore workings and settlements.",
+    "Una fortaleza de señales en lo alto de la cresta aún vigila los caminos entre las minas y los poblados de Ironroot."
+  ],
+  "side-frontier-shrine": [
+    "Orc soldiers have taken quarters in an old shrine beside the occupied Frontier's military road.",
+    "Soldados orcos han ocupado un antiguo santuario junto al camino militar de la Frontera."
+  ],
+  "side-crown-foundry": [
+    "Warm air escapes the foundry flues. Inside, Crownguards defend the furnaces and the finished stock.",
+    "De los respiraderos de la fundición sale aire caliente. Dentro, los guardias de la Corona defienden los hornos y las mercancías terminadas."
+  ],
+  "thorn-homestead": [
+    "A worn Crown scout's badge hangs beside a whistle. The rail by the doorway is scratched at hound height, and a bowl of fresh water stands nearby.",
+    "Una insignia gastada de explorador de la Corona cuelga junto a un silbato. La baranda de la entrada tiene arañazos a la altura de los sabuesos, y cerca hay un cuenco con agua fresca."
+  ]
+};
+  const rescueBriefings = {
+  "thorn": [
+    "Thornfang, a former Crown scout, keeps Millhaven's instructor Mira with him on patrol. Free her to train your second skill.",
+    "Thornfang, antiguo explorador de la Corona, lleva vigilada a Mira durante sus patrullas. Libérala para aprender tu segunda habilidad."
+  ],
+  "crypt": [
+    "The Lifebinder is converting the Forest Crypt into the Dark Lord's winter retreat with aware skeleton workers and the captive smith Borin. Free Borin to improve your equipment.",
+    "El Lifebinder convierte la Cripta del Bosque en residencia invernal con obreros esqueléticos conscientes y el herrero cautivo Borin. Libera a Borin para mejorar tu equipo."
+  ],
+  "mire": [
+    "Mirejaw knows the marsh channels and holds combat instructor Sela in his territory. Free her to expand your training.",
+    "Mirejaw conoce los canales de las marismas y retiene a la instructora Sela en su territorio. Libérala para ampliar tu entrenamiento."
+  ],
+  "archive": [
+    "The Drowned Keeper is forcing alchemist Neri to preserve the Sunken Archive's water-damaged records. Free her to restore her independence and unlock her services.",
+    "El Drowned Keeper obliga a la alquimista Neri a salvar los registros dañados por el agua. Libérala para devolverle su libertad y acceder a sus servicios."
+  ],
+  "ridge": [
+    "The Ridge Tyrant is Ironroot's Master of Coin. He holds instructor Orin at his mountain watchtower; free Orin for more training.",
+    "Ridge Tyrant es el Maestro de la Moneda de Ironroot. Retiene al instructor Orin en su atalaya; libéralo para continuar tu entrenamiento."
+  ],
+  "mine": [
+    "Garun the Stone Colossus guards a working mine that is also his workshop. Smith Dara receives wages there, but cannot leave. Free her to improve your gear.",
+    "Garun, el Coloso de Piedra, custodia una mina que también usa como taller. La herrera Dara cobra por su trabajo, pero no puede marcharse. Libérala para mejorar tu equipo."
+  ],
+  "warlord": [
+    "The Ashen Warlord governs the occupied Frontier, where repaired roads come with compulsory inspections. Free instructor Lyss from his checkpoint.",
+    "Ashen Warlord gobierna la Frontera ocupada, donde los caminos reparados también traen inspecciones obligatorias. Libera a Lyss de su puesto de control."
+  ],
+  "abyss": [
+    "Veyrith is preparing the Dark Lord's unfinished military air force at Abyss Bastion. Free runewright Eren from the project.",
+    "Veyrith prepara la fuerza aérea militar del Dark Lord en Abyss Bastion, todavía inacabada. Libera al artesano de runas Eren."
+  ],
+  "cindermaw": [
+    "Cindermaw runs the Interior and Welfare ministry with captive smith Vera at his side. Free her to gain the final equipment improvements.",
+    "Cindermaw dirige Interior y Bienestar y obliga a la herrera Vera a acompañarlo. Libérala para acceder a las últimas mejoras de equipo."
+  ],
+  "citadel": [
+    "Marshal Veyra commands the Crown's mixed-species standing army at the Citadel. Free instructor Tovan to complete your training.",
+    "La mariscal Veyra dirige el ejército permanente de la Corona, formado por distintas especies. Libera a Tovan para completar tu entrenamiento."
+  ]
+};
+  // One-time, in-person accounts: deliberately distinct from the Keeper's deeper archive.
+  const specialistFirstConversations = {
+  "thorn": [
+    "Thanks. I thought my feet would give out before that dog ever got tired! Thornfang paid me to inspect the winter estate and train its defenders. Whenever I tried to head back to Millhaven, his hounds turned me around. He's a trained scout; don't expect him to forget your last fight.",
+    "Gracias. ¡Creí que mis pies se rendirían antes de que aquel perro se cansara! Thornfang me pagaba por inspeccionar la residencia invernal y entrenar a sus defensores. Cada vez que intentaba volver a Millhaven, sus sabuesos me hacían regresar. Es un explorador experto; no esperes que olvide vuestro último combate."
+  ],
+  "crypt": [
+    "Good to be home. The Lifebinder had me helping turn the old Forest Crypt into a winter residence. His skeleton workers had opinions about what was changing. Scornfang's Goblins carefully moved old furnishings; he fought to preserve the stonework. And the Dark Lord wanted his guests comfortable, not reminded they were sleeping in a crypt. Fascinating job, if they'd let me leave.",
+    "Qué gusto estar en casa. Ayudaba al Lifebinder a convertir la vieja Cripta del Bosque en una residencia invernal. Sus esqueletos tenían sus propias opiniones sobre las obras. Los goblins de Scornfang trasladaban con cuidado los objetos antiguos, y él insistía en conservar la piedra original. El Dark Lord quería que sus invitados estuvieran cómodos, no que sintieran que dormían en una cripta. Un trabajo fascinante... si me hubieran dejado volver a casa."
+  ],
+  "mire": [
+    "Thank you. I've taught all sorts, but Mirelings were a first. Try showing one how to defend itself when its first answer is to bite! Mirejaw knew those marshes better than any of us; he used shallow channels and mud to his advantage. Direjaw handled the guards and supplies. I'm glad to be back on dry ground.",
+    "Gracias. He enseñado a gente de todo tipo, ¡pero nunca a mirelings! Intenta enseñarle a uno cómo defenderse cuando su primera respuesta es morder. Mirejaw conocía las marismas mejor que nadie; aprovechaba los canales poco profundos y el barro. Direjaw se ocupaba de los guardias y las provisiones. Qué gusto volver a pisar tierra firme."
+  ],
+  "archive": [
+    "I'm glad to be free. The Keeper needed my alchemy to save his waterlogged records. He genuinely loves those books; he'd talk about a rescued page almost as long as he talks about fishing. I spent my days drying and treating them, but I couldn't leave. I still don't know what flooded the Archive.",
+    "Me alegra ser libre. El Keeper necesitaba mi alquimia para salvar sus archivos empapados. De verdad adora esos libros; podía hablar de una página recuperada casi tanto como de la pesca. Pasé los días secándolos y tratándolos, pero no podía marcharme. Aún no sé qué inundó el Archivo."
+  ],
+  "ridge": [
+    "Good to be out. The Ridge Tyrant wanted my advice on protecting his payroll caravans. The crossings are repaired, the archers are paid, and he's proud of every crown spent. To him, that's proof his rule works. He seemed genuinely puzzled when I said I'd rather go home.",
+    "Qué alivio salir de allí. Ridge Tyrant quería mis consejos para proteger las caravanas que llevaban la paga. Los puentes están reparados, los arqueros cobran y él se enorgullece de cada corona bien gastada. Para él, eso demuestra que su gobierno funciona. Parecía sinceramente desconcertado cuando le dije que prefería volver a casa."
+  ],
+  "mine": [
+    "Garun had me fixing mine equipment, then kept asking for odd little mechanisms simply because they interested him. The same Ogre who designed roads and fortresses could spend hours on one tiny piece of stonework. That mine is his workshop as much as his post. I'd have enjoyed it if going home had been my decision.",
+    "Garun me encargaba reparar el equipo de la mina y luego me pedía pequeños mecanismos extraños, solo porque le interesaban. El mismo ogro que diseñó caminos y fortalezas podía pasar horas con una pequeña pieza de piedra. Para él, la mina es tanto un taller como un puesto de vigilancia. Habría disfrutado del trabajo si hubiera podido decidir cuándo volver a casa."
+  ],
+  "warlord": [
+    "I'm relieved to be away from that checkpoint. The Ashen Warlord wanted my help preparing escorts for attacks along the repaired roads. His soldiers really do keep food and building materials moving, but those same soldiers collect levies and inspect every wagon. Families are rebuilding under armed supervision. I never got used to watching that.",
+    "Me alivia haber salido de aquel puesto de control. Ashen Warlord quería que ayudara a preparar a las escoltas contra posibles ataques en los caminos reparados. Sus soldados sí mantienen el suministro de comida y materiales, pero también cobran tributos y registran cada carreta. Las familias reconstruyen sus hogares bajo vigilancia armada. Nunca llegué a acostumbrarme a verlo."
+  ],
+  "abyss": [
+    "Glad you came. They put my rune work to use on dragon equipment while Veyrith prepared the air force. The hatchery and harness stations are busy, but the launch platform isn't finished yet. He's proud, disciplined and certain that controlling the skies will keep the peace below. He never asked whether I shared his enthusiasm for staying.",
+    "Me alegra que vinieras. Usaban mis runas en equipo para dragones mientras Veyrith preparaba la fuerza aérea. Hay actividad en la zona de cría y los arneses, pero la plataforma de despegue aún no está terminada. Es orgulloso, disciplinado y está convencido de que controlar los cielos mantendrá la paz. Nunca me preguntó si yo quería quedarme."
+  ],
+  "cindermaw": [
+    "Cindermaw kept me working for his ministry, with guards watching where I went. He knew the condition of the roads, supplies, and shelters under his ministry, down to the smallest complaint. People truly depend on those services. He seemed to think that gave him the right to decide where I belonged.",
+    "Cindermaw me tenía trabajando para su ministerio, con guardias vigilando mis movimientos. Conocía al detalle el estado de los caminos, las provisiones y los refugios de su ministerio, hasta las quejas más pequeñas. La gente depende de verdad de esos servicios. Parecía creer que eso le daba derecho a decidir dónde debía estar yo."
+  ],
+  "citadel": [
+    "Veyra had me help prepare recruits for her drills. She's turned Goblins, Ogres and Humans into a real standing army. She can spot a crooked formation as quickly as a bad haircut; evidently her old work as a cosmetologist never left her. I respect her skill. I'd have admired it more from home.",
+    "Veyra me puso a ayudar a preparar a los reclutas para sus ejercicios. Ha convertido a goblins, ogros y humanos en un verdadero ejército permanente. Detecta una formación torcida tan rápido como un mal corte de pelo; se nota que no ha olvidado su antiguo oficio de cosmetóloga. Respeto su talento. Lo habría admirado más desde casa."
+  ]
+};
+  // A short regional clue beside each existing objective; quest rules and rewards are unchanged.
+  const questLore = {
+  "Roads Under Threat": [
+    "The tracks between Millhaven and the farms are no longer entirely safe.",
+    "Los caminos entre Millhaven y las granjas ya no son del todo seguros."
+  ],
+  "Stolen Stores": [
+    "Scornfang's crews are carefully moving and preserving parts of the old Forest Crypt for the winter retreat. Millhaven's carters also want their seized supplies back.",
+    "Las cuadrillas de Scornfang trasladan y conservan con cuidado partes de la vieja Cripta del Bosque para la residencia invernal. Los carreteros de Millhaven también quieren recuperar las provisiones que les han quitado."
+  ],
+  "Keeping Trade Open": [
+    "The mill crossing links orchard wagons to Millhaven's working road.",
+    "El puente del molino conecta los carros del huerto con el camino comercial de Millhaven."
+  ],
+  "Who Owns the Woods?": [
+    "Farms, woodland creatures and the Crown's unfinished estate all share Greenwood's paths.",
+    "Granjas, criaturas del bosque y la residencia inacabada de la Corona comparten los caminos de Greenwood."
+  ],
+  "Unsafe Crossings": [
+    "Raised roads keep the fishing settlements connected, but the wetlands around them are dangerous.",
+    "Los caminos elevados comunican los pueblos pesqueros, pero las marismas que los rodean son peligrosas."
+  ],
+  "Hidden Provisions": [
+    "Direjaw controls the guards at Mirejaw's supply landing. Fisher crews want the provisions held beyond it.",
+    "Direjaw manda sobre los guardias del embarcadero de Mirejaw. Los pescadores quieren recuperar las provisiones retenidas allí."
+  ],
+  "Shadows After Sundown": [
+    "At Lantern Shore, some lights belong to neither boats nor villages.",
+    "En Lantern Shore, algunas luces no pertenecen a barcos ni a aldeas."
+  ],
+  "Beyond the Main Road": [
+    "Reedport, Fisher Camp and Mirejaw's marsh territory do not all answer to the same authority.",
+    "Reedport, Fisher Camp y el territorio de Mirejaw no responden todos a la misma autoridad."
+  ],
+  "Ore Workers at Risk": [
+    "Ironroot's working mines depend on dangerous roads through wolf country.",
+    "Las minas activas de Ironroot dependen de caminos peligrosos que atraviesan territorio de lobos."
+  ],
+  "The Master's Reserve": [
+    "Crag Tyrant keeps the Master of Coin's private Treasury, with paid riders guarding its stores.",
+    "Crag Tyrant custodia el Tesoro privado del Maestro de la Moneda, protegido por jinetes a sueldo."
+  ],
+  "Whose Mountain?": [
+    "The Crown claims Ironroot's silver and copper, but people still live and work on those slopes.",
+    "La Corona reclama la plata y el cobre de Ironroot, pero hay familias que viven y trabajan en esas laderas."
+  ],
+  "Follow the Crowns": [
+    "Silver and copper travel from separate ore workings to Stonecross, where the Dark Lord's portrait is struck on crowns.",
+    "La plata y el cobre llegan de minas distintas a Stonecross, donde se acuñan coronas con el retrato del Dark Lord."
+  ],
+  "An Army Needs Supplies": [
+    "Cinder Warlord inspects the Frontier's convoys and work crews for the military governor; the rebuilt roads have a price.",
+    "Cinder Warlord inspecciona los convoyes y cuadrillas de la Frontera en nombre del gobernador militar; reconstruir los caminos tiene un precio."
+  ],
+  "Roads Still Contested": [
+    "The army keeps the Frontier's repaired crossings open, but fighting has not ended.",
+    "El ejército mantiene abiertos los pasos reparados de la Frontera, pero la lucha no ha terminado."
+  ],
+  "Rebuilding Under Guard": [
+    "New gardens and pale saplings grow beside burned homes. Reconstruction continues under military orders.",
+    "Nuevos huertos y árboles jóvenes crecen junto a casas quemadas. La reconstrucción continúa bajo órdenes militares."
+  ],
+  "A Different Kind of Flight": [
+    "Emberwatch's civilian dragon passage is not Veyrith's unfinished military air project.",
+    "El transporte civil en dragón de Emberwatch no es el proyecto militar aéreo, aún inacabado, de Veyrith."
+  ],
+  "Hostile Ground": [
+    "The Crown's roads connect homes and workshops despite lava channels and Ash-beast territory.",
+    "Los caminos de la Corona conectan casas y talleres pese a los ríos de lava y los territorios de las bestias de ceniza."
+  ],
+  "Dreadmaw's Duty": [
+    "Dreadmaw handles food production and distribution across the provinces, and shares Treasury authority with Cindermaw.",
+    "Dreadmaw organiza la producción y distribución de alimentos entre las provincias y comparte la autoridad del Tesoro con Cindermaw."
+  ],
+  "The Machinery of Rule": [
+    "Crownwatch's public heat, roads and workshops function beside guarded gates, taxes and compulsory work.",
+    "La calefacción pública, los caminos y los talleres de Crownwatch funcionan junto a puertas vigiladas, impuestos y trabajos obligatorios."
+  ],
+  "Ready for the Dark Lord": [
+    "The final fortress lies beyond the Crown's military and ministerial strongholds.",
+    "La fortaleza final se alza tras los bastiones militares y ministeriales de la Corona."
+  ]
+};
+  const travelBriefings = {
+    march: [
+      'The wagon stops at Reedport. Fishing keeps the Marches fed, and raised roads carry people and goods between the villages. Stick to those roads around the lake and give Mirejaw’s marsh island a wide berth.',
+      'La carreta para en Reedport. La pesca alimenta a las Marismas y los caminos elevados comunican sus aldeas. Sigue esos caminos al bordear el lago y mantente lejos de la isla de Mirejaw.',
+    ],
+    highlands: [
+      'We land near Stonecross, where the mint turns mountain silver and copper into crowns. The ore roads cross wooded ravines. You’ll see escorted shipments on the way down to town.',
+      'Desembarcamos cerca de Stonecross, donde la ceca convierte la plata y el cobre de la montaña en coronas. Los caminos mineros cruzan barrancos arbolados. Verás cargamentos bajo escolta al bajar al pueblo.',
+    ],
+    frontier: [
+      'We stop behind Emberwatch. The Frontier was a battlefield, but people are rebuilding homes and planting gardens again. The army maintains the crossings and inspects travelers along the road.',
+      'Paramos detrás de Emberwatch. Ashen Frontier fue un campo de batalla, pero la gente está reconstruyendo sus casas y volviendo a plantar huertos. El ejército mantiene los pasos e inspecciona a los viajeros.',
+    ],
+    crown: [
+      'The dragon lands near Crownwatch. People there use the heat of the volcanic ground for kilns and workshops. Keep to the guarded roads around the lava channels and expect inspections at the gates.',
+      'El dragón aterriza cerca de Crownwatch. Allí aprovechan el calor del terreno volcánico para los hornos y talleres. Sigue los caminos vigilados junto a los canales de lava y cuenta con inspecciones en las puertas.',
+    ],
+  };
   function create({
     getGame,
+    getLanguage = () => 'en',
+    onSpecialistIntroduction = () => {},
     Campaign,
     D,
     action,
@@ -63,54 +314,82 @@
         ],
       );
     }
+    function siteBriefing(id) {
+      return siteBriefings[id]?.[getLanguage() === 'es' ? 1 : 0];
+    }
+    function firstSpecialistConversation(n) {
+      // Remote Barracks services must not consume the first actual conversation.
+      if (!n || n.id !== 'service-' + n.family ||
+          !getGame().zone().npcs.includes(n) ||
+          !getGame().s.rescued[n.family]) return '';
+      const entry = specialistFirstConversations[n.family];
+      const flag = 'specialist:introduction:' + n.family;
+      if (!entry || getGame().s.discovered[flag]) return '';
+      getGame().s.discovered[flag] = true;
+      onSpecialistIntroduction();
+      return entry[getLanguage() === 'es' ? 1 : 0];
+    }
+    function questStory(q) {
+      return questLore[q.name]?.[getLanguage() === 'es' ? 1 : 0] || '';
+    }
     function dungeonEntranceMenu(ref, back = closeMenu) {
       const game = getGame(),
-        entrance = game.dungeonEntrance(ref);
+        side = game.sideDungeon(ref.family),
+        findEntrance = (owner) =>
+          side
+            ? !owner.isDungeon() && owner.zone().npcs.find(
+                (n) => n.kind === 'dungeon' && n.id === ref.id && n.family === ref.family &&
+                  owner.interactionDistance(n) <= 115,
+              )
+            : owner.dungeonEntrance(ref),
+        entrance = findEntrance(game);
       if (!entrance) {
         status('Visit the dungeon entrance to prepare a camp.');
         return;
       }
-      const camp = game.dungeonCamp(entrance),
-        reason = game.dungeonCampReason(entrance),
-        cost = camp ? 0 : game.barracksBuildCost();
-      if (camp && (camp.progress >= 4 || camp.dungeonEntrance === entrance.family)) {
-        sceneTransitionTo(entrance.family, entrance.name, () => getGame().interact(entrance));
-        return;
-      }
+      const treasury = game.supplyRoom(entrance.family);
+      const camp = side ? null : game.dungeonCamp(entrance),
+        reason = side ? '' : game.dungeonCampReason(entrance),
+        cost = camp || side ? 0 : game.barracksBuildCost();
+      // Keep the entrance about the place, not repeated instructions on encounter mechanics.
+      const description = siteBriefing(entrance.family) || '';
+      const enterLabel = treasury ? 'Enter Treasury' : side ? 'Go inside' : 'Enter dungeon';
       openMenu(
         entrance.name,
-        game.peace
-          ? 'Enter, or prepare your recovery camp outside.'
-          : 'Leaving resets an unfinished encounter. Defeated leaders keep their normal return time; earned progress stays saved.',
+        description,
         [
-          action('Enter dungeon', () => {
-            const current = getGame().dungeonEntrance(entrance);
-            if (current) sceneTransitionTo(current.family, current.name, () => getGame().interact(current));
+          action(enterLabel, () => {
+            const owner = getGame();
+            if (owner !== game) return;
+            const current = findEntrance(owner);
+            if (current) sceneTransitionTo(current.family, current.name, () => owner.interact(current));
           }),
-          action(
-            camp?.progress >= 4
-              ? 'Use nearby Barracks & set recovery'
-              : camp
-                ? 'Finish Barracks & set recovery'
-                : 'Build Barracks & set recovery',
-            () => {
-              if (!getGame().prepareDungeonCamp(entrance)) {
-                status(getGame().messages.at(-1));
-                dungeonEntranceMenu(entrance, back);
-                return;
-              }
-              const ready = getGame().dungeonCamp(entrance);
-              if (ready?.progress >= 4)
-                barracksMenu(ready, () => dungeonEntranceMenu(entrance, back));
-              else closeMenu();
-            },
-            reason ||
-              (camp?.progress >= 4
-                ? 'Reuse this camp for recovery and companion services.'
-                : (camp ? 'No extra cost' : cost ? cost + ' crowns' : 'First Barracks FREE') +
-                  ' · one Soldier or Ranger builds outside. Recovery switches when finished.'),
-            !!reason,
-          ),
+          ...(side ? [] : [
+            action(
+              camp?.progress >= 4
+                ? 'Use nearby Barracks & set recovery'
+                : camp
+                  ? 'Finish Barracks & set recovery'
+                  : 'Build Barracks & set recovery',
+              () => {
+                if (!getGame().prepareDungeonCamp(entrance)) {
+                  status(getGame().messages.at(-1));
+                  dungeonEntranceMenu(entrance, back);
+                  return;
+                }
+                const ready = getGame().dungeonCamp(entrance);
+                if (ready?.progress >= 4)
+                  barracksMenu(ready, () => dungeonEntranceMenu(entrance, back));
+                else closeMenu();
+              },
+              reason ||
+                (camp?.progress >= 4
+                  ? 'Reuse this camp for recovery and companion services.'
+                  : (camp ? 'No extra cost' : cost ? cost + ' crowns' : 'First Barracks FREE') +
+                    ' · one Soldier or Ranger builds outside. Recovery switches when finished.'),
+              !!reason,
+            ),
+          ]),
         ],
         back,
       );
@@ -152,9 +431,13 @@
             !!departureReason,
           ),
         );
+      const briefing = !game.s.discovered[target.id + ':arrival']
+        ? travelBriefings[target.id]?.[getLanguage() === 'es' ? 1 : 0]
+        : null;
       openMenu(
         n.name,
-        (ferryPassage ? ferryPassage + '\n\n' : '') +
+        (briefing ? briefing + '\n\n' : '') +
+          (ferryPassage ? ferryPassage + '\n\n' : '') +
           (game.s.mode === 'developer'
             ? 'FREE — Developer Mode. Travel has no fare or return-ticket requirement.'
             : 'Fare ' +
@@ -226,7 +509,7 @@
         );
       openMenu(
         n.name,
-        'Choose your training.',
+        firstSpecialistConversation(n) || 'Choose your training.',
         [
           action(
             'Hero skills',
@@ -269,6 +552,7 @@
             : []),
         ],
         back,
+        { view: 'npc-training-hub' },
       );
     }
     function teacherRingleader(n, back, page = 0) {
@@ -877,16 +1161,17 @@
             ),
           ],
           back,
+          { view: 'npc-service-catalog' },
         );
         return;
       }
       openMenu(
         n.name,
-        n.presentation === 'archive-restorer'
+        firstSpecialistConversation(n) || (n.presentation === 'archive-restorer'
           ? approvedNarrative.P04.en
           : manaEnabled
             ? approvedNarrative.P07.en
-            : approvedNarrative.P07_nomana.en,
+            : approvedNarrative.P07_nomana.en),
         [
           { kind: 'section', label: 'Preparation Tonics' },
           action(
@@ -966,6 +1251,7 @@
           ),
         ],
         back,
+        { view: 'npc-service-catalog' },
       );
     }
     function smith(n, back = closeMenu) {
@@ -995,11 +1281,9 @@
             '. ';
       openMenu(
         n.name,
-        equipmentStatus +
-          'Equipment replaces the earlier tier in its slot. Tier purchases are one-time; bonuses do not stack.' +
-          (supportActions.length
-            ? ' This specialist also teaches companion equipment inheritance.'
-            : ''),
+        firstSpecialistConversation(n) ||
+          (equipmentStatus + 'Equipment replaces the earlier tier in its slot. Tier purchases are one-time; bonuses do not stack.' +
+          (supportActions.length ? ' This specialist also teaches companion equipment inheritance.' : '')),
         [
           { kind: 'section', label: 'Equipment upgrades' },
           action(
@@ -1113,6 +1397,7 @@
             : []),
         ],
         back,
+        { view: 'npc-service-catalog' },
       );
     }
     function unitLabel(type) {
@@ -2575,6 +2860,7 @@
           'Your field base. Recovery → Treat wounds heals your party for 30 crowns.',
           [...services, upgrade],
           back,
+          { view: 'barracks-hub' },
         );
         return;
       }
@@ -2593,6 +2879,7 @@
             : 'Local death loss drops to 5%, including regional dungeons.'),
         services,
         back,
+        { view: 'barracks-hub' },
       );
     }
     function inventory(back = closeMenu, fromCharacter = false) {
@@ -2868,6 +3155,7 @@
     function storyJournal(
       back = closeMenu,
       present = (summary, options) => openMenu('Story journal', summary, options, back),
+      returnHere = () => storyJournal(back),
     ) {
       const game = getGame(),
         zone = game.zone(),
@@ -2935,38 +3223,43 @@
         return;
       }
 
-      const pending = D.bosses.filter(
-        (boss) => boss.region === regionId && boss.captive && !game.s.rescued[boss.id],
-      );
-      if (pending.length) {
-        if (room && leaveInterior()) return;
-        if (inside && !pending.some((boss) => boss.id === here) && leaveInterior()) return;
-        const ordered = [
-          ...pending.filter((boss) => boss.id === here),
-          ...pending.filter((boss) => boss.id !== here),
-        ];
-        present(
-          (region?.name || 'Region') + ' · ' + (2 - pending.length) + '/2 rescued',
-          ordered.map((boss) => {
-            const destination =
-              boss.id === 'thorn' && here === 'vale'
-                ? game.s.keys.thorn
-                  ? findNpc((n) => n.id === 'cage-thorn')
-                  : findNpc((n) => n.thornReport) || findNpc((n) => n.id === 'thorn-trailhead-0')
-                : here === boss.id
-                  ? liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id)
-                  : boss.kind === 'dungeon'
-                    ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
-                    : liveBoss(boss.id) ||
-                      findNpc((n) => n.kind === 'cage' && n.family === boss.id);
-            return guideAction(
-              boss.id === 'thorn' && !game.s.keys.thorn
-                ? 'Mira · ask the Western road observer'
-                : boss.captive.split(' the ')[0] + ' · ' + boss.place,
-              destination,
-            );
-          }),
-        );
+      const rescues = game.questDefs().filter((q) => q.kind === 'rescue' && q.region === regionId);
+      const rescued = rescues.filter((q) => game.s.rescued[q.target]).length;
+      const mainStory = rescues
+        .sort((a, b) =>
+          Number(game.boss(a.target).kind === 'dungeon') - Number(game.boss(b.target).kind === 'dungeon'),
+        )
+        .map((q) => {
+          const freed = !!game.s.rescued[q.target];
+          const briefing = freed
+            ? 'The specialist is free.'
+            : rescueBriefings[q.target][getLanguage() === 'es' ? 1 : 0];
+          const progress = game.questProgress(q);
+          return action(
+            q.name,
+            () => {
+              const destination = getGame().questDestination(q.id);
+              openMenu(
+                q.name,
+                [briefing, freed ? null : q.objective.split('; clear compound guards')[0], progress]
+                  .filter(Boolean).join('\n\n'),
+                [
+                  action('Track quest', () => storyNavigate(destination, q.name, q.id), '', !destination),
+                  action('Navigate', () => storyNavigate(destination, q.name), '', !destination),
+                ],
+                returnHere,
+              );
+            },
+            briefing + '\n' + progress,
+          );
+        });
+      const summary = 'Main Story · ' + (region?.name || 'Region') + ' · ' + rescued + '/' +
+        rescues.length + ' rescued';
+      if (rescues.length && rescued < rescues.length) {
+        const introduction = regionId === 'vale'
+          ? '\n\nThe Dark Lord’s forces are holding the people who teach adventurers and forge their equipment. Start by rescuing Greenwood’s two specialists. Mira can teach you a second skill, and Borin can improve your weapons.'
+          : '';
+        present(summary + introduction, mainStory);
         return;
       }
       if (inside && leaveInterior()) return;
@@ -2975,21 +3268,35 @@
       if (index >= 0 && index < D.regions.length - 1) {
         const next = D.regions[index + 1],
           transport = findNpc((n) => n.kind === 'transport' && n.direction === 1);
-        present('Specialists rescued · Next: ' + next.name, [
+        present(summary + '\nSpecialists rescued · Next: ' + next.name, [
+          ...mainStory,
           guideAction(transport?.name || 'Transport to ' + next.name, transport),
         ]);
         return;
       }
 
+      const finalApproach = game.questDefs().find((q) => q.region === regionId && q.requiresRescues);
+      const gate = findNpc((n) => n.id === 'fortress-gate');
+      if (gate && finalApproach && !game.s.quests[finalApproach.id]?.done) {
+        // The final approach is a Main Story milestone, not a Side Quest.
+        // Put its one-line world clue at its actual presentation point.
+        const approachLore = questStory(finalApproach);
+        present(summary + '\n' + finalApproach.name +
+          (approachLore ? '\n' + approachLore : ''), [
+          ...mainStory,
+          guideAction(finalApproach.name, gate),
+        ]);
+        return;
+      }
       const darklord =
         liveBoss('darklord') ||
-        findNpc((n) => n.id === 'fortress-gate') ||
+        gate ||
         (D.fields?.[4] ? { x: D.fields[4][0], y: D.fields[4][1] } : null);
       present(
         game.s.normal.darklord
           ? 'Find and defeat the TRUE Dark Lord'
           : 'Specialists rescued · Defeat the Dark Lord',
-        [guideAction('Dark Lord', darklord)],
+        [...mainStory, guideAction('Dark Lord', darklord)],
       );
     }
 
@@ -3027,7 +3334,7 @@
               );
           openMenu(
             atBoard ? 'Quest board' : 'Quest journal',
-            summary + '\nTap an objective to track it.',
+            summary,
             [
               ...(tutorial
                 ? [
@@ -3053,7 +3360,7 @@
             ],
             back,
           );
-        });
+        }, returnHere);
         return;
       }
       const game = getGame(),
@@ -3063,7 +3370,7 @@
           .filter(
             (q) =>
               (!atBoard || q.region === game.definition().id) &&
-              (completed || !q.tutorial) &&
+              (completed || (!q.tutorial && q.kind !== 'rescue' && !q.requiresRescues)) &&
               (completed
                 ? game.s.quests[q.id]?.paid || game.s.quests[q.id]?.closedByPeace
                 : !game.s.quests[q.id]?.paid && !game.s.quests[q.id]?.closedByPeace),
@@ -3087,7 +3394,7 @@
                       : 'No destination is currently available. ' + q.objective,
                   );
               },
-              q.objective +
+              (questStory(q) ? questStory(q) + '\n' : '') + q.objective +
                 ' · ' +
                 (q.tutorial ? 'Tutorial' : q.gold + ' crowns / ' + q.xp + ' XP') +
                 ' · ' +
@@ -3110,6 +3417,7 @@
     }
     return {
       refugeIntro,
+      siteBriefing,
       dungeonEntranceMenu,
       transport,
       teacher,

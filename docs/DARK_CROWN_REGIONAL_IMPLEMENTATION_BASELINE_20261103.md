@@ -1,5 +1,8 @@
 # Dark Crown regional overhaul — engineering baseline and phase ownership
 
+> **8 November execution checkpoint.** The reconciled draft replaces the animated Foundry people described below with stationary equipment and a static shipping gantry. The focused route test passes both modes for the five equipment stations and the original lava crossings. The Canvas baseline samples are camera-position checks. Final traversal, visual acceptance, real Pixi/WebGL, historical-save fixtures and publication remain open.
+
+
 **NEW CROSS-CHAT STATUS — late 4 November 2026:** This document's first section is an accurate **historical Phase-1 design-gate closeout**, not the current phase. **Phase 2 is now IN PROGRESS** after its 56-native-Canvas-image initial audit, while all 16 owner scene categories await actual-route composition and acceptance. [Read the lead's CURRENT multi-PR reconciliation](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md) for the newly approved NL01–NL16 natural landscape (#707), #794 isolated on-hold model, and published main phone-landscape changes #793/#798. No new water infrastructure has been implemented. Older “Phase 2 NOT STARTED” refers only to the 4-November Phase-1 exit date.
 
 ## Phase 1 final engineering reconciliation — 4 November 2026: DESIGN EXIT COMPLETE; Phase 2 NOT STARTED

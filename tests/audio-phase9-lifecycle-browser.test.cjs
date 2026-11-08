@@ -91,8 +91,8 @@ const server = http.createServer((req, res) => {
       assert.equal(menu.at, loaded.at, 'menu must not restart the score');
       assert.equal(menu.state, 'running', 'menu must not suspend Web Audio');
       assert.equal(menu.scene, 'world', 'menu must not reduce music to 22%');
-      await page.getByRole('button', { name: 'Game and settings' }).click();
-      await page.waitForFunction(() => document.querySelector('#modal-title')?.textContent === 'Game and settings');
+      await page.getByRole('button', { name: 'Settings' }).click();
+      await page.waitForFunction(() => document.querySelector('#modal-title')?.textContent === 'Settings');
       await page.waitForTimeout(200);
       const settings = await page.evaluate(() => ({
         id: Prototype.audio.recordedScore?.id || 'synth:vale',

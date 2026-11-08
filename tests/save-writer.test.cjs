@@ -218,8 +218,12 @@ function lockManager() {
   workerApp.scope.Prototype.game.hero.cd[0] = 0;
   workerApp.scope.Prototype.game.hero.gold = 567;
   workerEvents.controllerchange();
-  assert.equal(workerReloads, 1);
+  assert.equal(workerReloads, 0, 'An unsolicited worker takeover never reloads active gameplay');
   assert.equal(JSON.parse(workerApp.storage.get(P.saveKey('normal'))).hero.gold, 567);
+  assert.equal(workerApp.elements.get('update-button').hidden, false,
+    'An externally activated release is presented as an optional update');
+  workerApp.elements.get('update-button').click();
+  assert.equal(workerReloads, 1, 'The player can intentionally refresh after a successful save');
   for (const listener of workerApp.events.pagehide || []) listener();
   console.log(
     'PASS cross-window ownership, stale-revision rejection, protected startup/shutdown, fresh takeover and bfcache reload',

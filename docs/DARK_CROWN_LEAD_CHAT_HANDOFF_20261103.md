@@ -1,5 +1,8 @@
 # Dark Crown regional overhaul — authoritative cross-chat lead handoff
 
+> **8 November execution checkpoint.** Execution checkpoint: current main and the seven #862 documentation changes are reconciled on the lead branch. The #707 design and #794 isolated field model are included. Foundry equipment replaces the animated figures. Regional art, utilities, vegetation, terrain rendering and final verification remain open.
+
+
 ## 8 November 2026 — owner-directed priority and autonomous completion mandate
 
 **New owner instruction superseding the 4 November deprioritization/hold language below:** Dark Crown is now the **next dedicated development project** after the Chromebook performance optimization phase was completed with exceptions. The owner plans to establish a new ChatGPT project for Dark Crown and authorizes this workstream to proceed using the extensive existing feedback, established authorial choices and the lead branch/design records **without further repetitive design questionnaires or intermediate personal art approval**. The implementer is responsible for source/branch reconciliation, completing the designed region, focused tests, relevant documentation maintenance, reviewing CI failures and performing a verified integration, **merging and player publication when truly ready**. The owner will review the finished Dark Crown in normal campaign progression when eventually reaching the final region; do not require them to skip other regions or actively manage implementation details. This is prospective authorization for the owner-directed Dark Crown scope, **not** a statement that old candidate branches already passed integration or that a player release occurred on 8 November.

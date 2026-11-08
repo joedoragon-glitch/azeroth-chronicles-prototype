@@ -56,24 +56,20 @@ jobs:
           git rev-parse "$BASE_SHA^{commit}"
           git worktree add --detach "$RUNNER_TEMP/pixi-755-base" "$BASE_SHA"
           cp tests/pixi-parity-browser.test.cjs "$RUNNER_TEMP/pixi-755-base/tests/pixi-parity-browser.test.cjs"
-          # A development version bump changes only the root lockfile
-          # version fields. Compare the complete dependency graph, including
-          # resolved packages and integrity hashes, not that release label.
+          # An app-only release version bump must not invalidate otherwise
+          # identical pinned dependencies. Reject every non-root lock delta.
           node - "$RUNNER_TEMP/pixi-755-base/package-lock.json" <<'NODE'
           const fs = require('node:fs');
           const assert = require('node:assert/strict');
-          const normalize = path => {
-            const lock = JSON.parse(fs.readFileSync(path, 'utf8'));
-            delete lock.version;
-            if (lock.packages?.['']) delete lock.packages[''].version;
-            return lock;
-          };
-          try {
-            assert.deepStrictEqual(normalize('package-lock.json'), normalize(process.argv[2]));
-          } catch (_) {
-            console.error('::error::Different locked dependencies invalidate a paired comparison');
-            process.exitCode = 1;
-          }
+          const candidate = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          const baseline = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+          assert.equal(candidate.packages[''].version, candidate.version);
+          assert.equal(baseline.packages[''].version, baseline.version);
+          baseline.version = candidate.version;
+          baseline.packages[''].version = candidate.version;
+          assert.deepEqual(baseline, candidate,
+            'Different locked dependencies invalidate a paired comparison');
+          console.log('PASS identical pinned dependencies; root app release version normalized');
           NODE
           ln -s "$GITHUB_WORKSPACE/node_modules" "$RUNNER_TEMP/pixi-755-base/node_modules"
           printf '%s\n' "Baseline $(git -C "$RUNNER_TEMP/pixi-755-base" rev-parse HEAD)" "Candidate $(git rev-parse HEAD)"

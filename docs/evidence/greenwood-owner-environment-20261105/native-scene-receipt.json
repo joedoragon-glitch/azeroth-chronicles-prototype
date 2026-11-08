@@ -1,0 +1,258 @@
+{
+  "source": "b502360f2f994a503ddf62af4919a1387e225927",
+  "qualifier": "native Canvas procedural production renderer; no browser/GPU/device proof",
+  "receipts": [
+    {
+      "file": "homestead-day.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 120,
+      "requested": [
+        2690,
+        1230
+      ],
+      "actual": [
+        2690,
+        1230
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "homestead-night.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 500,
+      "requested": [
+        2690,
+        1230
+      ],
+      "actual": [
+        2690,
+        1230
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "treasury-day.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 120,
+      "requested": [
+        2120,
+        1250
+      ],
+      "actual": [
+        2120,
+        1250
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "treasury-night.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 500,
+      "requested": [
+        2120,
+        1250
+      ],
+      "actual": [
+        2120,
+        1250
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "goblin-day.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 120,
+      "requested": [
+        350,
+        2820
+      ],
+      "actual": [
+        350,
+        2820
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "goblin-night.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 500,
+      "requested": [
+        350,
+        2820
+      ],
+      "actual": [
+        350,
+        2820
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "market-day.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 120,
+      "requested": [
+        900,
+        650
+      ],
+      "actual": [
+        900,
+        650
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "market-night.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 500,
+      "requested": [
+        900,
+        650
+      ],
+      "actual": [
+        900,
+        650
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "departure-day.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 120,
+      "requested": [
+        2880,
+        280
+      ],
+      "actual": [
+        2880,
+        280
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "departure-night.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 500,
+      "requested": [
+        2880,
+        280
+      ],
+      "actual": [
+        2880,
+        280
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "watch-day.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 120,
+      "requested": [
+        2670,
+        2220
+      ],
+      "actual": [
+        2670,
+        2220
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "watch-night.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 500,
+      "requested": [
+        2670,
+        2220
+      ],
+      "actual": [
+        2670,
+        2220
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "ground-day.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 120,
+      "requested": [
+        780,
+        2100
+      ],
+      "actual": [
+        780,
+        2100
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "ground-night.png",
+      "viewport": [
+        852,
+        393
+      ],
+      "zoom": 1.5,
+      "clock": 500,
+      "requested": [
+        780,
+        2100
+      ],
+      "actual": [
+        780,
+        2100
+      ],
+      "stateUnchanged": true
+    }
+  ]
+}

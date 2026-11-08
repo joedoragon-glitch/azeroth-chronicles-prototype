@@ -46,7 +46,7 @@ assert(crownSites.some(s => s[0] === 'foundry' && s[2] === 1850 && s[3] === 2700
 const foundry = rules.sideDungeons.find(s => s.id === 'side-crown-foundry');
 assert(foundry && foundry.region === 'crown' && foundry.site === 'foundry');
 assert.equal(foundry.size, 1100, 'Foundry original internal floor envelope');
-assert.equal(foundry.enemyCount, 14, 'Record current combat configuration; not worker population');
+assert.equal(foundry.enemyCount, 14, 'Record current combat configuration; not station population');
 assert.equal(rules.crownThermalWorksScenes.length, 15,
   'Existing heatworks are fifteen authored objects, not a proved pipe network');
 
@@ -206,18 +206,18 @@ assert.deepEqual(foundry.decor.slice(7, 9).map(p => p[2]),
 const workRoom = new Campaign('normal', 'paladin', () => 0.73);
 assert(workRoom.enter('side-crown-foundry'));
 const factory = workRoom.zone();
-const workers = factory.props.filter(p => p.crownFoundryWorker);
-assert.equal(factory.crownFoundryProductionVersion, 1,
+const stations = factory.props.filter(p => p.crownFoundryEquipment);
+assert.equal(factory.crownFoundryProductionVersion, 2,
   'Foundry workstations have their own once-only migration');
-assert(workers.length >= 3 && workers.length <= rules.crownFoundryStations.length,
+assert(stations.length >= 3 && stations.length <= rules.crownFoundryStations.length,
   'A productive floor needs multiple actually generated safe work stations');
-assert(workers.every(p => p.decorative && p.r === 0 &&
+assert(stations.every(p => p.decorative && p.r === 0 &&
   p.id.startsWith('crown-foundry-work-')),
-  'Worker scenes cannot become new collision obstacles or enemy actors');
+  'Equipment scenes cannot become new collision obstacles or enemy actors');
 const trapLocations = foundry.traps.map(([x, y]) => ({ x, y }));
-assert(workers.every(p => trapLocations.every(t => Math.hypot(p.x - t.x, p.y - t.y) >= 105)),
-  'Workers cannot stand inside preserved trap clearance');
-const foundryPositions = () => factory.props.filter(p => p.crownFoundryWorker)
+assert(stations.every(p => trapLocations.every(t => Math.hypot(p.x - t.x, p.y - t.y) >= 105)),
+  'Equipments cannot stand inside preserved trap clearance');
+const foundryPositions = () => factory.props.filter(p => p.crownFoundryEquipment)
   .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0]));
 const firstShift = foundryPositions();
 const guardSnapshot = factory.enemies.map(e => [e.id, e.x, e.y, e.hp]).sort();
@@ -226,32 +226,34 @@ const columnSnapshot = factory.props.filter(p => p.id.startsWith('side-wall-'))
 const originalTraps = JSON.stringify(foundry.traps);
 workRoom.crownFoundryProduction(factory);
 assert.deepEqual(foundryPositions(), firstShift,
-  'Repeated Foundry work migration cannot move or duplicate workers');
+  'Repeated Foundry work migration cannot move or duplicate stations');
 assert.deepEqual(factory.enemies.map(e => [e.id, e.x, e.y, e.hp]).sort(), guardSnapshot,
-  'Workers must never replace an enemy or change a hostile spawn');
+  'Equipments must never replace an enemy or change a hostile spawn');
 assert.deepEqual(factory.props.filter(p => p.id.startsWith('side-wall-'))
   .map(p => [p.id, p.x, p.y, p.r]).sort(), columnSnapshot);
 assert.equal(JSON.stringify(foundry.traps), originalTraps);
 const restoredWork = Campaign.restore(workRoom.snapshot());
 assert(restoredWork.enter('side-crown-foundry'));
-assert.deepEqual(restoredWork.zone().props.filter(p => p.crownFoundryWorker)
+assert.deepEqual(restoredWork.zone().props.filter(p => p.crownFoundryEquipment)
   .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0])),
   firstShift, 'Old v4 save schema retains production identities and coordinates');
 assert.deepEqual(restoredWork.zone().enemies.map(e => [e.id, e.x, e.y, e.hp]).sort(),
   guardSnapshot, 'All hostile entities survive Foundry save/restore');
 
-// Directly draw one of the actual placed production stations twice at two
-// presentation times; a sprite's very existence is not evidence of work.
-const station = workers.find(p => p.structure === 'crown-foundry-forming') || workers[0];
-function workerFrame(time) {
-  const c = createCanvas(200, 170);
-  Visuals.draw(c.getContext('2d'), { ...station, renderKind: 'prop',
-    ambientTime: time }, { x: 96, y: 125 }, 4);
-  return c.toBuffer('image/png');
+// Interior fixtures and the shipping gantry remain visually static.
+for (const fixture of [
+  ...stations,
+  { id: 'shipping-gantry', structure: 'crown-foundry-yard-shipping' },
+]) {
+  function equipmentFrame(time) {
+    const canvas = createCanvas(200, 170);
+    Visuals.draw(canvas.getContext('2d'), { ...fixture, renderKind: 'prop',
+      ambientTime: time }, { x: 96, y: 125 }, 4);
+    return canvas.toBuffer('image/png');
+  }
+  assert.deepEqual(equipmentFrame(0), equipmentFrame(1.1),
+    fixture.id + ' must remain static at distinct presentation times');
 }
-assert.notEqual(crypto.createHash('sha256').update(workerFrame(0)).digest('hex'),
-  crypto.createHash('sha256').update(workerFrame(1.1)).digest('hex'),
-  'Worker/tool pose must visibly change between two render instants');
 
 const candidates = [
   // First-visit city, home, heat, freight, geology, crossings and regime.
@@ -289,7 +291,7 @@ const candidates = [
 // Bind camera reconnaissance to the REAL saved/generation identities where
 // they exist. Nominal master-plan coordinates can miss the safely displaced
 // actual industrial yard; a filename must never masquerade as visual proof.
-// Offset the player camera from workers/props so the hero does not hide them.
+// Offset the player camera from stations/props so the hero does not hide them.
 const cameraAnchors = new Map([
   ['civic-hall-frontage', ['npcs', 'rest', 0, 0, true]],
   ['ridge-skyline', ['npcs', 'rest', 210, -90, true]],

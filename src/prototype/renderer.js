@@ -63,53 +63,8 @@
     ctx.strokeStyle = '#ecf1ee';
     ctx.lineWidth = 1;
     ctx.stroke();
-    // The ruler's right-facing head and identifiable nose, chin and shoulder.
-    // The same portrait grammar is used on Stonecross's striking-die tray.
-    ctx.fillStyle = '#586d77';
-    ctx.beginPath();
-    ctx.moveTo(-5, -3);
-    ctx.lineTo(2, -5);
-    ctx.lineTo(4, -2);
-    ctx.lineTo(7, 0);
-    ctx.lineTo(4, 1);
-    ctx.lineTo(3, 4);
-    ctx.lineTo(1, 5);
-    ctx.lineTo(-3, 4);
-    ctx.lineTo(-6, 6);
-    ctx.lineTo(-7, 5);
-    ctx.lineTo(-4, 2);
-    ctx.closePath();
-    ctx.fill();
-    // The ruler's own tall pointed helm and broad three-tipped crown,
-    // miniaturized from the actual Dark Lord silhouette, not generic royalty.
-    ctx.fillStyle = '#596274';
-    ctx.beginPath();
-    ctx.moveTo(-5, -3);
-    ctx.lineTo(-4, -6);
-    ctx.lineTo(0, -8);
-    ctx.lineTo(4, -5);
-    ctx.lineTo(5, -3);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillStyle = '#4e646e';
-    ctx.beginPath();
-    ctx.moveTo(-5.5, -4);
-    ctx.lineTo(-8, -8.6);
-    ctx.lineTo(-3, -6.2);
-    ctx.lineTo(0, -9.5);
-    ctx.lineTo(3, -6.2);
-    ctx.lineTo(7.8, -8.6);
-    ctx.lineTo(5.8, -4);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = '#e3e9e7';
-    ctx.lineWidth = 0.8;
-    ctx.beginPath();
-    ctx.moveTo(-4, -4);
-    ctx.lineTo(3, -4);
-    ctx.stroke();
-    ctx.fillStyle = '#e3e9e7';
-    ctx.fillRect(1, -2, 1.2, 1.2);
+    const visuals = root.PrototypeVisuals || require('./visuals.js');
+    visuals.drawDarkLordProfile(ctx);
     ctx.restore();
   }
 
@@ -297,8 +252,10 @@
     const lanterns = /(?:^|[-_])(?:lantern|grave-lamp)(?:$|[-_])/i;
     const thermal =
       /^(?:geothermal-heat-intake|crown-glass-kiln|crown-ceramic-kiln|heat-distribution-post|heated-drying-shed|heated-washhouse|thermal-flue)$/;
+    // Domestic glass is intentionally dark at night; actual facade lamps
+    // are enumerated from the canonical drawings by lightingFixtures().
     return domestic.test(structure)
-      ? 'window'
+      ? null
       : lanterns.test(structure)
         ? 'lantern'
         : thermal.test(structure)
@@ -620,6 +577,9 @@
     let cacheGround = true,
       optimized = false;
     const phaseSamples = [];
+    // Only the existing opt-in renderer recording activates these subpass clocks.
+    let overlaySubpassEnabled = false,
+      overlaySubpassLast = null;
     let drawCount = 0,
       phaseSample = null,
       phaseAt = 0;
@@ -707,9 +667,30 @@
       ctx.fillText(name, slot.x, slot.y, slot.width);
       ctx.restore();
     }
+    // Thornfang's homestead is a world prop rather than an NPC. It deserves
+    // the same nearby golden label as existing named locations, not a toast,
+    // discovery marker or new actor.
+    function sceneryPlaceName(e) {
+      return e.renderKind === 'prop' &&
+        e.id === 'greenwood-thorn-homestead-lodge' &&
+        e.greenwoodFacility === 'thorn-lodge'
+        ? "Thornfang's Homestead"
+        : '';
+    }
+    function labelHeight(e) {
+      // This long, pitched granary fills the upper native phone viewport.
+      // Place its name *on* the roof instead of pushing the label offscreen
+      // above the building. Canvas and Pixi use the same projected anchor.
+      return sceneryPlaceName(e) ? 82 : spriteHeight(e);
+    }
+    // Read-only presentation gate: a visible boss is not automatically
+    // identified, and inactive hostiles must not generate labels or HP bars.
+    function enemyHudVisible(e) {
+      return e.hp > 0 && !!e.aggro && !e.returning;
+    }
     function worldLabelVisible(e) {
-      if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
-      if (e.renderKind === 'npc' || e.renderKind === 'building')
+      if (e.renderKind === 'enemy') return enemyHudVisible(e);
+      if (e.renderKind === 'npc' || e.renderKind === 'building' || sceneryPlaceName(e))
         return Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 220;
       return true;
     }
@@ -845,7 +826,7 @@
       actorFacingMemory.set(owner, { x: e.x, y: e.y, side });
       return side;
     }
-    function sprite(e, p, target = ctx, bodyOnly = false) {
+    function sprite(e, p, target = ctx, bodyOnly = false, stationary = false) {
       const retained = bodyOnly && silhouetteFrames?.get(e.spriteIdentity || e);
       if (retained) {
         // Use the exact currently composited GPU pose, including frame/pivot.
@@ -869,7 +850,7 @@
         target.restore();
         return;
       }
-      const q = visualPosition(e, p),
+      const q = stationary ? p : visualPosition(e, p),
         rescued = !!game.s.rescued[e.family];
       const facing = paintedFacing(e);
       // Mirror about the foot anchor, never about the canvas origin. This
@@ -961,26 +942,65 @@
       }
       return 256;
     }
-    function drawOcclusionOutlines(entities) {
+    function drawOcclusionOutlines(entities, detail = null) {
+      const pairsAt = detail ? now() : 0;
       const pairs = occlusionPairs(entities, screen, spriteHeight);
+      if (detail) {
+        // Nested opt-in timings belong to occlusionMasks, not additional work.
+        // The mask painter still follows the identical sequence when disabled.
+        detail.outlinePairs = pairs.length;
+        detail.outlineCoverSprites = 0;
+        detail.outlinePairMs = Math.max(0, now() - pairsAt);
+        for (const name of [
+          'outlineBuffersMs', 'outlineClearMs', 'outlineActorMs',
+          'outlineTintMs', 'outlineEdgeMs', 'outlineCoverMs', 'outlineCompositeMs',
+        ]) detail[name] = 0;
+      }
       if (!pairs.length || typeof document === 'undefined') return;
       for (const pair of pairs) {
         const size = outlineSize(pair.actor);
-        if (!outlineLayers.has(size)) {
+        const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
+        const actor = pair.actor;
+        const busy = (actor.renderKind === 'enemy' && (actor.aggro || actor.telegraph)) ||
+          (actor.renderKind === 'hero' && game.manaCombatActive());
+        const shown = retained && busy ? visualPosition(actor, pair.position) : pair.position;
+        // Keep ordinary masks on their shared 256px surface. Compact only
+        // known oversized masks whose entire sampling fringe fits.
+        let width = size, left = 0, top = 0;
+        if (size === 384 && retained) {
+          const x = size / 2 + shown.x - pair.position.x + retained.dx;
+          const y = 260 + shown.y - pair.position.y + retained.dy;
+          const fringe = 4;
+          const x0 = Math.max(0, Math.floor(x) - fringe);
+          const y0 = Math.max(0, Math.floor(y) - fringe);
+          const x1 = Math.min(size, Math.ceil(x + retained.width) + fringe);
+          const y1 = Math.min(size, Math.ceil(y + retained.height) + fringe);
+          if (x1 > x0 && y1 > y0 && x1 - x0 <= 192 && y1 - y0 <= 192) {
+            width = 192;
+            left = Math.min(x0, size - width);
+            top = Math.min(y0, size - width);
+          }
+        }
+        const height = width;
+        const key = width;
+        const buffersAt = detail ? now() : 0;
+        if (!outlineLayers.has(key)) {
           const layers = [];
           for (let i = 0; i < 4; i++) {
             const surface = document.createElement('canvas');
-            surface.width = surface.height = size;
+            surface.width = width;
+            surface.height = height;
             const brush = surface.getContext('2d');
             if (!brush) return;
             layers.push({ surface, brush });
           }
-          outlineLayers.set(size, layers);
+          outlineLayers.set(key, layers);
         }
-        const layers = outlineLayers.get(size);
+        const layers = outlineLayers.get(key);
+        if (detail) detail.outlineBuffersMs += Math.max(0, now() - buffersAt);
         const [actorLayer, tintLayer, edgeLayer, coverLayer] = layers,
-          centerX = size / 2,
-          footY = size === 384 ? 260 : 192,
+          centerX = size / 2 - left,
+          footY = (size === 384 ? 260 : 192) - top,
           ring =
             optimized && compactOutlines
               ? [
@@ -1004,20 +1024,16 @@
                   [0.95, 0.95],
                 ];
         stats.outlineMasks++;
-        stats.outlineMaskPixels += size * size;
+        stats.outlineMaskPixels += width * height;
+        const clearAt = detail ? now() : 0;
         for (const layer of layers) {
           layer.brush.globalCompositeOperation = 'source-over';
           layer.brush.globalAlpha = 1;
-          layer.brush.clearRect(0, 0, size, size);
+          layer.brush.clearRect(0, 0, width, height);
         }
-        // Pixi keeps its world/shadow foot still, but moves the retained
-        // raster body by Canvas's identity-phase idle/busy animation. The
-        // mask must track that same presentation-only delta. Cover, broad
-        // phase, collision and the final on-screen contour origin stay at
-        // their original world points. Unretained Canvas bodies already
-        // apply visualPosition inside sprite(), so never offset them twice.
-        const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
-        const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
+        if (detail) detail.outlineClearMs += Math.max(0, now() - clearAt);
+        // Anchor idle outlines at the resting position. Combat motion still follows the body.
+        const actorAt = detail ? now() : 0;
         sprite(
           pair.actor,
           {
@@ -1026,25 +1042,33 @@
           },
           actorLayer.brush,
           true,
+          !busy,
         );
+        if (detail) detail.outlineActorMs += Math.max(0, now() - actorAt);
 
         // Color the real actor alpha, not a rectangle or an ellipse.
+        const tintAt = detail ? now() : 0;
         const tint = tintLayer.brush;
         tint.drawImage(actorLayer.surface, 0, 0);
         tint.globalCompositeOperation = 'source-in';
         tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
-        tint.fillRect(0, 0, size, size);
+        tint.fillRect(0, 0, width, height);
         tint.globalCompositeOperation = 'source-over';
+        if (detail) detail.outlineTintMs += Math.max(0, now() - tintAt);
 
+        const edgeAt = detail ? now() : 0;
         const edge = edgeLayer.brush;
         for (const [dx, dy] of ring) edge.drawImage(tintLayer.surface, dx, dy);
         edge.globalCompositeOperation = 'destination-out';
         edge.drawImage(actorLayer.surface, 0, 0);
         edge.globalCompositeOperation = 'source-over';
+        if (detail) detail.outlineEdgeMs += Math.max(0, now() - edgeAt);
 
         // Union the actual foreground artwork. The contour is erased wherever
         // the actor is visible rather than showing a permanent character glow.
+        const coverAt = detail ? now() : 0;
         const cover = coverLayer.brush;
+        if (detail) detail.outlineCoverSprites += pair.front.length;
         for (const obstacle of pair.front)
           sprite(
             obstacle.entity,
@@ -1055,6 +1079,8 @@
             cover,
             true,
           );
+        if (detail) detail.outlineCoverMs += Math.max(0, now() - coverAt);
+        const compositeAt = detail ? now() : 0;
         edge.globalCompositeOperation = 'destination-in';
         edge.drawImage(coverLayer.surface, 0, 0);
         edge.globalCompositeOperation = 'source-over';
@@ -1066,6 +1092,7 @@
           Math.round(pair.position.y - footY),
         );
         ctx.restore();
+        if (detail) detail.outlineCompositeMs += Math.max(0, now() - compositeAt);
       }
     }
     // Shared Canvas/Pixi presentation geometry. A GPU actor uses these same
@@ -1090,8 +1117,31 @@
         ry = 8;
       }
       const scale = (PrototypeVisuals.featureScale?.(e) || 1) > 1 ? e.visualScale || 1 : 1;
+      // Flat paint and low plants are not standing obstacles. A generic
+      // building-sized oval on a field, bridge marker or palisade segment
+      // reads as an unexplained black patch. Painted walls own a narrow,
+      // physically attached base contact in GreenwoodLandscape.drawWall().
+      const structure = String(e.structure || '');
+      const flatGround = !!(e.greenwoodField || e.greenwoodKitchen ||
+        (e.kind === 'landmark' && String(e.id || '').startsWith('bridge-')) ||
+        /^(?:furrow-plot|garden|meadow|floor|paving|rune|path|road|ash-patch)$/.test(structure));
+      const littlePlant = e.greenwoodNature === 'understory' ||
+        /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure);
+      if (littlePlant) { rx = 7; ry = 2; }
+      // The farmyard painter now supplies small contact at actual posts and
+      // timbers. Generic entity-sized bubbles would double those contacts.
+      const selfGrounded = String(e.greenwoodFacility || '').startsWith('thorn-');
+      const treasuryServiceProp = /^stronghold-treasury-yard-prop-/.test(String(e.id || ''));
+      if (treasuryServiceProp) { rx = 11; ry = 3; }
       rx *= scale;
       ry *= scale;
+      // Keep only restrained contact darkness at night. Sun-cast ovals
+      // cannot remain at full daylight strength beneath moonlight/lanterns.
+      // Reading the existing daylight phase adds no saved state or new clock.
+      const darkness = !game.isDungeon?.() ? game.daylightPhase?.().darkness || 0 : 0;
+      const shadowOpacity = Math.round(16 * (e.greenwoodWall || flatGround || selfGrounded ? 0 :
+        treasuryServiceProp ? 0.42 : littlePlant ? 0.30 : 1) *
+        (1 - 0.72 * darkness)) / 16;
       const type = e.renderKind,
         important =
           type === 'hero' || e.type === 'boss' || e.captain || e.roomCaptain || e.kind === 'quests';
@@ -1114,11 +1164,13 @@
             important,
           }
         : null;
-      return { rx, ry, marker };
+      return { rx, ry, marker, shadowOpacity };
     }
     function entityShadow(e, p) {
-      const { rx, ry } = groundPresentation(e);
+      const { rx, ry, shadowOpacity } = groundPresentation(e);
+      if (shadowOpacity <= 0) return;
       ctx.save();
+      ctx.globalAlpha *= shadowOpacity;
       ctx.fillStyle = '#05100c38';
       ctx.beginPath();
       ctx.ellipse(p.x + 4, p.y + 13, rx * 1.18, ry * 1.35, -0.08, 0, Math.PI * 2);
@@ -1178,11 +1230,11 @@
       }
       brush.restore();
     }
-    function healthPlate(e, p) {
+    function healthPlate(e, p, renderKind = e.renderKind) {
       const y = p.y - spriteHeight(e),
         w = e.type === 'boss' ? 54 : e.captain || e.roomCaptain ? 50 : 42,
         left = p.x - w / 2;
-      if (e.renderKind === 'hero') {
+      if (renderKind === 'hero') {
         const cast = chargePresentation();
         if (cast) {
           const cy = y - 9;
@@ -1200,7 +1252,7 @@
             ctx.strokeRect(left - 0.5, cy - 0.5, w + 1, 4);
           }
         }
-      } else if (e.renderKind === 'ally') {
+      } else if (renderKind === 'ally') {
         const preparing = game._companionCharges?.get(e.id);
         if (preparing) {
           if (e.type === 'pet') {
@@ -1255,7 +1307,7 @@
           ctx.fillRect(left, cy, w * fraction, 1);
         }
       }
-      if (e.renderKind === 'enemy' && game.enemyFort(e)) {
+      if (renderKind === 'enemy' && game.enemyFort(e)) {
         ctx.save();
         ctx.translate(left - 10, y + 1);
         ctx.fillStyle = '#9dbfcb';
@@ -1276,7 +1328,7 @@
       ctx.fillRect(left - 2, y - 2, w + 4, 8);
       ctx.fillStyle = '#5a645b';
       ctx.fillRect(left, y, w, 4);
-      ctx.fillStyle = e.renderKind === 'enemy' ? '#e87966' : '#91d59c';
+      ctx.fillStyle = renderKind === 'enemy' ? '#e87966' : '#91d59c';
       ctx.fillRect(left, y, w * Math.max(0, Math.min(1, e.hp / e.maxHp)), 4);
       ctx.fillStyle = '#ffffff77';
       ctx.fillRect(left, y, w * Math.max(0, Math.min(1, e.hp / e.maxHp)), 1);
@@ -2653,9 +2705,7 @@
         ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
         ...(Campaign.rules?.ambientLife?.[e.structure || e.id]
           ? { ambientTime: (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
-          : e.crownFoundryWorker || e.crownFoundryExterior
-            ? { ambientTime: reducedMotion() ? 0 : (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
-            : {}),
+          : {}),
       };
       const registered = PrototypeSprites?.definitionFor?.(
         visual,
@@ -2884,15 +2934,19 @@
         records = [];
       const add = (list, kind) => {
         for (const entity of list || []) {
-          if (entity.interactionOnly || (kind === 'enemy' && entity.hp <= 0)) continue;
+          // Avoid creating a presented actor and a projected nameplate
+          // for idle hostiles, including undiscovered bosses.
+          if (entity.interactionOnly || (kind === 'enemy' && !enemyHudVisible(entity))) continue;
           const e = presentEntity(entity, kind);
           if (e.presentation === 'scout-tracks' || !worldLabelVisible(e)) continue;
           const p = screen(e);
           if (p.x < -40 || p.x > canvas.width + 40 || p.y < -100 || p.y > canvas.height + 100)
             continue;
           const name =
-            kind === 'npc'
-              ? e.kind === 'mini'
+            kind === 'prop'
+              ? sceneryPlaceName(e)
+              : kind === 'npc'
+                ? e.kind === 'mini'
                 ? e.name +
                   (game.peace
                     ? ' · Peaceful'
@@ -2916,6 +2970,12 @@
           records.push({ e, kind, p, name });
         }
       };
+      // Add the single authored homestead label through the existing
+      // Canvas/Pixi nameplate pass, without turning the building into an NPC.
+      if (game.zoneId === 'vale') {
+        const home = zone.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
+        if (home) add([home], 'prop');
+      }
       add(game.visibleNPCs(), 'npc');
       add(game.visibleResourceNodes(), 'node');
       add(zone.buildings, 'building');
@@ -2924,7 +2984,9 @@
       const priority = (r) =>
         r.kind === 'npc'
           ? 0
-          : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain)
+          : r.kind === 'prop'
+            ? 0.5
+            : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain)
             ? 1
             : r.kind === 'ally' && namedCompanion(r.e)
               ? 1.5
@@ -2940,7 +3002,7 @@
       ctx.textAlign = 'center';
       for (const { e, kind, p, name } of records.sort((a, b) => priority(a) - priority(b))) {
         const width = worldLabelWidth(name, e);
-        const baseY = kind === 'node' ? p.y - 25 : p.y - spriteHeight(e) - 5;
+        const baseY = kind === 'node' ? p.y - 25 : p.y - labelHeight(e) - 5;
         let slot = null;
         if (name && charmedCompanion(e)) {
           // The nickname follows its creature exactly. Never search alternate
@@ -2976,7 +3038,7 @@
         if (slot) {
           ctx.shadowColor = '#07140e';
           ctx.shadowBlur = kind === 'enemy' ? 3 : 4;
-          if (kind === 'npc') {
+          if (kind === 'npc' || kind === 'prop') {
             ctx.font = 'bold 11px system-ui';
             ctx.fillStyle = '#ffe4a2';
             ctx.fillText(name, slot.x, slot.y, slot.width);
@@ -3001,26 +3063,28 @@
           ctx.shadowBlur = 0;
         }
         if (kind === 'enemy' && !slot) drawCombatName(ctx, e, p, null);
-        // The Millhaven captain's recruitment prompt was previously missing.
-        if (
-          kind === 'npc' &&
-          e.kind === 'recruiter' &&
-          game.zoneId === 'vale' &&
-          game.s.party.length <= 2
-        ) {
-          ctx.fillStyle = '#f9ce72';
-          ctx.beginPath();
-          ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#fff1b4';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.fillStyle = '#19291e';
-          ctx.font = 'bold 23px system-ui';
-          ctx.fillText('!', p.x, p.y - 72);
-        }
+        if (kind === 'npc' && millhavenCue(e)) drawQuestCue(p);
       }
       ctx.restore();
+    }
+    function millhavenCue(entity) {
+      return game.zoneId === 'vale' &&
+        ((entity.kind === 'recruiter' && game.s.party.length <= 2) ||
+          (entity.kind === 'quests' && entity.id === 'board' &&
+            !game.s.discovered?.['vale:quest-board-intro']));
+    }
+    function drawQuestCue(p) {
+      ctx.fillStyle = '#f9ce72';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff1b4';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#19291e';
+      ctx.font = 'bold 23px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('!', p.x, p.y - 72);
     }
     function drawArenaBoundary() {
       if (game.s.mode !== 'arena') return;
@@ -3071,6 +3135,17 @@
       // between simulation steps or change warning/damage geometry.
       const warningFrameShapes = new Map();
       if (renderLayer === 'overlay') {
+        // Do not time ordinary frames or create an opt-in sample unless requested.
+        overlaySubpassLast = null;
+        const overlayStages = overlaySubpassEnabled ? {} : null;
+        let overlayMarkAt = overlayStages ? now() : 0;
+        const overlayMark = overlayStages
+          ? (name) => {
+              const next = now();
+              overlayStages[name] = Math.max(0, next - overlayMarkAt);
+              overlayMarkAt = next;
+            }
+          : null;
         // On the experimental PixiJS path, keep essential native combat cues
         // above the independent GPU world instead of hiding player warnings.
         // The full normal Canvas path below is unchanged.
@@ -3087,20 +3162,45 @@
           warningFrameShapes,
         );
         PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
-        for (const e of [
-          ...z.enemies.filter((u) => u.hp > 0),
-          ...game.activeLivingParty(),
-          game.hero,
-        ]) {
+        if (overlayMark) overlayMark('groundAndClear');
+        // The Pixi cue layer receives raw Campaign actors, unlike Canvas's
+        // presented entities. Pass the actor kind explicitly so hostile bars
+        // and the position-derived fortress shield use the shared drawing path.
+        // The overlay only needs engaged hostiles for HP drawing. Filter
+        // before screen projection, not inside the paint loop.
+        const enemies = z.enemies.filter((u) => enemyHudVisible(u));
+        const allies = game.activeLivingParty();
+        const actors = [...enemies, ...allies, game.hero];
+        for (let index = 0; index < actors.length; index++) {
+          const e = actors[index];
           if (e !== game.hero && e.hp <= 0) continue;
           if (e !== game.hero && e.neutral) continue;
+          const renderKind =
+            index < enemies.length
+              ? 'enemy'
+              : index < enemies.length + allies.length
+                ? 'ally'
+                : 'hero';
           const p = screen(e);
           if (p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120)
-            healthPlate(e, p);
+            healthPlate(e, p, renderKind);
         }
+        if (overlayMark) overlayMark('healthPlates');
         drawPixiNameplates();
+        if (overlayMark) overlayMark('nameplates');
         // Reuse the bounded alpha-mask painter: no GPU readback or new texture.
-        drawOcclusionOutlines(collectVisibleEntities());
+        const overlayVisible = collectVisibleEntities();
+        if (overlayMark) overlayMark('occlusionCandidates');
+        if (!game.manaCombatActive()) drawOcclusionOutlines(overlayVisible, overlayStages);
+        if (overlayMark) overlayMark('occlusionMasks');
+        if (overlayStages) {
+          // Per-draw denominators: an expensive zero-mask draw falsifies the
+          // hypothesis that outline compositing alone explains its cost.
+          // These existing counters reset at draw entry; no extra scan.
+          overlayStages.occlusionMasksDrawn = stats.outlineMasks;
+          overlayStages.occlusionMaskPixels = stats.outlineMaskPixels;
+          overlayStages.occlusionVisibleEntities = overlayVisible.length;
+        }
         PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
         for (const projectile of game.s.projectiles) drawProjectile(projectile);
         drawVisualFx();
@@ -3114,6 +3214,10 @@
         targetGuidance();
         drawNavigationRoute();
         drawPausePresentation();
+        if (overlayMark) {
+          overlayMark('remainingCombatCues');
+          overlaySubpassLast = overlayStages;
+        }
         finishPhase('effects');
         return;
       }
@@ -3235,8 +3339,11 @@
           screen,
           i,
           optimized ? null : PrototypeMaterials,
+          null,
+          z.footpaths || [],
+          z.greenwoodRoadKinds || [],
         );
-        PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
+        PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen, i);
         if (!game.isDungeon())
           PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       } else {
@@ -3260,8 +3367,6 @@
       }
       finishPhase('terrain');
       if (renderLayer === 'background') return;
-      const boardCue = null,
-        captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
       const entities = collectVisibleEntities();
       // Reserve nameplates once in screen space, with interactable NPCs and
       // bosses first. Entity draw/depth order must not decide which nearby
@@ -3269,6 +3374,7 @@
       const labelSlots = new Map();
       const claimedLabels = [];
       const labelText = (e) => {
+        if (e.renderKind === 'prop') return sceneryPlaceName(e);
         if (e.renderKind === 'npc')
           return e.presentation === 'mobile-captive'
             ? 'Mira · captive'
@@ -3284,7 +3390,9 @@
       const labelPriority = (e) =>
         e.renderKind === 'npc'
           ? 0
-          : e.renderKind === 'enemy' && e.type === 'boss'
+          : sceneryPlaceName(e)
+            ? 0.5
+            : e.renderKind === 'enemy' && e.type === 'boss'
             ? 1
             : e.renderKind === 'enemy' && (e.captain || e.roomCaptain)
               ? 1.5
@@ -3299,7 +3407,8 @@
                       : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
-          !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
+          (!['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) &&
+            !sceneryPlaceName(e)) ||
           e.presentation === 'scout-tracks' ||
           !worldLabelVisible(e)
         )
@@ -3316,7 +3425,7 @@
           continue;
         const w = worldLabelWidth(name, e);
         const h = namedCompanion(e) ? 20 : 17;
-        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - spriteHeight(e) - 5;
+        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - labelHeight(e) - 5;
         let slot = null;
         if (charmedCompanion(e)) {
           // A Charmed nickname stays above the actor, even in a crowd.
@@ -3441,19 +3550,17 @@
             if (slot) ctx.fillText(name, slot.x, slot.y, Math.min(slot.width, width || slot.width));
             ctx.shadowBlur = 0;
           }
-          const cue =
-            e.kind === 'quests' ? boardCue : e.kind === 'recruiter' && captainCue ? '!' : null;
-          if (cue) {
-            ctx.fillStyle = cue === '?' ? '#9fe4ad' : '#f9ce72';
-            ctx.beginPath();
-            ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#fff1b4';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.fillStyle = '#19291e';
-            ctx.font = 'bold 23px system-ui';
-            ctx.fillText(cue, p.x, p.y - 72);
+          if (millhavenCue(e)) drawQuestCue(p);
+        }
+        if (sceneryPlaceName(e) && worldLabelVisible(e)) {
+          const slot = labelSlots.get(e);
+          if (slot) {
+            ctx.font = 'bold 11px system-ui';
+            ctx.fillStyle = '#ffe4a2';
+            ctx.shadowColor = '#07140e';
+            ctx.shadowBlur = 4;
+            ctx.fillText(sceneryPlaceName(e), slot.x, slot.y, slot.width);
+            ctx.shadowBlur = 0;
           }
         }
         if (e.renderKind === 'building' && worldLabelVisible(e)) {
@@ -3491,43 +3598,24 @@
         ? []
         : [
             ...z.props.flatMap((prop) => {
-              const structure = String(prop.structure || '');
-              const kind = nightLightKind(structure);
-              return kind
-                ? [
-                    {
-                      ...screen(prop),
-                      kind,
-                      id: prop.id,
-                      ...(structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
-                    },
-                  ]
-                : [];
+              const projected = screen(prop);
+              const fixtures = PrototypeVisuals.lightingFixtures?.(prop, projected, 1, game.regionIndex()) || [];
+              if (fixtures.length) return fixtures;
+              const kind = nightLightKind(String(prop.structure || ''));
+              return kind ? [{ ...projected, kind, id: prop.id }] : [];
             }),
-            ...z.buildings
-              .filter((b) => b.progress >= 4)
-              .map((b) => ({ ...screen(b), kind: 'window', id: b.id })),
-            ...game
-              .visibleNPCs()
-              .filter(
-                (n) =>
-                  [
-                    'rest',
-                    'supplier',
-                    'recruiter',
-                    'quests',
-                    'fountain',
-                    'transport',
-                    'smith',
-                    'teacher',
-                    'alchemist',
-                  ].includes(n.kind) && !n.interactionOnly,
-              )
-              .map((n) => ({ ...screen(n), kind: 'lantern', id: n.id })),
+            ...z.buildings.flatMap((b) =>
+              b.progress >= 4 ? PrototypeVisuals.lightingFixtures?.(b, screen(b), 1, game.regionIndex()) || [] : [],
+            ),
+            ...game.visibleNPCs().flatMap((n) =>
+              !n.interactionOnly
+                ? PrototypeVisuals.lightingFixtures?.(n, screen(n), 1, game.regionIndex()) || []
+                : [],
+            ),
           ]
             .filter(
               (p) =>
-                p.x > -140 && p.x < canvas.width + 140 && p.y > -160 && p.y < canvas.height + 140,
+                p.lit !== false && p.x > -140 && p.x < canvas.width + 140 && p.y > -160 && p.y < canvas.height + 140,
             )
             .sort((a, b) => {
               const da = (a.x - canvas.width / 2) ** 2 + (a.y - canvas.height / 2) ** 2;
@@ -3582,7 +3670,7 @@
         ctx.restore();
       }
       PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
-      drawOcclusionOutlines(entities);
+      if (!game.manaCombatActive()) drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
       for (const p of game.s.projectiles) drawProjectile(p);
@@ -3601,6 +3689,15 @@
     }
     return {
       draw,
+      setOverlaySubpassProfiling(enabled) {
+        overlaySubpassEnabled = !!enabled;
+        if (!overlaySubpassEnabled) overlaySubpassLast = null;
+      },
+      consumeOverlaySubpassProfile() {
+        const profile = overlaySubpassLast;
+        overlaySubpassLast = null;
+        return profile;
+      },
       // No diagnostic object is constructed outside an explicit developer opt-in.
       setEffectDiagnostics(enabled) {
         if (enabled && getGame().s.mode === 'developer') {
@@ -3762,7 +3859,7 @@
         groundCache: groundCache?.status() || null,
         outlineBuffers: {
           surfaces: outlineLayers.size * 4,
-          bytes: [...outlineLayers.keys()].reduce((sum, size) => sum + size * size * 4 * 4, 0),
+          bytes: [...outlineLayers.values()].reduce((sum, layers) => sum + layers[0].surface.width * layers[0].surface.height * 4 * 4, 0),
         },
         phases: phaseReport(),
       }),

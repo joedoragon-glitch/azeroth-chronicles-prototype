@@ -1,3 +1,5 @@
+**Dev.276 draft.** Chronicle, milestones, warnings and feedback wrap at the available desktop or phone width. Landscape notices sit between the vitals and Menu when space permits, with a below-HUD layout for tight viewports. The shared palette uses dark opaque narration cards, warm light type and distinct warning and milestone colors.
+
 # Scenery and announcements — next-update candidate dev.120
 
 Owner issue: #354. Joel narrowed collision work to straightforward corrections, leaving ambiguous cases annotated, and explicitly requested a concluding implementation audit. All announcement categories remain in scope, including previous-region lore arriving after travel.

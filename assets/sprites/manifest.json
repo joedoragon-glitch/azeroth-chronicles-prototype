@@ -108,18 +108,6 @@
         }
       }
     },
-    "prop:vale-cottage:vale": {
-      "src": "./assets/sprites/prop-vale-cottage-vale-21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573.png",
-      "width": 816,
-      "height": 816,
-      "hash": "21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573",
-      "revision": "fbe84420634d262175aa6f33c3ba6615aef421a0093421540da4c06d3ab44d92",
-      "displayWidth": 192,
-      "displayHeight": 192,
-      "anchorX": 0.5,
-      "anchorY": 0.75,
-      "labelHeight": 64
-    },
     "hero:mage": {
       "src": "./assets/sprites/hero-mage-467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9.png",
       "width": 192,

@@ -5,8 +5,13 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     // Runtime collision applies to terrain and scenery only, not other actors.
     // Opt-in and unsaved. Navigation/terrain diagnostics no longer inspect actors.
-    // Disabled diagnostics add zero runtime instrumentation overhead.
+    // Crowd diagnostics are disabled without their per-call wrappers.
+    // The separate opt-in enemy route observer below adds only a cheap
+    // WeakMap guard to native route/planner calls when not recording.
     const diagnosticSessions = new WeakMap();
+    // Renderer-recording-only, per-update route attribution. Never saved and
+    // never enabled by ordinary gameplay or by the separate crowd recorder.
+    const enemyRouteTraces = new WeakMap();
     const diagnosticMetrics = [
       'moveCalls',
       'moveMs',
@@ -71,6 +76,27 @@
       thornPatrolNodesPerTick: 160,
       thornEscortProbesPerTick: 512,
       thornEscortNodesPerTick: 160,
+      // Active elites and the Frontier captain's patrol are independent
+      // of ordinary pursuit, companions, Thorn's retreat and Mira's escort.
+      eliteProbesPerTick: 768,
+      eliteNodesPerTick: 240,
+      captainPatrolProbesPerTick: 512,
+      captainPatrolNodesPerTick: 160,
+      // #615: each native asynchronous consumer has a separate ceiling.
+      // Treasury support, Crown inspection, minister return, Vera and the
+      // two guards cannot steal elite/ordinary/Thorn or companion budgets.
+      supportApproachProbesPerTick: 512,
+      supportApproachNodesPerTick: 160,
+      cinderSelectionProbesPerTick: 512,
+      cinderSelectionNodesPerTick: 160,
+      cinderPatrolProbesPerTick: 512,
+      cinderPatrolNodesPerTick: 160,
+      cinderEscortProbesPerTick: 512,
+      cinderEscortNodesPerTick: 160,
+      cinderGuardProbesPerTick: 512,
+      cinderGuardNodesPerTick: 160,
+      cinderReturnProbesPerTick: 512,
+      cinderReturnNodesPerTick: 160,
     });
     const terrainTrips = new WeakMap(),
       movementPlanFrames = new WeakMap(),
@@ -486,6 +512,22 @@
             thornPatrolNodes: cfg.thornPatrolNodesPerTick,
             thornEscortProbes: cfg.thornEscortProbesPerTick,
             thornEscortNodes: cfg.thornEscortNodesPerTick,
+            eliteProbes: cfg.eliteProbesPerTick,
+            eliteNodes: cfg.eliteNodesPerTick,
+            captainPatrolProbes: cfg.captainPatrolProbesPerTick,
+            captainPatrolNodes: cfg.captainPatrolNodesPerTick,
+            supportApproachProbes: cfg.supportApproachProbesPerTick,
+            supportApproachNodes: cfg.supportApproachNodesPerTick,
+            cinderSelectionProbes: cfg.cinderSelectionProbesPerTick,
+            cinderSelectionNodes: cfg.cinderSelectionNodesPerTick,
+            cinderPatrolProbes: cfg.cinderPatrolProbesPerTick,
+            cinderPatrolNodes: cfg.cinderPatrolNodesPerTick,
+            cinderEscortProbes: cfg.cinderEscortProbesPerTick,
+            cinderEscortNodes: cfg.cinderEscortNodesPerTick,
+            cinderGuardProbes: cfg.cinderGuardProbesPerTick,
+            cinderGuardNodes: cfg.cinderGuardNodesPerTick,
+            cinderReturnProbes: cfg.cinderReturnProbesPerTick,
+            cinderReturnNodes: cfg.cinderReturnNodesPerTick,
           };
           routePlanningFrames.set(this, frame);
         }
@@ -493,7 +535,10 @@
         if (!plan || plan.zone !== zone || plan.mode !== mode ||
             plan.gathering !== gathering ||
             dist(plan.origin, origin) > 20 || dist(plan.target, target) > 20) {
-          const generator = ['tactical', 'pursuit', 'thorn-retreat', 'thorn-patrol', 'thorn-escort'].includes(mode)
+          const generator = ['tactical', 'pursuit', 'thorn-retreat', 'thorn-patrol', 'thorn-escort',
+              'elite-pursuit', 'captain-patrol', 'support-approach',
+              'cinder-selection', 'cinder-patrol', 'cinder-escort',
+              'cinder-guard', 'cinder-return'].includes(mode)
             ? this.budgetedTacticalRoute(origin, target)
             : this.budgetedCompanionRoute(origin, target, gathering);
           plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
@@ -501,12 +546,26 @@
         const pool = mode === 'thorn-retreat' ? 'thornRetreat'
           : mode === 'thorn-patrol' ? 'thornPatrol'
             : mode === 'thorn-escort' ? 'thornEscort'
-              : mode === 'pursuit' ? 'pursuit' : '';
+              : mode === 'elite-pursuit' ? 'elite'
+                : mode === 'captain-patrol' ? 'captainPatrol'
+                  : mode === 'support-approach' ? 'supportApproach'
+                    : mode === 'cinder-selection' ? 'cinderSelection'
+                      : mode === 'cinder-patrol' ? 'cinderPatrol'
+                        : mode === 'cinder-escort' ? 'cinderEscort'
+                          : mode === 'cinder-guard' ? 'cinderGuard'
+                            : mode === 'cinder-return' ? 'cinderReturn'
+                              : mode === 'pursuit' ? 'pursuit' : '';
         const probeKey = pool ? pool + 'Probes' : 'probes',
           nodeKey = pool ? pool + 'Nodes' : 'nodes';
         let probes = Math.min(frame[probeKey],
             mode === 'thorn-retreat' ? cfg.thornRetreatProbesPerTick : cfg.terrainProbesPerSearch),
           nodes = Math.min(frame[nodeKey], cfg.routeNodesPerSearch);
+        // Collision is read-only during this synchronous planner advance.
+        // Reuse exact duplicate probes only until this invocation returns:
+        // no stale geometry across actors, ticks, phase changes or save/load.
+        // Every yielded request still consumes its ORIGINAL probe budget,
+        // preserving per-tick search completion and AI scheduling exactly.
+        const checked = new Map();
         while (true) {
           if (!plan.request) {
             const next = plan.generator.next(plan.reply);
@@ -523,7 +582,13 @@
             if (!probes) break;
             probes--;
             frame[probeKey]--;
-            plan.reply = this.blocked(...plan.request.args);
+            const args = plan.request.args;
+            const key = args.join(':');
+            if (checked.has(key)) plan.reply = checked.get(key);
+            else {
+              plan.reply = this.blocked(...args);
+              checked.set(key, plan.reply);
+            }
           } else throw Error('Unknown route planning step');
           plan.request = null;
         }
@@ -834,18 +899,18 @@
       mapDestinations() {
         const zone = this.zone(),
           region = this.definition(),
-          hidden = new Set([
-            'supplier',
-            'recruiter',
-            'quests',
-            'teacher',
-            'smith',
-            'alchemist',
-            'cage',
-            'bundle',
-          ]);
+          storyPlaces = {
+            vale: ['thorn-local-report', 'mill-pond', 'goblin-camp', 'cache'],
+            march: ['mire-nests', 'night-site'],
+            highlands: ['ogre-hearth', 'ore'],
+            frontier: ['convoy', 'orc-bivouac'],
+            crown: ['siege', 'fortress-gate'],
+          }[region.id] || [];
         const places = this.visibleNPCs()
-          .filter((n) => !n.thornFootprint && (this.isDungeon() || !hidden.has(n.kind)))
+          .filter((n) =>
+            ['rest', 'transport', 'exit', 'dungeon', 'mini'].includes(n.kind) ||
+            (!this.isDungeon() && storyPlaces.includes(n.id)),
+          )
           .map((n) =>
             n.kind === 'rest' && n.id === 'rest' ? { ...n, name: region.town, icon: '🏘️' } : n,
           );
@@ -855,8 +920,7 @@
           name: b.name || 'Barracks',
           icon: b.progress < 4 ? '🏗️' : '🏕️',
         }));
-        // Thornfang's authored tracking clues stay on the map; never turn his
-        // mobile patrol into an omniscient live destination.
+        // Thornfang's moving patrol is handled by the roadside witness.
         const bosses = zone.enemies
           .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral && e.family !== 'thorn')
           .map((e) => ({
@@ -961,7 +1025,7 @@
           return p.decorative ? null : p.r;
         return r;
       }
-      blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false, fort = null) {
+      blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false, fort = null, rangedRay = false) {
         if (this.s.mode === 'arena' && zone === 'arena') {
           const size = this.zoneSize(zone);
           return !Number.isFinite(x) || !Number.isFinite(y) ||
@@ -1046,6 +1110,7 @@
                 x > d.x1 + radius && x < d.x2 - radius && y > d.y1 + radius && y < d.y2 - radius,
             );
           if (
+            !(rangedRay && (R.barriers[i].kind === 'water' || R.barriers[i].kind === 'lava')) &&
             !onInheritedDeck &&
             y > c - radius &&
             y < e + radius &&
@@ -1060,8 +1125,26 @@
         if (!dungeon && !room && !side)
           for (const p of R.terrain[i])
             if (
-              p.kind === 'rain-pools'
-                ? R.rainPoolBlocked(p.pools, x, y, radius)
+              !(rangedRay && (p.kind === 'water' || p.kind === 'lava' || p.kind === 'rain-pools')) &&
+              (p.kind === 'rain-pools'
+                ? // The added upstream creek is expressly shallow/walkable.
+                  // The lower millrace remains solid water except on its true
+                  // short timber bridge. Evaluate the bridge only after a
+                  // water hit; do not add a search cost to the normal hot path.
+                  R.rainPoolBlocked(p.blockingPools || p.pools, x, y, radius) &&
+                  !(zone === 'vale' && R.greenwoodLayout?.millBridge &&
+                    (() => {
+                      const deck = R.greenwoodLayout.millBridge;
+                      const dx = deck.to.x - deck.from.x;
+                      const dy = deck.to.y - deck.from.y;
+                      const len2 = dx * dx + dy * dy;
+                      const t = ((x - deck.from.x) * dx + (y - deck.from.y) * dy) / len2;
+                      if (t < 0 || t > 1) return false;
+                      const cx = deck.from.x + dx * t;
+                      const cy = deck.from.y + dy * t;
+                      return (x-cx)*(x-cx) + (y-cy)*(y-cy) <=
+                        Math.pow(Math.max(0, deck.width / 2 - radius), 2);
+                    })())
                 : p.r
                   ? // Reject obstacles far outside the circle's bounding box
                     // without invoking a square root.
@@ -1073,6 +1156,7 @@
                     y > p.y1 - radius &&
                     y < p.y2 + radius &&
                     !(p.gaps || []).some(([l, h]) => y > l + radius && y < h - radius)
+              )
             )
               return true;
         if (!dungeon && !room && !side) {
@@ -1082,7 +1166,7 @@
               d = harbor.dock,
               onDock =
                 x > d.x1 + radius && x < d.x2 - radius && y > d.y1 + radius && y < d.y2 - radius;
-            if (!onDock && R.harborWaterBlocked(w, x, y, radius)) return true;
+            if (!rangedRay && !onDock && R.harborWaterBlocked(w, x, y, radius)) return true;
           }
         }
         const z = this.s.zones[zone];
@@ -1153,6 +1237,28 @@
             this.blocked(a.x + ((b.x - a.x) * i) / n, a.y + ((b.y - a.y) * i) / n, this.s.zone, 0)
           )
             return false;
+        return true;
+      }
+      // Line-of-fire geometry does not inherit water/lava movement collisions.
+      // Keep line()/clearSegment() unchanged for melee, routes and physical travel.
+      rangedLine(a, b) {
+        const n = Math.ceil(dist(a, b) / 20);
+        for (let i = 1; i < n; i++)
+          if (this.blocked(
+            a.x + ((b.x - a.x) * i) / n,
+            a.y + ((b.y - a.y) * i) / n,
+            this.s.zone, 0, false, null, true,
+          )) return false;
+        return true;
+      }
+      rangedSegment(a, b, fort = null) {
+        const n = Math.max(1, Math.ceil(dist(a, b) / 8));
+        for (let j = 0; j <= n; j++)
+          if (this.blocked(
+            a.x + ((b.x - a.x) * j) / n,
+            a.y + ((b.y - a.y) * j) / n,
+            this.s.zone, 0, false, fort, true,
+          )) return false;
         return true;
       }
       clearSegment(a, b, radius = 15, terrainOnly = false) {
@@ -1424,19 +1530,43 @@
             }),
           );
         }
-        // Open western road shoulder: clear of the hamlet roofs and lantern.
-        // Reposition the same resident on old saves as well as fresh campaigns.
-        witness.name = R.greenwoodLayout?.version === 2
-          ? 'Western road observer'
-          : 'Orchard trail witness';
-        Object.assign(
-          witness,
-          R.greenwoodLayout?.version === 2
-            ? this.safe(850 * R.greenwoodLayout.scale, 750 * R.greenwoodLayout.scale, 'vale')
-            : this.safe(780, 740, 'vale'),
-        );
+        this.positionThornWitness(witness);
       }
-      thornReport(concise = false) {
+      positionThornWitness(witness) {
+        const layout = R.greenwoodLayout;
+        // The west road shoulder is outside the Captain's interaction radius.
+        witness.name = layout?.version === 2 ? 'Western road observer' : 'Orchard trail witness';
+        const position = layout?.version === 2
+          ? this.safe(680 * layout.scale, 1020 * layout.scale, 'vale')
+          : this.safe(780, 740, 'vale');
+        Object.assign(witness, position);
+      }
+      thornWitnessLead() {
+        if (this.s.keys.thorn || this.s.rescued.thorn || this.peace) return null;
+        const thorn = this.s.zones.vale?.enemies.find(
+          (e) => e.type === 'boss' && e.family === 'thorn' && e.hp > 0 &&
+            !e.neutral && !e.developerSummon,
+        );
+        if (!thorn) return null;
+        const cfg = R.thornPatrol;
+        const heading = !(thorn.aggro || thorn.returning || thorn.thornReturn ||
+          thorn.thornIntroRetreat != null || thorn.thornPause > 0);
+        let leg = cfg.startLeg;
+        if (heading) {
+          if (cfg.route[thorn.thornLeg]) leg = thorn.thornLeg;
+        } else {
+          leg = cfg.route.reduce(
+            (best, [x, y], i) =>
+              dist(thorn, { x, y }) < dist(thorn, { x: cfg.route[best][0], y: cfg.route[best][1] })
+                ? i
+                : best,
+            0,
+          );
+        }
+        const [x, y] = cfg.route[leg];
+        return { id: 'thorn-lead-' + leg, name: cfg.names[leg], x, y, heading };
+      }
+      thornReport(concise = false, sighting = concise ? this.thornWitnessLead() : null) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
         if (this.s.keys.thorn) {
           const n = this.thornCaptive(), cfg = R.thornPatrol;
@@ -1447,19 +1577,18 @@
           return 'Thornfang was defeated. Mira waits near ' + cfg.names[i] +
             '. Your journal can guide you to her last known waiting place.';
         }
-        // Never turn a static roadside witness into a global GPS receiver.
-        // Track evidence expires, and only pawprints actually near the observer
-        // or the investigating player can support a recent local claim.
         const z = this.s.zones.vale;
-        const observer = z?.npcs.find((n) => n.id === 'thorn-local-report');
-        const origin = concise ? (observer || this.hero) : this.hero;
+        if (concise) {
+          const lead = sighting
+            ? (sighting.heading ? 'Thornfang’s patrol is heading toward ' : 'Last word puts Thornfang near ') +
+              sighting.name + '.'
+            : 'I haven’t seen Thornfang on the trail lately. Check back and I’ll tell you when he’s out on patrol.';
+          return lead + '\n\n' +
+            'He used to scout for the Crown. Now he takes Mira along to inspect security at the Dark Lord’s winter estate. He pays her, then tells her she can’t leave. Some employer. If you catch up with him, get her out of there.';
+        }
         const fresh = z?.npcs.some((n) => n.thornFootprint &&
           n.expires > this.s.time && Number.isFinite(n.x) && Number.isFinite(n.y) &&
-          dist(n, origin) <= 230);
-        if (concise)
-          return fresh
-            ? 'Recent pawprints were found by the western road. They may already be old; follow the tracks.'
-            : 'No recent sighting from the western road. Search for scout tracks near the southern woods and both crossings.';
+          dist(n, this.hero) <= 230);
         const context = 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
         return (fresh ? 'Fresh pawprints mark this nearby path. Follow their direction. ' : '') + context;
       }
@@ -1542,6 +1671,21 @@
         );
         z.npcs = z.npcs.filter((n) => !remove.has(n.id));
       }
+      // Reuse an already completed, collision-validated route from another
+      // bounded planner (Cindermaw's ordered inspection-stop selection).
+      // This is transient actor-scoped state, never a saved path or second
+      // navigation solver. The ordinary follow() safety check still rejects
+      // the first leg if the actor was displaced before its next update.
+      adoptBudgetedRoute(entity, target, mode, path) {
+        if (!path?.length || !this.clearSegment(entity, path[0])) return false;
+        entity.path = path.slice();
+        entity.routeAge = R.navigationPlanning.routeRetrySeconds;
+        terrainTrips.set(entity, {
+          zone: this.s.zones[this.zoneId], kind: mode,
+          engagement: entity.fightStart, target: { x: target.x, y: target.y }, pending: null,
+        });
+        return true;
+      }
       follow(entity, target, speed, dt, stop = 45, planningMode = null) {
         if (this.s.party.includes(entity))
           return this.followCompanion(entity, target, speed, dt, stop);
@@ -1555,8 +1699,8 @@
             !entity.veraEscort && !this.thornPatroller(entity) &&
             !this.cinderPatroller(entity) && zone.enemies.includes(entity),
           // This isolated exemption is only for the established passive
-          // opening-withdrawal path. Active bosses and scripted combat still
-          // retain their original follow()/route() semantics.
+          // opening-withdrawal path. Active bosses retain their authored
+          // phases; a separate incremental planner bounds their route cost.
           thornRetreat = planningMode === 'thorn-retreat' &&
             entity.thornIntroRetreat !== undefined &&
             !entity.aggro && zone.enemies.includes(entity),
@@ -1565,7 +1709,28 @@
             entity.thornIntroRetreat === undefined && entity.hp > 0,
           thornEscort = planningMode === 'thorn-escort' &&
             entity === this.thornCaptive() && this.thornCaptiveFollowing() && !this.peace,
-          scriptedVale = thornRetreat || thornPatrol || thornEscort;
+          // Only route calculation changes. Native boss/captain attacks,
+          // special phases, telegraphs and reset logic still own each tick.
+          elitePursuit = entity.aggro && !entity.returning &&
+            (entity.type === 'boss' || entity.captain || entity.roomCaptain || entity.fieldCaptain) &&
+            zone.enemies.includes(entity),
+          captainPatrol = planningMode === 'captain-patrol' && entity.fieldCaptain &&
+            !entity.aggro && !entity.returning && zone.enemies.includes(entity),
+          scriptedVale = thornRetreat || thornPatrol || thornEscort,
+          supportApproach = planningMode === 'support-approach' &&
+            entity.hp > 0 && !entity.returning && zone.enemies.includes(entity),
+          cinderPatrol = planningMode === 'cinder-patrol' &&
+            this.cinderPatroller(entity) && !entity.aggro && !entity.returning && entity.hp > 0,
+          cinderEscort = planningMode === 'cinder-escort' &&
+            this.zoneId === 'crown' && entity === this.veraCaptive() && this.veraHeld(),
+          cinderGuard = planningMode === 'cinder-guard' &&
+            this.zoneId === 'crown' && entity.veraEscort && entity.hp > 0 &&
+            zone.enemies.includes(entity),
+          cinderReturn = planningMode === 'cinder-return' &&
+            this.cinderPatroller(entity) && (entity.returning || entity.cinderReturn),
+          scriptedCinder = cinderPatrol || cinderEscort || cinderGuard || cinderReturn,
+          incremental = enemyPursuit || scriptedVale || elitePursuit || captainPatrol ||
+            supportApproach || scriptedCinder;
         let trip = terrainTrips.get(entity);
         // A hero-first interruption must retire its unsaved pending search,
         // including when the new engagement has a clear direct approach.
@@ -1582,7 +1747,7 @@
         if ((!(thornRetreat || thornPatrol) || !entity.path?.length) &&
             this.clearSegment(entity, target)) {
           entity.path = [];
-          if (enemyPursuit || scriptedVale) terrainTrips.delete(entity);
+          if (incremental) terrainTrips.delete(entity);
           return this.move(entity, target, speed, dt, stop);
         }
         entity.routeAge = (entity.routeAge || 0) - dt;
@@ -1590,15 +1755,23 @@
         // An already-computed, still-clear path is not made obsolete by the
         // generic 1.3s retry timer. Replan only if its next leg is obstructed
         // or the original path has been consumed.
-        if ((thornRetreat || thornPatrol) && entity.routeAge <= 0 && entity.path?.length) {
+        if ((thornRetreat || thornPatrol || cinderPatrol) &&
+            entity.routeAge <= 0 && entity.path?.length) {
           if (this.clearSegment(entity, entity.path[0]))
             entity.routeAge = R.navigationPlanning.routeRetrySeconds;
           else entity.path = [];
         }
-        if (enemyPursuit || scriptedVale) {
+        if (incremental) {
           const kind = thornRetreat ? 'thorn-retreat'
             : thornPatrol ? 'thorn-patrol'
-              : thornEscort ? 'thorn-escort' : 'pursuit';
+              : thornEscort ? 'thorn-escort'
+                : captainPatrol ? 'captain-patrol'
+                  : elitePursuit ? 'elite-pursuit'
+                    : supportApproach ? 'support-approach'
+                      : cinderPatrol ? 'cinder-patrol'
+                        : cinderEscort ? 'cinder-escort'
+                          : cinderGuard ? 'cinder-guard'
+                            : cinderReturn ? 'cinder-return' : 'pursuit';
           // A moving hero must not reset the entire search frontier every
           // update. A pending search uses its frozen origin and destination;
           // its result is validated against the actor's actual position.
@@ -1613,7 +1786,10 @@
             entity.routeAge = 0;
           }
           if (trip.pending || entity.routeAge <= 0) {
-            if (scriptedVale || trip.pending || this.reserveMovementPlan(entity)) {
+            // The elite pool also owns admission: combat leaders cannot consume
+            // the companion/delivery shared route-plan count.
+            if (scriptedVale || captainPatrol || elitePursuit || supportApproach || scriptedCinder ||
+                trip.pending || this.reserveMovementPlan(entity)) {
               const origin = trip.pending?.origin || entity,
                 destination = trip.pending?.target || target,
                 result = this.advanceBudgetedRoute(origin, destination, kind, trip.pending);
@@ -1647,7 +1823,14 @@
           }
         }
         while (entity.path?.length && dist(entity, entity.path[0]) < 1) entity.path.shift();
-        if (!entity.path?.length) return false;
+        if (!entity.path?.length) {
+          // A pending search is not a failed patrol leg: retain the authored
+          // destination instead of immediately skipping the checkpoint.
+          // A still-running Treasury support search is not a failed approach:
+          // hold the healer's position instead of starting idle wandering
+          // and invalidating its next legitimate route frontier.
+          return !!((captainPatrol || supportApproach) && trip?.pending);
+        }
         const moved = this.move(entity, entity.path[0], speed, dt);
         if (dist(entity, entity.path[0]) < 1) entity.path.shift();
         return moved;
@@ -1682,6 +1865,52 @@
         }
       };
     }
+    // The native route implementation is untouched; observe only calls made
+    // while the app explicitly brackets a recorded enemy-update substage.
+    const originalRoute = methods.route.value;
+    methods.route.value = function (...args) {
+      const trace = enemyRouteTraces.get(this);
+      if (!trace) return originalRoute.apply(this, args);
+      const started = performance.now();
+      try {
+        return originalRoute.apply(this, args);
+      } finally {
+        const row = trace.phases[trace.phase];
+        if (row) {
+          const ms = Math.max(0, performance.now() - started);
+          row.routeCalls++;
+          row.routeMs += ms;
+          row.maxRouteMs = Math.max(row.maxRouteMs, ms);
+        }
+      }
+    };
+    // The incremental planner has a separate cost: zero full-route calls must
+    // not be mistaken for zero enemy pathfinding. This is also observer-only.
+    const originalBudgetedRoute = methods.advanceBudgetedRoute.value;
+    methods.advanceBudgetedRoute.value = function (...args) {
+      const trace = enemyRouteTraces.get(this);
+      if (!trace) return originalBudgetedRoute.apply(this, args);
+      const started = performance.now();
+      try {
+        return originalBudgetedRoute.apply(this, args);
+      } finally {
+        const row = trace.phases[trace.phase];
+        if (row) {
+          const ms = Math.max(0, performance.now() - started);
+          row.budgetedCalls++;
+          row.budgetedMs += ms;
+          row.maxBudgetedMs = Math.max(row.maxBudgetedMs, ms);
+        }
+      }
+    };
+    methods.setEnemyRouteTrace = {
+      configurable: true,
+      writable: true,
+      value(trace) {
+        if (trace) enemyRouteTraces.set(this, trace);
+        else enemyRouteTraces.delete(this);
+      },
+    };
     delete methods.constructor;
     Object.defineProperties(Campaign.prototype, methods);
   }

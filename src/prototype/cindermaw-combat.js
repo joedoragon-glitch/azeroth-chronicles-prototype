@@ -22,6 +22,9 @@
       angleDistance = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b))),
       alive = (e) => e && e.hp > 0 && !e.neutral && !e.returning,
       isMinister = (e) => e?.type === 'boss' && e.family === 'cindermaw',
+      // Unsaved, actor-scoped inspection-selection frontiers. No game-state
+      // or authored itinerary change; each stop uses the native terrain grid.
+      inspectionPlans = new WeakMap(),
       interrupted = (c, hero, zone, deaths) =>
         c.hero !== hero ||
         c.zoneId !== zone ||
@@ -85,29 +88,71 @@
         if (!this.cinderPatroller(e) || e.aggro || e.neutral || this.peace || e.hp <= 0)
           return false;
         if (e.cinderReturn) {
+          inspectionPlans.delete(e);
           this.disengage(e, dt);
           return true;
         }
         if (!this.cinderEntourageTogether(e)) return true;
         const cfg = R.cinderInspection;
         e.cinderInspectionPause = Math.max(0, (e.cinderInspectionPause ?? cfg.pauseMin) - dt);
-        if (e.cinderInspectionPause > 0) return true;
         if (!e.cinderDestination) {
           const last = Number.isInteger(e.cinderStop) ? e.cinderStop : 0;
-          const choices = this.cinderInspectionStops()
-            .map((p, i) => ({ ...p, i }))
-            .filter((p) => p.i !== last && this.route(e, p).length);
-          if (!choices.length) {
+          let search = inspectionPlans.get(e);
+          if (!search || search.zone !== this.zoneId ||
+              search.fightStart !== e.fightStart || search.stop !== last ||
+              dist(search.origin, e) > 20) {
+            search = { zone: this.zoneId, fightStart: e.fightStart,
+              stop: last, origin: { x: e.x, y: e.y },
+              stops: this.cinderInspectionStops().map((p, i) => ({ ...p, i })),
+              index: 0, choices: [], pending: null };
+            inspectionPlans.set(e, search);
+          }
+          // Previously the synchronous filter finished four complete routes
+          // (plus a fifth follow search) in a single inspection tick.
+          // Preserve original candidate order and single random draw, but
+          // carry each native path-search frontier across finite updates.
+          while (search.index < search.stops.length) {
+            const stop = search.stops[search.index];
+            if (stop.i === last) { search.index++; continue; }
+            const pending = search.pending;
+            const result = this.advanceBudgetedRoute(
+              pending?.origin || e, pending?.target || stop,
+              'cinder-selection', pending,
+            );
+            if (result.pending) {
+              search.pending = result.state;
+              return true;
+            }
+            search.pending = null;
+            // Keep each solver-approved waypoint list alongside its original
+            // facility candidate. The selected itinerary must not pay for the
+            // same costly search a second time after the authored pause.
+            if (result.path.length) search.choices.push({ ...stop, path: result.path });
+            search.index++;
+          }
+          // Plan during the already-authored inspection pause. The boss
+          // still selects its next facility only when that pause expires;
+          // no extra random draw or earlier movement is introduced.
+          if (e.cinderInspectionPause > 0) return true;
+          inspectionPlans.delete(e);
+          if (!search.choices.length) {
             e.cinderInspectionPause = cfg.pauseMin;
             return true;
           }
-          const p =
-            choices[Math.min(choices.length - 1, Math.floor(this.random() * choices.length))];
+          const p = search.choices[
+            Math.min(search.choices.length - 1, Math.floor(this.random() * search.choices.length))
+          ];
           e.cinderDestination = { x: p.x, y: p.y, name: p.name, i: p.i };
-          delete e.path;
+          // An invalidated first leg falls back to a new bounded search;
+          // never trust a stale path after collision/actor displacement.
+          if (!this.adoptBudgetedRoute(e, e.cinderDestination, 'cinder-patrol', p.path)) {
+            delete e.path;
+            e.routeAge = 0;
+          }
         }
+        if (e.cinderInspectionPause > 0) return true;
         const p = e.cinderDestination;
-        this.follow(e, p, cfg.speed * (e.slow > 0 ? 0.5 : 1), dt, cfg.arrival);
+        this.follow(e, p, cfg.speed * (e.slow > 0 ? 0.5 : 1), dt, cfg.arrival, 'cinder-patrol');
         if (dist(e, p) <= cfg.arrival + 1e-7) {
           e.cinderStop = p.i;
           delete e.cinderDestination;
@@ -137,13 +182,13 @@
             // so correctly positioned guards cannot deadlock the itinerary.
             point =
               dist(preferred, e) <= R.cinderInspection.waitForCaptive + 20 ? preferred : center;
-          this.follow(u, point, R.cinderInspection.guardSpeed, dt, 20);
+          this.follow(u, point, R.cinderInspection.guardSpeed, dt, 20, 'cinder-guard');
           return true;
         }
         // Liberation/victory cancels compulsory escort; surviving ordinary
         // guards walk home rather than snapping back or spawning replacements.
         if (dist(u, u.home) > 1) {
-          this.follow(u, u.home, R.cinderInspection.guardSpeed, dt, 0);
+          this.follow(u, u.home, R.cinderInspection.guardSpeed, dt, 0, 'cinder-guard');
           return true;
         }
         delete u.veraEscort;
@@ -167,7 +212,7 @@
         }
         // Reuse the established collision/follow machinery. Vera never joins
         // the party, target lists or damage resolver.
-        this.follow(n, e, R.cinderInspection.captiveSpeed, dt, R.cinderInspection.separation);
+        this.follow(n, e, R.cinderInspection.captiveSpeed, dt, R.cinderInspection.separation, 'cinder-escort');
         if (!e.aggro || e.returning || e.cinderReturn) {
           this.clearVeraRepairs(z);
           return;
