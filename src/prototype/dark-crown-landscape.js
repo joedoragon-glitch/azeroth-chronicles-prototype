@@ -3,6 +3,7 @@
   'use strict';
 
   const VERSION = 2;
+  const PAINT_REVISION = 3;
   const WORLD_SIZE = 3800;
   const clamp = (n) => Math.max(0, Math.min(1, n));
   const smooth = (t) => t * t * (3 - 2 * t);
@@ -129,9 +130,9 @@
   function pigment(field) {
     const age = field.age;
     return [
-      48 + age * 21 + field.oxidization * 18,
-      47 + age * 17 + field.island * 9,
-      57 + age * 19 - field.island * 6,
+      48 + age * 21 + field.oxidization * 18 - field.island * 5,
+      47 + age * 17 + field.island * 18,
+      57 + age * 19 - field.island * 20,
     ];
   }
   const rgb = (channels) => 'rgb(' + channels.map(Math.round).join(',') + ')';
@@ -140,8 +141,8 @@
   // renderer, save and time. Arbitrary coordinates remain uncached.
   const paintedFields = new Map();
   function authoredPaintField(x, y) {
-    if (x < 0 || y < 0 || x > WORLD_SIZE + 80 || y > WORLD_SIZE + 80 ||
-        x % 80 !== y % 80 || x % 40) return sample(x, y, authored);
+    if (x < 0 || y < 0 || x > WORLD_SIZE + 80 || y > WORLD_SIZE + 80 || x % 80 !== y % 80 || x % 40)
+      return sample(x, y, authored);
     const key = x * (WORLD_SIZE + 81) + y;
     let field = paintedFields.get(key);
     if (!field) {
@@ -185,26 +186,50 @@
     ctx.stroke();
     const tileX = x / 80,
       tileY = y / 80;
+    // Select marks by substrate so a lava lobe, a broken flow edge and a
+    // cinder bed read differently at gameplay zoom. All share the tile cache.
+    const rope = field.material === 'young-basalt' && field.fracture < 0.58;
+    const clinker = !rope && field.fracture > 0.58 && field.cinder < 0.66;
     const grainCount = Math.round(5 + 8 * field.cinder);
     for (let n = 0; n < grainCount; n++) {
       const u = 10 + hash2(tileX, tileY, 401 + n * 23) * 60;
       const v = 10 + hash2(tileX, tileY, 719 + n * 31) * 60;
       const px = p.x + (u - v) * 0.76,
         py = p.y + (u + v) * 0.27;
-      const joint = n < 2 && field.fracture > 0.48;
-      const length = 2 + hash2(tileX, tileY, 907 + n * 47) * (joint ? 22 : 4);
-      ctx.strokeStyle = n % 3 === 0 ? '#c7b0a92b' : '#20202d62';
-      ctx.lineWidth = joint ? 1.3 : 0.7;
+      const variation = hash2(tileX, tileY, 907 + n * 47);
       ctx.beginPath();
-      ctx.moveTo(px - length / 2, py + 1);
-      ctx.lineTo(px, py - (joint ? 3 : 1));
-      ctx.lineTo(px + length / 2, py + (joint ? 2 : 0));
+      if (rope && n < 2) {
+        const span = 7 + variation * 13;
+        const tilt = (hash2(tileX, tileY, 831) - 0.5) * 11;
+        ctx.strokeStyle = '#827b9138';
+        ctx.lineWidth = 1.3;
+        for (let rib = 0; rib < 2 + Number(variation > 0.6); rib++) {
+          const y = py + rib * 2.8;
+          ctx.moveTo(px - span, y + 3 - tilt);
+          ctx.quadraticCurveTo(px - span * 0.22, y - 6, px + span, y + 1 + tilt);
+        }
+      } else if (clinker && n < 4) {
+        const span = 3 + variation * 8;
+        const bend = n % 2 ? 1 : -1;
+        ctx.strokeStyle = n % 2 ? '#91839240' : '#191a2678';
+        ctx.lineWidth = 1.2;
+        ctx.moveTo(px - span, py + bend * 2);
+        ctx.lineTo(px - span * 0.25, py - bend * 3);
+        ctx.lineTo(px + span * 0.25, py + bend * 2);
+        ctx.lineTo(px + span, py - bend);
+      } else {
+        ctx.strokeStyle = n % 3 === 0 ? '#c7b0a94a' : '#20202d62';
+        ctx.lineWidth = 0.8 + variation * 0.6;
+        ctx.moveTo(px, py);
+        ctx.lineTo(px + 0.6 + variation * 2.4, py - variation);
+      }
       ctx.stroke();
     }
   }
 
   const api = Object.freeze({
     VERSION,
+    PAINT_REVISION,
     WORLD_SIZE,
     hash2,
     noise,

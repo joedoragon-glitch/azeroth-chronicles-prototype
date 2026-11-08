@@ -226,8 +226,8 @@
 
 **Full-party wound treatment — dev.217 published 29 October 2026:** [merged PR #588](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/588) changed the Captain and completed Barracks **Treat wounds** service to fully heal the wounded hero and living companions for 30 crowns, while retaining separate 40-crown fallen recovery, safe-service checks, target-bound unpaid queues, v4 saves, and English/Spanish onboarding. [successful merged-main focused and Pages run #40823109435](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40823109435) verified publication; actual phone/Chromebook acceptance remains unverified.
 
-<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.286 -->
-**Current code/build version:** `0.9.1+snapshot.dev.286` — Dark Crown integration checkpoint on draft PR #769.
+<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.287 -->
+**Current code/build version:** `0.9.1+snapshot.dev.287` — Dark Crown integration checkpoint on draft PR #769.
 **Latest verified published code/build version:** `0.9.1+snapshot.dev.276` — [main `ee44c2f`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/ee44c2f9975a9ced0b392ad19f2e317a01e669f8), [successful focused/Pages #42480404721](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42480404721). Owner Chromebook Report (39) verifies this SHA was loaded in that report; full-campaign certification remains open.
 **Historical playable music update — dev.248 (31 October 2026), superseded by dev.249/250:** `0.9.1+snapshot.dev.248` merged in [PR #740](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/740) and [published #41242493774](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242493774). Its 65 new source-authored tracks and 18 preserved Crown recordings remain historical evidence; later dev.249 extended the audio catalog.
 
@@ -254,7 +254,7 @@ Owner-directed narrow save-system revision: keep the existing v4 primary snapsho
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
 | Source | **dev.276 merged, published** | [Main `ee44c2f`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/ee44c2f9975a9ced0b392ad19f2e317a01e669f8) includes #858, #860 and #861 and earlier performance releases. |
-| Build/cache version | **`0.9.1+snapshot.dev.286`** — candidate | Dark Crown integration checkpoint. The published dev.276 receipt is above. |
+| Build/cache version | **`0.9.1+snapshot.dev.287`** — candidate | Dark Crown integration checkpoint. The published dev.276 receipt is above. |
 | Focused automation | **dev.276 merged-main tests succeeded** | Focused validation in [#42480404721](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42480404721); not a broad campaign/browser matrix. |
 | GitHub Pages publication | **Published dev.276** | [GitHub Pages publication #42480404721](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42480404721) completed successfully. |
 | Owner Chromebook loaded build | **dev.276 SHA independently observed in Report (39)** | Private real-device export recorded `buildCommit=ee44c2f9975a9ced0b392ad19f2e317a01e669f8` while **Canvas2D was active**; no broader PWA or Pixi inference. |

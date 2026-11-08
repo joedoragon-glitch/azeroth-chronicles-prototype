@@ -11,11 +11,11 @@ The approved reference pair is **Craters of the Moon, Idaho (primary)** and **Ne
 | NL03 Layered ridges and walkable open ground | Crownwatch basalt shoulder, native walking checks | Review depth and skyline composition; strengthen weak silhouettes without adding collision. |
 | NL04 Charcoal, slate and subdued violet | Low-saturation pigment formula | Inspect exposure and color in both renderers, day and night. |
 | NL05 Gradual weathering and drifting ash | Age blending and shared corner gradients | Verify legible young-to-old flow transitions; localized drifting ash remains unverified. |
-| NL06 Three or four memorable islands | Exactly three named, authored habitat footprints | Walk through each and check that it reads at landscape-phone scale. |
+| NL06 Three or four memorable islands | Exactly three named, authored habitat footprints with a subdued older-soil tint | Walk through each and check that it reads at landscape-phone scale. |
 | NL07 Western and southern emphasis | Southwest and southern-fold sites plus the Ash Refuge perimeter | Verify route order and separation in play. |
 | NL08 Golden bunchgrasses and sparse flowers | Site-filtered bunchgrass and occasional wildflower placements | Check density and visibility against rock without a uniform grass carpet. |
 | NL09 Small sheltered conifer clusters | Pine candidates restricted to older cores of the two distant islands | Verify final placed silhouettes and shelter, including representative seeds. |
-| NL10 Ropes, clinker/fractures and granular cinders | Fracture strokes and cinder grain in the painter | Ropy lava and distinct jagged clinker silhouettes are not separately established. Add or strengthen these only where the source and walk show a gap. |
+| NL10 Ropes, clinker/fractures and granular cinders | Dev.287 adds clustered curved ribs on younger basalt, jagged marks on fractured ground, and granular speckling on ash and older ground. | Reviewed at landscape-phone scale in sampled views. Confirm the full walked transition and natural composition in the final sweep. |
 | NL11 Crownwatch integrated into old shelves | Painted north shoulder, existing streets and city footprints | Walk the city reveal and check that basalt reads as a foundation rather than a detached patch. |
 | NL12 Ash Refuge wild island | A dedicated older-ground island and a separate cultivated courtyard | Verify wild-to-domestic contrast on foot. |
 | NL13 Industrial scoria, rust and ash margins | Regional mineral and oxidation fields, protected hot works and freight corridors | Check the margin at glassworks, ceramic works and Foundry; add local treatment where generic ground persists. |

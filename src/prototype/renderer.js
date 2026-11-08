@@ -3285,7 +3285,7 @@
             origin,
             scene: z,
             revision: i === 4 && root.PrototypeDarkCrownLandscape
-              ? 'crown-landscape-' + root.PrototypeDarkCrownLandscape.VERSION
+              ? 'crown-landscape-' + root.PrototypeDarkCrownLandscape.PAINT_REVISION
               : optimized
                 ? 'optimization-procedural-v1'
                 : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',

@@ -309,6 +309,9 @@ async function main() {
         }
         if (['march', 'crown'].includes(name)) g.enter(name);
         const crownView = {
+          'crown-young-flow': [1600, 880, 245],
+          'crown-west-flow': [660, 2520, 245],
+          'crown-southwest-island': [710, 3120, 480],
           'crown-courtyard-day': [880, 2000, 245],
           'crown-courtyard-night': [880, 2000, 480],
           'crown-fortress-freight': [3085, 2325, 245],
