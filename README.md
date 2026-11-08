@@ -38,6 +38,8 @@ Greenwood has a working mill and pond, cultivated orchards, a separate decorativ
 
 These are **default** desktop bindings. Movement, interaction, menu/back, combat, and utility keys can all be changed under **Settings → Controls → Customize keyboard → Movement and menu keys** (or the other key groups). Escape remains a safety fallback for opening and leaving menus; Enter remains available for confirmation. On phone, use the on-screen buttons and joystick or tap a reachable destination.
 
+On desktop, a prompt shows the current **Interact** key and the nearby NPC, object, or resource it will act on. It follows your binding if you change it.
+
 | Action | Desktop / Chromebook | Phone |
 | --- | --- | --- |
 | Move | W / A / S / D | Left joystick or tap-to-move |

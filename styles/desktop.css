@@ -13,6 +13,25 @@ body[data-experience='desktop'] #hud {
 body[data-experience='desktop'] #movement {
   display: none;
 }
+#desktop-interaction {
+  display: none;
+}
+body[data-experience='desktop']:not(.menu-open):not(.title-active) #desktop-interaction:not([hidden]) {
+  display: block;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 6;
+  max-width: min(18rem, 42vw);
+  padding: 7px 11px;
+  border: 1px solid #abb99791;
+  border-radius: 7px;
+  background: #102018f2;
+  color: #f2ecd7;
+  font-size: 14px;
+  font-weight: 600;
+  pointer-events: none;
+}
 body[data-experience='desktop'] #skills {
   left: calc((100vw - min(260px, 27vw) - 24px) / 2);
   bottom: 14px;

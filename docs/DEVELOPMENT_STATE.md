@@ -1,3 +1,5 @@
+**8 November 2026 — New-player interaction and Barracks artwork (dev.276 candidate).** Pixi selects a new cached image at each visible construction stage and at Basic/Full completion. Desktop shows the current Interact binding and nearby target using the same selection as the action itself. Companion build orders and Canvas artwork follow the existing behavior. See [visual parity](PIXI_VISUAL_PARITY_20261031.md). Player release and installed-device verification are pending.
+
 **7 November 2026 — owner-marked Screen and performance decluttering (dev.275 candidate).** Screenshot-directed removal of noninteractive redundant headings, effective-state repeats and tips; keep the existing single-page controls, active renderer/fallback status, effective density, graphics, AI and saves. The [feature documentation](MENU_SCREEN_PERFORMANCE_STEP2_20261023.md) and focused bilingual/menu/renderer tests own the change. Owner authorized merging after validation. **Dev.275 is not yet published or device-verified.** Dev.274 was [merged #857](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/857) and [published on main c1c33b8 in Pages #42445318925](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42445318925).
 
 **7 November 2026 — one-page Screen & Performance correction, dev.274 draft.** Owner rejected the separate Display/Renderer/Graphics/Frame Pacing child pages in published dev.273. [PR #857](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/857) stages one scrollable page, grouped nonrepeated renderer/quality/FPS settings, and silent preference migration with no technical title-screen notice. Feature details: [Screen & Performance](MENU_SCREEN_PERFORMANCE_STEP2_20261023.md). The owner authorized merging after relevant exact-head checks; **this commit is not yet a release**. Existing Pixi/Canvas safety, AI, combat, saves and Playtest tools remain; physical Chromebook/phone and campaign-wide performance acceptance are not inferred.
@@ -218,8 +220,8 @@
 
 **Full-party wound treatment — dev.217 published 29 October 2026:** [merged PR #588](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/588) changed the Captain and completed Barracks **Treat wounds** service to fully heal the wounded hero and living companions for 30 crowns, while retaining separate 40-crown fallen recovery, safe-service checks, target-bound unpaid queues, v4 saves, and English/Spanish onboarding. [successful merged-main focused and Pages run #40823109435](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40823109435) verified publication; actual phone/Chromebook acceptance remains unverified.
 
-<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.275 -->
-**Current code/build version:** `0.9.1+snapshot.dev.275` — screenshot UI cleanup candidate; not yet merged or published.
+<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.276 -->
+**Current code/build version:** `0.9.1+snapshot.dev.276` — desktop interaction and Barracks visual parity candidate, unpublished.
 **Latest verified published code/build version:** `0.9.1+snapshot.dev.274` — [main `c1c33b8`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/c1c33b8effd5939eb67384a69af59a4c23c342c9), [successful Pages #42445318925](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42445318925). Device-installed build and whole-campaign FPS remain separately unverified.
 **Historical playable music update — dev.248 (31 October 2026), superseded by dev.249/250:** `0.9.1+snapshot.dev.248` merged in [PR #740](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/740) and [published #41242493774](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242493774). Its 65 new source-authored tracks and 18 preserved Crown recordings remain historical evidence; later dev.249 extended the audio catalog.
 
@@ -245,9 +247,9 @@ Owner-directed narrow save-system revision: keep the existing v4 primary snapsho
 
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
-| Source | **dev.275 compact settings candidate on published dev.274** | [Screen and performance contract](MENU_SCREEN_PERFORMANCE_STEP2_20261023.md); game systems unchanged. |
-| Build/cache version | **`0.9.1+snapshot.dev.275`** — candidate | Package, generated metadata and SW cache stamped for offline build verification. |
-| Focused automation | **dev.275 awaiting exact-head checks** | Bilingual menu, renderer safety and offline packaging checks before merge. |
+| Source | **dev.276 desktop interaction and Barracks visual parity candidate** | [Canvas–Pixi visual parity](PIXI_VISUAL_PARITY_20261031.md). |
+| Build/cache version | **`0.9.1+snapshot.dev.276`** — candidate | Package, generated metadata and SW cache stamped for offline build verification. |
+| Focused automation | **dev.276 candidate** | Focused construction, Pixi cache and offline packaging checks. |
 | GitHub Pages publication | **dev.274 published; dev.275 pending** | [Pages #42445318925](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42445318925) published dev.274. |
 | An individual's open browser / installed PWA | **Local uptake unverified** | A browser/PWA can retain an older service worker; confirm the version on that device after accepting the update. |
 | Physical browser/device acceptance | **Not certified by this audit** | Pixi/Canvas side-by-side fidelity, real Chromebook/phone sustained frame pacing, GPU/process memory and first-frame scenes remain under [Stage 7 runbook](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md) / [#478](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/478); other specific known issues below also remain open |

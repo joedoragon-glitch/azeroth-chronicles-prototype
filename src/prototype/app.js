@@ -3326,6 +3326,7 @@
     )
       worldPointer = null;
     else cancelTravel();
+    $('desktop-interaction').hidden = true;
   }
   // Shared presentation controls. Gameplay menus still use action() unchanged.
   const menuControls = Object.freeze({
@@ -9949,6 +9950,14 @@
     $('touch-interact-button').hidden = !n || !activePlay();
     setMarkup('touch-interact-button', tr('Interact'));
     $('touch-interact-button').title = n ? n.name : '';
+    const desktopInteraction = $('desktop-interaction');
+    desktopInteraction.hidden =
+      platform.mode !== 'desktop' || !n || !activePlay() || !!sceneTransition;
+    if (!desktopInteraction.hidden) {
+      const label = '[' + input.key('confirm') + '] ' + tr('Interact');
+      const prompt = n.name ? label + ' · ' + tr(n.name) : label;
+      if (desktopInteraction.textContent !== prompt) desktopInteraction.textContent = prompt;
+    }
     $('order-button').textContent = tr('Confirm');
     $('desktop-hints').textContent =
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('') +

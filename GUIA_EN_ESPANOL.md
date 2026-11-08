@@ -55,6 +55,8 @@ Greenwood tiene un molino y estanque de trabajo, huertos en distintas etapas, un
 
 Los siguientes son los **atajos predeterminados** del teclado. Puedes cambiar movimiento, interacción, apertura del menú, combate y otras teclas en **Ajustes → Controles → Personalizar teclado**. La tecla Esc siempre funciona como salida de emergencia de los menús. También hay distribuciones clásicas y alternativas.
 
+En computadora, al acercarte a un personaje, objeto o recurso, aparece un aviso con su nombre y la tecla actual de **Interactuar**. Si cambias esa tecla, el aviso usa la nueva.
+
 | Lo que quieres hacer | Computadora o Chromebook | Teléfono |
 | --- | --- | --- |
 | Moverte | **W / A / S / D** | Palanca izquierda o tocar un destino accesible |
