@@ -1,6 +1,22 @@
 # Screen & Performance settings
 
-## November 7 follow-up — Pixi-first settings audit (#839)
+## Current owner correction — one page, no title-screen migration notice (7 Nov 2026)
+
+**Base:** published `main@97cb3b8af9c24976e5946a786d33f22461a78049`, dev.273, following merged #855 and #856 ([Pages #42430517255](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42430517255)). **Current candidate:** dev.274 on [PR #857](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/857), not player-published pending relevant exact-head checks; owner authorized merge after validation. Physical-device acceptance is separate.
+
+The owner rejected dev.273's four clickable child menus and duplicate technical readouts. **Screen and performance is now a single scrollable Settings page**, with inline section headings and their controls:
+- **Display:** current layout, layout choice and zoom.
+- **Renderer and recovery:** active world renderer (only during gameplay), any genuine known recovery/fallback state, and the chosen Pixi/Canvas renderer. The selector itself communicates the preferred choice, so no duplicate preferred-renderer summary. Safe retry remains available only when appropriate, with the existing manual 15-second Keep/Revert and quarantine intact.
+- **Pixi graphics / Canvas graphics:** effective density when gameplay is running, one relevant set of graphics controls, and its own effective quality readouts. Before New Game/Continue, show the preferred backend's settings without claiming that the title Canvas element is an actual Pixi failure. A configured Canvas backup and true fallback still show Canvas controls when active.
+- **Frame pacing:** draw target appears once, beside FPS selection and adaptive skip. This is a target, not a display-presentation measurement.
+
+**No Display, Renderer and recovery, Graphics or Frame pacing navigation buttons or child screens remain.** Gameplay controls/prefs, both rendering implementations, performance presets, critical recovery, save data and actual performance metrics are unchanged. **Playtest tools** remains the distinct, one-page diagnostics destination under Settings, with Export, Performance details, profiling, and Reset available together; Help and privacy remains an informational subpage.
+
+The title screen does **not** announce Pixi, expose graphics explanations, or announce that preferences were migrated/reset. The one-time migration remains functional but silent; existing offline/update-availability messaging is unrelated and unchanged. A false “Pixi startup failed” label is suppressed before gameplay on an ordinary clean launch; actual stored recovery holds are still visible in Settings. This distinction requires targeted title/entry/real-failure tests, not only static inspection.
+
+**Validation/release gate:** verify English/Spanish production-shell menus, a no-announcement title launch, Canvas selection and recovery, focused Pixi browser navigation, phone layout geometry, and the relevant offline package at exact candidate SHA. A draft is not a player update; merging/deployment require separate approval. No claim of improved FPS or ChromeOS/iOS hardware verification is made.
+
+## Historical 7 November split-page audit — superseded by owner direction
 
 Baseline: published dev.272 (`0a7397bfb39e456f1d88584bca8f71c8fbe0c114`). The October consolidation and dev.271–272 candidate notes below are historical. The follow-up belongs in one PR.
 
@@ -14,7 +30,7 @@ Baseline: published dev.272 (`0a7397bfb39e456f1d88584bca8f71c8fbe0c114`). The Oc
 
 Resume in order: verify main and the open PR, finish the preference/safety contract, complete the player-facing pages, then run targeted shell and browser journeys and reconcile this document and the development ledger. Candidate acceptance requires the exact branch head and concrete pass/fail evidence. Publication requires separate owner authorization.
 
-Checkpoint: initial runtime implementation is in draft [PR #856](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/856). It splits the settings pages, uses the live renderer for graphics controls, separates saved and effective values, and adds a pre-controller settings migration. An interrupted trial preserves the guard’s Canvas decision rather than being retried by the migration. Current checks and remaining acceptance are tracked in the PR.
+Historical checkpoint: initial runtime implementation was in [PR #856](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/856). It split the settings pages (subsequently rejected by the owner), used the live renderer for graphics controls, separated saved and effective values, and adds a pre-controller settings migration. An interrupted trial preserves the guard’s Canvas decision rather than being retried by the migration. PR #856 merged/published dev.273 before the owner's later one-page correction. Its original checks are historical evidence, not acceptance of the revised navigation.
 
 ### Playtest tools
 

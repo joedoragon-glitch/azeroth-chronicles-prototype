@@ -204,10 +204,22 @@ function contrast(item) {
         await frame.locator('#title-settings').tap();
         const settingsFit = await assertDialogGeometry(frame, 'Settings', { noScroll: true });
         await frame.getByRole('button', { name: language === 'es' ? /Pantalla y rendimiento/ : /Screen and performance/ }).tap();
-        await assertDialogGeometry(frame, 'Screen and performance');
-        await frame.getByRole('button', { name: language === 'es' ? 'Gráficos de Canvas' : 'Canvas graphics', exact: true }).tap();
-        const graphicsFit = await assertDialogGeometry(frame, 'Canvas graphics');
-        await frame.locator('#close-button').tap();
+        const graphicsFit = await assertDialogGeometry(frame, 'Screen and performance');
+        assert.equal(
+          await frame.locator('#modal-actions .menu-section')
+            .filter({ hasText: language === 'es' ? 'Gráficos de Canvas' : 'Canvas graphics' })
+            .count(),
+          1,
+          'active Canvas graphics is one inline section, not a submenu',
+        );
+        assert.equal(
+          await frame.getByRole('combobox', {
+            name: language === 'es' ? 'Objetivo de dibujo (FPS)' : 'Drawing target (FPS)',
+            exact: true,
+          }).count(),
+          1,
+          'frame pacing remains reachable on the same page',
+        );
         await frame.locator('#close-button').tap();
         await frame.getByRole('button', { name: language === 'es' ? 'Herramientas de prueba' : 'Playtest tools', exact: true }).tap();
         await assertDialogGeometry(frame, 'Playtest tools');
