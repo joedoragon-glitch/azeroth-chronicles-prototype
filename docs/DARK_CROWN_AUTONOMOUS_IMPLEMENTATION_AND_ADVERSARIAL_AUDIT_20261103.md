@@ -11,7 +11,7 @@ The terrain painter now reuses immutable samples at world tile centers and share
 | #707 scene | Draft evidence | Release disposition |
 | --- | --- | --- |
 | 1. Crownwatch approach | Existing route and city composition, procedural ground, current camera samples | Walked reveal and exits open |
-| 2. Ridge and three towers | Three physical utility towers across the region | A real ridge and coherent view remain open |
+| 2. Ridge and three towers | Three function-specific utility towers and an exposed Crownwatch basalt shoulder | Walked skyline framing and cross-renderer review open |
 | 3. Civic square and hall | Existing rest service, forecourt and ministry frontage | Full services and matched day/night scene open |
 | 4. Courtyard housing | Current-main Ash Refuge household art retained | Connected walkable housing and camera review open |
 | 5. Ash Refuge | Local tower, existing households, one tested habitat | District composition and lived-in details open |

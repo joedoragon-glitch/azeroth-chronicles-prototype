@@ -14083,18 +14083,28 @@
           }
           break;
         }
-        case 'crown-water-tower':
+        case 'crown-water-tower': {
+          const civic = e.id === 'crownwatch-water-tower';
+          const refuge = e.id === 'ash-refuge-water-tower';
+          ctx.save();
+          ctx.scale(refuge ? 0.87 : civic ? 1 : 1.1, refuge ? 0.79 : civic ? 1.12 : 0.94);
           fillOval(0, 10, 32, 13, '#272633', 0.3);
           blockwork(-23, -23, 46, 38, '#706d7c', 6);
           for (const x of [-16, 16]) blockwork(x - 5, -67, 10, 72, '#888593', 7);
-          softRect(-29, -91, 58, 39, '#60767e', 6);
+          softRect(-29, -91, 58, 39, refuge ? '#5c7470' : civic ? '#60767e' : '#6e697a', 6);
           for (const y of [-84, -73, -62])
             softRect(-28, y, 56, 3, '#a4aca7', 1);
           softPoly([[-33, -89], [0, -109], [33, -89], [0, -80]], '#a5a0a5', 2);
+          if (civic) {
+            softRect(-7, -114, 14, 12, '#8f8b99', 2);
+            softPoly([[-10, -113], [0, -122], [10, -113]], '#c7b79d', 1);
+          }
           softRect(-7, -12, 14, 26, '#444652', 2);
           line([[22, -54], [22, -19], [33, -15], [33, 10]], '#a8a391', 3);
           oval(33, -8, 6, 4, '#637a80');
+          ctx.restore();
           break;
+        }
         case 'crown-bathhouse':
           fillOval(0, 13, 58, 15, '#272532', 0.25);
           blockwork(-52, -42, 104, 58, '#a19a98', 8);
@@ -20878,6 +20888,16 @@
       for (let x = 450; x <= 790; x += 40) line({ x, y: 450 }, { x, y: 700 }, '#b7a4b644', 1);
       for (let y = 450; y <= 700; y += 40) line({ x: 450, y }, { x: 790, y }, '#b7a4b644', 1);
       for (const y of [450, 700]) line({ x: 450, y }, { x: 790, y }, '#b5a081', 2);
+    }
+    if (region === 4) {
+      // Exposed basalt at Crownwatch's north shoulder. Existing streets
+      // overpaint the shelf and retain their authored grades and collision.
+      poly([{x: 765, y: 345}, {x: 855, y: 300}, {x: 1008, y: 332},
+        {x: 1090, y: 395}, {x: 986, y: 425}, {x: 852, y: 402}], '#393340');
+      poly([{x: 765, y: 345}, {x: 852, y: 402}, {x: 986, y: 425},
+        {x: 979, y: 438}, {x: 842, y: 414}], '#292633');
+      poly([{x: 815, y: 350}, {x: 863, y: 321}, {x: 987, y: 346},
+        {x: 1025, y: 378}, {x: 974, y: 392}, {x: 866, y: 374}], '#514959');
     }
     for (const p of R.terrain[region]) {
       const kind = p.kind || 'cliff';

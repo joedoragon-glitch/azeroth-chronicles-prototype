@@ -1188,7 +1188,7 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "351b5c6c330a600c1db6eeb6774065d2bcd1ab67b75345ccfdf547fd39dae217",
+    "src/prototype/visuals.js": "a1a79a3a34fe60ea9c9e67c4b1113a67097888e6bf50c44ad0df9b8739229dd7",
     "src/prototype/world.js": "e8d8012db515915b422db47725f9b61f396e1c1bac78d281c70b310d25ea82cc",
     "src/prototype/rules.js": "006cb41261639b8514ccd5180c9505fafd7d9b445f5592ce6ceb1c7fbf90c84b",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
