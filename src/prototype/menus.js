@@ -186,6 +186,50 @@
     "Tovan y Vera poseen los últimos conocimientos de entrenamiento y forja que necesitas. Libéralos antes de tomar el camino hacia la fortaleza del Dark Lord."
   ]
 ];
+  // One first in-person conversation after each rescue. Do not replay at the
+  // remote Barracks: training access and the meeting are different events.
+  const specialistStories = {
+  "thorn": [
+    "Honestly, my feet are killing me. Thornfang hired me to check the winter estate's defenses and train its guards, then dragged me round his patrol for days. Every time I asked to go back to Millhaven, his hounds turned me around. Thank you. If he's out patrolling again, watch yourself—he knows those paths.",
+    "Me están matando los pies. Thornfang me contrató para revisar las defensas de la residencia invernal y entrenar a sus guardias, y luego me llevó de patrulla durante días. Cada vez que pedía volver a Millhaven, sus sabuesos me cerraban el paso. Gracias. Si vuelve a patrullar, ten cuidado: conoce esos senderos."
+  ],
+  "crypt": [
+    "Good to be heading home. The Lifebinder's crews were fitting an old crypt out as the Dark Lord's winter house, with salvage coming in from Scornfang's yard. Those skeletons didn't come out of the graves here; they came with him. They have names and opinions, and not all of them like the work. I got tired of being told my pay made it voluntary.",
+    "Qué ganas tenía de volver a casa. Las cuadrillas de Lifebinder convertían una vieja cripta en la casa invernal del Dark Lord, usando materiales del depósito de Scornfang. Esos esqueletos no salieron de las tumbas de aquí; vinieron con él. Tienen nombres y opiniones, y no a todos les gusta la obra. Me cansé de oír que, por cobrar, estaba allí por voluntad propia."
+  ],
+  "mire": [
+    "I'd had enough of that marsh. Mirejaw knows the channels better than anyone I've met; he could tell when a landing would flood before the boats moved. Direjaw, his disciple, kept the supply post running. Neither of them seemed to think that meant owning the fishers' villages, but they certainly guarded their own waters. Thanks for getting me back.",
+    "Ya había tenido bastante pantano. Mirejaw conoce los canales mejor que nadie; sabía cuándo se inundaría un embarcadero antes de que zarparan los botes. Direjaw, su discípulo, dirigía el puesto de suministros. No parecían creer que eso les diera las aldeas pesqueras, pero defendían sus aguas a conciencia. Gracias por ayudarme a volver."
+  ],
+  "archive": [
+    "I can finally put the drying cloths down. The Keeper had me saving books from the flooded shelves, and the Lantern Wraiths helped sort them. He kept telling them to mind their lanterns around the paper. He's still trying to discover where the water came from. I wish he'd been as careful about asking whether I wanted to stay.",
+    "Por fin puedo soltar los paños de secado. El Keeper me obligó a salvar libros de las estanterías inundadas, y los Lantern Wraiths ayudaban a ordenarlos. No paraba de recordarles que alejaran las linternas del papel. Aún investiga de dónde vino el agua. Ojalá hubiera preguntado con el mismo cuidado si yo quería quedarme."
+  ],
+  "ridge": [
+    "I taught at that watchtower long enough to hear plenty about wages. The Master of Coin pays his miners and archers well and keeps the ore roads in good repair. He can tell you the value of every shipment. Try asking whether the people doing the work can refuse, though. Thanks for giving me back that choice.",
+    "En aquella torre enseñé el tiempo suficiente para oír mucho sobre salarios. El Maestro de la Moneda paga bien a mineros y arqueros, y mantiene los caminos del mineral. Sabe cuánto vale cada cargamento. Pero pregúntale si quienes trabajan pueden negarse. Gracias por devolverme esa elección."
+  ],
+  "mine": [
+    "Garun designed that stone body himself, you know. He paid me to repair the Mine's gear and make little machines that mostly just looked interesting. He'd argue about every angle, then pay what we agreed. I could bargain over the work and walk around the Mine. What I couldn't bargain for was permission to leave.",
+    "¿Sabías que Garun diseñó él mismo su cuerpo de piedra? Me pagaba por reparar equipos de la mina y fabricar maquinitas que servían más para admirarlas que para otra cosa. Discutía cada ángulo y luego pagaba lo acordado. Podía negociar el trabajo y moverme por la mina. Lo que no podía negociar era la libertad de marcharme."
+  ],
+  "warlord": [
+    "I was kept teaching soldiers at the checkpoint. The Ashen Warlord sent escorts to keep the repaired crossings open, and his inspector, Cinder Warlord, checked the work parties. The roads really are better now. But the same soldiers enforce the levies, and nobody asked me whether I wanted to stay. I'm glad to be leaving.",
+    "Me tenían entrenando soldados en el puesto de control. El Ashen Warlord enviaba escoltas para mantener abiertos los pasos reparados, y su inspector, Cinder Warlord, revisaba las cuadrillas. Los caminos sí están mejor. Pero esos mismos soldados cobran tributos, y nadie me preguntó si quería quedarme. Me alegro de irme."
+  ],
+  "abyss": [
+    "Veyrith isn't just preparing a few dragon mounts. There are eggs, hatchery crews and an unfinished launch platform—he wants an air force. He kept me working runes into the equipment while the crews drilled. He talks about controlling the sky as the surest way to keep peace. I wasn't free to say I had other plans.",
+    "Veyrith no está preparando solo unas monturas. Hay huevos, criaderos y una plataforma de despegue sin terminar: quiere una fuerza aérea. Me obligó a grabar runas en el equipo mientras las cuadrillas ensayaban. Habla de controlar los cielos como la mejor forma de mantener la paz. Yo no podía decir que tenía otros planes."
+  ],
+  "cindermaw": [
+    "Cindermaw took my mobile forge along on his inspections. I repaired the Ash beasts' gear while he checked that shelters and deliveries were actually working. Dreadmaw saw to the food stores. They know how to run a province, I'll give them that. They paid me, too. They just never let me take the road home.",
+    "Cindermaw llevaba mi forja móvil en sus inspecciones. Yo reparaba equipo de las bestias de ceniza mientras él comprobaba refugios y entregas. Dreadmaw se ocupaba de los alimentos. Saben administrar una provincia, eso sí. También me pagaban. Pero nunca me dejaban tomar el camino de vuelta a casa."
+  ],
+  "citadel": [
+    "Veyra can get Goblins, Ogres and humans marching together without making any of them look alike. She notices every crooked rank and badly fitted uniform. She and Garun could talk about workmanship all day. I learned plenty watching her run that army. I'd have preferred to learn it without being held here.",
+    "Veyra consigue que goblins, ogros y humanos marchen juntos sin hacerlos parecer iguales. Detecta cada fila torcida y cada uniforme mal ajustado. Ella y Garun podrían hablar de diseño todo el día. Aprendí mucho viendo cómo dirige el ejército. Habría preferido aprenderlo sin estar retenido aquí."
+  ]
+};
   const rescueBriefings = {
     thorn: [
       "Thornfang needs Mira to inspect the winter estate's defenses and train its guards. She is paid, but can't go home.",
@@ -249,6 +293,7 @@
   function create({
     getGame,
     getLanguage = () => 'en',
+    onStoryRead = () => {},
     Campaign,
     D,
     action,
@@ -308,6 +353,16 @@
           ),
         ],
       );
+    }
+    function firstSpecialistStory(n) {
+      const game = getGame();
+      if (!n?.family || !specialistStories[n.family] || !game.s.rescued[n.family]) return null;
+      if (!game.zone().npcs.includes(n) || game.interactionDistance(n) > 115) return null;
+      const key = 'specialist-first-talk:' + n.family;
+      if (game.s.discovered[key]) return null;
+      game.s.discovered[key] = true;
+      onStoryRead();
+      return specialistStories[n.family][getLanguage() === 'es' ? 1 : 0];
     }
     function siteBriefing(id) {
       return siteBriefings[id]?.[getLanguage() === 'es' ? 1 : 0];
@@ -491,7 +546,7 @@
         );
       openMenu(
         n.name,
-        'Choose your training.',
+        firstSpecialistStory(n) || 'Choose your training.',
         [
           action(
             'Hero skills',
@@ -1149,11 +1204,11 @@
       }
       openMenu(
         n.name,
-        n.presentation === 'archive-restorer'
+        firstSpecialistStory(n) || (n.presentation === 'archive-restorer'
           ? approvedNarrative.P04.en
           : manaEnabled
             ? approvedNarrative.P07.en
-            : approvedNarrative.P07_nomana.en,
+            : approvedNarrative.P07_nomana.en),
         [
           { kind: 'section', label: 'Preparation Tonics' },
           action(
@@ -1263,11 +1318,11 @@
             '. ';
       openMenu(
         n.name,
-        equipmentStatus +
+        firstSpecialistStory(n) || (equipmentStatus +
           'Equipment replaces the earlier tier in its slot. Tier purchases are one-time; bonuses do not stack.' +
           (supportActions.length
             ? ' This specialist also teaches companion equipment inheritance.'
-            : ''),
+            : '')),
         [
           { kind: 'section', label: 'Equipment upgrades' },
           action(
