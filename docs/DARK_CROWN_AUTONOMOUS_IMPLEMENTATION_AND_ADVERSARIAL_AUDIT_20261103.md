@@ -4,7 +4,7 @@
 
 ## Current completion register
 
-The terrain painter now reuses immutable samples at world tile centers and shared corners. A focused synthetic draw-preparation benchmark is separate from the outstanding Crown browser performance gate.
+The terrain painter now reuses immutable samples at world tile centers and shared corners. A focused native Canvas terrain-only benchmark at four sites took 154–176 ms per 48 frames, versus 196–197 ms without sample reuse, with identical PNGs. Dev.283 ran active Pixi and Canvas at 800×375 for five Crown scene captures. A separate 64-draw software Chromium comparison against published dev.276 found Canvas p50 of 2.3 vs 2.4 ms at Crownwatch and 2.2 vs 2.3 ms at the Crystal Deposit. Pixi p95 was 1.2 vs 0.8 ms at Crownwatch and 0.9 vs 1.0 ms at the Deposit. This is a limited comparison, with broader performance acceptance open.
 
 **Release gate: HOLD.** This is implementation in draft #769. The earlier focused run [42505370490](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42505370490) failed on test ownership and stale sprite-scope evidence. The new draft maps Crown tests and refreshes the audited scope, which adds only Crown renderer families and source fingerprints. The companion [PWA run](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42505370498) passed for that earlier checkpoint. Four mini-dungeon assertions reproduced on unchanged main and the draft. They concern Greenwood cover/progression and an outdoor trap contract. Preserve their outcomes and keep the relevant Crown original behavior under the dedicated route and save checks.
 
@@ -18,7 +18,7 @@ The terrain painter now reuses immutable samples at world tile centers and share
 | 6. Geothermal and public works | Seven fixtures and the existing south bridge service chase. Native placement and v4 restore checks | Heat, wastewater and clean-water route legibility open |
 | 7. Glass and ceramics | Fifteen existing thermal works and two realized industrial footpaths | Detailed working precincts and freight sequence open |
 | 8. Both lava bridges | Native round-trip routes in both modes, no changed roads | Matched bank and deck views open |
-| 9. Market and freight | Existing market, Crown freight and five industrial props | Roadside wagon, storefront and provisioning audit open |
+| 9. Market and freight | Existing market and adjacent cart, with Crown masonry counters and stocked stalls | Wider provisioning route and cross-renderer review open |
 | 10. Foundry | Five static work stages, static gantry, original 14 guards, 7 columns, 4 traps and exit. Native routes and save round trip | Full exterior and walked interior combat/readability open |
 | 11. Citadel | Existing academy with a nonblocking exterior muster and arms station | Walked day/night framing and separate armory composition open |
 | 12. Cindermaw | Existing ministry facade, sheltered communal nesting shelf and distinct private bed | Walked public/private/communal separation and night review open |

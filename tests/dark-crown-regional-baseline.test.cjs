@@ -275,7 +275,8 @@ const candidates = [
   ['west-glassworks', 'crown', 2290, 2130, 245],
   ['bridge-north', 'crown', 1350, 1000, 245],
   ['bridge-south', 'crown', 1350, 2400, 245],
-  ['market-freight', 'crown', 850, 1400, 245],
+  ['market-freight', 'crown', 305, 760, 245],
+  ['market-freight-night', 'crown', 305, 760, 480],
   ['foundry-exterior', 'crown', 1850, 2700, 245],
   ['cindermaw-ministry', 'crown', 740, 520, 245],
   ['cindermaw-communal-roost', 'crown', 2580, 1900, 245],
@@ -333,8 +334,7 @@ for (const [label, zoneId, x, y, clock] of candidates) {
   assert(game.enter(zoneId), 'Existing zone is enterable: ' + zoneId);
   const zone = game.zone();
   game.s.clock = clock;
-  // Collision-safe teleport for CAMERA RECONNAISSANCE only. It does not
-  // demonstrate that a player can reach this point through normal gameplay.
+  // Resolve the viewing point before walking there through native movement.
   const spec = cameraAnchors.get(label);
   const anchored = spec && zone[spec[0]]?.find(entity => entity.id === spec[1]);
   if (spec?.[4])
@@ -349,7 +349,22 @@ for (const [label, zoneId, x, y, clock] of candidates) {
   if (anchored)
     assert(Math.hypot(safe.x - anchored.x, safe.y - anchored.y) <= 240,
       'A grounded landmark cannot be outside its own camera neighborhood: ' + label);
-  Object.assign(game.hero, safe);
+  const entry = { x: game.hero.x, y: game.hero.y };
+  function walkTo(target) {
+    const path = game.route(game.hero, target);
+    assert(path.length, 'Missing route for ' + label);
+    for (const point of path) {
+      const stepBudget = Math.ceil(Math.hypot(point.x - game.hero.x, point.y - game.hero.y)) + 12;
+      let step = 0;
+      while (Math.hypot(point.x - game.hero.x, point.y - game.hero.y) > 0.01) {
+        assert(step++ < stepBudget && game.move(game.hero, point, 120, 1 / 60),
+          'Native movement blocked for ' + label);
+      }
+    }
+    assert(Math.hypot(target.x - game.hero.x, target.y - game.hero.y) <= 0.01,
+      'Route did not reach its destination for ' + label);
+  }
+  walkTo(safe);
   for (const [viewport, width, height] of [['desktop', 880, 560], ['phone-800', 800, 375], ['phone-844', 844, 390]]) {
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
@@ -384,7 +399,7 @@ for (const [label, zoneId, x, y, clock] of candidates) {
       featureDistanceFromCamera: anchored
         ? Math.round(Math.hypot(anchored.x - safe.x, anchored.y - safe.y)) : null,
       viewNameIsIntentNotVerifiedLandmark: true,
-      traversedToView: false, compositionReviewedByTest: false,
+      traversedToView: true, compositionReviewedByTest: false,
       focusDisplacement: Math.round(Math.hypot(x - safe.x, y - safe.y)),
       nearbyProps: nearby(zone.props).length,
       nearbyNpcs: nearby(zone.npcs).map(n => n.id),
@@ -394,6 +409,7 @@ for (const [label, zoneId, x, y, clock] of candidates) {
       renderer: 'native Canvas2D', phoneScaleOnly: viewport.startsWith('phone-'),
     });
   }
+  walkTo(entry);
 }
 assert.equal(records.length, candidates.length * 3);
 
@@ -422,7 +438,7 @@ fs.writeFileSync(path.join(root, 'scene-index.json'), JSON.stringify({
     githubWorkflowRunId: process.env.GITHUB_RUN_ID || null,
     localRunWithoutCiMetadata: !process.env.GITHUB_SHA,
   },
-  captureMethod: 'collision-safe subject-relative hero camera where authorial feature ID exists, fallback to nominal survey where missing; fixed RNG and clock, native Canvas2D at 150%, no pixel identity, player traversal, Pixi, image-content assertion or physical phone',
+  captureMethod: 'collision-safe subject-relative hero camera where authorial feature ID exists, fallback to nominal survey where missing; fixed RNG and clock, native Canvas2D at 150%, native movement from zone entry and back, no pixel identity, Pixi, image-content assertion or physical phone',
   regionSourceId: 'crown', foundrySourceId: 'side-crown-foundry',
   scenes: candidates.length, captures: records.length, records,
 }, null, 2) + '\n');

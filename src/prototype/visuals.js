@@ -15829,7 +15829,7 @@
           break;
         case 'market':
           for (const x of [-28, 28]) timber([x, 15], [x, -34], 4);
-          shaped('#b3a17a', () => {
+          shaped(region === 4 ? '#af9a9a' : '#b3a17a', () => {
             ctx.moveTo(-35, -28);
             ctx.lineTo(-24, -40);
             ctx.lineTo(25, -40);
@@ -15838,7 +15838,16 @@
             ctx.quadraticCurveTo(0, -19, -12, -26);
             ctx.quadraticCurveTo(-26, -19, -35, -28);
           });
-          table(55);
+          if (region === 4) {
+            blockwork(-30, -6, 60, 24, '#74717f', 6);
+            softRect(-34, -9, 68, 5, '#aaa2a2', 1.4);
+            for (const x of [-18, 0, 18]) {
+              softPoly([[x - 4, 5], [x, 1], [x + 4, 5], [x, 10]], '#5c797b', 1);
+              line([[x, -38], [x - 2, -27]], '#d4b9a0', 1.2);
+            }
+            crateBody(-41, 10, 0.48);
+            crateBody(42, 12, 0.4);
+          } else table(55);
           for (const [x, c] of [
             [-16, '#9da771'],
             [0, '#ba9865'],
