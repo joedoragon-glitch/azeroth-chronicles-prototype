@@ -414,7 +414,7 @@ const PrototypeData = {
   ],
   quests: [
     ['vale', 'A Teacher Taken', 'Defeat Thornfang; free Mira', 45, 50],
-    ['vale', 'Roads Under Threat', 'Defeat 5 outdoor enemies in Greenwood Vale', 25, 88],
+    ['vale', 'The Estate Comes First', 'Defeat 5 outdoor enemies in Greenwood Vale', 25, 88],
     ['vale', 'Stolen Stores', "Recover 2 caches from Scornfang's Treasury", 35, 100],
     ['vale', 'An Unfinished Retreat', 'Defeat Lifebinder; free Borin', 45, 137],
     ['vale', 'Keeping Trade Open', 'Visit Mill bridge and wagon stand', 0, 50],
@@ -424,11 +424,11 @@ const PrototypeData = {
     ['march', 'Records at Risk', 'Defeat Drowned Keeper; free Neri', 110, 300],
     ['march', 'Hidden Provisions', "Recover 3 caches from Mirejaw's Treasury", 80, 175],
     ['march', 'Shadows After Sundown', 'Visit Lantern Shore at night; defeat 2 wraiths', 0, 150],
-    ['march', 'Beyond the Main Road', 'Discover any 3 Flooded Marches sites', 25, 175],
+    ['march', 'Beyond the Causeway', 'Discover any 3 Flooded Marches sites', 25, 175],
     ['highlands', "The Tyrant's Grip", 'Defeat Ridge Tyrant; free Orin', 180, 350],
     [
       'highlands',
-      'Ore Workers at Risk',
+      'Ore Road Grievances',
       'Defeat 7 outdoor enemies in Ironroot Highlands',
       120,
       350,
@@ -452,7 +452,7 @@ const PrototypeData = {
       450,
     ],
     ['frontier', 'Wings of War', 'Defeat Abyss Dragon; free Eren', 400, 625],
-    ['frontier', 'Roads Still Contested', 'Defeat 8 outdoor enemies in Ashen Frontier', 200, 400],
+    ['frontier', 'A Little Resistance', 'Defeat 8 outdoor enemies in Ashen Frontier', 200, 400],
     ['frontier', 'Rebuilding Under Guard', 'Discover any 3 Ashen Frontier sites', 50, 300],
     [
       'frontier',
