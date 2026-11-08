@@ -5059,8 +5059,8 @@
             read(
               'Saved games & updates',
               'Partidas y actualizaciones',
-              'Normal and Nightmare have separate saves stored in this browser. Saved Games & Backups on the Main Menu lets you export, import or recover them. Keep an exported backup outside the browser: clearing site data, reinstalling or losing the device can remove local saves.\n\nThe game checks for updates when it starts and can run offline from its installed cache. Ready updates can be offered during play instead of interrupting it.',
-              'Normal y Pesadilla guardan partidas distintas en este navegador. Partidas y copias de seguridad, en el menú principal, permite exportarlas, importarlas o recuperarlas. Conserva una copia fuera del navegador: borrar los datos, reinstalar o perder el dispositivo puede eliminar las partidas.\n\nEl juego busca actualizaciones al iniciar y puede ejecutarse sin conexión desde la copia instalada. Las actualizaciones listas pueden ofrecerse durante el juego sin interrumpirlo.',
+              'Normal and Nightmare have separate saves stored in this browser. Saved Games & Backups on the Main Menu lets you export, import or recover them. Keep an exported backup outside the browser: clearing site data, reinstalling or losing the device can remove local saves.\n\nThe game checks for updates at launch and at most hourly during long play, but never installs them automatically during a campaign. An available update is offered without stopping play; install when ready, or choose Check for game update in Settings. The installed cache also works offline.',
+              'Normal y Pesadilla guardan partidas distintas en este navegador. Partidas y copias de seguridad, en el menú principal, permite exportarlas, importarlas o recuperarlas. Conserva una copia fuera del navegador: borrar los datos, reinstalar o perder el dispositivo puede eliminar las partidas.\n\nEl juego busca actualizaciones al iniciar y, como máximo, una vez por hora durante partidas largas, pero nunca las instala automáticamente en una partida. Muestra las disponibles sin interrumpir; puedes instalarlas cuando quieras o elegir Buscar actualización en Ajustes. La copia instalada también funciona sin conexión.',
             ),
           'Local saves, backups and offline play.',
           'Partidas locales, copias y juego sin conexión.',
@@ -10914,7 +10914,8 @@
           if (!save()) status('Saving failed. Export your run before closing.');
           return;
         }
-        appReloadRequested = false;
+        // Keep the intentional reload flag through beforeunload so it is not blocked.
+        appReloadRequested = true;
         appControllerReloaded = true;
         startupEvent('update-reload-requested', { reason: 'service-worker-controller-change' });
         notePlaytestLifecycle('service-worker-controller-change');
