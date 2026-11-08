@@ -107,6 +107,31 @@ function startup({ online = true, controller = true, waiting = false,
     await flush();
     assert.equal(a.reloads, 1, 'a deliberate update reloads once');
   }
+  // History navigation should require a second deliberate Back gesture.
+  // A native beforeunload warning is best-effort and may not appear on iPadOS.
+  {
+    let pushes = 0, backs = 0, prevented = false;
+    const history = {
+      pushState() { pushes++; },
+      back() { backs++; },
+    };
+    const a = shell('en', 'ranger', {
+      location: { protocol: 'file:', hostname: '', href: 'file:///prototype/index.html' },
+      history,
+    });
+    await flush();
+    a.frame(0);
+    assert.equal(a.scope.Prototype.started, true);
+    assert.equal(pushes, 1, 'one history guard for a running campaign');
+    for (const fn of a.events.popstate || []) fn();
+    assert.equal(pushes, 2, 'accidental Back is intercepted once');
+    assert.equal(backs, 0);
+    for (const fn of a.events.popstate || []) fn();
+    assert.equal(backs, 1, 'a deliberate second Back can leave');
+    const unload = { preventDefault() { prevented = true; } };
+    for (const fn of a.events.beforeunload || []) fn(unload);
+    assert.equal(prevented, false, 'an intentional second Back is not blocked again');
+  }
   // Offline status is visible on the *main menu*, without preventing play.
   {
     const a = startup({ online: false });
