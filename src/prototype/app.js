@@ -341,6 +341,11 @@
     'Return death recovery to refuge': 'Volver al refugio al morir',
     'Set death recovery point': 'Establecer punto de reaparición',
     'Enter dungeon': 'Entrar en la mazmorra',
+    'Enter Treasury': 'Entrar en el Tesoro',
+    'Go inside': 'Entrar',
+    'Treasuries are guarded supply stores. Clear the guards before collecting the caches.':
+      'Los Tesoros son almacenes protegidos. Derrota a los guardias antes de recoger los suministros.',
+    "Thornfang's Homestead": 'Hogar de Thornfang',
     'Build Barracks & set recovery': 'Construir cuartel y fijar reaparición',
     'Finish Barracks & set recovery': 'Terminar cuartel y fijar reaparición',
     'Use nearby Barracks & set recovery': 'Usar cuartel cercano y fijar reaparición',
@@ -410,6 +415,7 @@
     'Regional transport': 'Transporte regional',
     'Mira · ask the Western road observer': 'Mira · pregunta al observador del camino occidental',
     'Western road observer': 'Observador del camino occidental',
+    'Follow this lead': 'Seguir esta pista',
     'Scout tracks / Western road observer':
       'Huellas del explorador / observador del camino occidental',
     'Mira is free. Find her teaching in Millhaven.':
@@ -2830,8 +2836,10 @@
     transport,
     refugeIntro,
     dungeonEntranceMenu,
+    siteBriefing,
   } = PrototypeMenus.create({
     getGame: () => game,
+    getLanguage: () => language,
     Campaign,
     D,
     action,
@@ -7020,10 +7028,15 @@
     showTitleScreen();
   }
   function nearestNPC() {
+    const zone = game.zone();
+    const homestead = zone.id === 'vale'
+      ? zone.props.find((prop) => prop.id === 'greenwood-thorn-homestead-lodge')
+      : null;
     return [
+      ...(homestead ? [{ ...homestead, kind: 'thorn-homestead', name: "Thornfang's Homestead" }] : []),
       ...game.visibleNPCs(),
       ...game.visibleResourceNodes(),
-      ...game.zone().buildings.map((b) => ({ ...b, kind: 'barracks', name: b.name || 'Barracks' })),
+      ...zone.buildings.map((b) => ({ ...b, kind: 'barracks', name: b.name || 'Barracks' })),
     ]
       .filter((n) => game.interactionDistance(n) < 115)
       .sort((a, b) => game.interactionDistance(a) - game.interactionDistance(b))[0];
@@ -7100,8 +7113,15 @@
       status('Nothing nearby to interact with.');
       return;
     }
+    if (n.kind === 'thorn-homestead') {
+      openMenu(n.name, siteBriefing(n.kind));
+      return;
+    }
     if (n.thornReport) {
-      openMenu(n.name, game.thornReport(true));
+      const lead = game.thornWitnessLead();
+      openMenu(n.name, game.thornReport(true, lead), lead
+        ? [action('Follow this lead', () => storyNavigate(lead, lead.name), lead.name)]
+        : []);
       return;
     }
     if (game.s.mode === 'arena' && n.kind === 'arena-guide') {
@@ -7135,15 +7155,12 @@
       refugeIntro(n);
       return;
     }
-    if (n.kind === 'dungeon' && !game.sideDungeon(n.family)) {
+    if (n.kind === 'dungeon') {
       dungeonEntranceMenu(n);
       return;
     }
-    if (n.kind === 'exit' || (n.kind === 'dungeon' && n.sideDungeon)) {
-      const destination =
-        n.kind === 'dungeon'
-          ? n.family
-          : game.sideDungeon()?.region || game.supplyRoom()?.region || game.definition().id;
+    if (n.kind === 'exit') {
+      const destination = game.sideDungeon()?.region || game.supplyRoom()?.region || game.definition().id;
       sceneTransitionTo(destination, n.name || destination, () => game.interact(n));
       return;
     }
@@ -9318,34 +9335,50 @@
         until: now + (notice.duration || 5.5) * 1000,
       });
     }
-    const width = typeof window === 'undefined' ? 1280 : window.innerWidth,
-      height = typeof window === 'undefined' ? 800 : window.innerHeight,
-      shortPhone = platform.mode === 'phone' && width > height,
-      layout = [platform.mode, width, height].join(':');
+    const { innerWidth: width, innerHeight: height } = window;
+    const phone = platform.mode === 'phone';
+    const landscape = phone && width > height;
+    const prompt = $('desktop-interaction');
+    const promptVisible = !phone && !prompt.hidden;
+    const cancelVisible = !phone && !cancelNavigationButton.hidden;
+    const layout = [
+      platform.mode, width, height, language, promptVisible ? prompt.textContent : '', cancelVisible,
+    ].join(':');
     if (layout !== state.layout) {
       state.layout = layout;
-      const style = typeof getComputedStyle === 'undefined' ? null : getComputedStyle(host),
-        safeLeft = Number.parseFloat(style?.getPropertyValue('--notice-safe-left')) || 0,
-        safeRight = Number.parseFloat(style?.getPropertyValue('--notice-safe-right')) || 0;
-      const hud = $('hud').getBoundingClientRect(),
-        edge = Math.max(12, platform.mode === 'phone' ? safeLeft : 0),
-        right =
-          platform.mode === 'desktop'
-            ? Math.max(180, hud.left - edge)
-            : width - Math.max(12, safeRight),
-        left = shortPhone && width - hud.right > 250 ? hud.right + edge : edge,
-        available = Math.max(160, right - left),
-        noticeWidth = Math.min(
-          platform.mode === 'phone' ? (shortPhone ? 320 : 310) : 480,
-          available,
-        );
-      host.style.width = noticeWidth + 'px';
+      const style = typeof getComputedStyle === 'undefined' ? null : getComputedStyle(host);
+      const edge = (side) =>
+        Math.max(12, Number.parseFloat(style?.getPropertyValue('--notice-safe-' + side)) || 0);
+      const hud = $('hud').getBoundingClientRect();
+      let left = edge('left'), right = width - edge('right');
+      let top = Math.max(8, hud.top);
+      if (phone) {
+        const menuButton = $('menu-button').getBoundingClientRect();
+        if (landscape && menuButton.left - hud.right >= 304) {
+          left = Math.max(left, hud.right + 8);
+          right = Math.min(right, menuButton.left - 8);
+        } else {
+          top = Math.max(hud.bottom, menuButton.bottom) + 8;
+        }
+      } else {
+        const dock = cancelVisible ? Math.min(hud.left, cancelNavigationButton.getBoundingClientRect().left) : hud.left;
+        right = Math.min(right, dock - 12);
+        if (promptVisible) {
+          const promptRect = prompt.getBoundingClientRect();
+          if (right - promptRect.right >= 312) left = Math.max(left, promptRect.right + 12);
+          else top = Math.max(top, promptRect.bottom + 8);
+        }
+        if (right - left < 200) {
+          right = width - edge('right');
+          top = Math.max(top, hud.bottom + 8);
+        }
+      }
+      const available = Math.max(1, right - left);
+      host.style.width = Math.min(available, phone ? (landscape ? 680 : 420) : 800) + 'px';
       host.style.left = left + available / 2 + 'px';
-      host.style.top =
-        (platform.mode === 'phone' && !shortPhone ? hud.bottom + 6 : Math.max(edge, hud.top)) +
-        'px';
+      host.style.top = top + 'px';
     }
-    const rendered = layout + ':' + state.active.map((n) => n.id).join(',');
+    const rendered = language + ':' + state.active.map((n) => n.id).join(',');
     if (rendered !== state.rendered) {
       state.rendered = rendered;
       host.replaceChildren(
@@ -9386,19 +9419,11 @@
               : n.kind === 'narration' || n.kind === 'milestone'
                 ? tr(n.text)
                 : n.text;
-          const full = displayedText + (n.detail ? ' ' + n.detail : ''),
-            limit = shortPhone ? 72 : platform.mode === 'phone' ? 88 : 150,
-            compact = full.length > limit;
-          card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : displayedText;
-          if (compact) {
-            const hint = document.createElement('small');
-            hint.className = 'notice-detail';
-            hint.textContent = tr('Full text: Menu · Announcements');
-            card.append(hint);
-          } else if (n.detail) {
+          card.textContent = displayedText;
+          if (n.detail) {
             const detail = document.createElement('small');
             detail.className = 'notice-detail';
-            detail.textContent = n.detail;
+            detail.textContent = tr(n.detail);
             card.append(detail);
           }
           if (n.requiresTalentPoints) {

@@ -39,9 +39,8 @@ assert(/#status\.notice-deferred\s*\{\s*visibility: hidden;/.test(segment),
 assert(segment.includes("data-notice-tier='critical'"), 'urgent technical receipts are separate');
 assert(segment.includes("prefers-reduced-motion: reduce"), 'honor motion preferences');
 const app = fs.readFileSync(path.join(__dirname, '../src/prototype/app.js'), 'utf8');
-assert(app.includes("text === 'Performance recovered: combat resumed.' ? 1750"),
+assert(/text === 'Performance recovered: combat resumed\.'\s*\? 1750/.test(app),
   'performance recovery receipt must be brief');
-assert(app.includes("shortPhone ? 320 : 310"), 'phone amber notices remain bounded');
 assert(app.includes("const deferRoutine = state.active.length > 0 && !urgent"),
   'warning/announcement takes precedence over a routine receipt');
 
@@ -49,6 +48,7 @@ for (const language of ['en', 'es']) {
   const { scope, elements } = shell(language, 'ranger', {
     storage: new Map([['azeroth-screen-v1', 'phone']]),
   });
+  scope.Prototype.platform.select('phone');
   const g = scope.Prototype.game, banner = elements.get('message');
   g.notices.length = 0;
   g.zone().enemies = [];
@@ -66,5 +66,33 @@ for (const language of ['en', 'es']) {
     language + ': danger is accessible as an alert');
   assert(!elements.get('menu-button').hidden, language + ': Menu remains reachable');
   assert(!elements.get('recall-button').hidden, language + ': Recall remains reachable');
+}
+for (const [mode, width, height, hud, menuButton, expected] of [
+  ['phone', 852, 393, { left: 20, right: 208, top: 10, bottom: 74 },
+    { left: 742, right: 836, top: 10, bottom: 56 }, [216, 734, 10]],
+  ['phone', 568, 320, { left: 12, right: 200, top: 8, bottom: 70 },
+    { left: 462, right: 556, top: 8, bottom: 54 }, [12, 556, 78]],
+  ['desktop', 1366, 768, { left: 1166, right: 1354, top: 12, bottom: 174 },
+    { left: 1174, right: 1346, top: 20, bottom: 56 }, [12, 1154, 12]],
+]) {
+  const { scope, elements } = shell('en');
+  scope.Prototype.platform.select(mode);
+  Object.assign(scope, { innerWidth: width, innerHeight: height });
+  elements.get('hud').getBoundingClientRect = () => hud;
+  elements.get('menu-button').getBoundingClientRect = () => menuButton;
+  elements.get('desktop-interaction').hidden = true;
+  const game = scope.Prototype.game;
+  game.zone().enemies = [];
+  const full = 'The watchhouse once housed Crown soldiers. '.repeat(5).trim();
+  game.notice(full, 5, 'The old hearth still works.', 'milestone');
+  scope.Prototype.updateHUD();
+  const banner = elements.get('message');
+  const left = Number.parseFloat(banner.style.left) - Number.parseFloat(banner.style.width) / 2;
+  const right = left + Number.parseFloat(banner.style.width);
+  assert(left >= expected[0] && right <= expected[1]);
+  assert.equal(Number.parseFloat(banner.style.top), expected[2]);
+  assert(Number.parseFloat(banner.style.width) > 480);
+  assert.equal(banner.children[0].textContent, full);
+  assert.equal(banner.children[0].children[0].textContent, 'The old hearth still works.');
 }
 console.log('PASS phone high-contrast palettes (all 10 >= 7:1), notice priority, reduced motion and EN/ES shell');

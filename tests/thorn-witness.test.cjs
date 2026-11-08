@@ -93,5 +93,15 @@ for (const language of ['en', 'es']) {
   const dialogue = elements.get('modal-description').textContent;
   assert(dialogue.includes(language === 'en' ? 'patrol is heading toward' : 'se dirige hacia'));
   assert(dialogue.includes(language === 'en' ? 'get her out of there' : 'saca a Mira de allí'));
+  const lead = game.thornWitnessLead();
+  const target = game.navigationTarget(lead).point;
+  const boss = game.zone().enemies.find((enemy) => enemy.family === 'thorn' && enemy.type === 'boss');
+  boss.thornLeg = (boss.thornLeg + 1) % cfg.route.length;
+  const tile = elements.get('modal-actions').children.find((button) =>
+    button.textContent.startsWith(language === 'en' ? 'Follow this lead' : 'Seguir esta pista'));
+  assert(tile, 'the reported landmark has an actionable lead');
+  tile.click();
+  assert.deepEqual(game.hero.path.at(-1), target, 'the route uses the reported area snapshot');
+
 }
 console.log('PASS #679 truthful, localized Thornfang/Mira clues; stable trail/witness IDs; v4 migration; rescue');

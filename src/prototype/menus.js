@@ -1,8 +1,71 @@
 /* Specialist, expedition, inventory and training menu catalog. Shell services are injected. */
 (function (root) {
   'use strict';
+  const siteBriefings = {
+    'supply-vale': [
+      'Scornfang, Thornfang’s Goblin disciple, oversees salvage for the winter estate. His Treasury stores reclaimed timber, fittings and two supply caches. Scornfang and his guards defend the stores.',
+      'Scornfang, discípulo goblin de Thornfang, dirige la recuperación de materiales para la residencia invernal. Su Tesoro guarda madera recuperada, herrajes y dos depósitos de suministros. Scornfang y sus guardias protegen el almacén.',
+    ],
+    'supply-march': [
+      'Mirejaw’s guards keep three supply caches in this wetland storehouse. Direjaw, Mirejaw’s disciple, commands the defenders inside.',
+      'Los guardias de Mirejaw guardan tres depósitos de suministros en este almacén de las marismas. Direjaw, discípulo de Mirejaw, dirige a los defensores del interior.',
+    ],
+    'supply-highlands': [
+      'Crag Tyrant, the Master of Coin’s disciple, guards the coin stores, accounts and three supply caches. The Crown riders quarter here alongside their armored direwolves.',
+      'Crag Tyrant, discípulo del Maestro de la Moneda, custodia las reservas de moneda, los libros de cuentas y tres depósitos de suministros. Los jinetes de la Corona se alojan aquí junto a sus lobos terribles acorazados.',
+    ],
+    'supply-crown': [
+      'Cindermaw and Dreadmaw jointly manage this Treasury. Dreadmaw oversees the Crown’s food supply and guards the Inner Vault. Three supply caches are kept inside.',
+      'Cindermaw y Dreadmaw administran juntos este Tesoro. Dreadmaw supervisa los alimentos de la Corona y custodia la cámara interior. Dentro se guardan tres depósitos de suministros.',
+    ],
+    crypt: [
+      'The Lifebinder brought his skeleton crews to turn this old crypt into the Dark Lord’s winter retreat. The work is still under way, and Borin, Millhaven’s smith, was put to work on its construction and repairs.',
+      'El Lifebinder trajo a sus cuadrillas de esqueletos para convertir esta antigua cripta en la residencia invernal del Dark Lord. Las obras siguen y Borin, el herrero de Millhaven, fue obligado a trabajar en ellas.',
+    ],
+    archive: [
+      'The Drowned Keeper tends the Crown’s records here. Floodwater damaged the lower shelves, and the Keeper brought Neri here for her knowledge of how to preserve the soaked books.',
+      'El Drowned Keeper custodia aquí los registros de la Corona. La inundación dañó los estantes inferiores y el Keeper trajo a Neri porque sabe cómo conservar los libros empapados.',
+    ],
+    mine: [
+      'Ogre wardens and Crown riders guard this working mine. Garun, the Stone Colossus, commissions repairs and curiosities from Dara, a smith whose paid work here came with strict limits on leaving.',
+      'Guardianes ogros y jinetes de la Corona protegen esta mina en explotación. Garun, el Coloso de Piedra, encarga reparaciones y curiosidades a Dara, una herrera cuyo trabajo remunerado aquí incluía restricciones para marcharse.',
+    ],
+    abyss: [
+      'Veyrith, the Dark Lord’s mount and Air Marshal, is preparing a royal air force here. The hatchery and harness stations are already in use. The garrison brought Eren the Runewright here as a captive.',
+      'Veyrith, montura del Dark Lord y mariscal del aire, prepara aquí una fuerza aérea real. El criadero y los puestos de arneses ya están en uso. La guarnición trajo aquí como cautivo a Eren, el artesano de runas.',
+    ],
+    citadel: [
+      'Marshal Veyra turned the Dark Lord’s irregular fighters into a standing army. The Citadel is her garrison and drill ground. Tovan, the final instructor, was brought here as a prisoner.',
+      'La mariscal Veyra convirtió a los combatientes irregulares del Dark Lord en un ejército permanente. La Ciudadela es su guarnición y campo de instrucción. Tovan, el último instructor, fue traído aquí como prisionero.',
+    ],
+    'side-vale-cellars': [
+      'Goblin families displaced by the winter-estate works now live in these old fruit cellars. Bedrolls, hearths and jars of preserves fill the rooms they share.',
+      'Familias goblin desplazadas por las obras de la residencia invernal viven ahora en estas antiguas bodegas. En sus habitaciones compartidas hay petates, hogares y tarros de conservas.',
+    ],
+    'side-march-watchhouse': [
+      'Reed Beasts have made a shelter above the waterline of this flooded watchhouse. They dry fish and build their nests where soldiers once kept watch.',
+      'Las bestias del carrizal se refugian por encima del agua en este puesto de vigilancia inundado. Secan pescado y hacen sus nidos donde antes montaban guardia los soldados.',
+    ],
+    'side-highlands-signal': [
+      'The signal station still works. Ogre households keep mining tools here and gather around the hearth after their shifts.',
+      'El puesto de señales sigue funcionando. Las familias ogro guardan aquí sus herramientas de minería y se reúnen junto al hogar después de sus turnos.',
+    ],
+    'side-frontier-shrine': [
+      'Orc soldiers use the old shrine as a barracks. They cook and drill here, and still look after the surviving ritual furnishings.',
+      'Los soldados orcos usan el antiguo santuario como cuartel. Aquí cocinan y se entrenan, y siguen cuidando el mobiliario ritual que se conserva.',
+    ],
+    'side-crown-foundry': [
+      'The old foundry’s walls are damaged, but its forge still works. Crown soldiers eat and sleep beside the benches where they repair their equipment.',
+      'Los muros de la antigua fundición están dañados, pero la fragua sigue en uso. Los soldados de la Corona comen y duermen junto a los bancos donde reparan su equipo.',
+    ],
+    'thorn-homestead': [
+      'Thornfang was a Crown wilderness scout. The gear here is for scent work, recall drills and caring for his hounds. He was put in charge of patrolling the winter estate’s approaches. He took Mira on those rounds to inspect its defenses, paying her while forbidding her to leave. Once the estate can keep itself secure, Thornfang means to return to his distant home.',
+      'Thornfang fue explorador de la Corona. Aquí guarda el equipo de rastreo, de entrenamiento y de cuidado de sus sabuesos. Le encargaron patrullar los accesos de la residencia invernal. Se llevaba a Mira para inspeccionar las defensas, le pagaba y le prohibía marcharse. Cuando la finca pueda protegerse por sí sola, Thornfang piensa volver a su lejano hogar.',
+    ],
+  };
   function create({
     getGame,
+    getLanguage = () => 'en',
     Campaign,
     D,
     action,
@@ -63,54 +126,73 @@
         ],
       );
     }
+    function siteBriefing(id) {
+      return siteBriefings[id]?.[getLanguage() === 'es' ? 1 : 0];
+    }
     function dungeonEntranceMenu(ref, back = closeMenu) {
       const game = getGame(),
-        entrance = game.dungeonEntrance(ref);
+        side = game.sideDungeon(ref.family),
+        findEntrance = (owner) =>
+          side
+            ? !owner.isDungeon() && owner.zone().npcs.find(
+                (n) => n.kind === 'dungeon' && n.id === ref.id && n.family === ref.family &&
+                  owner.interactionDistance(n) <= 115,
+              )
+            : owner.dungeonEntrance(ref),
+        entrance = findEntrance(game);
       if (!entrance) {
         status('Visit the dungeon entrance to prepare a camp.');
         return;
       }
-      const camp = game.dungeonCamp(entrance),
-        reason = game.dungeonCampReason(entrance),
-        cost = camp ? 0 : game.barracksBuildCost();
-      if (camp && (camp.progress >= 4 || camp.dungeonEntrance === entrance.family)) {
-        sceneTransitionTo(entrance.family, entrance.name, () => getGame().interact(entrance));
-        return;
-      }
+      const treasury = game.supplyRoom(entrance.family);
+      const camp = side ? null : game.dungeonCamp(entrance),
+        reason = side ? '' : game.dungeonCampReason(entrance),
+        cost = camp || side ? 0 : game.barracksBuildCost();
+      const reset = 'Leaving resets an unfinished encounter. Defeated leaders keep their normal return time; earned progress stays saved.';
+      const description = [
+        siteBriefing(entrance.family),
+        treasury && !game.peace
+          ? 'Treasuries are guarded supply stores. Clear the guards before collecting the caches.'
+          : null,
+        game.peace || side ? null : reset,
+      ].filter(Boolean).join('\n\n');
+      const enterLabel = treasury ? 'Enter Treasury' : side ? 'Go inside' : 'Enter dungeon';
       openMenu(
         entrance.name,
-        game.peace
-          ? 'Enter, or prepare your recovery camp outside.'
-          : 'Leaving resets an unfinished encounter. Defeated leaders keep their normal return time; earned progress stays saved.',
+        description,
         [
-          action('Enter dungeon', () => {
-            const current = getGame().dungeonEntrance(entrance);
-            if (current) sceneTransitionTo(current.family, current.name, () => getGame().interact(current));
+          action(enterLabel, () => {
+            const owner = getGame();
+            if (owner !== game) return;
+            const current = findEntrance(owner);
+            if (current) sceneTransitionTo(current.family, current.name, () => owner.interact(current));
           }),
-          action(
-            camp?.progress >= 4
-              ? 'Use nearby Barracks & set recovery'
-              : camp
-                ? 'Finish Barracks & set recovery'
-                : 'Build Barracks & set recovery',
-            () => {
-              if (!getGame().prepareDungeonCamp(entrance)) {
-                status(getGame().messages.at(-1));
-                dungeonEntranceMenu(entrance, back);
-                return;
-              }
-              const ready = getGame().dungeonCamp(entrance);
-              if (ready?.progress >= 4)
-                barracksMenu(ready, () => dungeonEntranceMenu(entrance, back));
-              else closeMenu();
-            },
-            reason ||
-              (camp?.progress >= 4
-                ? 'Reuse this camp for recovery and companion services.'
-                : (camp ? 'No extra cost' : cost ? cost + ' crowns' : 'First Barracks FREE') +
-                  ' · one Soldier or Ranger builds outside. Recovery switches when finished.'),
-            !!reason,
-          ),
+          ...(side ? [] : [
+            action(
+              camp?.progress >= 4
+                ? 'Use nearby Barracks & set recovery'
+                : camp
+                  ? 'Finish Barracks & set recovery'
+                  : 'Build Barracks & set recovery',
+              () => {
+                if (!getGame().prepareDungeonCamp(entrance)) {
+                  status(getGame().messages.at(-1));
+                  dungeonEntranceMenu(entrance, back);
+                  return;
+                }
+                const ready = getGame().dungeonCamp(entrance);
+                if (ready?.progress >= 4)
+                  barracksMenu(ready, () => dungeonEntranceMenu(entrance, back));
+                else closeMenu();
+              },
+              reason ||
+                (camp?.progress >= 4
+                  ? 'Reuse this camp for recovery and companion services.'
+                  : (camp ? 'No extra cost' : cost ? cost + ' crowns' : 'First Barracks FREE') +
+                    ' · one Soldier or Ranger builds outside. Recovery switches when finished.'),
+              !!reason,
+            ),
+          ]),
         ],
         back,
       );
@@ -3116,6 +3198,7 @@
     }
     return {
       refugeIntro,
+      siteBriefing,
       dungeonEntranceMenu,
       transport,
       teacher,

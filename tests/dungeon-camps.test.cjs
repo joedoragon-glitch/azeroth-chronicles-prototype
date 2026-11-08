@@ -88,7 +88,8 @@ for (const r of C.data.regions) {
     finaleMenu() {},
   });
   catalog.dungeonEntranceMenu(n);
-  assert.equal(menu, undefined, 'already requested camp skips entrance prompt');
+  assert(menu.description.includes('The Lifebinder'), 'the entrance briefing remains available after preparing a camp');
+  menu.actions[0].action();
   assert(closed);
   assert.equal(g.zoneId, n.family);
   g.enter('vale', { x: n.x, y: n.y });
@@ -274,14 +275,14 @@ for (const site of C.rules.treasuryRecovery.sites.filter((s) => s.zone !== s.reg
     'a genuinely nearby ordinary camp qualifies',
   );
   const selectedBefore = g.s.barracksRespawn;
-  let opened = false;
+  let opened;
   const catalog = Menus.create({
     getGame: () => g,
     Campaign: C,
     D: C.data,
-    action: () => {},
-    openMenu: () => {
-      opened = true;
+    action: (label, action) => ({ label, action }),
+    openMenu: (_title, _description, actions) => {
+      opened = actions;
     },
     closeMenu() {},
     recallSquad() {},
@@ -289,12 +290,13 @@ for (const site of C.rules.treasuryRecovery.sites.filter((s) => s.zone !== s.reg
     finaleMenu() {},
   });
   catalog.dungeonEntranceMenu(n);
-  assert(!opened);
+  assert(opened);
+  opened.find((item) => item.label === 'Enter dungeon').action();
   assert.equal(g.zoneId, 'crypt');
   assert.deepEqual(
     g.s.barracksRespawn,
     selectedBefore,
-    'auto-entry preserves the chosen recovery point',
+    'entering preserves the chosen recovery point',
   );
 }
 console.log(

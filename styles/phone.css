@@ -437,14 +437,6 @@ body[data-experience='phone'] #message {
   transform: translate(-50%, 0);
 }
 /* Long reading uses the available width instead of a deep card over the hero. */
-body[data-experience='phone'] #message.wide-notice {
-  --notice-edge: max(
-    8px,
-    var(--phone-safe-left, env(safe-area-inset-left)),
-    var(--phone-safe-right, env(safe-area-inset-right))
-  );
-  width: min(250px, calc(100vw - 2 * var(--notice-edge)));
-}
 body[data-experience='phone'] #message.wide-notice .notice-card {
   padding: 6px 9px;
   border-radius: 6px;
@@ -785,12 +777,6 @@ body[data-experience='phone'] #hero-stats .hero-ailment {
   font-weight: 700;
 }
 
-body[data-experience='phone'] #message .notice-card.notice-narration {
-  font-size: 11px;
-  line-height: 1.22;
-  padding: 5px 7px;
-}
-
 /* Match class-learning clarity on compact touch screens without shrinking text. */
 @media (min-height: 600px) {
   body[data-experience='phone'] #modal[data-view='character'] {
@@ -951,7 +937,7 @@ body[data-experience='phone'] #status {
   width: max-content;
   max-width: min(280px, calc(100vw - 24px));
   padding: 6px 9px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.4;
   font-weight: 650;
   text-align: center;
@@ -990,17 +976,17 @@ body[data-experience='phone'] #message .notice-card {
   color: #211908;
   background: #edcb7e;
   border-color: #f8e1b0;
-  font-size: 13px;
-  line-height: 1.35;
+  font-size: 14px;
+  line-height: 1.4;
   font-weight: 700;
   text-shadow: none;
   box-shadow: 0 3px 12px #07120dd9;
 }
 body[data-experience='phone'] #message .notice-card .notice-detail {
   color: #4c3422;
-  font-size: 11px;
-  line-height: 1.4;
-  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 550;
 }
 body[data-experience='phone'] #message .notice-card.notice-warning {
   color: #30180c;
@@ -1017,9 +1003,9 @@ body[data-experience='phone'] #message .notice-card.notice-narration {
   color: #f8efd9;
   background: #162a30;
   border-color: #9dbeb5;
-  font-size: 13px;
-  line-height: 1.4;
-  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.45;
+  font-weight: 550;
 }
 body[data-experience='phone'] #message .notice-card.notice-narration::before {
   color: #f5d397;
@@ -1031,7 +1017,7 @@ body[data-experience='phone'] #message .notice-card.notice-feedback {
   color: #f7f2e5;
   background: #122b36;
   border-color: #a3c3c8;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 650;
 }
 body[data-experience='phone'] #message .notice-card.notice-feedback .notice-detail {

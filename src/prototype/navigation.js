@@ -899,18 +899,18 @@
       mapDestinations() {
         const zone = this.zone(),
           region = this.definition(),
-          hidden = new Set([
-            'supplier',
-            'recruiter',
-            'quests',
-            'teacher',
-            'smith',
-            'alchemist',
-            'cage',
-            'bundle',
-          ]);
+          storyPlaces = {
+            vale: ['thorn-local-report', 'mill-pond', 'goblin-camp', 'cache'],
+            march: ['mire-nests', 'night-site'],
+            highlands: ['ogre-hearth', 'ore'],
+            frontier: ['convoy', 'orc-bivouac'],
+            crown: ['siege', 'fortress-gate'],
+          }[region.id] || [];
         const places = this.visibleNPCs()
-          .filter((n) => !n.thornFootprint && (this.isDungeon() || !hidden.has(n.kind)))
+          .filter((n) =>
+            ['rest', 'transport', 'exit', 'dungeon', 'mini'].includes(n.kind) ||
+            (!this.isDungeon() && storyPlaces.includes(n.id)),
+          )
           .map((n) =>
             n.kind === 'rest' && n.id === 'rest' ? { ...n, name: region.town, icon: '🏘️' } : n,
           );
@@ -920,8 +920,7 @@
           name: b.name || 'Barracks',
           icon: b.progress < 4 ? '🏗️' : '🏕️',
         }));
-        // Thornfang's authored tracking clues stay on the map; never turn his
-        // mobile patrol into an omniscient live destination.
+        // Thornfang's moving patrol is handled by the roadside witness.
         const bosses = zone.enemies
           .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral && e.family !== 'thorn')
           .map((e) => ({
@@ -1542,7 +1541,32 @@
           : this.safe(780, 740, 'vale');
         Object.assign(witness, position);
       }
-      thornReport(concise = false) {
+      thornWitnessLead() {
+        if (this.s.keys.thorn || this.s.rescued.thorn || this.peace) return null;
+        const thorn = this.s.zones.vale?.enemies.find(
+          (e) => e.type === 'boss' && e.family === 'thorn' && e.hp > 0 &&
+            !e.neutral && !e.developerSummon,
+        );
+        if (!thorn) return null;
+        const cfg = R.thornPatrol;
+        const heading = !(thorn.aggro || thorn.returning || thorn.thornReturn ||
+          thorn.thornIntroRetreat != null || thorn.thornPause > 0);
+        let leg = cfg.startLeg;
+        if (heading) {
+          if (cfg.route[thorn.thornLeg]) leg = thorn.thornLeg;
+        } else {
+          leg = cfg.route.reduce(
+            (best, [x, y], i) =>
+              dist(thorn, { x, y }) < dist(thorn, { x: cfg.route[best][0], y: cfg.route[best][1] })
+                ? i
+                : best,
+            0,
+          );
+        }
+        const [x, y] = cfg.route[leg];
+        return { id: 'thorn-lead-' + leg, name: cfg.names[leg], x, y, heading };
+      }
+      thornReport(concise = false, sighting = concise ? this.thornWitnessLead() : null) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
         if (this.s.keys.thorn) {
           const n = this.thornCaptive(), cfg = R.thornPatrol;
@@ -1555,40 +1579,10 @@
         }
         const z = this.s.zones.vale;
         if (concise) {
-          const thorn = z?.enemies.find(
-            (e) =>
-              e.type === 'boss' &&
-              e.family === 'thorn' &&
-              e.hp > 0 &&
-              !e.neutral &&
-              !e.developerSummon,
-          );
-          const cfg = R.thornPatrol;
-          let lead =
-            'I haven’t seen Thornfang on the trail lately. Check back and I’ll tell you when he’s out on patrol.';
-          if (thorn) {
-            if (
-              thorn.aggro ||
-              thorn.returning ||
-              thorn.thornReturn ||
-              thorn.thornIntroRetreat != null ||
-              thorn.thornPause > 0
-            ) {
-              const nearest = cfg.route.reduce(
-                (best, [x, y], i) =>
-                  dist(thorn, { x, y }) < dist(thorn, { x: cfg.route[best][0], y: cfg.route[best][1] })
-                    ? i
-                    : best,
-                0,
-              );
-              lead = 'Last word puts Thornfang near ' + cfg.names[nearest] + '.';
-            } else {
-              lead =
-                'Thornfang’s patrol is heading toward ' +
-                (cfg.names[thorn.thornLeg] || cfg.names[cfg.startLeg]) +
-                '.';
-            }
-          }
+          const lead = sighting
+            ? (sighting.heading ? 'Thornfang’s patrol is heading toward ' : 'Last word puts Thornfang near ') +
+              sighting.name + '.'
+            : 'I haven’t seen Thornfang on the trail lately. Check back and I’ll tell you when he’s out on patrol.';
           return lead + '\n\n' +
             'He used to scout for the Crown. Now he takes Mira along to inspect security at the Dark Lord’s winter estate. He pays her, then tells her she can’t leave. Some employer. If you catch up with him, get her out of there.';
         }

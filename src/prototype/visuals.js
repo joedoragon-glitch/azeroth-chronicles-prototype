@@ -2842,7 +2842,7 @@
       oval(26.6, -20.7, 2.6, 2, '#8e9487');
       grip(15, -4, hide);
     }
-    function goblinBody(crown = false, ranged = !!e.ranged, friendly = false) {
+    function goblinBody(crown = false, ranged = !!e.ranged, friendly = false, civilian = false) {
       const hide = '#9caa78',
         cloth = crown ? '#55485f' : friendly ? '#66875c' : '#867356';
       // The friendly Archer alone carries arrows. Hostile Slingers keep stones.
@@ -2928,7 +2928,7 @@
         grip(15, -4, hide);
       } else if (ranged) {
         goblinSlingerEquipment(hide);
-      } else {
+      } else if (!civilian) {
         sword(15, -8);
         grip(17, 0, hide);
       }
@@ -18475,7 +18475,8 @@
     } else if (e.kind === 'landmark') {
       landmark();
     } else if (type === 'npc') {
-      if (e.family && ['teacher', 'smith', 'alchemist'].includes(e.kind)) specialist(e);
+      if (e.presentation === 'goblin-resident') goblinBody(false, false, false, true);
+      else if (e.family && ['teacher', 'smith', 'alchemist'].includes(e.kind)) specialist(e);
       else {
         const smith = ['smith', 'alchemist'].includes(e.kind);
         humanoid(smith ? '#8b7770' : '#8b9c7b');

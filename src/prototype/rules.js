@@ -2599,8 +2599,9 @@
       {
         id: 'goblin-paid-preserves',
         name: 'Purchased preserves',
-        x: 425,
-        y: 245,
+        x: 350,
+        y: 310,
+        presentation: 'goblin-resident',
         icon: '🍯',
         narrativeId: 'I01',
       },

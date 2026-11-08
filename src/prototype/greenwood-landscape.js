@@ -275,7 +275,7 @@
       ],
       millBridge = {
         from: q([1210, 1575]), to: q([1250, 1495]),
-        width: 62 * scale, kind: 'timber',
+        width: 84 * scale, kind: 'timber',
       },
       creekCulvert = {
         from: q([1070, 725]), to: q([1145, 805]),
@@ -294,7 +294,7 @@
         [650, 1550], [785, 1595], [990, 1655], [1200, 1660],
       ].map(q),
       // A 24-unit pedestrian trail, NOT a cart road, runs across the
-      // 62-unit-wide timber deck and then bends to the actual mill door.
+      // 84-unit-wide timber deck and then bends to the actual mill door.
       millDoorFootpath = [
         [1200, 1660], [1210, 1575], [1250, 1495],
         [1400, 1490], [1290, 1490], [1210, 1485],

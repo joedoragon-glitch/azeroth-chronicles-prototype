@@ -12,11 +12,13 @@ function element(tagName = 'div') {
     tagName,
     children: [],
     style: {},
+    dataset: {},
     classList: {
       toggle(k, on) {
         on ? classes.add(k) : classes.delete(k);
       },
       contains: (k) => classes.has(k),
+      remove: (k) => classes.delete(k),
     },
     replaceChildren(...c) {
       this.children = c;
@@ -49,6 +51,9 @@ const context = {
   $: (id) => (id === 'message' ? host : status),
   document: { hidden: false, createElement: element },
   platform: { mode: 'phone' },
+  window: { innerWidth: 852, innerHeight: 393 },
+  language: 'en',
+  cancelNavigationButton: { hidden: true },
   menu: null,
   paused: false,
   focused: true,

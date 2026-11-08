@@ -6,7 +6,7 @@ const Campaign = require('../src/prototype/engine.js');
 const Approved = require('../src/prototype/narration.js').approved;
 const scenes = [
   ['citadel', 'veyra-private-quarters', 'D04', 'citadel-vanity-quarters'],
-  ['side-vale-cellars', 'goblin-paid-preserves', 'I01', 'purchased-preserves'],
+  ['side-vale-cellars', 'goblin-paid-preserves', 'I01', 'preserve-rack'],
   ['side-highlands-signal', 'signal-working-beacon', 'I03', 'active-signal-beacon'],
   ['side-frontier-shrine', 'scornfang-shrine-records', 'I04', 'scornfang-memoranda'],
 ];
@@ -20,7 +20,23 @@ for (const [zone, id, narrativeId, structure] of scenes) {
     zone + ' provides an in-world inspection point, not an entrance claim');
   assert(room.props.some((prop) => prop.structure === structure),
     zone + ' genuinely renders the source-supported evidence');
-  assert.equal(room.narrativeSceneVersion, 1, 'Scene migration recorded');
+  assert.equal(room.narrativeSceneVersion, zone === 'side-vale-cellars' ? 2 : 1);
+  if (zone === 'side-vale-cellars') {
+    assert.equal(npc.presentation, 'goblin-resident');
+    assert.deepEqual([npc.x, npc.y], [350, 310]);
+    assert(!g.blocked(npc.x, npc.y, zone, 15));
+    const old = g.snapshot();
+    const saved = old.zones[zone];
+    const oldNpc = saved.npcs.find((n) => n.id === id);
+    Object.assign(oldNpc, { x: 425, y: 245 });
+    delete oldNpc.presentation;
+    saved.narrativeSceneVersion = 1;
+    const restored = Campaign.restore(old);
+    const residents = restored.zone().npcs.filter((n) => n.id === id);
+    assert.equal(residents.length, 1);
+    assert.equal(residents[0].presentation, 'goblin-resident');
+    assert.deepEqual([residents[0].x, residents[0].y], [350, 310]);
+  }
   assert(!g.interact({ ...npc, x: g.hero.x, y: g.hero.y }),
     'A forged interaction reference does not grant facts');
   if (narrativeId === 'D04') {
@@ -70,7 +86,7 @@ for (const [zone, id, narrativeId, structure] of scenes) {
 }
 const side = Campaign.rules.sideDungeons;
 const vale = side.find((x) => x.id === 'side-vale-cellars');
-assert(vale.decor.some((x) => x[2] === 'purchased-preserves'));
+assert(vale.decor.some((x) => x[2] === 'preserve-rack'));
 assert(!vale.decor.some((x) => x[2] === 'stolen-goods'),
   'Goblin wages are not illustrated as stolen goods');
 const highlands = side.find((x) => x.id === 'side-highlands-signal');

@@ -70,6 +70,14 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
     'upper source is deliberately shallow, not an unmarked new strategic barrier');
   assert.equal(g.clearSegment(bridge.from, bridge.to, 12),true,
     'whole bridge crossing, not only the center, is physically usable');
+  assert.equal(bridge.width, 84 * cfg.scale);
+  const dx = bridge.to.x - bridge.from.x, dy = bridge.to.y - bridge.from.y;
+  const length = Math.hypot(dx, dy);
+  for (const offset of [-23, 23]) {
+    const shift = (point) => ({ x: point.x - dy / length * offset, y: point.y + dx / length * offset });
+    assert(g.clearSegment(shift(bridge.from), shift(bridge.to), 15),
+      'an off-center hero can walk across the full timber deck');
+  }
   assert(!g.blocked(cfg.millEntrance.x,cfg.millEntrance.y,'vale',12,true),
     'the visible mill loading entrance has dry terrain');
   assert(!g.blocked(cfg.millEntrance.x,cfg.millEntrance.y,'vale',12),
