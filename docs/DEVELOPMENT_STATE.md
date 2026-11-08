@@ -254,7 +254,7 @@ Owner-directed narrow save-system revision: keep the existing v4 primary snapsho
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
 | Source | **dev.276 merged, published** | [Main `ee44c2f`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/ee44c2f9975a9ced0b392ad19f2e317a01e669f8) includes #858, #860 and #861 and earlier performance releases. |
-| Build/cache version | **`0.9.1+snapshot.dev.276` — merged and published** | Exact main game/PWA package verified by successful [release workflow #42480404721](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42480404721). |
+| Build/cache version | **`0.9.1+snapshot.dev.276`** — merged and published | Exact main game/PWA package verified by successful [release workflow #42480404721](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42480404721). |
 | Focused automation | **dev.276 merged-main tests succeeded** | Focused validation in [#42480404721](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42480404721); not a broad campaign/browser matrix. |
 | GitHub Pages publication | **Published dev.276** | [GitHub Pages publication #42480404721](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42480404721) completed successfully. |
 | Owner Chromebook loaded build | **dev.276 SHA independently observed in Report (39)** | Private real-device export recorded `buildCommit=ee44c2f9975a9ced0b392ad19f2e317a01e669f8` while **Canvas2D was active**; no broader PWA or Pixi inference. |
