@@ -150,9 +150,9 @@ for (const language of ['en', 'es']) {
   const titleChoice = titleRenderer.children.find((node) => node.className === 'menu-setting-input');
   titleChoice.value = 'canvas2d';
   titleChoice.onchange();
-  assert(titleActions().some((node) => node.className === 'menu-section' &&
-    node.textContent === t('Canvas graphics', 'Gráficos de Canvas')),
-    'explicitly selecting Canvas on title switches to its inline settings');
+  assert(titleActions().some((node) => node.className === 'menu-setting' &&
+    node.children.some((child) => child.textContent === t('Optimization Mode', 'Modo de optimización'))),
+    'explicitly selecting Canvas on title exposes Canvas optimization inline, without a heading');
   const writes = [];
   const originalSet = storage.set.bind(storage);
   storage.set = (key, value) => {
