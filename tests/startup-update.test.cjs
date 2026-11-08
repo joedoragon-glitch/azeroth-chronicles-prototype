@@ -10,7 +10,7 @@ const flush = async () => {
 function startup({ online = true, controller = true, waiting = false,
                    updateError = false, onUpdate = null } = {}) {
   const events = {}, messages = [];
-  let updates = 0, reloads = 0;
+  let updates = 0, reloads = 0, discoveryInterval = null;
   const worker = {
     state: 'installed',
     postMessage(value) { messages.push(value.type); },
@@ -36,11 +36,13 @@ function startup({ online = true, controller = true, waiting = false,
     location: { protocol: 'http:', hostname: 'localhost', search: '',
                 reload() { reloads++; } },
     navigator: { serviceWorker: sw, onLine: online },
+    onInterval(fn, ms) { if (ms === 3600000) discoveryInterval = { fn, ms }; },
   });
   return {
     ...app, registration, events, messages,
     get updates() { return updates; },
     get reloads() { return reloads; },
+    get discoveryInterval() { return discoveryInterval; },
     controllerChange() {
       for (const fn of events.controllerchange || []) fn();
     },
@@ -61,6 +63,7 @@ function startup({ online = true, controller = true, waiting = false,
     assert.equal(a.elements.get('title-screen').hidden, false);
     assert.equal(a.elements.get('title-continue').disabled, false);
     assert.equal(a.scope.Prototype.started, false);
+    assert.equal(a.discoveryInterval?.ms, 3600000, 'checks are hourly, not every five minutes');
     assert.equal(a.storage.get('azeroth-v4-normal'), saved, 'no save rewritten');
   }
   // The old menu must never be exposed while the new worker is waiting.
@@ -85,6 +88,24 @@ function startup({ online = true, controller = true, waiting = false,
     await flush();
     assert.deepEqual(a.messages, ['SKIP_WAITING']);
     assert.equal(a.elements.get('title-screen').hidden, true);
+  }
+  // A controller change outside an explicit update must NOT reload live play.
+  // The player can deliberately install the newly controlled version later.
+  {
+    const a = startup();
+    await flush();
+    a.elements.get('title-continue').click();
+    a.frame(0);
+    await flush();
+    a.frame(0);
+    assert.equal(a.scope.Prototype.started, true, 'test entered gameplay');
+    a.controllerChange();
+    assert.equal(a.reloads, 0, 'unexpected service-worker takeover does not evict a campaign');
+    assert.equal(a.scope.Prototype.started, true, 'the same campaign remains active');
+    assert.equal(a.elements.get('update-button').hidden, false, 'update becomes opt-in');
+    a.elements.get('update-button').click();
+    await flush();
+    assert.equal(a.reloads, 1, 'a deliberate update reloads once');
   }
   // Offline status is visible on the *main menu*, without preventing play.
   {
