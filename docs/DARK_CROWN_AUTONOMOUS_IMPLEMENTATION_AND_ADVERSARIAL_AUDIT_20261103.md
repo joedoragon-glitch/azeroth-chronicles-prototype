@@ -18,7 +18,7 @@
 | 8. Both lava bridges | Native round-trip routes in both modes, no changed roads | Matched bank and deck views open |
 | 9. Market and freight | Existing market, Crown freight and five industrial props | Roadside wagon, storefront and provisioning audit open |
 | 10. Foundry | Five static work stages, static gantry, original 14 guards, 7 columns, 4 traps and exit. Native routes and save round trip | Full exterior and walked interior combat/readability open |
-| 11. Citadel | Existing native academy and interior, military features preserved | Exterior drill and armory views open |
+| 11. Citadel | Existing academy with a nonblocking exterior muster and arms station | Walked day/night framing and separate armory composition open |
 | 12. Cindermaw | Existing encounters and ministry facade retained | Public/private/communal scene separation and walk open |
 | 13. Crystals | Existing shipment with graded raw-crystal trays, protected stock and loading canopy | Walked day/night composition and security review open |
 | 14. Orrery | Existing landmark retained with bronze service fasteners and a walkable engraved survey court | Walked approaches and matched lighting review open |

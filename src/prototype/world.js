@@ -1120,12 +1120,22 @@
           this.s.zone = before;
         }
       }
+      crownCitadelMuster(z) {
+        // Reuse the existing exterior command station, including its saved
+        // position. The drill and equipment presentation is nonblocking.
+        const station = z.props.find((p) => p.id === 'crown-layout-citadel-command-7');
+        if (station?.r === 0 && station.decorative && station.structure === 'war-table') {
+          station.structure = 'citadel-muster';
+          station.crownExteriorMuster = true;
+        }
+      }
       crownSceneComposition(z) {
         const cfg = R.crownSceneLayout;
         if (z.id !== 'crown') return;
         if (z.crownSceneVersion === cfg.version) {
           this.ashRefugeDomesticLife(z);
           this.crownCivicForecourt(z);
+          this.crownCitadelMuster(z);
           return;
         }
         const oldZone = this.s.zone;
@@ -1342,6 +1352,7 @@
         // placeholders, then incorrectly marks them finished with no objects.
         this.ashRefugeDomesticLife(z);
         this.crownCivicForecourt(z);
+        this.crownCitadelMuster(z);
       }
       settlementLayout(z) {
         if (

@@ -14412,6 +14412,16 @@
             );
           }
           craftAt(-24, -14, 0.6, () => flag(true));
+          if (e.crownExteriorMuster) {
+            blockwork(-43, 18, 86, 9, '#78717b', 5);
+            for (const x of [-25, 0, 25]) {
+              line([[x - 6, 16], [x + 6, 16]], '#ccb98d', 1.5);
+            }
+            for (const x of [35, 43]) {
+              timber([x, 7], [x - 4, -28], 2.5);
+              poly([[x - 7, -25], [x - 5, -36], [x, -27]], '#c5c8c5');
+            }
+          }
           break;
         case 'citadel-command':
           ledgerDesk(true);

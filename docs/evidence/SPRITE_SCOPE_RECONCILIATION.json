@@ -1188,8 +1188,8 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "7d76ef1ec0e26b9235072fc0b90679c2bf77432749342bde435b3d58530cee49",
-    "src/prototype/world.js": "cbabd8c6251703b7a149ca78af39a47491a032136ecac3c88a0caa6d57d08ebc",
+    "src/prototype/visuals.js": "0a098e2d3dbc12e64c703143ac9cb054d9d4296ad0460489404f1512cda98139",
+    "src/prototype/world.js": "e8d8012db515915b422db47725f9b61f396e1c1bac78d281c70b310d25ea82cc",
     "src/prototype/rules.js": "006cb41261639b8514ccd5180c9505fafd7d9b445f5592ce6ceb1c7fbf90c84b",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "a49f3db912824770e7b546177745d3d428194b99459b095e6b659a838de43e43",

@@ -300,6 +300,8 @@ const candidates = [
   ['foundry-forming', 'side-crown-foundry', 595, 260, 245],
   ['foundry-finishing', 'side-crown-foundry', 915, 515, 245],
   ['foundry-dispatch', 'side-crown-foundry', 895, 875, 245],
+  ['citadel-exterior-muster', 'crown', 2520, 1110, 245],
+  ['citadel-exterior-night', 'crown', 2520, 1110, 480],
   ['citadel-academy', 'citadel', 630, 955, 245],
   ['cindermaw-treasury', 'supply-crown', 535, 350, 245],
 ];
