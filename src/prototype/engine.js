@@ -5119,7 +5119,11 @@
         anonymousCast =
           (e.captainProfile === 'supply-highlands' && !fatigued) ||
           (e.captainProfile === 'supply-march' && plan.warning === 0),
-        attackWarning = anonymousCast ? 0.9 : plan.warning,
+        rematch = R.rematchAdaptation.captain[Math.min(2, e.rematchTier || 0)],
+        baseWarning = anonymousCast ? 0.9 : plan.warning,
+        attackWarning = baseWarning > 0
+          ? Math.max(R.rematchAdaptation.captainWarningFloor, baseWarning * rematch.warningScale)
+          : 0,
         markHero =
           plan.kind === 'circle' &&
           this.hero.hp > 0 &&
@@ -5173,8 +5177,10 @@
           sequence: [],
           arenaPatches: pads.slice(2).map(({ x, y, radius }) => ({ x, y, radius })),
           pairMarks: pads.slice(2).map((p) => ({ x: p.x, y: p.y })),
-          timer: plan.pairWarning,
-          total: plan.pairWarning,
+          timer: Math.max(R.rematchAdaptation.captainWarningFloor,
+            plan.pairWarning * rematch.warningScale),
+          total: Math.max(R.rematchAdaptation.captainWarningFloor,
+            plan.pairWarning * rematch.warningScale),
           name: plan.name + ' — second pair',
         });
       }
@@ -5190,8 +5196,8 @@
           ...p,
           arenaPatches: [{ x: p.x, y: p.y, radius: p.radius }],
           count: 1,
-          timer: attackWarning * 0.72,
-          total: attackWarning * 0.72,
+          timer: Math.max(R.rematchAdaptation.captainWarningFloor, attackWarning * 0.72),
+          total: Math.max(R.rematchAdaptation.captainWarningFloor, attackWarning * 0.72),
           name: plan.name + ' follow-up',
         }));
       }
@@ -5207,7 +5213,8 @@
           ? e.captainProfile === 'supply-highlands'
             ? e.captainAttackRate
             : 0.82
-          : 1);
+          : 1) *
+        rematch.cooldownScale;
       this.event(
         'warning',
         anonymousCast
