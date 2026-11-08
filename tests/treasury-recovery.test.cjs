@@ -110,8 +110,11 @@ for (const mode of ['normal', 'nightmare'])
     const returned = g.treasuryCaptain(g.zone(), site);
     assert(returned.hp > 0, 'captain returns for another recovery cycle');
     assert.equal(returned.id, cap.id);
-    assert.equal(returned.gold, 0);
-    assert.equal(returned.xp, 0);
+    const repeatPrize = g.regionalEnemyRewards(g.regionIndex(site.region), 'fieldCaptain');
+    assert.equal(returned.gold, repeatPrize.gold, 'named captain rematch keeps its bounded crown reward');
+    assert.equal(returned.xp, repeatPrize.xp, 'named captain rematch keeps its bounded XP reward');
+    assert.equal(returned.level, cap.level + 1, 'first return gains exactly one displayed level');
+    assert.equal(returned.rematchTier, 1);
     assert.equal(state.unlocked, false);
     assert(
       !g.blocked(returned.x, returned.y, g.zoneId, g.actorRadius(returned)),
