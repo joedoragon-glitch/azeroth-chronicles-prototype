@@ -128,4 +128,28 @@ function harness(g) {
   assert.equal(restored.zone().enemies.find(e => e.roomCaptain).level, originalLevel + 1,
     'population reconciliation does not stack rematch levels');
 }
+
+{
+  for (const b of C.data.bosses.filter(x => x.captive)) {
+    const g = fresh();
+    g.s.keys[b.id] = true;
+    assert(g.rescue(b.id), b.id + ' can be freed');
+    g.enter(b.region);
+    const npc = g.zone().npcs.find(n => n.id === 'service-' + b.id);
+    assert(npc, b.id + ' has real town service');
+    const h = harness(g);
+    const interact = npc.kind === 'teacher' ? h.m.teacher :
+      npc.kind === 'smith' ? h.m.smith : h.m.supplier;
+    interact({ family: b.id, kind: npc.kind, name: b.captive });
+    assert.equal(h.calls.length, 0, b.id + ' remote service cannot consume intro');
+    interact(npc);
+    assert(h.last().description.length > 55, b.id + ' has a substantial personal account');
+    assert.equal(h.calls.length, 1, b.id + ' first visit saves one mark');
+    interact(npc);
+    assert.equal(h.calls.length, 1, b.id + ' repeat visits do not repeat introduction');
+    assert(C.restore(g.snapshot()).s.discovered['specialist:introduction:' + b.id],
+      b.id + ' one-time mark survives the save contract');
+  }
+}
+
 console.log('PASS lore-led quests, first conversations, entrance economy, boss and captain rematches');
