@@ -85,6 +85,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
       removeItem: (k) => storage.delete(k),
     },
     location: options.location || { protocol: 'file:', hostname: '' },
+    history: options.history,
     navigator: options.navigator || {},
     document: {
       documentElement: {},
@@ -103,7 +104,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     },
     setTimeout() {},
     clearTimeout() {},
-    setInterval() {},
+    setInterval(fn, ms) { options.onInterval?.(fn, ms); },
     Blob,
     URL: { createObjectURL: () => '', revokeObjectURL() {} },
     confirm: () => true,
