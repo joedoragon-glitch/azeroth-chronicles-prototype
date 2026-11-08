@@ -272,7 +272,7 @@ const server = http.createServer((req, res) => {
       assert.equal(await page.locator('#modal-actions').getByRole('button', {
         name: phone ? 'Buscar actualización' : 'Check for game update',
         exact: true,
-      }).count(), 0, 'Settings no longer duplicates the automatic update check');
+      }).count(), 0, 'Settings has no redundant manual check; startup owns discovery');
       // A rejected Service Worker check does not pause the current campaign.
       // Failure is exercised at the original browser API boundary, not through
       // a user control which no longer exists.
@@ -367,6 +367,71 @@ const server = http.createServer((req, res) => {
           'unchanged browser-cached assets must not download: ' + unchanged);
       assert(await page.locator('#update-button').isHidden(),
         'automatic preflight never asks for an update tap');
+      // One real multi-tab takeover: installing a release elsewhere must not
+      // reload an active campaign here. The player can install deliberately.
+      if (phone) {
+        await page.locator('#title-continue').click();
+        await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
+        await page.evaluate(() => { Prototype.game.hero.gold = 53535; Prototype.game.tick = () => {}; });
+        const currentBoot = await page.evaluate(() =>
+          Number(sessionStorage.getItem('pwa-browser-boot-count') || 0));
+        const other = await context.newPage();
+        await other.goto(url + '/phone-game.html');
+        await other.waitForFunction(() =>
+          document.getElementById('startup-update').hidden &&
+          !document.getElementById('title-screen').hidden &&
+          !!navigator.serviceWorker.controller);
+        generation = 'b';
+        await other.evaluate(async () => {
+          const reg = await navigator.serviceWorker.getRegistration();
+          await reg.update();
+        });
+        await other.waitForFunction(async () =>
+          !!(await navigator.serviceWorker.getRegistration()).waiting);
+        await other.waitForFunction(() => !document.getElementById('update-button').hidden);
+        // On the title screen, the full-screen title panel covers the HUD.
+        // Install via the visible Settings action, not a hidden-behind-title HUD click.
+        await other.locator('#title-settings').click();
+        await other.locator('#modal-actions').getByRole('button', {
+          name: 'Instalar actualización', exact: true,
+        }).click();
+        // Prove the other tab really completed the new worker activation:
+        // an updatefound notification alone must not masquerade as takeover.
+        await other.waitForFunction(async () => {
+          const reg = await navigator.serviceWorker.getRegistration();
+          const names = await caches.keys();
+          return reg?.active?.state === 'activated' && !reg.waiting &&
+            names.includes('azeroth-app-v' + PrototypeBuild.version + '-notice-b') &&
+            !names.includes('azeroth-app-v' + PrototypeBuild.version + '-notice-c');
+        }, null, { timeout: 90000 });
+        // The other tab may change controller without reporting a new load.
+        // Verify the *playing* tab remains alive and offers an optional update.
+        await page.waitForFunction(() =>
+          !document.getElementById('update-button').hidden, null, { timeout: 90000 });
+        const ongoing = await page.evaluate(async () => {
+          const response = await fetch('./assets/sprites/manifest.json');
+          const manifest = await response.json();
+          return {
+            started: Prototype.started,
+            gold: Prototype.game.hero.gold,
+            boot: Number(sessionStorage.getItem('pwa-browser-boot-count') || 0),
+            newWorkerControlsPage: !!navigator.serviceWorker.controller,
+            lazyAssetReadable: response.ok && !!manifest.sprites,
+          };
+        });
+        assert.equal(ongoing.started, true, 'a different tab must not stop the campaign');
+        assert.equal(ongoing.gold, 53535, 'a different tab must not lose game state');
+        assert.equal(ongoing.boot, currentBoot, 'no document reload from another tab activation');
+        assert(ongoing.newWorkerControlsPage && ongoing.lazyAssetReadable,
+          'old play session remains usable after the other tab changes the worker');
+        const chosenReload = page.waitForEvent('domcontentloaded');
+        await page.locator('#update-button').click();
+        await chosenReload;
+        await page.waitForFunction(() => !document.getElementById('title-screen').hidden);
+        assert.equal(await page.evaluate(() => Prototype.game.hero.gold), 53535,
+          'explicit acceptance retains the saved run');
+        await other.close();
+      }
       assert.deepEqual(errors, []);
       console.log(
         'PASS ready notice, localized layout/menu access, waiting activation, offline install, save retention and offline reload: ' +
