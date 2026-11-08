@@ -3278,7 +3278,11 @@
       const finalApproach = game.questDefs().find((q) => q.region === regionId && q.requiresRescues);
       const gate = findNpc((n) => n.id === 'fortress-gate');
       if (gate && finalApproach && !game.s.quests[finalApproach.id]?.done) {
-        present(summary + '\n' + finalApproach.name, [
+        // The final approach is a Main Story milestone, not a Side Quest.
+        // Put its one-line world clue at its actual presentation point.
+        const approachLore = questStory(finalApproach);
+        present(summary + '\n' + finalApproach.name +
+          (approachLore ? '\n' + approachLore : ''), [
           ...mainStory,
           guideAction(finalApproach.name, gate),
         ]);
