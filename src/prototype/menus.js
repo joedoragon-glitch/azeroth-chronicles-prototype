@@ -4,8 +4,8 @@
   // Brief observable clues here; deeper historical accounts belong to the Keeper.
   const siteBriefings = {
   "supply-vale": [
-    "Scornfang sorts reclaimed beams and fittings here for the unfinished winter estate. His reclamation office answers to Thornfang.",
-    "Scornfang clasifica aquí vigas y herrajes recuperados para la residencia invernal, todavía inacabada. Su oficina de recuperación responde ante Thornfang."
+    "Scornfang's Goblins record what they remove, repair, or preserve from the Forest Crypt. He wants the Dark Lord's winter retreat built without erasing the old place's history.",
+    "Los goblins de Scornfang llevan aquí el registro de lo que retiran, reparan o conservan de la Cripta del Bosque. Él quiere construir la residencia invernal sin borrar la historia del lugar."
   ],
   "supply-march": [
     "Mooring posts carry marks for high water. Direjaw's guards watch this landing and the provisions crossing Mirejaw's marsh channels.",
@@ -113,40 +113,40 @@
     "Gracias. ¡Creí que mis pies se rendirían antes de que aquel perro se cansara! Thornfang me pagaba por inspeccionar la residencia invernal y entrenar a sus defensores. Cada vez que intentaba volver a Millhaven, sus sabuesos me hacían regresar. Es un explorador experto; no esperes que olvide vuestro último combate."
   ],
   "crypt": [
-    "It's good to be home. The Lifebinder had me repairing the old crypt while it becomes the Dark Lord's winter retreat. His skeleton crews came with him; they're aware of what's happening and have their own opinions about it. Scornfang's Goblins kept bringing salvaged beams and fittings. The work is far from finished—and I wasn't allowed to leave mine.",
-    "Qué gusto volver a casa. El Lifebinder me tenía reparando la antigua cripta para convertirla en la residencia invernal del Dark Lord. Sus cuadrillas de esqueletos llegaron con él; son conscientes de lo que ocurre y tienen sus propias opiniones. Los goblins de Scornfang traían vigas y herrajes recuperados sin parar. Aún queda mucho por hacer, y a mí no me dejaban marcharme."
+    "Good to be home. The Lifebinder had me helping turn the old Forest Crypt into a winter residence. His skeleton workers had opinions about what was changing. Scornfang's Goblins carefully moved old furnishings; he fought to preserve the stonework. And the Dark Lord wanted his guests comfortable, not reminded they were sleeping in a crypt. Fascinating job, if they'd let me leave.",
+    "Qué gusto estar en casa. Ayudaba al Lifebinder a convertir la vieja Cripta del Bosque en una residencia invernal. Sus esqueletos tenían sus propias opiniones sobre las obras. Los goblins de Scornfang trasladaban con cuidado los objetos antiguos, y él insistía en conservar la piedra original. El Dark Lord quería que sus invitados estuvieran cómodos, no que sintieran que dormían en una cripta. Un trabajo fascinante... si me hubieran dejado volver a casa."
   ],
   "mire": [
-    "Thank you. Mirejaw kept me teaching his fighters, though nobody there knows the marsh like he does. He understands which channels are shallow and where the mud will catch you. Direjaw sees to the guards and supplies along those routes. Mirejaw has his own territory; the fishing villages beyond it are another world entirely.",
-    "Gracias. Mirejaw me retenía para entrenar a sus combatientes, aunque nadie conoce las marismas como él. Sabe qué canales son poco profundos y dónde el barro te atrapará. Direjaw organiza los guardias y las provisiones de esas rutas. Mirejaw tiene su territorio; los pueblos pesqueros de fuera son otro mundo."
+    "Thank you. I've taught all sorts, but Mirelings were a first. Try showing one how to defend itself when its first answer is to bite! Mirejaw knew those marshes better than any of us; he used shallow channels and mud to his advantage. Direjaw handled the guards and supplies. I'm glad to be back on dry ground.",
+    "Gracias. He enseñado a gente de todo tipo, ¡pero nunca a mirelings! Intenta enseñarle a uno cómo defenderse cuando su primera respuesta es morder. Mirejaw conocía las marismas mejor que nadie; aprovechaba los canales poco profundos y el barro. Direjaw se ocupaba de los guardias y las provisiones. Qué gusto volver a pisar tierra firme."
   ],
   "archive": [
     "I'm glad to be free. The Keeper needed my alchemy to save his waterlogged records. He genuinely loves those books; he'd talk about a rescued page almost as long as he talks about fishing. I spent my days drying and treating them, but I couldn't leave. I still don't know what flooded the Archive.",
     "Me alegra ser libre. El Keeper necesitaba mi alquimia para salvar sus archivos empapados. De verdad adora esos libros; podía hablar de una página recuperada casi tanto como de la pesca. Pasé los días secándolos y tratándolos, pero no podía marcharme. Aún no sé qué inundó el Archivo."
   ],
   "ridge": [
-    "Good to be out. I trained guards at the Ridge Tyrant's watchtower while he kept the payroll and caravans moving. He's the Master of Coin, and he can explain exactly how much a sound road or a regular wage is worth. The roads do work, and the archers get paid. He doesn't quite grasp why that wasn't enough to make me want to stay.",
-    "Qué alivio salir de allí. Entrené a los guardias de la atalaya de Ridge Tyrant mientras él organizaba las nóminas y las caravanas. Es el Maestro de la Moneda y sabe calcular cuánto vale un buen camino o un salario puntual. Los caminos funcionan y los arqueros cobran. Lo que no entiende es por qué eso no bastaba para que yo quisiera quedarme."
+    "Good to be out. The Ridge Tyrant wanted my advice on protecting his payroll caravans. The crossings are repaired, the archers are paid, and he's proud of every crown spent. To him, that's proof his rule works. He seemed genuinely puzzled when I said I'd rather go home.",
+    "Qué alivio salir de allí. Ridge Tyrant quería mis consejos para proteger sus caravanas de salarios. Los cruces están reparados, los arqueros cobran y él presume de cada corona invertida. Para él, eso demuestra que su gobierno funciona. Parecía sinceramente desconcertado cuando le dije que prefería volver a casa."
   ],
   "mine": [
-    "Thank you. Garun paid me fairly for mine repairs and some very peculiar commissions. He loves making little mechanisms and stone pieces just because they interest him; that mine is his workshop as much as his post. I could negotiate a price, but not permission to leave. It would have been a pleasant job if it had been my choice.",
-    "Gracias. Garun me pagaba bien por reparar equipo de la mina y por algunos encargos bastante extraños. Le encanta hacer pequeños mecanismos y piezas de piedra simplemente porque le interesan; esa mina es tanto su taller como su puesto. Podía negociar el precio, pero no el permiso para irme. Habría sido un trabajo agradable si hubiera podido elegirlo."
+    "Garun had me fixing mine equipment, then kept asking for odd little mechanisms simply because they interested him. He'd show me a piece of clever stonework with the pride of someone showing off a new toy. That mine is his workshop as much as his post. I'd have enjoyed it if going home had been my decision.",
+    "Garun me encargaba reparar el equipo de la mina y luego me pedía pequeños mecanismos extraños, solo porque le hacían ilusión. Me enseñaba alguna pieza de piedra ingeniosa con el orgullo de un niño con un juguete nuevo. Para él, la mina es tanto un taller como un puesto de vigilancia. Habría disfrutado del trabajo si hubiera podido decidir cuándo volver a casa."
   ],
   "warlord": [
-    "I'm relieved to be away from that checkpoint. The Ashen Warlord had me training his troops. His escorts really do keep food and repairs moving across the Frontier, but the same soldiers collect levies and enforce every inspection. People are rebuilding their lives under armed supervision. I was paid to teach—and forbidden to go.",
-    "Me alivia haber salido de aquel puesto de control. Ashen Warlord me hacía entrenar a sus tropas. Sus escoltas de verdad mantienen el paso de alimentos y materiales de reparación, pero esos mismos soldados cobran tributos y hacen cumplir cada inspección. La gente reconstruye su vida bajo vigilancia armada. Me pagaban por enseñar, pero me prohibían irme."
+    "I'm relieved to be away from that checkpoint. The Ashen Warlord wanted my help preparing escorts for attacks along the repaired roads. His soldiers really do keep food and supplies moving, but those same soldiers collect levies and inspect every wagon. Families are rebuilding under armed supervision. I never got used to watching that.",
+    "Me alivia haber salido de aquel puesto de control. Ashen Warlord quería que ayudara a preparar a las escoltas contra posibles ataques en los caminos reparados. Sus soldados sí mantienen el suministro de comida y materiales, pero también cobran tributos y registran cada carreta. Las familias reconstruyen sus hogares bajo vigilancia armada. Nunca llegué a acostumbrarme a verlo."
   ],
   "abyss": [
     "Glad you came. They put my rune work to use on dragon equipment while Veyrith prepared the air force. The hatchery and harness stations are busy, but the launch platform isn't finished yet. He's proud, disciplined and certain that controlling the skies will keep the peace below. He never asked whether I shared his enthusiasm for staying.",
     "Me alegra que vinieras. Usaban mis runas en equipo para dragones mientras Veyrith preparaba la fuerza aérea. Hay actividad en la zona de cría y los arneses, pero la plataforma de despegue aún no está terminada. Es orgulloso, disciplinado y está convencido de que controlar los cielos mantendrá la paz. Nunca me preguntó si yo quería quedarme."
   ],
   "cindermaw": [
-    "Thank you. Cindermaw paid me for my smithing and put guards on my movements. I saw how carefully he followed the roads, supplies and shelters under his ministry. People genuinely depend on those services. He seemed to think that meant he could decide where I worked, too.",
-    "Gracias. Cindermaw me pagaba por mi trabajo de herrera y ponía guardias a vigilar mis movimientos. Vi lo mucho que se ocupa de los caminos, las provisiones y los refugios de su ministerio. La gente depende de esos servicios. Parecía pensar que por eso también podía decidir dónde trabajaba yo."
+    "Cindermaw wanted my work at his forge and kept guards watching where I went. He knew the condition of the roads, supplies, and shelters under his ministry, down to the smallest complaint. People truly depend on those services. He seemed to think that gave him the right to decide where I belonged.",
+    "Cindermaw quería mis servicios en su forja y puso guardias para vigilar mis movimientos. Conocía al detalle el estado de los caminos, las provisiones y los refugios de su ministerio, hasta las quejas más pequeñas. La gente depende de verdad de esos servicios. Parecía creer que eso le daba derecho a decidir dónde debía estar yo."
   ],
   "citadel": [
-    "Thank you. I spent my time training recruits at the Citadel. Veyra has Goblins, Ogres and Humans drilling together as a real standing army. She notices everything, from a crooked formation to badly fitted equipment, and insists it should work and look right. I respect her skill. I would have preferred to volunteer.",
-    "Gracias. Me pasé el tiempo entrenando reclutas en la Ciudadela. Veyra hace que goblins, ogros y humanos se instruyan juntos como un verdadero ejército permanente. Se fija en todo, desde una formación torcida hasta el equipo mal ajustado, e insiste en que funcione y tenga buen aspecto. Respeto su habilidad. Habría preferido estar allí por voluntad propia."
+    "Veyra had me help prepare recruits for her drills. She's turned Goblins, Ogres and Humans into a real standing army. She can spot a crooked formation as quickly as a bad haircut; evidently her old work as a cosmetologist never left her. I respect her skill. I'd have admired it more from home.",
+    "Veyra me puso a ayudar a preparar a los reclutas para sus ejercicios. Ha convertido a goblins, ogros y humanos en un verdadero ejército permanente. Detecta una formación torcida tan rápido como un mal corte de pelo; se nota que no ha olvidado su antiguo oficio de cosmetóloga. Respeto su talento. Lo habría admirado más desde casa."
   ]
 };
   // A short regional clue beside each existing objective; quest rules and rewards are unchanged.
@@ -156,8 +156,8 @@
     "Los caminos entre Millhaven y las granjas ya no son del todo seguros."
   ],
   "Stolen Stores": [
-    "Scornfang's reclamation crews have taken usable timber and fittings for the winter estate. Millhaven's carters want their stores back.",
-    "Las cuadrillas de recuperación de Scornfang se han llevado madera y herrajes útiles para la residencia invernal. Los carreteros de Millhaven quieren recuperar sus provisiones."
+    "Scornfang's crews are carefully moving and preserving parts of the old Forest Crypt for the winter retreat. Millhaven's carters also want their seized supplies back.",
+    "Las cuadrillas de Scornfang trasladan y conservan con cuidado partes de la vieja Cripta del Bosque para la residencia invernal. Los carreteros de Millhaven también quieren recuperar las provisiones que les han quitado."
   ],
   "Keeping Trade Open": [
     "The mill crossing links orchard wagons to Millhaven's working road.",
