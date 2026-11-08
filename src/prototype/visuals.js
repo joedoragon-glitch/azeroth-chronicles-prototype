@@ -14393,32 +14393,25 @@
           table(28);
           break;
         case 'crown-logistics-bay':
-          craftAt(-13, 3, 0.8, () => tent(true));
-          crateBody(-17, 0, 0.65);
-          crateBody(20, 4, 0.7);
-          line(
-            [
-              [-29, -1],
-              [26, -8],
-            ],
-            '#c5b186',
-            1.6,
-          );
+          blockwork(-43, 9, 86, 12, '#6d6975', 6);
+          for (const x of [-37, 37]) blockwork(x - 4, -31, 8, 43, '#8b8490', 6);
+          softPoly([[-44, -31], [0, -53], [44, -31], [0, -17]], '#555365', 2);
+          line([[-40, -30], [0, -49], [40, -30]], '#aaa0a4', 1.8);
+          crateBody(-24, 1, 0.64);
+          crateBody(21, 4, 0.72);
+          crateBody(17, -10, 0.48);
+          boards(-18, 14, 36, 10, '#7d6871', true);
+          for (const x of [-9, 9]) line([[x, 14], [x, 22]], '#ae948a', 1);
           break;
         case 'crown-fortress-checkpoint':
           for (const x of [-28, 28]) {
-            blockwork(x - 4, -25, 8, 40, '#6c6b75');
+            blockwork(x - 7, -34, 14, 49, '#625f6c', 6);
+            softRect(x - 9, -36, 18, 7, '#928a96', 1);
             softRect(x - 5, -7, 10, 5, '#a5ac9e', 1);
           }
-          timber([-28, -10], [28, -10], 6);
-          line(
-            [
-              [-25, -13],
-              [22, -7],
-            ],
-            '#c3af7c',
-            2,
-          );
+          timber([-26, -10], [26, -10], 6);
+          line([[-24, -13], [23, -7]], '#c3af7c', 2);
+          for (const x of [-13, 0, 13]) softRect(x - 2, -14, 4, 8, '#615560', 1);
           craftAt(25, -5, 0.65, () => flag(true));
           break;
         case 'citadel-muster':

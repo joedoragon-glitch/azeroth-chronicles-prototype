@@ -284,7 +284,9 @@ const candidates = [
   ['cindermaw-communal-roost-night', 'crown', 2580, 1900, 480],
   ['crystal-dispatch', 'crown', 1250, 2350, 245],
   ['orrery', 'crown', 1850, 3150, 245],
-  ['fortress-logistics', 'crown', 3060, 3040, 245],
+  ['fortress-logistics', 'crown', 3085, 2325, 245],
+  ['fortress-checkpoint', 'crown', 3160, 2910, 245],
+  ['fortress-gate', 'crown', 3060, 3040, 245],
   // First pass at the waterworks and natural habitats. These remain
   // camera reconnaissance, separate from native route verification.
   ['public-bathhouse', 'crown', 1099, 735, 245],
@@ -296,6 +298,8 @@ const candidates = [
   ['civic-night', 'crown', 600, 700, 480],
   ['heatworks-night', 'crown', 2770, 710, 480],
   ['fortress-night', 'crown', 3060, 3040, 480],
+  ['fortress-logistics-night', 'crown', 3085, 2325, 480],
+  ['fortress-checkpoint-night', 'crown', 3160, 2910, 480],
   // Interior production and circulation are not yet aesthetically accepted.
   ['foundry-entry', 'side-crown-foundry', 330, 260, 245],
   ['foundry-workfloor', 'side-crown-foundry', 745, 755, 245],

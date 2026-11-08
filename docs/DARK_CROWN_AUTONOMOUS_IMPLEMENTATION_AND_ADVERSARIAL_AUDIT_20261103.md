@@ -24,7 +24,7 @@ The terrain painter now reuses immutable samples at world tile centers and share
 | 12. Cindermaw | Existing ministry facade, sheltered communal nesting shelf and distinct private bed | Walked public/private/communal separation and night review open |
 | 13. Crystals | Existing shipment with graded raw-crystal trays, protected stock and loading canopy | Walked day/night composition and security review open |
 | 14. Orrery | Existing landmark retained with bronze service fasteners and a walkable engraved survey court | Walked approaches and matched lighting review open |
-| 15. Fortress logistics | Existing logistics and checkpoints, Crown flag painter uses coin portrait | Full standard census and graduated approach open |
+| 15. Fortress logistics | Masonry cargo bay, strengthened checkpoint and existing gate in three day/night views | Final authority gradient and cross-renderer review open |
 | 16. Day/night continuity | Shared painter, bath entrance fixture and reconnaissance frames | Paired walked view set and matched browser performance open |
 
 The [52 authored art decisions and 16 natural-landscape decisions](DARK_CROWN_CAPITAL_IDENTITY_RECONCILIATION_20261031.md) remain the acceptance contract. PC03 is the equipment-only implementation and LA01 retains its written four-part blend. The three older-ground islands are Ash Refuge, southwest and the southern fold. The shared painter uses world coordinates and versioned Canvas/Pixi caches. Bridge decks, original roads, hot works and boss roosts remain protected from vegetation placement. The municipal works use fixed reviewed parcels and mark the buried clean-main crossing at the original southern bridge. No simulated production, water economy or third bridge was added.
