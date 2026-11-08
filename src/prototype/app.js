@@ -6487,7 +6487,7 @@
       'Choose how the game looks and runs.',
       items,
       systemMenu,
-      { view: 'performance-Screen and performance', layout: 'stack' },
+      { view: 'performance-Screen and performance' },
     );
   }
   function platformMenu() {
