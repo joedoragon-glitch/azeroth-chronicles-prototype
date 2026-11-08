@@ -6489,7 +6489,7 @@
       { view: 'performance-Screen and performance', layout: 'stack' },
     );
   }
-    function platformMenu() {
+  function platformMenu() {
     performancePage();
   }
   function requestPerformancePixi() {
