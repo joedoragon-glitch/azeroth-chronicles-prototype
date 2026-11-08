@@ -126,14 +126,14 @@
   ],
   "ridge": [
     "Good to be out. The Ridge Tyrant wanted my advice on protecting his payroll caravans. The crossings are repaired, the archers are paid, and he's proud of every crown spent. To him, that's proof his rule works. He seemed genuinely puzzled when I said I'd rather go home.",
-    "Qué alivio salir de allí. Ridge Tyrant quería mis consejos para proteger sus caravanas de salarios. Los cruces están reparados, los arqueros cobran y él presume de cada corona invertida. Para él, eso demuestra que su gobierno funciona. Parecía sinceramente desconcertado cuando le dije que prefería volver a casa."
+    "Qué alivio salir de allí. Ridge Tyrant quería mis consejos para proteger las caravanas que llevaban la paga. Los puentes están reparados, los arqueros cobran y él se enorgullece de cada corona bien gastada. Para él, eso demuestra que su gobierno funciona. Parecía sinceramente desconcertado cuando le dije que prefería volver a casa."
   ],
   "mine": [
-    "Garun had me fixing mine equipment, then kept asking for odd little mechanisms simply because they interested him. He'd show me a piece of clever stonework with the pride of someone showing off a new toy. That mine is his workshop as much as his post. I'd have enjoyed it if going home had been my decision.",
-    "Garun me encargaba reparar el equipo de la mina y luego me pedía pequeños mecanismos extraños, solo porque le hacían ilusión. Me enseñaba alguna pieza de piedra ingeniosa con el orgullo de un niño con un juguete nuevo. Para él, la mina es tanto un taller como un puesto de vigilancia. Habría disfrutado del trabajo si hubiera podido decidir cuándo volver a casa."
+    "Garun had me fixing mine equipment, then kept asking for odd little mechanisms simply because they interested him. The same Ogre who designed roads and fortresses could spend hours on one tiny piece of stonework. That mine is his workshop as much as his post. I'd have enjoyed it if going home had been my decision.",
+    "Garun me encargaba reparar el equipo de la mina y luego me pedía pequeños mecanismos extraños, solo porque le interesaban. El mismo ogro que diseñó caminos y fortalezas podía pasar horas con una pequeña pieza de piedra. Para él, la mina es tanto un taller como un puesto de vigilancia. Habría disfrutado del trabajo si hubiera podido decidir cuándo volver a casa."
   ],
   "warlord": [
-    "I'm relieved to be away from that checkpoint. The Ashen Warlord wanted my help preparing escorts for attacks along the repaired roads. His soldiers really do keep food and supplies moving, but those same soldiers collect levies and inspect every wagon. Families are rebuilding under armed supervision. I never got used to watching that.",
+    "I'm relieved to be away from that checkpoint. The Ashen Warlord wanted my help preparing escorts for attacks along the repaired roads. His soldiers really do keep food and building materials moving, but those same soldiers collect levies and inspect every wagon. Families are rebuilding under armed supervision. I never got used to watching that.",
     "Me alivia haber salido de aquel puesto de control. Ashen Warlord quería que ayudara a preparar a las escoltas contra posibles ataques en los caminos reparados. Sus soldados sí mantienen el suministro de comida y materiales, pero también cobran tributos y registran cada carreta. Las familias reconstruyen sus hogares bajo vigilancia armada. Nunca llegué a acostumbrarme a verlo."
   ],
   "abyss": [
@@ -141,8 +141,8 @@
     "Me alegra que vinieras. Usaban mis runas en equipo para dragones mientras Veyrith preparaba la fuerza aérea. Hay actividad en la zona de cría y los arneses, pero la plataforma de despegue aún no está terminada. Es orgulloso, disciplinado y está convencido de que controlar los cielos mantendrá la paz. Nunca me preguntó si yo quería quedarme."
   ],
   "cindermaw": [
-    "Cindermaw wanted my work at his forge and kept guards watching where I went. He knew the condition of the roads, supplies, and shelters under his ministry, down to the smallest complaint. People truly depend on those services. He seemed to think that gave him the right to decide where I belonged.",
-    "Cindermaw quería mis servicios en su forja y puso guardias para vigilar mis movimientos. Conocía al detalle el estado de los caminos, las provisiones y los refugios de su ministerio, hasta las quejas más pequeñas. La gente depende de verdad de esos servicios. Parecía creer que eso le daba derecho a decidir dónde debía estar yo."
+    "Cindermaw kept me working for his ministry, with guards watching where I went. He knew the condition of the roads, supplies, and shelters under his ministry, down to the smallest complaint. People truly depend on those services. He seemed to think that gave him the right to decide where I belonged.",
+    "Cindermaw me tenía trabajando para su ministerio, con guardias vigilando mis movimientos. Conocía al detalle el estado de los caminos, las provisiones y los refugios de su ministerio, hasta las quejas más pequeñas. La gente depende de verdad de esos servicios. Parecía creer que eso le daba derecho a decidir dónde debía estar yo."
   ],
   "citadel": [
     "Veyra had me help prepare recruits for her drills. She's turned Goblins, Ogres and Humans into a real standing army. She can spot a crooked formation as quickly as a bad haircut; evidently her old work as a cosmetologist never left her. I respect her skill. I'd have admired it more from home.",
