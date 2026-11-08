@@ -95,25 +95,35 @@ for (const language of ['en', 'es']) {
   const section = (en, es = en) => {
     assert(rows().some((node) => node.className === 'menu-section' && node.textContent === t(en, es)));
   };
-  section('Active renderer', 'Motor gráfico activo');
-  section('Preferred renderer', 'Motor gráfico preferido');
+  // All screen, renderer, graphics and pacing settings are inline: no child pages.
+  section('Display', 'Pantalla');
+  section('Renderer and recovery', 'Motor gráfico y recuperación');
+  section('Pixi graphics', 'Gráficos de Pixi');
+  section('Frame pacing', 'Ritmo de fotogramas');
   assert(!rows().some((node) => node.textContent.startsWith(
     t('Export playtest report', 'Exportar informe de prueba'))));
-  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 0);
+  assert(!rows().some((node) => ['menu-action', 'menu-action menu-highlight'].includes(node.className)),
+    'Screen and performance has no navigation buttons');
+  assert(!rows().some((node) => node.className === 'menu-section' &&
+    node.textContent.startsWith(t('Preferred renderer', 'Motor gráfico preferido'))),
+    'preferred renderer belongs to the selected graphics control, not a duplicate label');
+  assert(!rows().some((node) => node.className === 'menu-section' &&
+    node.textContent.startsWith(t('Active renderer', 'Motor gráfico activo'))),
+    'title-screen Canvas context is not a running world renderer');
+  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 5);
   const writes = [];
   const originalSet = storage.set.bind(storage);
   storage.set = (key, value) => {
     writes.push(key);
     return originalSet(key, value);
   };
-  click(t('Renderer and recovery', 'Motor gráfico y recuperación'));
   const canvas = setting('Graphics renderer', 'Motor gráfico');
   assert(canvas.children.some((o) => o.value === 'canvas2d'));
   assert(canvas.children.some((o) => o.value === 'webgl2'));
   assert.equal(s.Prototype.experimentalGraphics.mode, 'canvas2d');
 
-  back();
-  click(t('Display', 'Pantalla'));
+  selectSetting('Graphics renderer', 'Motor gráfico', 'canvas2d');
+  section('Canvas graphics', 'Gráficos de Canvas');
   selectSetting('Screen layout', 'Disposición de pantalla', 'phone');
   assert.equal(s.Prototype.platform.mode, 'phone');
   assert.equal(storage.get(s.PrototypePlatform.preferenceKey), 'phone');
@@ -121,8 +131,6 @@ for (const language of ['en', 'es']) {
   assert.equal(s.Prototype.platform.cameraZoom, 1.5);
   assert.equal(JSON.parse(storage.get(s.PrototypePlatform.cameraPreferenceKey)).phone, 1.5);
 
-  back();
-  click(t('Canvas graphics', 'Gráficos de Canvas'));
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'auto');
   selectSetting('Optimization Mode', 'Modo de optimización', 'on');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'on');
@@ -137,8 +145,6 @@ for (const language of ['en', 'es']) {
   selectSetting('Optimization Mode', 'Modo de optimización', 'auto');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'auto');
 
-  back();
-  click(t('Frame pacing', 'Ritmo de fotogramas'));
   assert.equal(s.Prototype.fps.preference, 'auto');
   assert.equal(s.Prototype.fps.target, 30);
   for (const value of ['60', '20', 'auto']) {
@@ -157,7 +163,7 @@ for (const language of ['en', 'es']) {
 
   assert(!writes.some((key) => key.startsWith('azeroth-v4-')), 'device settings write no campaign saves');
   back();
-  back();
+  title('Settings', 'Ajustes');
   click(t('Playtest tools', 'Herramientas de prueba'));
   assert(rows().some((node) => node.textContent.startsWith(t('Export playtest report', 'Exportar informe de prueba'))));
   section('Performance details', 'Detalles de rendimiento');
