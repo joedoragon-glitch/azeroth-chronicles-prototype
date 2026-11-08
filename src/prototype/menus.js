@@ -1,110 +1,111 @@
 /* Specialist, expedition, inventory and training menu catalog. Shell services are injected. */
 (function (root) {
   'use strict';
+  // Brief observable clues here; deeper historical accounts belong to the Keeper.
   const siteBriefings = {
-    'supply-vale': [
-      'Reclaimed timber and scaffold fittings are hauled here from the winter-estate works. The yard belongs to Scornfang, Thornfang’s Goblin disciple and Greenwood’s superintendent of reclamation.',
-      'Aquí llegan madera recuperada y herrajes de andamios de las obras de la residencia invernal. El recinto pertenece a Scornfang, discípulo goblin de Thornfang y encargado de la recuperación de materiales en Greenwood.',
-    ],
-    'supply-march': [
-      'Mirejaw’s storehouse sits among the wetland supply routes. His disciple Direjaw commands the guards posted here.',
-      'El almacén de Mirejaw se encuentra entre las rutas de abastecimiento de las marismas. Su discípulo Direjaw manda a los guardias de este puesto.',
-    ],
-    'supply-highlands': [
-      'Coin shipments from Stonecross travel under guard. This Treasury is under Crag Tyrant, a disciple of the Master of Coin. Armored direwolf riders patrol its approaches.',
-      'Los cargamentos de moneda de Stonecross viajan bajo escolta. Crag Tyrant, discípulo del Maestro de la Moneda, está al mando de este Tesoro. Jinetes montados en lobos terribles acorazados patrullan los accesos.',
-    ],
-    'supply-crown': [
-      'The Crown’s food convoys come through this Treasury. Cindermaw shares its administration with Dreadmaw, the Minister of Agriculture.',
-      'Los convoyes de alimentos de la Corona pasan por este Tesoro. Cindermaw comparte su administración con Dreadmaw, el ministro de Agricultura.',
-    ],
-    crypt: [
-      'An old burial crypt stands behind the scaffolding. The Lifebinder oversees the work here, converting it into a winter retreat for the Dark Lord.',
-      'Una antigua cripta funeraria se alza tras los andamios. El Lifebinder dirige las obras para convertirla en la residencia invernal del Dark Lord.',
-    ],
-    archive: [
-      'The Drowned Keeper is the archivist responsible for this collection. Water stains on the masonry mark how high the flood reached.',
-      'El Drowned Keeper es el archivero a cargo de esta colección. Las manchas en la mampostería marcan hasta dónde llegó el agua.',
-    ],
-    mine: [
-      'Ore carts still roll out of Colossus Mine. Ogre wardens and Crown riders guard the workings for Garun, the Stone Colossus.',
-      'Los carros de mineral siguen saliendo de Colossus Mine. Guardianes ogros y jinetes de la Corona protegen la explotación para Garun, el Coloso de Piedra.',
-    ],
-    abyss: [
-      'The Crown has set aside Abyss Bastion for its military dragons. The unfinished launch platform overlooks the approach. Veyrith, the Dark Lord’s mount, commands the post.',
-      'La Corona ha reservado Abyss Bastion para sus dragones militares. La plataforma de despegue, aún en obras, domina el acceso. Veyrith, montura del Dark Lord, manda en el puesto.',
-    ],
-    citadel: [
-      'The Citadel of Ashes is the garrison of Marshal Veyra’s standing army. Orders, drills and changes of watch set the pace here.',
-      'La Ciudadela de Ceniza es la guarnición del ejército permanente de la mariscal Veyra. Las órdenes, los ejercicios y los cambios de guardia marcan el ritmo del lugar.',
-    ],
-    'side-vale-cellars': [
-      'These cellars once stored the orchard’s fruit. The orchard has newer stores now, but the old doorway still sees use.',
-      'En estas bodegas se guardaba la fruta del huerto. Ahora hay almacenes más nuevos, pero la antigua entrada sigue en uso.',
-    ],
-    'side-march-watchhouse': [
-      'The old watchhouse once stood guard over the wetland routes. The lower walls are waterlogged, and the approach is slick with mud.',
-      'El antiguo puesto vigilaba las rutas de las marismas. La parte baja de los muros está empapada y el acceso resbala por el barro.',
-    ],
-    'side-highlands-signal': [
-      'The ridge keep was built to send warnings across the Highlands. Its signal station still serves the people working the mountain.',
-      'La fortaleza se construyó para enviar avisos por las tierras altas. Su puesto de señales sigue al servicio de quienes trabajan en la montaña.',
-    ],
-    'side-frontier-shrine': [
-      'The old shrine still stands beside the Frontier’s military road. Orc soldiers have taken up quarters here.',
-      'El antiguo santuario sigue en pie junto a la vía militar de Ashen Frontier. Soldados orcos se han instalado aquí.',
-    ],
-    'side-crown-foundry': [
-      'The foundry’s outer walls are scarred. Smoke from the chimney and the sound of hammering carry out to the road.',
-      'Los muros exteriores de la fundición están marcados por los daños. El humo de la chimenea y el sonido de los martillos llegan hasta el camino.',
-    ],
-    'thorn-homestead': [
-      'Thornfang was a Crown wilderness scout. The gear here is for scent work, recall drills and caring for his hounds. He was put in charge of patrolling the winter estate’s approaches. He took Mira on those rounds to inspect its defenses, paying her while forbidding her to leave. Once the estate can keep itself secure, Thornfang means to return to his distant home.',
-      'Thornfang fue explorador de la Corona. Aquí guarda el equipo de rastreo, de entrenamiento y de cuidado de sus sabuesos. Le encargaron patrullar los accesos de la residencia invernal. Se llevaba a Mira para inspeccionar las defensas, le pagaba y le prohibía marcharse. Cuando la finca pueda protegerse por sí sola, Thornfang piensa volver a su lejano hogar.',
-    ],
-  };
+  "supply-vale": [
+    "A former farm storehouse now holds Scornfang's reclaimed beams, fittings and relocation supplies for the winter estate.",
+    "Un antiguo almacén agrícola guarda ahora las vigas, los herrajes y los materiales recuperados por Scornfang para la residencia invernal."
+  ],
+  "supply-march": [
+    "Mooring posts carry marks for high water. Direjaw's guards watch this landing and the provisions crossing Mirejaw's marsh channels.",
+    "Los postes de amarre tienen marcas de las crecidas. Los guardias de Direjaw vigilan el embarcadero y las provisiones que cruzan los canales de Mirejaw."
+  ],
+  "supply-highlands": [
+    "Crag Tyrant's Treasury is a guarded household as well as a store. Armored direwolf riders wait beside coin chests and shipment ledgers.",
+    "El Tesoro de Crag Tyrant es tanto una residencia vigilada como un almacén. Jinetes sobre lobos terribles acorazados custodian cofres y registros de envíos."
+  ],
+  "supply-crown": [
+    "Grain, fish and livestock wagons pass beneath the seals of Agriculture and Interior. Dreadmaw guards the Inner Vault of the Treasury he shares with Cindermaw.",
+    "Carros de grano, pescado y ganado pasan bajo los sellos de Agricultura e Interior. Dreadmaw guarda la cámara interior del Tesoro que comparte con Cindermaw."
+  ],
+  "crypt": [
+    "Old burial stone stands among new scaffolds. The Forest Crypt is being converted into the Dark Lord's unfinished winter retreat.",
+    "La piedra funeraria antigua asoma entre nuevos andamios. La Cripta del Bosque se está convirtiendo en la residencia invernal, todavía inacabada, del Dark Lord."
+  ],
+  "archive": [
+    "Wet books, raised shelves and drying racks crowd the Sunken Archive's entrance. Someone inside is fighting to save the collection.",
+    "Libros mojados, estantes elevados y tendederos de páginas llenan la entrada de Sunken Archive. Alguien dentro intenta salvar la colección."
+  ],
+  "mine": [
+    "Ore carts and repair benches line Colossus Mine's approach. Ogre wardens and Crown riders on armored direwolves guard the deeper workings.",
+    "Vagonetas de mineral y bancos de reparación bordean la entrada de Colossus Mine. Ogros guardianes y jinetes de la Corona sobre lobos terribles acorazados protegen las galerías interiores."
+  ],
+  "abyss": [
+    "An unfinished launch platform rises above dragon harness stations and hatchery sheds. Veyrith's military air project is still taking shape.",
+    "Una plataforma de despegue inacabada se eleva sobre los arneses y las instalaciones de cría de dragones. La fuerza aérea de Veyrith sigue en preparación."
+  ],
+  "citadel": [
+    "Mixed ranks of Goblins, Ogres and Humans drill behind the Citadel walls. Marshal Veyra's banners fly over the parade ground.",
+    "Filas de goblins, ogros y humanos se entrenan tras los muros de la Ciudadela. Los estandartes de la mariscal Veyra ondean sobre el patio de armas."
+  ],
+  "side-vale-cellars": [
+    "The old orchard cellars still show the marks of fruit storage, though the orchard now uses newer buildings.",
+    "Las viejas bodegas conservan huellas del almacenamiento de fruta, aunque el huerto ya utiliza edificios más nuevos."
+  ],
+  "side-march-watchhouse": [
+    "Reed Beasts have made a home in a waterlogged human watchhouse along the marsh routes.",
+    "Las bestias del carrizal se han instalado en una antigua garita humana anegada junto a los caminos de las marismas."
+  ],
+  "side-highlands-signal": [
+    "A ridge-top signal keep still watches the roads between Ironroot's ore workings and settlements.",
+    "Una fortaleza de señales en lo alto de la cresta aún vigila los caminos entre las minas y los poblados de Ironroot."
+  ],
+  "side-frontier-shrine": [
+    "Orc soldiers have taken quarters in an old shrine beside the occupied Frontier's military road.",
+    "Soldados orcos han ocupado un antiguo santuario junto al camino militar de la Frontera."
+  ],
+  "side-crown-foundry": [
+    "Hammering and smoke carry from the damaged foundry, where Crown workers still make use of the volcanic heat.",
+    "Los golpes de martillo y el humo salen de la fundición dañada, donde los trabajadores de la Corona aún aprovechan el calor volcánico."
+  ],
+  "thorn-homestead": [
+    "A worn Crown scout's badge hangs beside a whistle. The rail by the doorway is scratched at hound height, and a bowl of fresh water stands nearby.",
+    "Una insignia gastada de explorador de la Corona cuelga junto a un silbato. La baranda de la entrada tiene arañazos a la altura de los sabuesos, y cerca hay un cuenco con agua fresca."
+  ]
+};
   const rescueBriefings = {
-    thorn: [
-      'Thornfang is keeping Mira, Millhaven’s instructor, under guard. Ask the Western road observer where to pick up his trail. Free Mira so she can teach you your second skill.',
-      'Thornfang mantiene vigilada a Mira, la instructora de Millhaven. Pregunta al observador del camino occidental dónde seguir su rastro. Libera a Mira para aprender tu segunda habilidad.',
-    ],
-    crypt: [
-      'The Lifebinder is forcing Borin, Millhaven’s smith, to work on the Dark Lord’s winter retreat. Find him in the Forest Crypt and free him to unlock weapon upgrades and basic crafting.',
-      'El Lifebinder obliga a Borin, el herrero de Millhaven, a trabajar en la residencia invernal del Dark Lord. Búscalo en Forest Crypt y libéralo para mejorar armas y fabricar equipo básico.',
-    ],
-    mire: [
-      'Mirejaw holds Sela, a combat instructor, on his marsh island. Free her to learn new class skills and train the ones you already know.',
-      'Mirejaw retiene a Sela, una instructora de combate, en su isla de las marismas. Libérala para aprender habilidades de tu clase y mejorar las que ya conoces.',
-    ],
-    archive: [
-      'The Drowned Keeper is holding Neri at the Sunken Archive because she knows how to save its water-damaged books. Free her so she can choose her own work and help your company with tonics and training.',
-      'El Drowned Keeper retiene a Neri en Sunken Archive porque ella sabe cómo salvar los libros dañados por el agua. Libérala para que pueda elegir su trabajo y ayudar a tu compañía con tónicos y entrenamiento.',
-    ],
-    ridge: [
-      'The Ridge Tyrant holds Orin, the Highland instructor, at the mountain watchtower. Free Orin to learn an area attack and improve the skills you already know.',
-      'El Ridge Tyrant retiene a Orin, el instructor de las tierras altas, en la torre de vigilancia de la montaña. Libéralo para aprender un ataque de área y mejorar tus habilidades.',
-    ],
-    mine: [
-      'Dara repairs equipment and takes commissions at Colossus Mine, where the Stone Colossus controls whether she can leave. Free the Highland smith to unlock better weapons and armor.',
-      'Dara repara equipo y acepta encargos en Colossus Mine, donde el Coloso de Piedra decide si puede marcharse. Libera a la herrera para mejorar armas y armaduras.',
-    ],
-    warlord: [
-      'The Ashen Warlord holds Lyss, an advanced instructor, at his occupied checkpoint. Free her to learn an advanced class skill and train your abilities further.',
-      'El Ashen Warlord retiene a Lyss, una instructora avanzada, en su puesto de control. Libérala para aprender una habilidad avanzada de tu clase y seguir entrenando.',
-    ],
-    abyss: [
-      'Eren the Runewright is held at Abyss Bastion, where Veyrith is preparing the Dark Lord’s air force. Free Eren to unlock advanced weapon and armor improvements.',
-      'Eren, el artesano de runas, está cautivo en Abyss Bastion, donde Veyrith prepara la fuerza aérea del Dark Lord. Libéralo para acceder a mejoras avanzadas de armas y armaduras.',
-    ],
-    cindermaw: [
-      'Cindermaw employs Vera as a Master Smith and forbids her to leave. Find her at his roost and free her to unlock final equipment improvements before facing the Dark Lord.',
-      'Cindermaw emplea a Vera como maestra herrera y le prohíbe marcharse. Búscala en su guarida y libérala para acceder a las últimas mejoras de equipo antes de enfrentarte al Dark Lord.',
-    ],
-    citadel: [
-      'Veyra, the Ash Sentinel, holds Tovan at the Citadel of Ashes. Free him to learn your final class skill and finish your training for the Dark Lord.',
-      'Veyra, la Centinela de Ceniza, retiene a Tovan en la Ciudadela de Ceniza. Libéralo para aprender la última habilidad de tu clase y completar tu entrenamiento antes de enfrentarte al Dark Lord.',
-    ],
-  };
+  "thorn": [
+    "Thornfang, a former Crown scout, keeps Millhaven's instructor Mira with him on patrol. Free her to train your second skill.",
+    "Thornfang, antiguo explorador de la Corona, lleva vigilada a Mira durante sus patrullas. Libérala para aprender tu segunda habilidad."
+  ],
+  "crypt": [
+    "The Lifebinder is converting the Forest Crypt into the Dark Lord's winter retreat with aware skeleton workers and the captive smith Borin. Free Borin to improve your equipment.",
+    "El Lifebinder convierte la Cripta del Bosque en residencia invernal con obreros esqueléticos conscientes y el herrero cautivo Borin. Libera a Borin para mejorar tu equipo."
+  ],
+  "mire": [
+    "Mirejaw knows the marsh channels and holds combat instructor Sela in his territory. Free her to expand your training.",
+    "Mirejaw conoce los canales de las marismas y retiene a la instructora Sela en su territorio. Libérala para ampliar tu entrenamiento."
+  ],
+  "archive": [
+    "The Drowned Keeper is forcing alchemist Neri to preserve the Sunken Archive's water-damaged records. Free her to restore her independence and unlock her services.",
+    "El Drowned Keeper obliga a la alquimista Neri a salvar los registros dañados por el agua. Libérala para devolverle su libertad y acceder a sus servicios."
+  ],
+  "ridge": [
+    "The Ridge Tyrant is Ironroot's Master of Coin. He holds instructor Orin at his mountain watchtower; free Orin for more training.",
+    "Ridge Tyrant es el Maestro de la Moneda de Ironroot. Retiene al instructor Orin en su atalaya; libéralo para continuar tu entrenamiento."
+  ],
+  "mine": [
+    "Garun the Stone Colossus guards a working mine that is also his workshop. Smith Dara receives wages there, but cannot leave. Free her to improve your gear.",
+    "Garun, el Coloso de Piedra, custodia una mina que también usa como taller. La herrera Dara cobra por su trabajo, pero no puede marcharse. Libérala para mejorar tu equipo."
+  ],
+  "warlord": [
+    "The Ashen Warlord governs the occupied Frontier, where repaired roads come with compulsory inspections. Free instructor Lyss from his checkpoint.",
+    "Ashen Warlord gobierna la Frontera ocupada, donde los caminos reparados también traen inspecciones obligatorias. Libera a Lyss de su puesto de control."
+  ],
+  "abyss": [
+    "Veyrith is preparing the Dark Lord's unfinished military air force at Abyss Bastion. Free runewright Eren from the project.",
+    "Veyrith prepara la fuerza aérea militar del Dark Lord en Abyss Bastion, todavía inacabada. Libera al artesano de runas Eren."
+  ],
+  "cindermaw": [
+    "Cindermaw runs the Interior and Welfare ministry with captive smith Vera at his side. Free her to gain the final equipment improvements.",
+    "Cindermaw dirige Interior y Bienestar y obliga a la herrera Vera a acompañarlo. Libérala para acceder a las últimas mejoras de equipo."
+  ],
+  "citadel": [
+    "Marshal Veyra commands the Crown's mixed-species standing army at the Citadel. Free instructor Tovan to complete your training.",
+    "La mariscal Veyra dirige el ejército permanente de la Corona, formado por distintas especies. Libera a Tovan para completar tu entrenamiento."
+  ]
+};
   const travelBriefings = {
     march: [
       'The wagon stops at Reedport. Fishing keeps the Marches fed, and raised roads carry people and goods between the villages. Stick to those roads around the lake and give Mirejaw’s marsh island a wide berth.',
@@ -208,14 +209,8 @@
       const camp = side ? null : game.dungeonCamp(entrance),
         reason = side ? '' : game.dungeonCampReason(entrance),
         cost = camp || side ? 0 : game.barracksBuildCost();
-      const reset = 'Leaving resets an unfinished encounter. Defeated leaders keep their normal return time; earned progress stays saved.';
-      const description = [
-        siteBriefing(entrance.family),
-        treasury && !game.peace
-          ? 'Treasuries are guarded supply stores. Clear the guards before collecting the caches.'
-          : null,
-        game.peace || side ? null : reset,
-      ].filter(Boolean).join('\n\n');
+      // Keep the entrance about the place, not repeated instructions on encounter mechanics.
+      const description = siteBriefing(entrance.family) || '';
       const enterLabel = treasury ? 'Enter Treasury' : side ? 'Go inside' : 'Enter dungeon';
       openMenu(
         entrance.name,
