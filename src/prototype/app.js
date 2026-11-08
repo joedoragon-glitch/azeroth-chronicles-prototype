@@ -1009,6 +1009,7 @@
     Diagnostics: 'Diagnósticos',
     'Renderer and recovery': 'Motor gráfico y recuperación',
     'Active renderer': 'Motor gráfico activo',
+    'No game active': 'No hay una partida activa',
     'Preferred renderer': 'Motor gráfico preferido',
     'Renderer status': 'Estado del motor gráfico',
     'Active layout': 'Disposición activa',
@@ -6520,7 +6521,9 @@
       );
     const version = PrototypeBuild.version.replace(/^.*\+snapshot\./, '');
     const commit = PrototypeBuild.commit?.slice(0, 7);
-    const rendererName = graphics.mode === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D';
+    const rendererName = !started
+      ? tr('No game active')
+      : graphics.mode === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D';
     const fallback = graphics.mode === 'webgl2' && graphics.phase !== 'trial' ? ''
       : graphics.recoveryPaused
       ? 'Fallback · safety hold'
@@ -6549,9 +6552,7 @@
       tr('Active renderer') +
         ' · ' +
         rendererName +
-        ' / ' +
-        resolutionStatus().ratio.toFixed(2) +
-        '×' +
+        (started ? ' / ' + resolutionStatus().ratio.toFixed(2) + '×' : '') +
         (fallback ? '\n' + tr(fallback) : ''),
       tr('Drawing') +
         ' · ' +
