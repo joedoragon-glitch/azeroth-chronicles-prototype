@@ -98,7 +98,7 @@ for (const language of ['en', 'es']) {
   // All screen, renderer, graphics and pacing settings are inline: no child pages.
   section('Display', 'Pantalla');
   section('Renderer and recovery', 'Motor gráfico y recuperación');
-  section('Pixi graphics', 'Gráficos de Pixi');
+  section('Canvas graphics', 'Gráficos de Canvas');
   section('Frame pacing', 'Ritmo de fotogramas');
   assert(!rows().some((node) => node.textContent.startsWith(
     t('Export playtest report', 'Exportar informe de prueba'))));
@@ -107,10 +107,36 @@ for (const language of ['en', 'es']) {
   assert(!rows().some((node) => node.className === 'menu-section' &&
     node.textContent.startsWith(t('Preferred renderer', 'Motor gráfico preferido'))),
     'preferred renderer belongs to the selected graphics control, not a duplicate label');
-  assert(!rows().some((node) => node.className === 'menu-section' &&
-    node.textContent.startsWith(t('Active renderer', 'Motor gráfico activo'))),
-    'title-screen Canvas context is not a running world renderer');
-  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 5);
+  section('Active renderer', 'Motor gráfico activo');
+  section('Effective density', 'Densidad efectiva');
+  section('Active draw target', 'Objetivo de dibujo activo');
+  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 6);
+
+  // On a fresh title screen the Canvas DOM surface is not a failed Pixi world.
+  // Migrations must be silent: no technical release announcements to players.
+  const titleOnly = shell(language, 'paladin', {
+    stayOnTitle: true,
+    graphicsGuard: require('../tools/webgl-pilot/renderer-switch-guard.js'),
+  });
+  const titleElements = titleOnly.elements;
+  const titleNotice = titleElements.get('startup-update-notice');
+  assert(!/Performance settings updated|Ajustes de rendimiento actualizados/.test(titleNotice.textContent),
+    'silent default migration does not announce itself on the title screen');
+  titleElements.get('title-settings').click();
+  const titleActions = () => titleElements.get('modal-actions').children;
+  const screenEntry = titleActions().find((node) => node.textContent.startsWith(
+    t('Screen and performance', 'Pantalla y rendimiento')));
+  assert(screenEntry, 'Screen and performance is accessible from title settings');
+  screenEntry.click();
+  const titleSections = titleActions().filter((node) => node.className === 'menu-section');
+  assert(titleSections.some((node) => node.textContent === t('Pixi graphics', 'Gráficos de Pixi')),
+    'the planned Pixi backend gets graphics settings before gameplay');
+  assert(!titleSections.some((node) => node.textContent.startsWith(
+    t('Active renderer', 'Motor gráfico activo'))),
+    'do not present the title Canvas surface as a world renderer');
+  assert(!titleSections.some((node) => node.textContent.startsWith(
+    t('Renderer status', 'Estado del motor gráfico'))),
+    'no false startup-failure warning before entering the game');
   const writes = [];
   const originalSet = storage.set.bind(storage);
   storage.set = (key, value) => {
