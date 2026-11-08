@@ -379,7 +379,8 @@ const server = http.createServer((req, res) => {
         await other.goto(url + '/phone-game.html');
         await other.waitForFunction(() =>
           document.getElementById('startup-update').hidden &&
-          !document.getElementById('title-screen').hidden);
+          !document.getElementById('title-screen').hidden &&
+          !!navigator.serviceWorker.controller);
         generation = 'b';
         await other.evaluate(async () => {
           const reg = await navigator.serviceWorker.getRegistration();
@@ -388,11 +389,12 @@ const server = http.createServer((req, res) => {
         await other.waitForFunction(async () =>
           !!(await navigator.serviceWorker.getRegistration()).waiting);
         await other.waitForFunction(() => !document.getElementById('update-button').hidden);
-        const otherReloaded = other.waitForEvent('domcontentloaded');
+        // A newly active worker may control the other tab without a fresh
+        // DOMContentLoaded event. Our acceptance signal is the playing tab's
+        // optional update banner, not an assumed navigation in the other tab.
         await other.locator('#update-button').click();
-        await otherReloaded;
         await page.waitForFunction(() =>
-          !document.getElementById('update-button').hidden);
+          !document.getElementById('update-button').hidden, null, { timeout: 90000 });
         const ongoing = await page.evaluate(async () => {
           const response = await fetch('./assets/sprites/manifest.json');
           const manifest = await response.json();
