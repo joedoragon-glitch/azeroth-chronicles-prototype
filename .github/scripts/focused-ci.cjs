@@ -287,6 +287,12 @@ const groups = [
     tests: [TEST + 'snapshot-encounter-lifecycle.test.cjs'],
   },
   {
+    // Named captain reward/respawn changes must retain their original
+    // cross-region recovery contract and the new rematch/save coverage.
+    match: /^src\/prototype\/treasury\.js$/,
+    tests: [TEST + 'treasury-recovery.test.cjs', TEST + 'lore-rematch.test.cjs'],
+  },
+  {
     // A rules edit can alter the source fingerprints in the sprite census.
     // Validate its checked-in evidence even when the graphics stay identical.
     match: /^src\/prototype\/rules\.js$|^docs\/evidence\/SPRITE_SCOPE_RECONCILIATION\.json$/,
