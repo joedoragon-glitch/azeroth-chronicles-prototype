@@ -3,7 +3,7 @@
 const assert = require('node:assert/strict');
 const L = require('../src/prototype/dark-crown-landscape.js');
 
-assert.equal(L.VERSION, 1);
+assert.equal(L.VERSION, 2);
 assert.equal(L.WORLD_SIZE, 3800);
 assert.equal(L.sample(NaN, 100), null);
 assert.equal(L.sample(100, Infinity), null);

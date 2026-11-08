@@ -25,5 +25,5 @@ const painted = [], materials = { paint(_ctx, key) { painted.push(key); return t
 V.floor(ctx, { x: 200, y: 200 }, 480, 960, 3, false, '', false, materials);
 assert.deepEqual(painted, [], 'Frontier never paints its retired raster');
 V.floor(ctx, { x: 200, y: 200 }, 480, 960, 4, false, '', false, materials);
-assert.deepEqual(painted, ['terrain:ground:crown'], 'Crown remains unchanged');
+assert.deepEqual(painted, [], 'Crown uses the shared procedural floor painter');
 console.log('PASS Frontier recovery, ravine, scorched control and raster bypass');

@@ -1,6 +1,48 @@
 # Dark Crown — autonomous implementation and adversarial audit mandate
 
-> **8 November execution checkpoint.** Execution checkpoint: the equipment-only correction supersedes historical worker expectations below. The complete 16-scene release audit, utility installation and live validation remain open.
+> **8 November execution checkpoint.** Current draft progress is tracked below. Historical workers, portrait-phone previews and Phase 1 feasibility evidence cannot certify current runtime or final art.
+
+## Current completion register
+
+**Release gate: HOLD.** This is implementation in draft #769. The earlier focused run [42505370490](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42505370490) failed on test ownership and stale sprite-scope evidence. The new draft maps Crown tests and refreshes the audited scope, which adds only Crown renderer families and source fingerprints. The companion [PWA run](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42505370498) passed for that earlier checkpoint. Four mini-dungeon assertions reproduced on unchanged main and the draft. They concern Greenwood cover/progression and an outdoor trap contract. Preserve their outcomes and keep the relevant Crown original behavior under the dedicated route and save checks.
+
+| #707 scene | Draft evidence | Release disposition |
+| --- | --- | --- |
+| 1. Crownwatch approach | Existing route and city composition, procedural ground, current camera samples | Walked reveal and exits open |
+| 2. Ridge and three towers | Three physical utility towers across the region | A real ridge and coherent view remain open |
+| 3. Civic square and hall | Existing rest service, forecourt and ministry frontage | Full services and matched day/night scene open |
+| 4. Courtyard housing | Current-main Ash Refuge household art retained | Connected walkable housing and camera review open |
+| 5. Ash Refuge | Local tower, existing households, one tested habitat | District composition and lived-in details open |
+| 6. Geothermal and public works | Seven fixtures and the existing south bridge service chase. Native placement and v4 restore checks | Heat, wastewater and clean-water route legibility open |
+| 7. Glass and ceramics | Fifteen existing thermal works and two realized industrial footpaths | Detailed working precincts and freight sequence open |
+| 8. Both lava bridges | Native round-trip routes in both modes, no changed roads | Matched bank and deck views open |
+| 9. Market and freight | Existing market, Crown freight and five industrial props | Roadside wagon, storefront and provisioning audit open |
+| 10. Foundry | Five static work stages, static gantry, original 14 guards, 7 columns, 4 traps and exit. Native routes and save round trip | Full exterior and walked interior combat/readability open |
+| 11. Citadel | Existing native academy and interior, military features preserved | Exterior drill and armory views open |
+| 12. Cindermaw | Existing encounters and ministry facade retained | Public/private/communal scene separation and walk open |
+| 13. Crystals | Existing shipment and resource identity | Sorting, security and dispatch composition open |
+| 14. Orrery | Existing landmark retained | Four approved civic meanings and approach open |
+| 15. Fortress logistics | Existing logistics and checkpoints, Crown flag painter uses coin portrait | Full standard census and graduated approach open |
+| 16. Day/night continuity | Shared painter, bath entrance fixture and reconnaissance frames | Paired walked view set and matched browser performance open |
+
+The [52 authored art decisions and 16 natural-landscape decisions](DARK_CROWN_CAPITAL_IDENTITY_RECONCILIATION_20261031.md) remain the acceptance contract. PC03 is the equipment-only implementation and LA01 retains its written four-part blend. The three older-ground islands are Ash Refuge, southwest and the southern fold. The shared painter uses world coordinates and versioned Canvas/Pixi caches. Bridge decks, original roads, hot works and boss roosts remain protected from vegetation placement. The municipal works use fixed reviewed parcels and mark the buried clean-main crossing at the original southern bridge. No simulated production, water economy or third bridge was added.
+
+| Existing record | Current disposition |
+| --- | --- |
+| #769 | Sole integration lead. Draft, no release approval requested |
+| #707 | Binding contract copied into the lead. Remains open pending release |
+| #794 | Isolated model brought into the lead and connected to runtime. Remains open pending release |
+| #862 | Seven documentation changes reconciled in the lead. Separate release unnecessary |
+| #668, #669, #670 | Relevant Crown field reviews. Original crossings and round trips checked. Service placement, rolled-back connectors, historical fixtures and owner field review require individual closure evidence |
+| #658 | Parent tracks other regions and owner field visits. Keep open |
+| #232, #233, #235, #247, #257, #266 | Worldbuilding and canon owners. Keep open beyond the Crown scope |
+| #736 | Current main already runs Ash Refuge domestic-life composition. Do not import unrelated regions wholesale |
+| #739 | Candidate historical interior material reference. Foundry-specific material comparison remains open |
+| #732 | Review-only, superseded as implementation evidence |
+| #770, #781 | Independent Strategist lookup and old release metadata. Exclude from the Crown source |
+| #841, #755 | Highlands renderer exception and campaign-wide physical performance acceptance. Independent of scoped Crown validation |
+| #839, #297 | Performance closeout and recovery references. #862 carries their bounded historical status into the lead |
+
 
 
 **CURRENT RESUMPTION STATUS — 4 November 2026 late evening:** The [lead handoff current reconciliation](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md) now controls: **Phase 2 IN PROGRESS/NOT ACCEPTED** after 56 historical Canvas frames, **Phase 1 engineering design already complete**, 16/16 owner-approved natural-scene decisions on #707, isolated #794 terrain engineering integration **ON HOLD**, main phone landscape #793/#798 **merged/published** separately from the old dev.258 owner preview. Phases 3/4 partial, Phase 5 final corrective QA pending, Phase 6 no-go. Read those current records before action; dated “Phase 2 NEXT / six-commit main drift” below is historical, not a live instruction.

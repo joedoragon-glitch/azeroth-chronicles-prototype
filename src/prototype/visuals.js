@@ -12,6 +12,8 @@
     typeof PrototypeGreenwoodInteriors !== 'undefined'
       ? PrototypeGreenwoodInteriors
       : require('./greenwood-interiors.js');
+  const DarkCrownLandscape = root.PrototypeDarkCrownLandscape ||
+    (typeof require === 'function' ? require('./dark-crown-landscape.js') : null);
   // Ogre-quality craft across the existing catalog: organic contours and worn
   // material joins, with deliberate mineral, weapon and fortification edges retained.
   const organicContours = new Set([
@@ -205,6 +207,8 @@
       sites = [{ x: 40, y: -25, role: 'home', radius: 60, alpha: 0.2 }];
     else if (region === 0 && e.greenwoodFacility === 'mill')
       sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
+    else if (structure === 'crown-bathhouse')
+      sites = [{ x: 0, y: -20, role: 'public-bath', radius: 68, alpha: 0.18 }];
     else if (structure === 'roadside-lantern')
       sites = [{ x: 0, y: -42, role: 'street', radius: 80, alpha: 0.25 }];
     else if (structure === 'grave-lamp')
@@ -10159,7 +10163,7 @@
         case 'orc-bivouac':
           craftAt(-9, 1, 0.85, () => tent());
           crateBody(27, 8, 0.65);
-          craftAt(-25, -12, 0.6, () => flag());
+          craftAt(-25, -12, 0.6, () => flag(false));
           craftAt(29, -7, 0.45, () => ledgerDesk());
           break;
         case 'ash-roost':
@@ -11623,7 +11627,7 @@
           );
       });
     }
-    function flag(crown = false, x = -17, y = 14) {
+    function flag(crown = region === 4, x = -17, y = 14) {
       timber([x, y], [x, y - 60], 3, '#7e674a');
       shaped(
         crown ? '#62506f' : ['#8b7454', '#6e9588', '#7f8b7d', '#947863', '#62506f'][region],
@@ -14070,6 +14074,59 @@
           }
           break;
         }
+        case 'crown-water-tower':
+          fillOval(0, 10, 32, 13, '#272633', 0.3);
+          blockwork(-23, -23, 46, 38, '#706d7c', 6);
+          for (const x of [-16, 16]) blockwork(x - 5, -67, 10, 72, '#888593', 7);
+          softRect(-29, -91, 58, 39, '#60767e', 6);
+          for (const y of [-84, -73, -62])
+            softRect(-28, y, 56, 3, '#a4aca7', 1);
+          softPoly([[-33, -89], [0, -109], [33, -89], [0, -80]], '#a5a0a5', 2);
+          softRect(-7, -12, 14, 26, '#444652', 2);
+          line([[22, -54], [22, -19], [33, -15], [33, 10]], '#a8a391', 3);
+          oval(33, -8, 6, 4, '#637a80');
+          break;
+        case 'crown-bathhouse':
+          fillOval(0, 13, 58, 15, '#272532', 0.25);
+          blockwork(-52, -42, 104, 58, '#a19a98', 8);
+          softPoly([[-58, -41], [-29, -69], [22, -69], [58, -41], [0, -29]],
+            '#747786', 2);
+          for (const x of [-39, -24, 24, 39]) {
+            softRect(x - 5, -29, 10, 23, '#51787e', 3);
+            line([[x, -27], [x, -9]], '#cabfa9', 1);
+          }
+          blockwork(-22, -34, 44, 52, '#b3a8a0', 8);
+          softRect(-14, -27, 28, 43, '#535a66', 6);
+          softRect(-11, -24, 22, 7, '#d6ac74', 2);
+          for (const y of [15, 20, 25])
+            softRect(-21 - (y - 15) / 2, y, 42 + y - 15, 4, '#918c91', 1);
+          blockwork(28, -69, 13, 28, '#787985', 5);
+          oval(34, -70, 7, 3, '#454852');
+          break;
+        case 'crown-water-inlet':
+        case 'crown-wastewater-house': {
+          const inlet = kind === 'crown-water-inlet';
+          blockwork(-37, -25, 74, 39, '#777685', 6);
+          softPoly([[-41, -24], [0, -45], [41, -24], [0, -12]],
+            inlet ? '#697e85' : '#6d686e', 2);
+          softRect(-13, -18, 25, 29, '#484851', 3);
+          line([[-6, -12], [6, -12]], '#bab09d', 2);
+          softRect(22, -9, 10, 10, inlet ? '#8ca6a3' : '#af8e67', 2);
+          oval(33, 11, 10, 5, '#464650');
+          break;
+        }
+        case 'crown-bath-exchanger':
+          blockwork(-23, 2, 46, 12, '#75747e', 4);
+          softRect(-15, -25, 30, 30, '#7d7b7e', 4);
+          for (const x of [-9, 0, 9]) softRect(x - 2, -20, 4, 21, '#b3a089', 1);
+          line([[-14, -17], [-24, -17], [-24, 11]], '#a98b68', 4);
+          line([[14, -12], [24, -12], [24, 11]], '#789b9e', 4);
+          break;
+        case 'crown-water-hatch':
+          oval(0, 3, 13, 7, '#4f5562');
+          oval(0, 1, 10, 5, '#8a9292');
+          line([[-5, 1], [5, 1]], '#535d65', 1.5);
+          break;
         case 'crown-ministry-frontage':
           // Distinct public administrative offices: civic craftsmanship,
           // not a new official NPC, military gate or magic landmark.
@@ -15083,6 +15140,16 @@
             '#829179',
             0.8,
           );
+          break;
+        case 'crown-bunchgrass':
+          fillOval(0, 10, 16, 4, '#3d392a', 0.5);
+          for (const [x, y, color] of [
+            [-13, -3, '#927249'], [-8, -11, '#b49a62'], [-4, -5, '#9a844d'],
+            [0, -14, '#c4a878'], [6, -9, '#aa8b57'], [12, -4, '#97744a'],
+          ]) {
+            line([[0, 10], [x * 0.48, 3], [x, y]], color, 1.4);
+            if (y < -7) oval(x, y, 2, 3, '#c5a36d');
+          }
           break;
         case 'grass':
           grassTuft(0, 8, false);
@@ -16584,7 +16651,7 @@
             oval(x, y, 1, 1, '#505a49');
           break;
         case 'checkpoint-standard':
-          flag(false);
+          flag(region === 4);
           softRect(-22, 11, 10, 5, '#727b6a', 1);
           break;
         case 'chain-anchor':
@@ -18383,7 +18450,7 @@
     } else if (type === 'prop') {
       if (['vale-working-mill', 'fruit-cellar'].includes(e.structure)) decoration(e.structure);
       else if (e.treasuryBoss) decoration(e.structure);
-      else if (e.decorative || e.crownPublicMinistry) decoration(e.structure);
+      else if (e.decorative || e.crownPublicMinistry || e.crownUtility) decoration(e.structure);
       else if (/^(vale-|march-|highland-|frontier-|crown-)/.test(e.structure || '')) {
         settlementBuilding(e.structure);
       } else if (e.structure === 'fence') {
@@ -19930,6 +19997,10 @@
       tileY = Math.floor(y / 80),
       seed = (Math.imul(tileX + 19, 73856093) ^ Math.imul(tileY + 37, 19349663)) >>> 0;
     const outdoor = !room && !dungeonId;
+    if (outdoor && region === 4 && !blocked && DarkCrownLandscape) {
+      DarkCrownLandscape.paintTile(ctx, p, x, y);
+      return;
+    }
     let color = blocked
       ? '#737c70'
       : seed % 7 === 0

@@ -198,7 +198,7 @@ assert.equal(JSON.stringify(civic.zone().footpaths), originalIndustrialPaths,
 assert.equal(JSON.stringify(civic.zone().roads), originalRoads,
   'Connecting industry cannot revise original roads or lava bridges');
 
-// The Foundry's civilian labor must remain scenery separate from every
+// Foundry production equipment must remain scenery separate from every
 // original hostile actor and four real traps; no invented product or quest.
 assert.deepEqual(foundry.decor.slice(7, 9).map(p => p[2]),
   ['crown-foundry-cooling-rack', 'crown-foundry-stock-bay'],
@@ -274,6 +274,13 @@ const candidates = [
   ['crystal-dispatch', 'crown', 1250, 2350, 245],
   ['orrery', 'crown', 1850, 3150, 245],
   ['fortress-logistics', 'crown', 3060, 3040, 245],
+  // First pass at the waterworks and natural habitats. These remain
+  // camera reconnaissance, separate from native route verification.
+  ['public-bathhouse', 'crown', 1099, 735, 245],
+  ['public-bathhouse-night', 'crown', 1099, 735, 480],
+  ['ash-refuge-island', 'crown', 365, 2010, 245],
+  ['southwest-island', 'crown', 710, 3120, 245],
+  ['southern-fold-island', 'crown', 1770, 3410, 245],
   // Night variants: civilian comfort, industrial heat, official control.
   ['civic-night', 'crown', 600, 700, 480],
   ['heatworks-night', 'crown', 2770, 710, 480],
@@ -332,7 +339,7 @@ for (const [label, zoneId, x, y, clock] of candidates) {
     assert(Math.hypot(safe.x - anchored.x, safe.y - anchored.y) <= 240,
       'A grounded landmark cannot be outside its own camera neighborhood: ' + label);
   Object.assign(game.hero, safe);
-  for (const [viewport, width, height] of [['desktop', 880, 560], ['narrow', 390, 680]]) {
+  for (const [viewport, width, height] of [['desktop', 880, 560], ['phone-800', 800, 375], ['phone-844', 844, 390]]) {
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
     const before = JSON.stringify(game.s);
@@ -373,11 +380,11 @@ for (const [label, zoneId, x, y, clock] of candidates) {
       nearbyEnemies: nearby(zone.enemies.filter(e => e.hp > 0)).length,
       pngBytes: bytes.length,
       sha256: crypto.createHash('sha256').update(bytes).digest('hex'),
-      renderer: 'native Canvas2D', phoneScaleOnly: viewport === 'narrow',
+      renderer: 'native Canvas2D', phoneScaleOnly: viewport.startsWith('phone-'),
     });
   }
 }
-assert.equal(records.length, candidates.length * 2);
+assert.equal(records.length, candidates.length * 3);
 
 const room = new Campaign('normal', 'paladin', () => 0.73);
 assert(room.enter('side-crown-foundry'));
@@ -409,4 +416,4 @@ fs.writeFileSync(path.join(root, 'scene-index.json'), JSON.stringify({
   scenes: candidates.length, captures: records.length, records,
 }, null, 2) + '\n');
 console.log('PASS Dark Crown Stage 0: ' + candidates.length +
-  ' Canvas2D candidate camera positions x 2 viewports, Foundry ID/walls/enemies preserved');
+  ' Canvas2D candidate camera positions x 3 viewports, Foundry ID/walls/enemies preserved');

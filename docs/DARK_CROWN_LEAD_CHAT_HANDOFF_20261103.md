@@ -1,6 +1,6 @@
 # Dark Crown regional overhaul — authoritative cross-chat lead handoff
 
-> **8 November execution checkpoint.** Execution checkpoint: current main and the seven #862 documentation changes are reconciled on the lead branch. The #707 design and #794 isolated field model are included. Foundry equipment replaces the animated figures. Regional art, utilities, vegetation, terrain rendering and final verification remain open.
+> **8 November execution checkpoint.** The #769 draft carries current dev.276 main, all seven #862 documentation changes, the #707 contract and the #794 landscape model. The draft includes static Foundry equipment, seven waterworks sites, three older-ground habitats and shared procedural ground. See the current [completion register](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md#current-completion-register) before relying on older checkpoints below. The release remains on hold for final regional composition and verification.
 
 
 ## 8 November 2026 — owner-directed priority and autonomous completion mandate

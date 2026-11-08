@@ -231,14 +231,21 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `heated-drying-shed` | PROCEDURAL — thermal clothes and material drying workplace |
 | `crown-foundry-yard-loading` | PROCEDURAL — same Crown Foundry exterior cargo props and working entrance footprint; no new warehouse service |
 | `crown-foundry-yard-flue` | PROCEDURAL — retained exterior heat-exhaust structure and regional atmosphere |
-| `crown-foundry-yard-shipping` | PROCEDURAL — existing entrance prop hosting a bounded, timed shipping gesture; no extra NPC |
+| `crown-foundry-yard-shipping` | PROCEDURAL — existing entrance prop with a stationary loading gantry and parked hook |
 | `crown-foundry-cooling-rack` | PROCEDURAL — existing Foundry floor cooling station, not a loot or recipe object |
 | `crown-foundry-stock-bay` | PROCEDURAL — existing Foundry floor material-storage composition |
-| `crown-foundry-receiving` | PROCEDURAL — generated interior receiving worker/tool pose, noncombat and nonblocking |
-| `crown-foundry-furnace` | PROCEDURAL — generated interior furnace tender pose with existing heat source |
-| `crown-foundry-forming` | PROCEDURAL — generated interior material-forming worker gesture |
-| `crown-foundry-finishing` | PROCEDURAL — generated interior finishing/inspection worker pose |
-| `crown-foundry-dispatch` | PROCEDURAL — generated interior stock-dispatch worker gesture, no invented trade economy |
+| `crown-foundry-receiving` | PROCEDURAL — static receiving crates and handling bench |
+| `crown-foundry-furnace` | PROCEDURAL — maintained furnace, static hot-work tools and original heat source |
+| `crown-foundry-forming` | PROCEDURAL — static forming press and mold |
+| `crown-foundry-finishing` | PROCEDURAL — static finishing bench and inspection tools |
+| `crown-foundry-dispatch` | PROCEDURAL — static dispatch rack and stored stock |
+| `crown-water-tower` | PROCEDURAL — covered ceramic storage and pressure tank above a basalt base |
+| `crown-bathhouse` | PROCEDURAL — stone bath hall, protected windows and a warm entrance light |
+| `crown-water-inlet` | PROCEDURAL — protected clean-water main inlet |
+| `crown-wastewater-house` | PROCEDURAL — separate southwest covered wastewater works |
+| `crown-bath-exchanger` | PROCEDURAL — local indirect heat exchange equipment |
+| `crown-water-hatch` | PROCEDURAL — flush service covers at the original south bridge banks |
+| `crown-bunchgrass` | PROCEDURAL — dry golden grass limited to older volcanic habitat |
 | `crown-ministry-frontage` | PROCEDURAL — nonblocking glazed masonry public administrative frontage, without a new minister NPC or service |
 | `crown-civic-tilecourt` | PROCEDURAL — nonblocking ground-integrated Crownwatch civic court tiles |
 | `crown-sheltered-planter` | PROCEDURAL — small civic planter with same regional palette; nonblocking |

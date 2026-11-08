@@ -1,6 +1,6 @@
 # Dark Crown natural landscape — parallel workstream, source ownership and integration gate
 
-> **8 November execution checkpoint.** The isolated field model and native Node field test were carried into the #769 integration draft. Rendering still uses T005. Native camera and environmental acceptance are pending.
+> **8 November execution checkpoint.** The draft integrates the #794 model through the shared Canvas/Pixi floor painter and locates three habitats, including one at Ash Refuge. The candidate bypasses and unregisters outdoor T005 while retaining the approved rollback record. Native Node tests and a desktop Chromium WebGL2 sample verify operation. A walked day/night camera survey and measured final performance remain open. Earlier phase holds and isolated-model statuses below are historical.
 
 
 ## Current owner priority and design-review gate — 4 November 2026

@@ -129,6 +129,60 @@ for (const mode of ['normal', 'nightmare']) {
 }
 
 
+// Compare the installed parcels and habitat against the same collision and
+// road geometry used by the campaign. Restore a v4 zone before rebuilding.
+for (const mode of ['normal', 'nightmare']) {
+  const game = new Campaign(mode, 'paladin', () => 0.73);
+  assert(game.enter('crown'));
+  const inspect = (candidate) => {
+    const zone = candidate.zone();
+    const access = { roads: [...zone.roads, ...zone.footpaths] };
+    const found = [];
+    for (const [id, x, y, r, structure] of Campaign.rules.crownWaterworks) {
+      const fixtures = zone.props.filter((p) => p.id === id);
+      assert.equal(fixtures.length, 1, mode + ' waterworks placement: ' + id);
+      assert.deepEqual(fixtures.map((p) => [p.x, p.y, p.r, p.structure]), [[x, y, r, structure]]);
+      assert(!candidate.blocked(x, y, 'crown', r, true), id + ' is on cool ground');
+      assert(candidate.distanceToRoad(access, { x, y }) > r + 15, id + ' is outside roads');
+      assert([0, 1, 2, 3, 4, 5, 6, 7].some((n) => {
+        const theta = n * Math.PI / 4;
+        return !candidate.blocked(x + (r + 21) * Math.cos(theta),
+          y + (r + 21) * Math.sin(theta), 'crown');
+      }), id + ' has an unobstructed maintenance apron');
+      found.push(id);
+    }
+    for (const bank of ['west', 'east']) {
+      const id = 'crown-south-bridge-main-' + bank;
+      assert.equal(zone.props.filter((p) => p.id === id).length, 1, id);
+    }
+    const landscape = require('../src/prototype/dark-crown-landscape.js');
+    for (const island of landscape.islands) {
+      const plants = zone.props.filter((p) => p.id.startsWith('crown-habitat-' + island.id + '-'));
+      assert(plants.length >= 5, island.id + ' has a meaningful cluster of older-ground plants');
+      for (const plant of plants) {
+        assert(landscape.islandMask(plant.x, plant.y, [island]) >= 0.28);
+        assert(!candidate.blocked(plant.x, plant.y, 'crown', 20, true));
+        assert(candidate.distanceToRoad(access, plant) > 40);
+        found.push(plant.id);
+      }
+    }
+    return found.sort();
+  };
+  const expected = inspect(game);
+  const snapshot = game.snapshot();
+  // Model a v4 Crown zone predating these additions. Existing objects,
+  // quests, roads and player state remain in the real serialized shape.
+  const zone = snapshot.zones.crown;
+  zone.props = zone.props.filter((p) =>
+    !expected.includes(p.id) && !p.id.startsWith('crown-south-bridge-main-'));
+  delete zone.crownHabitatVersion;
+  const restored = Campaign.restore(snapshot);
+  assert(restored.enter('crown'));
+  assert.deepEqual(inspect(restored), expected, mode + ' v4 fixtures are deterministic');
+  assert.deepEqual(restored.zone().roads, game.zone().roads, mode + ' v4 roads preserved');
+  console.log('PASS ' + mode + ': waterworks and older-ground habitat on fresh and pre-feature v4 zones');
+}
+
 // Phase 1: audit the *resolved* geometry instead of mistaking rules.js's
 // requested anchors and eight optional freight links for a working network.
 // This is diagnostic-only evidence, not an assertion that geothermal pipes,

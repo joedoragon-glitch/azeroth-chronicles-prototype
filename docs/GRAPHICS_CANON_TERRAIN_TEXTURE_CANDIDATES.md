@@ -123,7 +123,7 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 > Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #343644, #414351, #2c2f3c, #a09b9e. Muted slate-violet earth with restrained fine mineral/obsidian grain. No purple glow. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
 
-**Current status:** T005 remains active. Crown's procedural district and fortress work does not automatically supersede the base mineral/obsidian floor grain. Retain until current terrain composition establishes a replacement.
+**Current status:** Published dev.276 still uses T005. Dark Crown draft #769 replaces its outdoor paint with shared world-coordinate geology. The approved image, material history and rollback remain available. The draft's native camera and final performance acceptance remain open.
 
 ### T006 — Greenwood Vale road material
 

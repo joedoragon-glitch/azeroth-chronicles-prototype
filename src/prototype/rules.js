@@ -1498,6 +1498,17 @@
     Object.freeze([-133, 165, 'crown-ceramic-bench', 'civic-rest']),
     Object.freeze([133, 165, 'crown-ceramic-bench', 'civic-rest']),
   ]);
+  // Municipal water is imported through a buried clean main. Only service
+  // buildings and access points are visible. Heat and wastewater stay separate.
+  const crownWaterworks = [
+    ['west-levy-water-inlet-service', 315, 1710, 45, 'crown-water-inlet'],
+    ['crownwatch-water-tower', 1150, 545, 48, 'crown-water-tower'],
+    ['ash-refuge-water-tower', 332, 2158, 45, 'crown-water-tower'],
+    ['east-service-water-tower', 2980, 2700, 48, 'crown-water-tower'],
+    ['public-geothermal-bathhouse', 1039, 672, 72, 'crown-bathhouse'],
+    ['cool-west-bank-heat-exchanger', 1155, 818, 25, 'crown-bath-exchanger'],
+    ['southwest-covered-wastewater-service', 450, 3257, 53, 'crown-wastewater-house'],
+  ];
   const crownDistricts = [
     {
       id: 'labor-quarter',
@@ -8082,6 +8093,7 @@
     crownRoutes,
     crownSceneLayout,
     crownCivicForecourt,
+    crownWaterworks,
     crownDistricts,
     teachers,
     expeditionSupportSkills,

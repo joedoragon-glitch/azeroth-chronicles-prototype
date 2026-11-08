@@ -2,6 +2,8 @@
 (function (root) {
   'use strict';
   const roadPlans = new Map();
+  const DarkCrownLandscape = root.PrototypeDarkCrownLandscape ||
+    (typeof require === 'function' ? require('./dark-crown-landscape.js') : null);
   // Evidence-confirmed reverse of the *rejected* dev.233 global final-pass moves.
   // Every row requires an exact matching AFTER coordinate; unrelated saves
   // and player-built objects are deliberately never repositioned.
@@ -973,6 +975,74 @@
           z.crownIndustrialFreightVersion = 1;
         } finally {
           this.s.zone = previous;
+        }
+      }
+      crownHabitat(z) {
+        if (z.id !== 'crown' || !DarkCrownLandscape ||
+            z.crownHabitatVersion === DarkCrownLandscape.VERSION) return;
+        const access = { roads: [...z.roads, ...(z.footpaths || [])] };
+        const protectedSites = z.props.filter((p) =>
+          p.id.startsWith('recovery-heat-crown-') ||
+          /roost|cindermaw/.test(p.structure || ''),
+        );
+        for (const island of DarkCrownLandscape.islands) {
+          for (let index = 0; index < 64; index++) {
+            const dx = DarkCrownLandscape.hash2(index, island.seed, 45) * 2 - 1;
+            const dy = DarkCrownLandscape.hash2(index, island.seed, 81) * 2 - 1;
+            const x = Math.round(island.x + dx * island.rx);
+            const y = Math.round(island.y + dy * island.ry);
+            const site = { x, y };
+            const id = 'crown-habitat-' + island.id + '-' + index;
+            const mask = DarkCrownLandscape.islandMask(x, y, [island]);
+            const tree = index < 9 && island.id !== 'ash-refuge' && mask > 0.88;
+            const margin = tree ? 60 : 29;
+            if (mask < 0.28 || this.blocked(x, y, z.id, margin, true) ||
+                this.distanceToRoad(access, site) < margin + 16 ||
+                protectedSites.some((p) => dist(p, site) < 160) ||
+                z.npcs.some((n) => dist(n, site) < margin + 45) ||
+                z.nodes.some((n) => dist(n, site) < margin + 38) ||
+                z.buildings.some((b) => dist(b, site) < margin + 45) ||
+                z.enemies.some((e) => e.type === 'boss' && dist(e.home || e, site) < 185) ||
+                z.props.some((p) => p.id === id || dist(p, site) < margin + (p.r || 0)))
+              continue;
+            const structure = tree ? 'pine-sapling' : index % 9 === 0
+              ? 'wildflowers' : 'crown-bunchgrass';
+            z.props.push({ id, x, y, r: 0, decorative: true, structure });
+          }
+        }
+        z.crownHabitatVersion = DarkCrownLandscape.VERSION;
+      }
+      crownWaterworks(z) {
+        if (z.id !== 'crown') return;
+        const access = { roads: [...z.roads, ...(z.footpaths || [])] };
+        for (const [id, x, y, r, structure] of R.crownWaterworks) {
+          if (z.props.some((prop) => prop.id === id)) continue;
+          const site = { x, y };
+          if (
+            this.blocked(x, y, z.id, r + 4, true) ||
+            this.distanceToRoad(access, site) <= r + 15 ||
+            z.props.some((prop) => dist(prop, site) <= r + Math.max(prop.r || 0, 30)) ||
+            z.npcs.some((npc) => dist(npc, site) <= r + 55) ||
+            z.nodes.some((node) => dist(node, site) <= r + 50) ||
+            z.buildings.some((building) => dist(building, site) <= r + 55) ||
+            z.enemies.some((enemy) => dist(enemy.home || enemy, site) <= r + 60)
+          ) continue;
+          z.props.push({ id, x, y, r, structure, crownUtility: true });
+        }
+        // Hatches on opposite banks mark the protected clean-main chase in
+        // the existing southern bridge. The bridge deck stays free of pipes.
+        const south = z.bridgeApproaches?.reduce(
+          (lower, crossing) => !lower || crossing.west.y > lower.west.y ? crossing : lower,
+          null,
+        );
+        if (!south) return;
+        for (const [bank, direction] of [['west', -1], ['east', 1]]) {
+          const id = 'crown-south-bridge-main-' + bank;
+          const { x, y } = south[bank];
+          const site = { x: x + 40 * direction, y: y + 39 };
+          if (z.props.some((prop) => prop.id === id) ||
+              this.blocked(site.x, site.y, z.id, 12, true)) continue;
+          z.props.push({ id, ...site, r: 0, decorative: true, structure: 'crown-water-hatch' });
         }
       }
       crownCivicForecourt(z) {
@@ -3175,6 +3245,8 @@
           this.crownIndustrialCirculation(z);
           this.crownFoundryExterior(z);
           this.crownIndustrialFreight(z);
+          this.crownWaterworks(z);
+          this.crownHabitat(z);
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
@@ -3616,6 +3688,8 @@
         this.crownIndustrialCirculation(z);
         this.crownFoundryExterior(z);
         this.crownIndustrialFreight(z);
+        this.crownWaterworks(z);
+        this.crownHabitat(z);
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);

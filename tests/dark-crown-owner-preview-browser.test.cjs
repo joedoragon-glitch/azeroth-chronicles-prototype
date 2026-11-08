@@ -5,6 +5,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const http = require('node:http');
+const {execFileSync} = require('node:child_process');
 const path = require('node:path');
 const {chromium} = require('playwright');
 const root = path.resolve(__dirname, '..');
@@ -76,9 +77,18 @@ async function guideGeometry(page,device){
     assert.equal(dimensions.bodyMode,'desktop');
   }
 }
+function chromiumExecutable() {
+  if (process.env.CHROMIUM_EXECUTABLE) return process.env.CHROMIUM_EXECUTABLE;
+  for (const command of ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser']) {
+    try {
+      return execFileSync('which', [command], {encoding:'utf8', stdio:['ignore','pipe','ignore']}).trim();
+    } catch {}
+  }
+  return undefined;
+}
 async function run(){
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-  const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  const browser=await chromium.launch({headless:true,executablePath:chromiumExecutable(),args:['--no-sandbox']});
   try {
     const origin='http://127.0.0.1:'+server.address().port+
       '/dark-crown-owner-preview.html?developer=1';
