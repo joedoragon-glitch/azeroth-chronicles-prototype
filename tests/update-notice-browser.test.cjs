@@ -389,10 +389,14 @@ const server = http.createServer((req, res) => {
         await other.waitForFunction(async () =>
           !!(await navigator.serviceWorker.getRegistration()).waiting);
         await other.waitForFunction(() => !document.getElementById('update-button').hidden);
-        // A newly active worker may control the other tab without a fresh
-        // DOMContentLoaded event. Our acceptance signal is the playing tab's
-        // optional update banner, not an assumed navigation in the other tab.
-        await other.locator('#update-button').click();
+        // On the title screen, the full-screen title panel covers the HUD.
+        // Install via the visible Settings action, not a hidden-behind-title HUD click.
+        await other.locator('#title-settings').click();
+        await other.locator('#modal-actions').getByRole('button', {
+          name: 'Instalar actualización', exact: true,
+        }).click();
+        // The other tab may change controller without reporting a new load.
+        // Verify the *playing* tab remains alive and offers an optional update.
         await page.waitForFunction(() =>
           !document.getElementById('update-button').hidden, null, { timeout: 90000 });
         const ongoing = await page.evaluate(async () => {
