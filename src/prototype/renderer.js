@@ -3063,26 +3063,28 @@
           ctx.shadowBlur = 0;
         }
         if (kind === 'enemy' && !slot) drawCombatName(ctx, e, p, null);
-        // The Millhaven captain's recruitment prompt was previously missing.
-        if (
-          kind === 'npc' &&
-          e.kind === 'recruiter' &&
-          game.zoneId === 'vale' &&
-          game.s.party.length <= 2
-        ) {
-          ctx.fillStyle = '#f9ce72';
-          ctx.beginPath();
-          ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.strokeStyle = '#fff1b4';
-          ctx.lineWidth = 2;
-          ctx.stroke();
-          ctx.fillStyle = '#19291e';
-          ctx.font = 'bold 23px system-ui';
-          ctx.fillText('!', p.x, p.y - 72);
-        }
+        if (kind === 'npc' && millhavenCue(e)) drawQuestCue(p);
       }
       ctx.restore();
+    }
+    function millhavenCue(entity) {
+      return game.zoneId === 'vale' &&
+        ((entity.kind === 'recruiter' && game.s.party.length <= 2) ||
+          (entity.kind === 'quests' && entity.id === 'board' &&
+            !game.s.discovered?.['vale:quest-board-intro']));
+    }
+    function drawQuestCue(p) {
+      ctx.fillStyle = '#f9ce72';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff1b4';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#19291e';
+      ctx.font = 'bold 23px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('!', p.x, p.y - 72);
     }
     function drawArenaBoundary() {
       if (game.s.mode !== 'arena') return;
@@ -3365,8 +3367,6 @@
       }
       finishPhase('terrain');
       if (renderLayer === 'background') return;
-      const boardCue = null,
-        captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
       const entities = collectVisibleEntities();
       // Reserve nameplates once in screen space, with interactable NPCs and
       // bosses first. Entity draw/depth order must not decide which nearby
@@ -3550,20 +3550,7 @@
             if (slot) ctx.fillText(name, slot.x, slot.y, Math.min(slot.width, width || slot.width));
             ctx.shadowBlur = 0;
           }
-          const cue =
-            e.kind === 'quests' ? boardCue : e.kind === 'recruiter' && captainCue ? '!' : null;
-          if (cue) {
-            ctx.fillStyle = cue === '?' ? '#9fe4ad' : '#f9ce72';
-            ctx.beginPath();
-            ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#fff1b4';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.fillStyle = '#19291e';
-            ctx.font = 'bold 23px system-ui';
-            ctx.fillText(cue, p.x, p.y - 72);
-          }
+          if (millhavenCue(e)) drawQuestCue(p);
         }
         if (sceneryPlaceName(e) && worldLabelVisible(e)) {
           const slot = labelSlots.get(e);

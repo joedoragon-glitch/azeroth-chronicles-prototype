@@ -664,6 +664,11 @@
   Object.assign(spanishText, {
     'Your First Company': 'Tu primera compañía',
     'Quest board': 'Tablón de misiones',
+    'Main Story': 'Historia principal',
+    'Track quest': 'Seguir misión',
+    'The specialist is free.': 'El especialista está libre.',
+    'The Dark Lord’s forces are holding the people who teach adventurers and forge their equipment. Start by rescuing Greenwood’s two specialists. Mira can teach you a second skill, and Borin can improve your weapons.':
+      'Las fuerzas del Dark Lord retienen a quienes entrenan a los aventureros y forjan su equipo. Empieza por rescatar a los dos especialistas de Greenwood. Mira puede enseñarte una segunda habilidad y Borin puede mejorar tus armas.',
     'Side Quests': 'Misiones secundarias',
     'All side quests': 'Todas las misiones secundarias',
     'Story objectives': 'Objetivos de la historia',
@@ -1894,14 +1899,14 @@
     appReloadRequested = false,
     installPrompt = null,
     appControllerReloaded = false,
+    appControllerChangedDuringPlay = false,
     appUpdateCheck = null,
     appUpdateBusy = false,
-    appLastUpdateCheck = -Infinity,
     startupUpdatePending = true,
     startupUpdateNotice = null;
   let hadServiceWorkerController = !!navigator.serviceWorker?.controller;
   function refreshUpdateNotice() {
-    appUpdateReady = !!appRegistration?.waiting;
+    appUpdateReady = !!appRegistration?.waiting || appControllerChangedDuringPlay;
     const button = $('update-button');
     button.hidden = startupUpdatePending || !appUpdateReady;
     button.textContent = tr('Update available');
@@ -1913,11 +1918,11 @@
       tr('Open game menu') + (appUpdateReady ? ' · ' + tr('Update available') : ''),
     );
   }
-  function checkAppUpdate(force = false) {
+  // Only the pre-title startup gate and an explicit Install action may check.
+  // A browser-driven updatefound event can still expose a ready, opt-in update.
+  function checkAppUpdate() {
     if (!appRegistration) return Promise.resolve();
     if (appUpdateCheck) return appUpdateCheck;
-    if (!force && Date.now() - appLastUpdateCheck < 300000) return Promise.resolve();
-    appLastUpdateCheck = Date.now();
     appUpdateCheck = appRegistration.update().finally(() => {
       appUpdateCheck = null;
       refreshUpdateNotice();
@@ -1926,6 +1931,20 @@
   }
   async function updateApp() {
     if (startupUpdatePending || !appRegistration || appUpdateBusy || appReloadRequested) return;
+    // Another tab can activate a new worker without consent from this player.
+    // Keep playing until this tab's player explicitly chooses to refresh.
+    if (appControllerChangedDuringPlay) {
+      if (started && !save()) {
+        status('Saving failed. Export your run before closing.');
+        return;
+      }
+      appReloadRequested = true;
+      paused = true;
+      clearInput();
+      audio.setPaused(true);
+      location.reload();
+      return;
+    }
     let activationPause = null;
     appUpdateBusy = true;
     refreshUpdateNotice();
@@ -1934,7 +1953,7 @@
       // put a network refresh ahead of that ready update.
       if (!appRegistration.waiting) {
         status('Checking for a game update…');
-        await checkAppUpdate(true);
+        await checkAppUpdate();
       }
       const worker = appRegistration.installing;
       if (worker && worker.state !== 'installed' && worker.state !== 'activated')
@@ -2104,7 +2123,7 @@
           // A rejected or timed-out check is not an update: keep the complete
           // installed version playable and explain what could not be verified.
           const checked = await startupBound(
-            checkAppUpdate(true).then(
+            checkAppUpdate().then(
               () => true,
               () => false,
             ),
@@ -2137,11 +2156,6 @@
         return;
       }
       finishStartupUpdate();
-      // Ongoing checks may discover an update while playing, but must never
-      // automatically replace the code of an active campaign.
-      setInterval(() => {
-        if (!document.hidden && navigator.onLine !== false) checkAppUpdate().catch(() => {});
-      }, 300000);
     } catch (_) {
       // Network, registration and storage failures preserve the old game.
       appReloadRequested = false;
@@ -4621,6 +4635,8 @@
         titleSkipGraphics = null;
         titleCanvasContinue.hidden = true;
         started = true;
+        lastBlockedBackAt = 0;
+        armBrowserBackGuard();
         updateGpuTrial(graphicsController.status());
         titleScreen.hidden = true;
         document.body.classList.remove('title-active');
@@ -4698,6 +4714,15 @@
       waitOrSkip(actual, paint);
     };
     waitOrSkip(titleWarmup, reveal);
+  }
+  // Protect accidental Safari Back swipes; repeat Back within three seconds to leave.
+  let backGuardArmed = false, lastBlockedBackAt = 0;
+  function armBrowserBackGuard() {
+    if (backGuardArmed || !window.history?.pushState) return;
+    try {
+      window.history.pushState({ sibdlpGameGuard: true }, '', location.href);
+      backGuardArmed = true;
+    } catch (_) { /* Embedded/locked history: keep native navigation. */ }
   }
   function returnToTitleScreen() {
     if (!started || !writerGuard.canWrite() || !save()) {
@@ -5036,8 +5061,8 @@
             read(
               'Saved games & updates',
               'Partidas y actualizaciones',
-              'Normal and Nightmare have separate saves stored in this browser. Saved Games & Backups on the Main Menu lets you export, import or recover them. Keep an exported backup outside the browser: clearing site data, reinstalling or losing the device can remove local saves.\n\nThe game checks for updates when it starts and can run offline from its installed cache. Ready updates can be offered during play instead of interrupting it.',
-              'Normal y Pesadilla guardan partidas distintas en este navegador. Partidas y copias de seguridad, en el menú principal, permite exportarlas, importarlas o recuperarlas. Conserva una copia fuera del navegador: borrar los datos, reinstalar o perder el dispositivo puede eliminar las partidas.\n\nEl juego busca actualizaciones al iniciar y puede ejecutarse sin conexión desde la copia instalada. Las actualizaciones listas pueden ofrecerse durante el juego sin interrumpirlo.',
+              'Normal and Nightmare have separate saves stored in this browser. Saved Games & Backups on the Main Menu lets you export, import or recover them. Keep an exported backup outside the browser: clearing site data, reinstalling or losing the device can remove local saves.\n\nThe game checks for updates when it starts, before you enter the campaign. It does not periodically check during gameplay. If the browser discovers a ready update, an optional Update available notice appears; you choose when to install it. Your installed cache also works offline.',
+              'Normal y Pesadilla guardan partidas distintas en este navegador. Partidas y copias de seguridad, en el menú principal, permite exportarlas, importarlas o recuperarlas. Conserva una copia fuera del navegador: borrar los datos, reinstalar o perder el dispositivo puede eliminar las partidas.\n\nEl juego busca actualizaciones al iniciar, antes de entrar en la partida. No hace comprobaciones periódicas durante el juego. Si el navegador detecta una actualización lista, muestra un aviso opcional; tú eliges cuándo instalarla. La copia instalada también funciona sin conexión.',
             ),
           'Local saves, backups and offline play.',
           'Partidas locales, copias y juego sin conexión.',
@@ -6713,7 +6738,6 @@
         ...(!runningAsApp() && platform.mode === 'phone'
           ? [action('Install on phone', installApp, 'Add the game to the home screen')]
           : []),
-        // Automatic checks own discovery; this appears only when installation is ready.
         ...(appRegistration && appUpdateReady
           ? [action('Install available game update', updateApp)]
           : []),
@@ -7229,7 +7253,13 @@
       save();
       updateHUD();
     } else if (n.kind === 'recruiter') partyMenu();
-    else if (n.kind === 'quests') quests(true);
+    else if (n.kind === 'quests') {
+      if (game.zoneId === 'vale' && n.id === 'board' && !game.s.discovered['vale:quest-board-intro']) {
+        game.s.discovered['vale:quest-board-intro'] = true;
+        save();
+      }
+      quests(true);
+    }
     else if (n.kind === 'transport') {
       if (n.hub) {
         const destinations = game.hubDestinations();
@@ -9117,19 +9147,12 @@
       requestAnimationFrame(() => revealSceneTransition(token));
     }
     if (started && !paused && !document.hidden) restartGuard.arm(game);
-    checkAppUpdate().catch(() => {});
   });
   addEventListener('online', () => {
     if (startupUpdateNotice === 'offline') {
       startupUpdateNotice = null;
       refreshStartupUpdateNotice();
     }
-    checkAppUpdate(true).catch(() => {
-      if (!started) {
-        startupUpdateNotice = 'unavailable';
-        refreshStartupUpdateNotice();
-      }
-    });
   });
   document.addEventListener('visibilitychange', () => {
     clearInput();
@@ -9168,8 +9191,22 @@
         requestAnimationFrame(() => revealSceneTransition(token));
       }
       if (started && !paused && focused) restartGuard.arm(game);
-      checkAppUpdate().catch(() => {});
     }
+  });
+  addEventListener('popstate', () => {
+    if (!started || !backGuardArmed) { backGuardArmed = false; return; }
+    backGuardArmed = false;
+    const now = Date.now();
+    if (lastBlockedBackAt && now - lastBlockedBackAt <= 3000) {
+      window.history?.back?.();
+      return;
+    }
+    lastBlockedBackAt = now;
+    notePlaytestLifecycle('browser-back-guarded');
+    status(language === 'es'
+      ? 'El gesto Atrás no interrumpió tu partida. Repite Atrás para salir.'
+      : 'Back gesture blocked. Press Back again to leave the game.');
+    armBrowserBackGuard();
   });
   addEventListener('pagehide', (event) => {
     notePlaytestLifecycle('pagehide', { persisted: event?.persisted === true });
@@ -10887,12 +10924,22 @@
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (appControllerReloaded) return;
       if (hadServiceWorkerController) {
-        appReloadRequested = false;
+        if ((started || titleLoading) && !appReloadRequested) {
+          // Another tab may have activated an update. Do not throw this run away.
+          appControllerChangedDuringPlay = true;
+          notePlaytestLifecycle('service-worker-controller-change-deferred');
+          refreshUpdateNotice();
+          if (!save()) status('Saving failed. Export your run before closing.');
+          return;
+        }
+        // An explicit user installation, or startup gate, permits one coherent reload.
+        appReloadRequested = true;
         appControllerReloaded = true;
         startupEvent('update-reload-requested', { reason: 'service-worker-controller-change' });
         notePlaytestLifecycle('service-worker-controller-change');
         if (started && writerGuard.canWrite() && !save()) {
           appControllerReloaded = false;
+          appReloadRequested = false;
           status('Saving failed. Export your run before closing.');
           return;
         }

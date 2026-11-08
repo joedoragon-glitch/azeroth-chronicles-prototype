@@ -1,3 +1,9 @@
+**First trips (dev.276 draft).** Regional transport offers a short bilingual description of Flooded Marches, Ironroot Highlands, Ashen Frontier, or Dark Crown before the first arrival. It uses the existing arrival record. Fares, work passage and departure requirements follow the existing travel rules.
+
+**Greenwood ground cover (dev.276 draft).** The shared terrain painter adds irregular tufts, broadleaf plants and meadow flowers across the region. Stable paint samples keep the vegetation in place between visits. Roads and water remain separate paint layers.
+
+**Story onboarding (dev.276 draft).** The Millhaven board displays a gold marker until opened in a campaign. Board and Journal share the two regional rescue briefings, quest progress and separate Track and Navigate actions. The existing rescue quest IDs, requirements and payouts are used by Main Story. Completed quests keep their history.
+
 **Dev.276 artwork draft.** The shared merchant wagon uses timber framing, a layered canvas hood, cargo and visible harness traces. Thornfang’s lodge has timber framing and a stone sill, and Scornfang’s Treasury has a braced, iron-bound loading face. Both retain their established roof planes and gain shingle courses. Crown banners use the same crowned profile as the coin. The Old Orchard Cellars use weathered vault masonry and stone steps, while the newer working cellar has dressed stone, an air vent and a produce crate.
 
 **Map and witness (dev.276 draft).** The Western road observer can send the player to the landmark in the current report. The route ends at the reported area even if Thornfang moves. Scout tracks remain discoverable on the ground. The regional map shows travel, camps, entrances, major threats and selected story sites.

@@ -1318,6 +1318,8 @@
       }
       if (this.zoneId !== targetZone)
         return z.npcs.find((n) => n.kind === 'dungeon' && n.family === targetZone) || null;
+      if (rescue === 'thorn' && !this.s.keys.thorn && !this.s.rescued.thorn)
+        return z.npcs.find((n) => n.thornReport) || null;
       if (rescue && !this.s.rescued[rescue])
         return (
           (this.s.keys[rescue]

@@ -62,4 +62,27 @@ for (const language of ['en', 'es']) {
     language === 'en' ? "Thornfang's Homestead" : 'Hogar de Thornfang');
   assert(elements.get('modal-description').textContent.includes('Mira'));
 }
+for (const [from, to, clueEn, clueEs] of [
+  ['vale', 'march', 'Fishing', 'pesca'],
+  ['march', 'highlands', 'mint', 'ceca'],
+  ['highlands', 'frontier', 'battlefield', 'campo de batalla'],
+  ['frontier', 'crown', 'volcanic ground', 'terreno volcánico'],
+]) {
+  assert(game.enter(from));
+  const outbound = game.zone().npcs.find((n) => n.kind === 'transport' && n.direction === 1);
+  assert(outbound, from);
+  const visit = to + ':arrival';
+  delete game.s.discovered[visit];
+  for (const [locale, clue] of [['en', clueEn], ['es', clueEs]]) {
+    language = locale;
+    catalog.transport(outbound);
+    assert(briefing.description.includes(clue), to + ' introduces the region before travel');
+    assert(!game.s.discovered[visit], 'reading does not count as travel');
+    assert(briefing.actions[0].label.startsWith('Travel to'));
+  }
+  assert(game.enter(to));
+  assert(game.enter(from));
+  catalog.transport(outbound);
+  assert(!briefing.description.includes(clueEs), 'briefings end after the first arrival');
+}
 console.log('PASS all 14 site briefings, native entry actions and bilingual Homestead interaction');

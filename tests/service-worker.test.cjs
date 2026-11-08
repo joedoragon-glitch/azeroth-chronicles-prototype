@@ -373,9 +373,15 @@ async function test(name, fn) {
     assert(/action\(\s*["']Install on phone["']/.test(app));
     assert(app.includes('appinstalled'));
     assert(app.includes('hadServiceWorkerController'));
-    assert(/if\s*\(hadServiceWorkerController\)\s*\{\s*appReloadRequested\s*=\s*false/.test(app));
+    assert(/if\s*\(\(started \|\| titleLoading\) && !appReloadRequested\)\s*\{[\s\S]*?appControllerChangedDuringPlay\s*=\s*true/.test(app),
+      'an unexpected controller takeover is deferred during gameplay or scene entry');
+    assert(/if\s*\(hadServiceWorkerController\)[\s\S]*?appReloadRequested\s*=\s*true/.test(app),
+      'an intentional activation keeps the one coherent reload');
     assert(!/hadServiceWorkerController\s*\|\|\s*appReloadRequested/.test(app));
-    assert(app.includes('checkAppUpdate(true).catch'));
+    assert(!app.includes('checkAppUpdate(true).catch'),
+      'returning online cannot trigger a silent update check');
+    assert(app.includes('checkAppUpdate().then('),
+      'the launch gate still verifies updates before showing the title');
     assert(app.includes("$('update-button').onclick = updateApp"));
   });
   for (const populated of [false, true])

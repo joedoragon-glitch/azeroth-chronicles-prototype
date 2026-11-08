@@ -9,8 +9,8 @@ const flush = async () => {
 };
 function startup({ online = true, controller = true, waiting = false,
                    updateError = false, onUpdate = null } = {}) {
-  const events = {}, messages = [];
-  let updates = 0, reloads = 0;
+  const events = {}, registrationEvents = {}, messages = [];
+  let updates = 0, reloads = 0, backgroundChecks = 0;
   const worker = {
     state: 'installed',
     postMessage(value) { messages.push(value.type); },
@@ -18,7 +18,7 @@ function startup({ online = true, controller = true, waiting = false,
   const registration = {
     waiting: waiting ? worker : null,
     installing: null,
-    addEventListener() {},
+    addEventListener(name, fn) { (registrationEvents[name] ??= []).push(fn); },
     async update() {
       updates++;
       if (updateError) throw Error('network failed');
@@ -36,11 +36,13 @@ function startup({ online = true, controller = true, waiting = false,
     location: { protocol: 'http:', hostname: 'localhost', search: '',
                 reload() { reloads++; } },
     navigator: { serviceWorker: sw, onLine: online },
+    onInterval(_fn, milliseconds) { if (milliseconds >= 60000) backgroundChecks++; },
   });
   return {
-    ...app, registration, events, messages,
+    ...app, registration, events, registrationEvents, worker, messages,
     get updates() { return updates; },
     get reloads() { return reloads; },
+    get backgroundChecks() { return backgroundChecks; },
     controllerChange() {
       for (const fn of events.controllerchange || []) fn();
     },
@@ -61,6 +63,12 @@ function startup({ online = true, controller = true, waiting = false,
     assert.equal(a.elements.get('title-screen').hidden, false);
     assert.equal(a.elements.get('title-continue').disabled, false);
     assert.equal(a.scope.Prototype.started, false);
+    assert.equal(a.backgroundChecks, 0, 'no timed update polling during gameplay');
+    for (const fn of a.events.focus || []) fn();
+    for (const fn of a.events.online || []) fn();
+    for (const fn of a.documentEvents.visibilitychange || []) fn();
+    await flush();
+    assert.equal(a.updates, 1, 'focus, online and visible do not check for updates');
     assert.equal(a.storage.get('azeroth-v4-normal'), saved, 'no save rewritten');
   }
   // The old menu must never be exposed while the new worker is waiting.
@@ -85,6 +93,60 @@ function startup({ online = true, controller = true, waiting = false,
     await flush();
     assert.deepEqual(a.messages, ['SKIP_WAITING']);
     assert.equal(a.elements.get('title-screen').hidden, true);
+  }
+  // Browser-driven updatefound can still surface a ready update without polling.
+  {
+    const a = startup();
+    await flush();
+    assert.equal(a.updates, 1, 'launch checked once');
+    a.registration.waiting = a.worker;
+    for (const fn of a.registrationEvents.updatefound || []) fn();
+    assert.equal(a.elements.get('update-button').hidden, false,
+      'a browser-discovered waiting update remains visible without a timer');
+    assert.equal(a.reloads, 0, 'a notice never activates the update');
+    assert.equal(a.updates, 1, 'showing the notice does not poll');
+  }
+  // A controller change outside an explicit update must NOT reload live play.
+  // The player can deliberately install the newly controlled version later.
+  {
+    const a = startup();
+    await flush();
+    a.elements.get('title-continue').click();
+    a.frame(0);
+    await flush();
+    a.frame(0);
+    assert.equal(a.scope.Prototype.started, true, 'test entered gameplay');
+    a.controllerChange();
+    assert.equal(a.reloads, 0, 'unexpected service-worker takeover does not evict a campaign');
+    assert.equal(a.scope.Prototype.started, true, 'the same campaign remains active');
+    assert.equal(a.elements.get('update-button').hidden, false, 'update becomes opt-in');
+    a.elements.get('update-button').click();
+    await flush();
+    assert.equal(a.reloads, 1, 'a deliberate update reloads once');
+  }
+  // History navigation should require a second deliberate Back gesture.
+  // Do not register beforeunload: it can harm browser back/forward caching.
+  {
+    let pushes = 0, backs = 0;
+    const history = {
+      pushState() { pushes++; },
+      back() { backs++; },
+    };
+    const a = shell('en', 'ranger', {
+      location: { protocol: 'file:', hostname: '', href: 'file:///prototype/index.html' },
+      history,
+    });
+    await flush();
+    a.frame(0);
+    assert.equal(a.scope.Prototype.started, true);
+    assert.equal(pushes, 1, 'one history guard for a running campaign');
+    for (const fn of a.events.popstate || []) fn();
+    assert.equal(pushes, 2, 'accidental Back is intercepted once');
+    assert.equal(backs, 0);
+    for (const fn of a.events.popstate || []) fn();
+    assert.equal(backs, 1, 'a deliberate second Back can leave');
+    assert.equal((a.events.beforeunload || []).length, 0,
+      'no unload prompt that can cause reload or interfere with BFCache');
   }
   // Offline status is visible on the *main menu*, without preventing play.
   {

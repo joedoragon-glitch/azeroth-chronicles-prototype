@@ -3342,14 +3342,25 @@
     [2420, 2040, 135, 100],
     [2930, 1740, 110, 120],
     [500, 2750, 145, 110],
+    [230, 625, 150, 155],
+    [940, 420, 155, 125],
+    [920, 1470, 135, 140],
+    [330, 2200, 165, 145],
+    [1160, 2170, 150, 130],
+    [1900, 485, 190, 165],
+    [2480, 440, 135, 150],
+    [2050, 1560, 160, 145],
+    [2610, 1650, 180, 160],
+    [2750, 2375, 145, 125],
+    [2000, 2770, 155, 135],
   ].map(([cx, cy, rx, ry], index) => ({
     cx,
     cy,
-    flowers: Array.from({ length: 13 }, (_, j) => {
+    flowers: Array.from({ length: 19 }, (_, j) => {
       const h = hash('greenwood-meadow-' + index + '-' + j);
       const a = j * 2.3999632297 + (h % 23) * 0.017;
       const r = Math.sqrt(((h >>> 8) % 997) / 997);
-      const dandelion = j % 4 === 0;
+      const dandelion = j % 7 === 0;
       return {
         x: cx + Math.cos(a) * rx * r,
         y: cy + Math.sin(a) * ry * r,
@@ -3360,6 +3371,24 @@
       };
     }),
   }));
+  // Jittered patches give rural ground continuous cover with irregular clumps.
+  // These samples are paint only and are shared by Canvas and Pixi terrain.
+  const groundTufts = Array.from({ length: 20 * 20 }, (_, index) => {
+    const seed = hash('vale-tuft-' + index);
+    const x = (index % 20) * 160 + 24 + (seed % 111);
+    const y = Math.floor(index / 20) * 160 + 24 + ((seed >>> 8) % 111);
+    return { x, y, tufts: Array.from({ length: 8 + (seed % 5) }, (_, i) => {
+      const h = hash('vale-blade-' + index + '-' + i);
+      return {
+        x: x + (h % 135) - 67,
+        y: y + ((h >>> 8) % 135) - 67,
+        height: 4 + ((h >>> 18) % 8),
+        tone: (h >>> 26) % 3,
+        leaf: i % 5 === 0,
+        bloom: i === 0 && (seed >>> 16) % 3 === 0 ? h : 0,
+      };
+    }) };
+  });
   const litterCache = new Map(); // twelve fixed native ground patches, bounded
   function drawGround(ctx, screen, cfg, bounds) {
     const s = cfg.scale;
@@ -3448,10 +3477,46 @@
     dirt.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
     ctx.closePath();
     ctx.fill();
+    const visibleTufts = [[], [], []];
+    const meadowVisible = [];
+    for (const patch of groundTufts) {
+      const center = screen({ x: patch.x * s, y: patch.y * s });
+      if (center.x < -130 || center.x > bounds.width + 130 ||
+          center.y < -75 || center.y > bounds.height + 75) continue;
+      for (const tuft of patch.tufts) {
+        if (tuft.x < 10 || tuft.y < 10 || tuft.x > 3190 || tuft.y > 3190) continue;
+        const p = screen({ x: tuft.x * s, y: tuft.y * s });
+        if (p.x < -10 || p.x > bounds.width + 10 || p.y < -14 || p.y > bounds.height + 10)
+          continue;
+        visibleTufts[tuft.tone].push({ ...p, height: tuft.height, leaf: tuft.leaf });
+        if (tuft.bloom)
+          meadowVisible.push({ ...p, h: tuft.bloom, stem: 8 + tuft.height / 3, lean: 2 });
+
+      }
+    }
+    for (const [tone, color] of ['#829456b5', '#a6a9699e', '#5d804ec9'].entries()) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      for (const { x, y, height, leaf } of visibleTufts[tone]) {
+        ctx.moveTo(x - 3, y);
+        ctx.quadraticCurveTo(x - 4, y - height * 0.7, x - 7, y - height);
+        ctx.quadraticCurveTo(x - 1, y - height * 0.8, x, y);
+        ctx.lineTo(x + 2, y);
+        ctx.quadraticCurveTo(x + 3, y - height, x + 7, y - height - 1);
+        ctx.quadraticCurveTo(x + 5, y - height * 0.5, x + 4, y);
+        ctx.closePath();
+        if (leaf) {
+          ctx.moveTo(x - 1, y - 2);
+          ctx.quadraticCurveTo(x - 9, y - 3, x - 10, y - 7);
+          ctx.quadraticCurveTo(x - 3, y - 9, x - 1, y - 2);
+          ctx.closePath();
+        }
+      }
+      ctx.fill();
+    }
     // These meadow samples are computed once and shared by every draw.
     // A bounded number of batched Canvas paths replaces hundreds of
     // per-flower strokes, fills and trig/hash calls on each painted scene.
-    const meadowVisible = [];
     for (const patch of meadowSamples) {
       const center = screen({ x: patch.cx * s, y: patch.cy * s });
       if (
@@ -3464,7 +3529,7 @@
       for (const flower of patch.flowers) {
         const p = screen({ x: flower.x * s, y: flower.y * s });
         if (p.x < -18 || p.x > bounds.width + 18 || p.y < -26 || p.y > bounds.height + 18) continue;
-        meadowVisible.push({ x: p.x, y: p.y, ...flower });
+        meadowVisible.push({ ...flower, x: p.x, y: p.y });
       }
     }
     if (meadowVisible.length) {

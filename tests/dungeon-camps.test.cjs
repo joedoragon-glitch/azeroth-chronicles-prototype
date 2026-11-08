@@ -43,7 +43,8 @@ for (const r of C.data.regions) {
     h.die();
     assert.equal(h.zoneId, r.id);
     assert.equal(h.selectedBarracksRespawn().barracks.id, camp.id);
-    assert(distance(h.hero, camp) < 120, 'dungeon defeat uses outside camp');
+    const landing = h.safe(camp.x + 85, camp.y + 50, r.id);
+    assert.deepEqual({ x: h.hero.x, y: h.hero.y }, landing, 'dungeon defeat uses the selected camp frontage');
     plots++;
   }
 }
@@ -65,7 +66,10 @@ for (const r of C.data.regions) {
   assert(g.prepareDungeonCamp(n));
   const b = g.dungeonCamp(n);
   g.recallParty();
-  assert(g.prepareDungeonCamp(n), 'resumes cancelled construction');
+  assert(!g.prepareDungeonCamp(n), 'Recall temporarily blocks assigning construction');
+  g.s.time += g.recallSecondsRemaining() + 0.1;
+  g.s.recallActive = false;
+  assert(g.prepareDungeonCamp(n), 'resumes cancelled construction after Recall');
   assert.equal(g.zone().buildings.length, 1);
   const bad = g.snapshot();
   bad.zones.vale.buildings[0].recoveryOnComplete = 'yes';

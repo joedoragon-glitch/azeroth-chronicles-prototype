@@ -63,6 +63,66 @@
       'Thornfang fue explorador de la Corona. Aquí guarda el equipo de rastreo, de entrenamiento y de cuidado de sus sabuesos. Le encargaron patrullar los accesos de la residencia invernal. Se llevaba a Mira para inspeccionar las defensas, le pagaba y le prohibía marcharse. Cuando la finca pueda protegerse por sí sola, Thornfang piensa volver a su lejano hogar.',
     ],
   };
+  const rescueBriefings = {
+    thorn: [
+      'Thornfang is keeping Mira, Millhaven’s instructor, under guard. Ask the Western road observer where to pick up his trail. Free Mira so she can teach you your second skill.',
+      'Thornfang mantiene vigilada a Mira, la instructora de Millhaven. Pregunta al observador del camino occidental dónde seguir su rastro. Libera a Mira para aprender tu segunda habilidad.',
+    ],
+    crypt: [
+      'The Lifebinder is forcing Borin, Millhaven’s smith, to work on the Dark Lord’s winter retreat. Find him in the Forest Crypt and free him to unlock weapon upgrades and basic crafting.',
+      'El Lifebinder obliga a Borin, el herrero de Millhaven, a trabajar en la residencia invernal del Dark Lord. Búscalo en Forest Crypt y libéralo para mejorar armas y fabricar equipo básico.',
+    ],
+    mire: [
+      'Mirejaw holds Sela, a combat instructor, on his marsh island. Free her to learn new class skills and train the ones you already know.',
+      'Mirejaw retiene a Sela, una instructora de combate, en su isla de las marismas. Libérala para aprender habilidades de tu clase y mejorar las que ya conoces.',
+    ],
+    archive: [
+      'The Drowned Keeper is holding Neri at the Sunken Archive because she knows how to save its water-damaged books. Free her so she can choose her own work and help your company with tonics and training.',
+      'El Drowned Keeper retiene a Neri en Sunken Archive porque ella sabe cómo salvar los libros dañados por el agua. Libérala para que pueda elegir su trabajo y ayudar a tu compañía con tónicos y entrenamiento.',
+    ],
+    ridge: [
+      'The Ridge Tyrant holds Orin, the Highland instructor, at the mountain watchtower. Free Orin to learn an area attack and improve the skills you already know.',
+      'El Ridge Tyrant retiene a Orin, el instructor de las tierras altas, en la torre de vigilancia de la montaña. Libéralo para aprender un ataque de área y mejorar tus habilidades.',
+    ],
+    mine: [
+      'Dara repairs equipment and takes commissions at Colossus Mine, where the Stone Colossus controls whether she can leave. Free the Highland smith to unlock better weapons and armor.',
+      'Dara repara equipo y acepta encargos en Colossus Mine, donde el Coloso de Piedra decide si puede marcharse. Libera a la herrera para mejorar armas y armaduras.',
+    ],
+    warlord: [
+      'The Ashen Warlord holds Lyss, an advanced instructor, at his occupied checkpoint. Free her to learn an advanced class skill and train your abilities further.',
+      'El Ashen Warlord retiene a Lyss, una instructora avanzada, en su puesto de control. Libérala para aprender una habilidad avanzada de tu clase y seguir entrenando.',
+    ],
+    abyss: [
+      'Eren the Runewright is held at Abyss Bastion, where Veyrith is preparing the Dark Lord’s air force. Free Eren to unlock advanced weapon and armor improvements.',
+      'Eren, el artesano de runas, está cautivo en Abyss Bastion, donde Veyrith prepara la fuerza aérea del Dark Lord. Libéralo para acceder a mejoras avanzadas de armas y armaduras.',
+    ],
+    cindermaw: [
+      'Cindermaw employs Vera as a Master Smith and forbids her to leave. Find her at his roost and free her to unlock final equipment improvements before facing the Dark Lord.',
+      'Cindermaw emplea a Vera como maestra herrera y le prohíbe marcharse. Búscala en su guarida y libérala para acceder a las últimas mejoras de equipo antes de enfrentarte al Dark Lord.',
+    ],
+    citadel: [
+      'Veyra, the Ash Sentinel, holds Tovan at the Citadel of Ashes. Free him to learn your final class skill and finish your training for the Dark Lord.',
+      'Veyra, la Centinela de Ceniza, retiene a Tovan en la Ciudadela de Ceniza. Libéralo para aprender la última habilidad de tu clase y completar tu entrenamiento antes de enfrentarte al Dark Lord.',
+    ],
+  };
+  const travelBriefings = {
+    march: [
+      'The wagon stops at Reedport. Fishing keeps the Marches fed, and raised roads carry people and goods between the villages. Stick to those roads around the lake and give Mirejaw’s marsh island a wide berth.',
+      'La carreta para en Reedport. La pesca alimenta a las Marismas y los caminos elevados comunican sus aldeas. Sigue esos caminos al bordear el lago y mantente lejos de la isla de Mirejaw.',
+    ],
+    highlands: [
+      'We land near Stonecross, where the mint turns mountain silver and copper into crowns. The ore roads cross wooded ravines. You’ll see escorted shipments on the way down to town.',
+      'Desembarcamos cerca de Stonecross, donde la ceca convierte la plata y el cobre de la montaña en coronas. Los caminos mineros cruzan barrancos arbolados. Verás cargamentos bajo escolta al bajar al pueblo.',
+    ],
+    frontier: [
+      'We stop behind Emberwatch. The Frontier was a battlefield, but people are rebuilding homes and planting gardens again. The army maintains the crossings and inspects travelers along the road.',
+      'Paramos detrás de Emberwatch. Ashen Frontier fue un campo de batalla, pero la gente está reconstruyendo sus casas y volviendo a plantar huertos. El ejército mantiene los pasos e inspecciona a los viajeros.',
+    ],
+    crown: [
+      'The dragon lands near Crownwatch. People there use the heat of the volcanic ground for kilns and workshops. Keep to the guarded roads around the lava channels and expect inspections at the gates.',
+      'El dragón aterriza cerca de Crownwatch. Allí aprovechan el calor del terreno volcánico para los hornos y talleres. Sigue los caminos vigilados junto a los canales de lava y cuenta con inspecciones en las puertas.',
+    ],
+  };
   function create({
     getGame,
     getLanguage = () => 'en',
@@ -234,9 +294,13 @@
             !!departureReason,
           ),
         );
+      const briefing = !game.s.discovered[target.id + ':arrival']
+        ? travelBriefings[target.id]?.[getLanguage() === 'es' ? 1 : 0]
+        : null;
       openMenu(
         n.name,
-        (ferryPassage ? ferryPassage + '\n\n' : '') +
+        (briefing ? briefing + '\n\n' : '') +
+          (ferryPassage ? ferryPassage + '\n\n' : '') +
           (game.s.mode === 'developer'
             ? 'FREE — Developer Mode. Travel has no fare or return-ticket requirement.'
             : 'Fare ' +
@@ -2956,6 +3020,7 @@
     function storyJournal(
       back = closeMenu,
       present = (summary, options) => openMenu('Story journal', summary, options, back),
+      returnHere = () => storyJournal(back),
     ) {
       const game = getGame(),
         zone = game.zone(),
@@ -3023,38 +3088,43 @@
         return;
       }
 
-      const pending = D.bosses.filter(
-        (boss) => boss.region === regionId && boss.captive && !game.s.rescued[boss.id],
-      );
-      if (pending.length) {
-        if (room && leaveInterior()) return;
-        if (inside && !pending.some((boss) => boss.id === here) && leaveInterior()) return;
-        const ordered = [
-          ...pending.filter((boss) => boss.id === here),
-          ...pending.filter((boss) => boss.id !== here),
-        ];
-        present(
-          (region?.name || 'Region') + ' · ' + (2 - pending.length) + '/2 rescued',
-          ordered.map((boss) => {
-            const destination =
-              boss.id === 'thorn' && here === 'vale'
-                ? game.s.keys.thorn
-                  ? findNpc((n) => n.id === 'cage-thorn')
-                  : findNpc((n) => n.thornReport) || findNpc((n) => n.id === 'thorn-trailhead-0')
-                : here === boss.id
-                  ? liveBoss(boss.id) || findNpc((n) => n.kind === 'cage' && n.family === boss.id)
-                  : boss.kind === 'dungeon'
-                    ? findNpc((n) => n.kind === 'dungeon' && n.family === boss.id)
-                    : liveBoss(boss.id) ||
-                      findNpc((n) => n.kind === 'cage' && n.family === boss.id);
-            return guideAction(
-              boss.id === 'thorn' && !game.s.keys.thorn
-                ? 'Mira · ask the Western road observer'
-                : boss.captive.split(' the ')[0] + ' · ' + boss.place,
-              destination,
-            );
-          }),
-        );
+      const rescues = game.questDefs().filter((q) => q.kind === 'rescue' && q.region === regionId);
+      const rescued = rescues.filter((q) => game.s.rescued[q.target]).length;
+      const mainStory = rescues
+        .sort((a, b) =>
+          Number(game.boss(a.target).kind === 'dungeon') - Number(game.boss(b.target).kind === 'dungeon'),
+        )
+        .map((q) => {
+          const freed = !!game.s.rescued[q.target];
+          const briefing = freed
+            ? 'The specialist is free.'
+            : rescueBriefings[q.target][getLanguage() === 'es' ? 1 : 0];
+          const progress = game.questProgress(q);
+          return action(
+            q.name,
+            () => {
+              const destination = getGame().questDestination(q.id);
+              openMenu(
+                q.name,
+                [briefing, freed ? null : q.objective.split('; clear compound guards')[0], progress]
+                  .filter(Boolean).join('\n\n'),
+                [
+                  action('Track quest', () => storyNavigate(destination, q.name, q.id), '', !destination),
+                  action('Navigate', () => storyNavigate(destination, q.name), '', !destination),
+                ],
+                returnHere,
+              );
+            },
+            briefing + '\n' + progress,
+          );
+        });
+      const summary = 'Main Story · ' + (region?.name || 'Region') + ' · ' + rescued + '/' +
+        rescues.length + ' rescued';
+      if (rescues.length && rescued < rescues.length) {
+        const introduction = regionId === 'vale'
+          ? '\n\nThe Dark Lord’s forces are holding the people who teach adventurers and forge their equipment. Start by rescuing Greenwood’s two specialists. Mira can teach you a second skill, and Borin can improve your weapons.'
+          : '';
+        present(summary + introduction, mainStory);
         return;
       }
       if (inside && leaveInterior()) return;
@@ -3063,21 +3133,31 @@
       if (index >= 0 && index < D.regions.length - 1) {
         const next = D.regions[index + 1],
           transport = findNpc((n) => n.kind === 'transport' && n.direction === 1);
-        present('Specialists rescued · Next: ' + next.name, [
+        present(summary + '\nSpecialists rescued · Next: ' + next.name, [
+          ...mainStory,
           guideAction(transport?.name || 'Transport to ' + next.name, transport),
         ]);
         return;
       }
 
+      const finalApproach = game.questDefs().find((q) => q.region === regionId && q.requiresRescues);
+      const gate = findNpc((n) => n.id === 'fortress-gate');
+      if (gate && finalApproach && !game.s.quests[finalApproach.id]?.done) {
+        present(summary + '\n' + finalApproach.name, [
+          ...mainStory,
+          guideAction(finalApproach.name, gate),
+        ]);
+        return;
+      }
       const darklord =
         liveBoss('darklord') ||
-        findNpc((n) => n.id === 'fortress-gate') ||
+        gate ||
         (D.fields?.[4] ? { x: D.fields[4][0], y: D.fields[4][1] } : null);
       present(
         game.s.normal.darklord
           ? 'Find and defeat the TRUE Dark Lord'
           : 'Specialists rescued · Defeat the Dark Lord',
-        [guideAction('Dark Lord', darklord)],
+        [...mainStory, guideAction('Dark Lord', darklord)],
       );
     }
 
@@ -3115,7 +3195,7 @@
               );
           openMenu(
             atBoard ? 'Quest board' : 'Quest journal',
-            summary + '\nTap an objective to track it.',
+            summary,
             [
               ...(tutorial
                 ? [
@@ -3141,7 +3221,7 @@
             ],
             back,
           );
-        });
+        }, returnHere);
         return;
       }
       const game = getGame(),
@@ -3151,7 +3231,7 @@
           .filter(
             (q) =>
               (!atBoard || q.region === game.definition().id) &&
-              (completed || !q.tutorial) &&
+              (completed || (!q.tutorial && q.kind !== 'rescue' && !q.requiresRescues)) &&
               (completed
                 ? game.s.quests[q.id]?.paid || game.s.quests[q.id]?.closedByPeace
                 : !game.s.quests[q.id]?.paid && !game.s.quests[q.id]?.closedByPeace),
