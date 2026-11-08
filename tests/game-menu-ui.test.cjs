@@ -137,6 +137,15 @@ for (const language of ['en', 'es']) {
   assert(!titleSections.some((node) => node.textContent.startsWith(
     t('Renderer status', 'Estado del motor gráfico'))),
     'no false startup-failure warning before entering the game');
+  const titleRenderer = titleActions().find((node) => node.className === 'menu-setting' &&
+    node.children.some((child) => child.textContent === t('Graphics renderer', 'Motor gráfico')));
+  assert(titleRenderer, 'renderer preference is editable without another submenu');
+  const titleChoice = titleRenderer.children.find((node) => node.className === 'menu-setting-input');
+  titleChoice.value = 'canvas2d';
+  titleChoice.onchange();
+  assert(titleActions().some((node) => node.className === 'menu-section' &&
+    node.textContent === t('Canvas graphics', 'Gráficos de Canvas')),
+    'explicitly selecting Canvas on title switches to its inline settings');
   const writes = [];
   const originalSet = storage.set.bind(storage);
   storage.set = (key, value) => {
