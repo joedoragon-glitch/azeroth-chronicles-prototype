@@ -4665,7 +4665,7 @@
           gpuState.preferredRenderer === 'webgl2';
         if (!shouldRestorePixi) return showReadyFrame();
         $('title-loading').textContent =
-          language === 'es' ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
+          language === 'es' ? 'Preparando la partida…' : 'Preparing the game…';
         startupEvent('gpu-start', startupGraphics());
         const restoration = graphicsController.resumeConfirmedWebGL();
         const observedReadyFrame = (ready) => {
