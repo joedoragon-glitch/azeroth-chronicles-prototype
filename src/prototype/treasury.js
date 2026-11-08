@@ -10,11 +10,18 @@
       }
       treasuryRecoveryState(region = this.definition().id) {
         this.s.treasuryRecovery ||= {};
-        return (this.s.treasuryRecovery[region] ||= {
+        const state = (this.s.treasuryRecovery[region] ||= {
           crowns: 0,
           unlocked: false,
           respawnAt: 0,
+          captainVictories: 0,
         });
+        // Older saves lack this counter. A currently unlocked or waiting
+        // captain proves at least one defeat; older completed cycles cannot
+        // be reconstructed without inventing a battle history.
+        if (!Number.isInteger(state.captainVictories))
+          state.captainVictories = state.unlocked || state.respawnAt > 0 ? 1 : 0;
+        return state;
       }
       treasuryLostCrowns(region = this.definition().id) {
         return this.s.treasuryRecovery?.[region]?.crowns || 0;
@@ -48,6 +55,7 @@
         )
           return;
         const state = this.treasuryRecoveryState(site.region);
+        state.captainVictories = Math.min(3, state.captainVictories + 1);
         if (this.supplyRoom()) this.emptyDungeonDefenders(e);
         state.unlocked = true;
         state.respawnAt = this.s.time + R.treasuryRecovery.respawnSeconds;
@@ -138,19 +146,30 @@
           points = this.treasuryRespawnPoints(z, defenders);
         if (!points) return;
         for (const [i, old] of defenders.entries()) {
+          const named = old === captain;
+          const tier = named ? Math.min(2, state.captainVictories || 0) : 0;
+          // The old actor's displayed level may already include a prior
+          // rematch; never stack the increment a second time after reloading.
+          const baseLevel = old.level - (old.rematchTier || 0);
+          // Guards remain non-farmable. A returning named captain earns the
+          // existing outdoor-captain reward profile, reduced by normal level-gap rules.
+          const prize = named
+            ? this.regionalEnemyRewards(this.regionIndex(site.region), 'fieldCaptain')
+            : { gold: 0, xp: 0 };
           const fresh = this.makeEnemy(
             {
               species: old.species,
               name: old.name,
               icon: old.icon,
-              level: old.level,
+              level: baseLevel + tier,
               hp: old.baseHp,
               damage: old.baseDamage,
-              gold: 0,
-              xp: 0,
+              gold: prize.gold,
+              xp: prize.xp,
             },
             points[i],
           );
+          if (named) fresh.rematchTier = tier;
           fresh.id = old.id;
           fresh.home = { x: points[i].x, y: points[i].y };
           for (const key of Object.keys(old))
