@@ -151,10 +151,15 @@
           // The old actor's displayed level may already include a prior
           // rematch; never stack the increment a second time after reloading.
           const baseLevel = old.level - (old.rematchTier || 0);
-          // Guards remain non-farmable. A returning named captain earns the
-          // existing outdoor-captain reward profile, reduced by normal level-gap rules.
+          // Recovering lost crowns remains the Treasury's main purpose.
+          // The *returning* named captain alone gives half an ordinary local
+          // enemy's crowns and a quarter of its raw XP (half of the actual
+          // ordinary-enemy XP after the normal 0.5 multiplier).
+          // Existing level-gap reductions still apply when awarding.
+          const ordinary = this.regionalEnemyRewards(this.regionIndex(site.region));
           const prize = named
-            ? this.regionalEnemyRewards(this.regionIndex(site.region), 'fieldCaptain')
+            ? { gold: Math.max(1, Math.floor(ordinary.gold / 2)),
+                xp: Math.max(1, Math.floor(ordinary.xp / 4)) }
             : { gold: 0, xp: 0 };
           const fresh = this.makeEnemy(
             {
