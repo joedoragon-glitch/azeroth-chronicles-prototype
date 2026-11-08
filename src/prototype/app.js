@@ -56,7 +56,7 @@
       return false;
     }
   }
-  const performanceBaselineUpgraded = applyPerformanceBaseline(localStorage);
+  applyPerformanceBaseline(localStorage);
   let optimizationPreference = 'auto';
   try {
     const saved = localStorage.getItem(optimizationKey);
@@ -1064,8 +1064,6 @@
       'WebGL2 puede acelerar el juego en algunos dispositivos. Pruébalo 15 segundos; consérvalo o vuelve a Canvas.',
     'WebGL2 may run faster on your device. If it feels slower or looks wrong, return to Canvas.':
       'WebGL2 puede acelerar el juego en tu dispositivo. Si va más lento o se ve mal, vuelve a Canvas.',
-    'Performance settings updated to recommended defaults. You can change them in Settings.':
-      'Ajustes de rendimiento actualizados a los valores recomendados. Puedes cambiarlos en Ajustes.',
     'Optimization Mode now defaults to Auto. You can change it in Settings.':
       'El modo de optimización ahora usa Auto por defecto. Puedes cambiarlo en Ajustes.',
     'Local samples are diagnostic estimates, not verified display FPS.':
@@ -1986,10 +1984,8 @@
             ? 'No se pudieron buscar actualizaciones. Puedes jugar con la última versión instalada.'
             : 'Could not check for updates. You can play the last installed version.'
           : '';
-    const resetMessage = performanceBaselineUpgraded
-      ? tr('Performance settings updated to recommended defaults. You can change them in Settings.')
-      : '';
-    notice.textContent = [updateMessage, resetMessage].filter(Boolean).join(' ');
+    // Preference migration is silent; update notices remain for actual app updates.
+    notice.textContent = updateMessage;
     notice.hidden = !notice.textContent;
   }
   function startupUpdateText(english, spanish) {
@@ -2550,6 +2546,9 @@
     pixiGame.noteEvents(events);
   };
   function rendererFallbackMessage(snapshot) {
+    // Canvas on the title screen is not a Pixi startup failure; GPU scene
+    // preparation happens on entering a game. Real recovery holds remain visible.
+    if (!started && !snapshot.recoveryPaused) return '';
     if (snapshot.recoveryPaused) {
       if (snapshot.recoveryHoldReason === 'interrupted-restore')
         return 'Canvas backup is active because a previous WebGL2 startup did not finish. Automatic retries are paused. You can retry PixiJS or use Canvas.';
@@ -6272,263 +6271,226 @@
     );
   const performanceSelect = (label, value, options, onChange, detail) =>
     menuControls.select(label, value, options, onChange, detail, false);
-  function performancePage(page = 'Screen and performance') {
+  // One scrolling settings page. Section headings are not navigation buttons.
+  // Each active/effective fact appears once, alongside the setting it explains.
+  function performancePage() {
     const graphics = graphicsController.status();
-    const pixiSettings = graphics.mode === 'webgl2';
-    const active = pixiSettings
-      ? graphics.phase === 'trial'
-        ? 'PixiJS WebGL2 (trial)'
-        : 'PixiJS WebGL2'
-      : 'Canvas 2D';
+    // The world renderer initializes on New Game / Continue, not on the title.
+    // Before entry, show the intended Pixi settings instead of presenting the
+    // title's independent Canvas surface as a failed world renderer.
+    const pixiSettings = graphics.mode === 'webgl2' ||
+      (!started && previousRendererChoice.renderer === 'webgl2' &&
+        !graphics.recoveryPaused && !graphics.lastFallbackReason);
     const preferred = graphics.preferredRenderer === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D';
-    const fallback = !pixiSettings && (preferred === 'PixiJS WebGL2' || graphics.recoveryPaused);
     const note = rendererFallbackMessage(graphics);
     const density = resolutionStatus().ratio.toFixed(2) + '×';
-    const rendererState = [
-      menuControls.section('Active renderer', active),
-      menuControls.section('Preferred renderer', preferred),
-      ...(note ? [menuControls.section('Renderer status', note)] : []),
+    const choices = (values) => values.map(([value, label]) => ({ value, label }));
+    const resolutions = [
+      ['auto', pixiSettings ? 'Device sharpness' : 'Automatic sharpness'],
+      ...(!pixiSettings ? [['native', 'Maximum sharpness']] : []),
+      ['100', '100% · Standard'],
+      ['80', '80% · Balanced'],
+      ...(!pixiSettings || pixiResolution.preference === '60'
+        ? [['60', '60% · Performance']] : []),
+      ...(!pixiSettings || pixiResolution.preference === '50'
+        ? [['50', '50% · Maximum speed']] : []),
     ];
-    const summary = [
+    const frameRates = [
+      ['auto', 'Auto 20–30 FPS · Default'],
+      ...(fps.preference === 'auto60' ? [['auto60', 'Auto 30–60 FPS']] : []),
+      ['20', '20 FPS'],
+      ...(fps.preference === '30' ? [['30', '30 FPS']] : []),
+      ['60', '60 FPS'],
+    ];
+    const items = [
+      menuControls.section('Display'),
+      menuControls.section(
+        'Active layout',
+        platform.mode === 'phone' ? 'Phone / touch screen' : 'Chromebook / desktop screen',
+      ),
+      performanceSelect(
+        'Screen layout',
+        platform.preference,
+        choices([
+          ['auto', 'Automatic screen'],
+          ['desktop', 'Chromebook / desktop screen'],
+          ['phone', 'Phone / touch screen'],
+        ]),
+        (value) => {
+          platform.select(value);
+          performancePage();
+        },
+        'Choose phone or desktop controls. Your save stays the same.',
+      ),
+      performanceSelect(
+        'Camera zoom',
+        String(platform.cameraZoom),
+        choices([
+          ['1', 'Camera 100%'],
+          ['1.5', 'Camera 150%'],
+          ['1.75', 'Camera 175%'],
+        ]),
+        (value) => {
+          clearInput();
+          platform.selectCameraZoom(Number(value));
+          performancePage();
+        },
+        'Zoom changes how much you see and can affect graphics workload.',
+      ),
+      menuControls.section('Renderer and recovery'),
+      ...(started ? [menuControls.section(
+        'Active renderer',
+        graphics.mode === 'webgl2'
+          ? graphics.phase === 'trial' ? 'PixiJS WebGL2 (trial)' : 'PixiJS WebGL2'
+          : 'Canvas 2D',
+      )] : []),
+      ...(note ? [menuControls.section('Renderer status', note)] : []),
+      performanceSelect(
+        'Graphics renderer',
+        graphics.preferredRenderer || graphics.mode,
+        choices([
+          ['webgl2', 'PixiJS WebGL2 · Default'],
+          ['canvas2d', 'Canvas 2D · Backup'],
+        ]),
+        (value) => {
+          if (value === 'canvas2d') {
+            graphicsController.revert();
+            performancePage();
+          } else {
+            requestPerformancePixi();
+          }
+        },
+        'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
+      ),
+      ...(!pixiSettings && graphics.preferredRenderer === 'webgl2'
+        ? [performanceAction('Retry PixiJS WebGL2', requestPerformancePixi)]
+        : []),
+      menuControls.section(pixiSettings ? 'Pixi graphics' : 'Canvas graphics'),
       menuControls.section(
         'Effective density',
         density + ' · ' + canvas.width + ' × ' + canvas.height,
       ),
-      menuControls.section('Active draw target', fps.target + ' FPS'),
-    ];
-    const choices = (values) => values.map(([value, label]) => ({ value, label }));
-    const drawPage = (title, items, description = '') =>
-      openMenu(title, description, items, platformMenu, { view: 'performance-' + page });
-    if (page === 'Display') {
-      drawPage(page, [
-        menuControls.section(
-          'Active layout',
-          platform.mode === 'phone' ? 'Phone / touch screen' : 'Chromebook / desktop screen',
-        ),
-        performanceSelect(
-          'Screen layout',
-          platform.preference,
-          choices([
-            ['auto', 'Automatic screen'],
-            ['desktop', 'Chromebook / desktop screen'],
-            ['phone', 'Phone / touch screen'],
-          ]),
-          (value) => {
-            platform.select(value);
-            performancePage('Display');
-          },
-          'Choose phone or desktop controls. Your save stays the same.',
-        ),
-        performanceSelect(
-          'Camera zoom',
-          String(platform.cameraZoom),
-          choices([
-            ['1', 'Camera 100%'],
-            ['1.5', 'Camera 150%'],
-            ['1.75', 'Camera 175%'],
-          ]),
-          (value) => {
-            clearInput();
-            platform.selectCameraZoom(Number(value));
-          },
-          'Zoom changes how much you see and can affect graphics workload.',
-        ),
-      ]);
-      return;
-    }
-    if (page === 'Renderer and recovery') {
-      drawPage(page, [
-        ...rendererState,
-        performanceSelect(
-          'Graphics renderer',
-          graphics.preferredRenderer || graphics.mode,
-          choices([
-            ['webgl2', 'PixiJS WebGL2 · Default'],
-            ['canvas2d', 'Canvas 2D · Backup'],
-          ]),
-          (value) => {
-            if (value === 'canvas2d') {
-              graphicsController.revert();
-              performancePage(page);
-            } else {
-              requestPerformancePixi();
-            }
-          },
-          'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
-        ),
-        ...(!pixiSettings && preferred === 'PixiJS WebGL2'
-          ? [performanceAction('Retry PixiJS WebGL2', requestPerformancePixi)]
-          : []),
-      ]);
-      return;
-    }
-    if (page === 'Graphics') {
-      const resolutions = [
-        ['auto', pixiSettings ? 'Device sharpness' : 'Automatic sharpness'],
-        ...(!pixiSettings ? [['native', 'Maximum sharpness']] : []),
-        ['100', '100% · Standard'],
-        ['80', '80% · Balanced'],
-        ...(!pixiSettings || pixiResolution.preference === '60'
-          ? [['60', '60% · Performance']]
-          : []),
-        ...(!pixiSettings || pixiResolution.preference === '50'
-          ? [['50', '50% · Maximum speed']]
-          : []),
-      ];
-      drawPage(
-        pixiSettings ? 'Pixi graphics' : 'Canvas graphics',
-        [
-          menuControls.section('Effective density', density),
-          ...(pixiSettings
-            ? [
-                menuControls.section(
-                  'Effective atmospheric particles',
-                  !pixiQuality.preset && pixiQuality.particles ? 'On' : 'Off',
-                ),
-              ]
-            : [menuControls.section('Effective optimization', optimizationMode ? 'On' : 'Off')]),
-          ...(pixiSettings
-            ? [
-                menuControls.toggle(
-                  'Optimization Mode',
-                  pixiQuality.preset,
-                  (enabled) => {
-                    pixiQuality.preset = enabled;
-                    applyPixiQuality();
-                    performancePage('Graphics');
-                  },
-                  'Use the Pixi performance preset. Turn it off to restore custom settings.',
-                  false,
-                ),
-                menuControls.toggle(
-                  'Atmospheric particles',
-                  pixiQuality.particles,
-                  (enabled) => {
-                    pixiQuality.particles = enabled;
-                    applyPixiQuality();
-                    performancePage('Graphics');
-                  },
-                  pixiQuality.preset
-                    ? 'Saved choice. The preset currently hides decorative particles.'
-                    : 'Decorative motes only.',
-                  false,
-                ),
-              ]
-            : [
-                performanceSelect(
-                  'Optimization Mode',
-                  optimizationPreference,
-                  choices([
-                    ['off', 'Off'],
-                    ['auto', 'Auto · Recommended'],
-                    ['on', 'On'],
-                  ]),
-                  (value) => {
-                    if (!['off', 'auto', 'on'].includes(value)) return;
-                    optimizationPreference = value;
-                    try {
-                      localStorage.setItem(optimizationKey, value);
-                    } catch (_) {}
-                    autoOptimization.reset();
-                    // Critical recovery is not an opt-out, even if Off is chosen now.
-                    setOptimizationActive(
-                      value === 'on' || (!canvasQualityBeforePixi && frameSkip.emergency),
-                    );
-                    performancePage('Graphics');
-                  },
-                  'Auto can reduce graphics detail and ambient audio under sustained load. Emergency protection still applies.',
-                ),
-              ]),
-          performanceSelect(
-            'Rendering resolution',
-            pixiSettings && pixiResolution.preference === 'native'
-              ? 'auto'
-              : (pixiSettings ? pixiResolution : renderResolution).preference,
-            choices(resolutions),
-            (value) => {
-              if (pixiSettings) {
-                pixiResolution.select(value);
+      ...(pixiSettings
+        ? [menuControls.section(
+            'Effective atmospheric particles',
+            !pixiQuality.preset && pixiQuality.particles ? 'On' : 'Off',
+          )]
+        : [menuControls.section('Effective optimization', optimizationMode ? 'On' : 'Off')]),
+      ...(pixiSettings
+        ? [
+            menuControls.toggle(
+              'Optimization Mode',
+              pixiQuality.preset,
+              (enabled) => {
+                pixiQuality.preset = enabled;
                 applyPixiQuality();
-                performancePage('Graphics');
-                return;
-              }
-              renderResolution.select(value);
-              resize();
-              runtime.reset();
-              frameProfile.reset();
-              fps.suspend();
-              performancePage('Graphics');
-            },
-            pixiSettings && pixiQuality.preset
-              ? 'Custom resolution. Optimization Mode applies the performance limit.'
-              : pixiSettings
-                ? 'Device sharpness stays fixed during play.'
-                : 'Automatic sharpness can adapt during play.',
-          ),
-        ],
-        fallback ? 'Canvas controls apply during fallback. Your Pixi choices are kept.' : '',
-      );
-      return;
-    }
-    if (page === 'Frame pacing') {
-      const frameRates = [
-        ['auto', 'Auto 20–30 FPS · Default'],
-        ...(fps.preference === 'auto60' ? [['auto60', 'Auto 30–60 FPS']] : []),
-        ['20', '20 FPS'],
-        ...(fps.preference === '30' ? [['30', '30 FPS']] : []),
-        ['60', '60 FPS'],
-      ];
-      drawPage(page, [
-        menuControls.section(
-          'Drawing target (FPS)',
-          tr('Active draw target') + ': ' + fps.target + ' FPS',
-        ),
-        performanceSelect(
-          'Drawing target (FPS)',
-          fps.preference,
-          choices(frameRates),
-          (value) => {
-            fps.select(value);
-            frameSkip.suspend();
-            runtime.reset();
-            frameProfile.reset();
-            performancePage('Frame pacing');
-          },
-          'Controls when the game draws. Displayed FPS can be lower. Simulation timing is independent.',
-        ),
-        menuControls.toggle(
-          'Adaptive frame skip',
-          frameSkip.enabled,
-          (enabled) => {
-            frameSkip.select(enabled);
-            fps.suspend();
-            runtime.reset();
-            frameProfile.reset();
-          },
-          'Off disables ordinary skips, not emergency combat protection.',
-          false,
-        ),
-      ]);
-      return;
-    }
+                performancePage();
+              },
+              'Use the Pixi performance preset. Turn it off to restore custom settings.',
+              false,
+            ),
+            menuControls.toggle(
+              'Atmospheric particles',
+              pixiQuality.particles,
+              (enabled) => {
+                pixiQuality.particles = enabled;
+                applyPixiQuality();
+                performancePage();
+              },
+              pixiQuality.preset
+                ? 'Saved choice. The preset currently hides decorative particles.'
+                : 'Decorative motes only.',
+              false,
+            ),
+          ]
+        : [
+            performanceSelect(
+              'Optimization Mode',
+              optimizationPreference,
+              choices([
+                ['off', 'Off'],
+                ['auto', 'Auto · Recommended'],
+                ['on', 'On'],
+              ]),
+              (value) => {
+                if (!['off', 'auto', 'on'].includes(value)) return;
+                optimizationPreference = value;
+                try {
+                  localStorage.setItem(optimizationKey, value);
+                } catch (_) {}
+                autoOptimization.reset();
+                // Critical recovery remains mandatory even with preference Off.
+                setOptimizationActive(
+                  value === 'on' || (!canvasQualityBeforePixi && frameSkip.emergency),
+                );
+                performancePage();
+              },
+              'Auto can reduce graphics detail and ambient audio under sustained load. Emergency protection still applies.',
+            ),
+          ]),
+      performanceSelect(
+        'Rendering resolution',
+        pixiSettings && pixiResolution.preference === 'native'
+          ? 'auto'
+          : (pixiSettings ? pixiResolution : renderResolution).preference,
+        choices(resolutions),
+        (value) => {
+          if (pixiSettings) {
+            pixiResolution.select(value);
+            applyPixiQuality();
+            performancePage();
+            return;
+          }
+          renderResolution.select(value);
+          resize();
+          runtime.reset();
+          frameProfile.reset();
+          fps.suspend();
+          performancePage();
+        },
+        pixiSettings && pixiQuality.preset
+          ? 'Custom resolution. Optimization Mode applies the performance limit.'
+          : pixiSettings
+            ? 'Device sharpness stays fixed during play.'
+            : 'Automatic sharpness can adapt during play.',
+      ),
+      menuControls.section('Frame pacing'),
+      menuControls.section('Active draw target', fps.target + ' FPS'),
+      performanceSelect(
+        'Drawing target (FPS)',
+        fps.preference,
+        choices(frameRates),
+        (value) => {
+          fps.select(value);
+          frameSkip.suspend();
+          runtime.reset();
+          frameProfile.reset();
+          performancePage();
+        },
+        'Controls when the game draws. Displayed FPS can be lower. Simulation timing is independent.',
+      ),
+      menuControls.toggle(
+        'Adaptive frame skip',
+        frameSkip.enabled,
+        (enabled) => {
+          frameSkip.select(enabled);
+          fps.suspend();
+          runtime.reset();
+          frameProfile.reset();
+        },
+        'Off disables ordinary skips, not emergency combat protection.',
+        false,
+      ),
+    ];
     openMenu(
       'Screen and performance',
       'Choose how the game looks and runs.',
-      [
-        ...rendererState,
-        ...summary,
-        performanceAction('Display', () => performancePage('Display')),
-        performanceAction('Renderer and recovery', () => performancePage('Renderer and recovery')),
-        performanceAction(pixiSettings ? 'Pixi graphics' : 'Canvas graphics', () =>
-          performancePage('Graphics'),
-        ),
-        performanceAction('Frame pacing', () => performancePage('Frame pacing')),
-      ],
+      items,
       systemMenu,
-      { view: 'performance-Screen and performance' },
+      { view: 'performance-Screen and performance', layout: 'stack' },
     );
   }
-  function platformMenu() {
+    function platformMenu() {
     performancePage();
   }
   function requestPerformancePixi() {
