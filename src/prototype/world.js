@@ -1120,6 +1120,26 @@
           this.s.zone = before;
         }
       }
+      crownAshCourtyard(z) {
+        const homes = ['settlement-minor-0', 'settlement-minor-1'];
+        if (!homes.every((id) => z.props.some((prop) => prop.id === id))) return;
+        const lanes = { roads: [...z.roads, ...(z.footpaths || [])] };
+        for (const [id, x, y, structure] of [
+          ['crown-ash-courtyard-paving', 805, 2010, 'crown-civic-tilecourt'],
+          ['crown-ash-courtyard-garden', 840, 2115, 'crown-sheltered-planter'],
+        ]) {
+          const point = { x, y };
+          if (
+            this.blocked(x, y, z.id, 15, true) ||
+            this.distanceToRoad(lanes, point) < 45 ||
+            z.props.some((p) => p.id === id || dist(point, p) < (p.r || 0) + 55) ||
+            z.buildings.some((p) => dist(point, p) < 130) ||
+            z.nodes.some((p) => dist(point, p) < 70) ||
+            z.npcs.some((p) => dist(point, p) < 100)
+          ) continue;
+          z.props.push({ id, ...point, r: 0, decorative: true, structure });
+        }
+      }
       crownCitadelMuster(z) {
         // Reuse the existing exterior command station, including its saved
         // position. The drill and equipment presentation is nonblocking.
@@ -1136,6 +1156,7 @@
           this.ashRefugeDomesticLife(z);
           this.crownCivicForecourt(z);
           this.crownCitadelMuster(z);
+          this.crownAshCourtyard(z);
           return;
         }
         const oldZone = this.s.zone;
@@ -1353,6 +1374,7 @@
         this.ashRefugeDomesticLife(z);
         this.crownCivicForecourt(z);
         this.crownCitadelMuster(z);
+        this.crownAshCourtyard(z);
       }
       settlementLayout(z) {
         if (

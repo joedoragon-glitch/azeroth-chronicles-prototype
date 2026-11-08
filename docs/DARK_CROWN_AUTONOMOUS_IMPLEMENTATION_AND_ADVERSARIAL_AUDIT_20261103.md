@@ -13,7 +13,7 @@ The terrain painter now reuses immutable samples at world tile centers and share
 | 1. Crownwatch approach | Existing route and city composition, procedural ground, current camera samples | Walked reveal and exits open |
 | 2. Ridge and three towers | Three function-specific utility towers and an exposed Crownwatch basalt shoulder | Walked skyline framing and cross-renderer review open |
 | 3. Civic square and hall | Existing rest service, forecourt and ministry frontage | Full services and matched day/night scene open |
-| 4. Courtyard housing | Current-main Ash Refuge household art retained | Connected walkable housing and camera review open |
+| 4. Courtyard housing | Existing Ash Refuge houses with shared paving and a sheltered planter | Cross-renderer courtyard framing open |
 | 5. Ash Refuge | Local tower, existing households, one tested habitat | District composition and lived-in details open |
 | 6. Geothermal and public works | Seven fixtures and the existing south bridge service chase. Native placement and v4 restore checks | Heat, wastewater and clean-water route legibility open |
 | 7. Glass and ceramics | Fifteen existing thermal works and two realized industrial footpaths | Detailed working precincts and freight sequence open |
