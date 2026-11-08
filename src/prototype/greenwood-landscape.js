@@ -9,6 +9,7 @@
     for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
     return h;
   };
+  const wagonExit = [3200, 80];
   const plan = {
     town: [650, 600],
     hamlet: [550, 1750],
@@ -284,7 +285,7 @@
       woodlandCulvert = {
         // The north woodland lane crosses the same creek upstream of Millhaven.
         from: q([1232, 258]), to: q([1292, 290]),
-        width: 24 * scale, kind: 'stone-culvert',
+        width: 40 * scale, kind: 'stone-culvert',
         flow: { x: 40, y: 170 },
       },
       // One genuine service road branches from the existing west-bank farm road,
@@ -584,18 +585,14 @@
         z.greenwoodHomesteadVersion = 1;
       }
       greenwoodOwnerCompoundFinish(z) {
-        if (z.id === 'vale' && z.greenwoodDepartureClearanceVersion !== 1) {
-          const a = R.greenwoodLayout.anchors.wagon,
-            b = { x: 3200, y: 80 };
-          const dx = b.x - a.x,
-            dy = b.y - a.y,
-            len2 = dx * dx + dy * dy;
-          z.props = z.props.filter((p) => {
-            if (!p.greenwoodNature || p.owned || p.playerOwned || p.custom) return true;
-            const t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2;
-            return t < 0 || t > 1 || Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy) > 75;
-          });
-          z.greenwoodDepartureClearanceVersion = 1;
+        if (z.id === 'vale' && z.greenwoodDepartureClearanceVersion !== 2) {
+          const layout = R.greenwoodLayout;
+          const end = point(wagonExit.map((value) => value * layout.scale));
+          z.props = z.props.filter((p) =>
+            !p.greenwoodNature || p.owned || p.playerOwned || p.custom ||
+            distanceToRoadSegment(p, layout.anchors.wagon, end) > 105 * layout.scale,
+          );
+          z.greenwoodDepartureClearanceVersion = 2;
         }
         if (z.id === 'vale' && z.greenwoodOwnerHomesteadLayoutVersion !== 1) {
           const bay = z.props.find((p) => p.id === 'greenwood-thorn-homestead-rest-bay');
@@ -2964,7 +2961,7 @@
   // and the non-overlapping path fragments once per real geometry revision.
   // Canvas and Pixi consume this same painter; no on-tick pathfinding or meshes.
   let roadPaintCache = null;
-  const roadWidths = Object.freeze({ cart: 44, farm: 26, path: 12 });
+  const roadWidths = Object.freeze({ cart: 44, farm: 26, path: 20 });
   function smoothRoad(path, kind) {
     if (!Array.isArray(path) || path.length < 3) return (path || []).slice();
     const limit = kind === 'cart' ? 85 : kind === 'farm' ? 54 : 32;
@@ -3041,12 +3038,8 @@
       kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
       points: smoothRoad(points, kinds[i] === 'cart' || i === 0 ? 'cart' : 'farm'),
     }));
-    // The previously appended merchant exit made the cart road bend sharply
-    // right toward the wagon. Keep the main carriageway moving through to the
-    // NORTH map boundary, and let the existing wagon stop branch off as a
-    // narrower, gently joined service lane. These are presentation-only
-    // centerlines; z.roads, NPC travel, saves and collision remain unchanged.
-    // The shape check avoids altering older/unrecognized road layouts.
+    // Extend the existing carriageway past the wagon at full width. This
+    // presentation keeps the wagon as the travel interaction at the same stop.
     const source = roads?.[0],
       destination = source?.at(-1),
       scale = destination?.x / 2880;
@@ -3055,28 +3048,14 @@
         Math.abs(destination.y - 280 * scale) < 1 &&
         Math.abs(source.at(-2).x - 2480 * scale) < 1 &&
         Math.abs(source.at(-2).y - 650 * scale) < 1) {
-      const fork = { x: 2480 * scale, y: 650 * scale };
       const westStart = source[0];
       const millhavenWest =
         Math.abs(westStart.x - 250 * scale) < 1 && Math.abs(westStart.y - 600 * scale) < 1
           ? [{ x: 0, y: westStart.y }]
           : [];
-      wide[0].points = smoothRoad([
-        ...millhavenWest,
-        ...source.slice(0, -1),
-        { x: 2450 * scale, y: 490 * scale },
-        { x: 2350 * scale, y: 240 * scale },
-        { x: 2270 * scale, y: -35 * scale },
-      ], 'cart');
-      wide.push({
-        kind: 'farm',
-        points: smoothRoad([
-          fork,
-          { x: 2630 * scale, y: 495 * scale },
-          { x: 2800 * scale, y: 345 * scale },
-          { ...destination },
-        ], 'farm'),
-      });
+      const exit = point(wagonExit.map((value) => value * scale));
+      wide[0].points = smoothRoad([...millhavenWest, ...source, exit], 'cart');
+      wide[0].endsAtEastEdge = true;
     }
     const fragments = [];
     for (const path of footpaths || []) {
@@ -3170,7 +3149,7 @@
     }
     return { wide, fragments, widths: roadWidths };
   }
-  function appendRoadRibbon(ctx, screen, points, width) {
+  function appendRoadRibbon(ctx, screen, points, width, endsAtEastEdge = false) {
     if (points.length < 2) return;
     const normals = [];
     for (let i = 1; i < points.length; i++) {
@@ -3193,8 +3172,17 @@
         dy = ny / len,
         denominator = Math.max(0.65, dx * after.x + dy * after.y),
         reach = width / denominator;
-      left.push(screen({ x: points[i].x + dx * reach, y: points[i].y + dy * reach }));
-      right.push(screen({ x: points[i].x - dx * reach, y: points[i].y - dy * reach }));
+      const p = points[i];
+      if (endsAtEastEdge && i === points.length - 1) {
+        const before = points[i - 1];
+        const slope = (p.y - before.y) / (p.x - before.x);
+        const edgeOffset = (dy - dx * slope) * reach;
+        left.push(screen({ x: p.x, y: p.y + edgeOffset }));
+        right.push(screen({ x: p.x, y: p.y - edgeOffset }));
+      } else {
+        left.push(screen({ x: p.x + dx * reach, y: p.y + dy * reach }));
+        right.push(screen({ x: p.x - dx * reach, y: p.y - dy * reach }));
+      }
     }
     left.concat(right.reverse()).forEach((p, i) => {
       if (i) ctx.lineTo(p.x, p.y);
@@ -3253,10 +3241,10 @@
       // strip on top of another and left visible seams at T/Y junctions.
       for (const road of wide) {
         const w = roadWidths[road.kind] * widthFactor;
-        appendRoadRibbon(ctx, screen, road.points, w);
+        appendRoadRibbon(ctx, screen, road.points, w, road.endsAtEastEdge);
         // A west-boundary carriageway ends flush with the map edge.
         if (road.points[0].x !== 0) appendRoadCap(ctx, screen, road.points[0], w);
-        appendRoadCap(ctx, screen, road.points.at(-1), w);
+        if (!road.endsAtEastEdge) appendRoadCap(ctx, screen, road.points.at(-1), w);
       }
       const footWidth = roadWidths.path * widthFactor;
       for (const run of fragments) {
