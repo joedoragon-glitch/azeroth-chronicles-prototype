@@ -373,7 +373,10 @@ async function test(name, fn) {
     assert(/action\(\s*["']Install on phone["']/.test(app));
     assert(app.includes('appinstalled'));
     assert(app.includes('hadServiceWorkerController'));
-    assert(/if\s*\(hadServiceWorkerController\)\s*\{\s*appReloadRequested\s*=\s*false/.test(app));
+    assert(/if\s*\(started && !appReloadRequested\)\s*\{[\s\S]*?appControllerChangedDuringPlay\s*=\s*true/.test(app),
+      'an unexpected controller takeover is deferred while a campaign is active');
+    assert(/if\s*\(hadServiceWorkerController\)[\s\S]*?appReloadRequested\s*=\s*true/.test(app),
+      'a deliberate activation must keep its reload exemption through beforeunload');
     assert(!/hadServiceWorkerController\s*\|\|\s*appReloadRequested/.test(app));
     assert(app.includes('checkAppUpdate(true).catch'));
     assert(app.includes("$('update-button').onclick = updateApp"));
