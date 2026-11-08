@@ -112,10 +112,10 @@ async function run(){
         page.on('pageerror',e=>errors.push(e.message));
         const url=origin+(phone?'&experience=phone':'&experience=desktop');
         await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
-        await page.waitForFunction(()=>{
-          const el=document.getElementById('title-screen'),u=document.getElementById('startup-update');
-          return el && !el.hidden && u && u.hidden;
-        },null,{timeout:90000});
+        await page.waitForFunction(()=>document.getElementById('startup-update')?.hidden);
+        if(await page.locator('#language-welcome').isVisible())
+          await page.locator('#language-welcome [data-language="en"]').click();
+        await page.locator('#title-screen').waitFor({state:'visible'});
         assert.equal(await page.locator('#crown-review-rotate').isHidden(),true);
         if(phone){
           // Landscape launch should present all five original title options.
@@ -147,10 +147,9 @@ async function run(){
         await page.locator('.crown-review-close').click();
         assert.equal(await page.locator('#crown-review-backdrop').isHidden(),true);
 
-        // Existing dev.258 preview title flow: explicitly opt into Developer.
+        // Use the current first-run title flow and explicitly opt into Developer.
         await page.locator('#title-new').click();
         await page.getByRole('button',{name:'New Developer Mode run'}).click();
-        await page.getByRole('button',{name:/^English/}).click();
         await page.getByRole('button',{name:/Paladin/}).click();
         await page.waitForFunction(()=>window.Prototype?.started===true,null,{timeout:90000});
         assert.equal(await page.evaluate(()=>Prototype.game.s.mode),'developer');
@@ -185,8 +184,7 @@ async function run(){
         assert(Math.hypot(crown.hero.x-690,crown.hero.y-430)<300);
 
         if(phone){
-          // The core orientation guard is not merged. The preview protects
-          // existing combat/clock via the native menu when rotated upright.
+          // The preview protects the native combat clock when rotated upright.
           const before=await page.evaluate(()=>({
             zone:Prototype.game.zoneId,x:Prototype.game.hero.x,y:Prototype.game.hero.y
           }));
@@ -244,7 +242,7 @@ async function run(){
         assert.equal(await page.locator('[data-owner-destination=arrival]').innerText(),'Visitar este lugar');
         await page.locator('.crown-review-done').click();
         assert.deepEqual(errors.slice(0,3),[]);
-        console.log('PASS '+name+': landscape review, native pause, real traversal, rotation recovery,'+
+        console.log('PASS '+name+': landscape review, native pause, developer scene entry, rotation recovery,'+
           ' location search/categories, bilingual text and v4 Developer save');
       } finally {await context.close();}
     }

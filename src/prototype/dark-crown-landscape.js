@@ -126,20 +126,38 @@
     Object.freeze({ id: 'southern-fold', x: 1770, y: 3410, rx: 240, ry: 195, seed: 181 }),
   ]);
   const authored = { flows, islands };
-  function pigment(x, y, field) {
+  function pigment(field) {
     const age = field.age;
-    const fleck = (noise(x, y, 108, 849) - 0.5) * 7;
-    return 'rgb(' + [
-      48 + age * 21 + field.oxidization * 18 + fleck,
-      47 + age * 17 + field.island * 9 + fleck,
-      57 + age * 19 - field.island * 6 + fleck,
-    ].map(Math.round).join(',') + ')';
+    return [
+      48 + age * 21 + field.oxidization * 18,
+      47 + age * 17 + field.island * 9,
+      57 + age * 19 - field.island * 6,
+    ];
+  }
+  const rgb = (channels) => 'rgb(' + channels.map(Math.round).join(',') + ')';
+  function tilePigment(ctx, p, x, y, field) {
+    if (typeof ctx.createLinearGradient !== 'function') return rgb(pigment(field));
+    // Adjacent diamonds sample their shared world vertices. Shade across the
+    // dominant axis to soften seams while keeping the mineral colors local.
+    const left = pigment(sample(x, y + 80, authored));
+    const right = pigment(sample(x + 80, y, authored));
+    const top = pigment(sample(x, y, authored));
+    const bottom = pigment(sample(x + 80, y + 80, authored));
+    const delta = (a, b) => a.reduce((sum, value, index) => sum + Math.abs(value - b[index]), 0);
+    const horizontal = delta(left, right) >= delta(top, bottom);
+    const gradient = horizontal
+      ? ctx.createLinearGradient(p.x - 60.8, p.y, p.x + 60.8, p.y)
+      : ctx.createLinearGradient(p.x, p.y, p.x, p.y + 43.2);
+    gradient.addColorStop(0, rgb(horizontal ? left : top));
+    gradient.addColorStop(0.5, rgb(pigment(field)));
+    gradient.addColorStop(1, rgb(horizontal ? right : bottom));
+    return gradient;
   }
   function paintTile(ctx, p, x, y) {
     // The renderer owns the 80-unit world diamond. Anchoring the grain to
     // this lattice keeps Canvas windows and overlapping Pixi tiles consistent.
     const field = sample(x + 40, y + 40, authored);
-    ctx.fillStyle = pigment(x + 40, y + 40, field);
+    ctx.fillStyle = tilePigment(ctx, p, x, y, field);
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
     ctx.lineTo(p.x + 60.8, p.y + 21.6);
@@ -150,12 +168,14 @@
     ctx.strokeStyle = ctx.fillStyle;
     ctx.lineWidth = 1;
     ctx.stroke();
-    const tileX = x / 80, tileY = y / 80;
+    const tileX = x / 80,
+      tileY = y / 80;
     const grainCount = Math.round(5 + 8 * field.cinder);
     for (let n = 0; n < grainCount; n++) {
       const u = 10 + hash2(tileX, tileY, 401 + n * 23) * 60;
       const v = 10 + hash2(tileX, tileY, 719 + n * 31) * 60;
-      const px = p.x + (u - v) * 0.76, py = p.y + (u + v) * 0.27;
+      const px = p.x + (u - v) * 0.76,
+        py = p.y + (u + v) * 0.27;
       const joint = n < 2 && field.fracture > 0.48;
       const length = 2 + hash2(tileX, tileY, 907 + n * 47) * (joint ? 22 : 4);
       ctx.strokeStyle = n % 3 === 0 ? '#c7b0a92b' : '#20202d62';
@@ -168,7 +188,17 @@
     }
   }
 
-  const api = Object.freeze({ VERSION, WORLD_SIZE, hash2, noise, flowMask, islandMask, sample, islands, paintTile });
+  const api = Object.freeze({
+    VERSION,
+    WORLD_SIZE,
+    hash2,
+    noise,
+    flowMask,
+    islandMask,
+    sample,
+    islands,
+    paintTile,
+  });
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeDarkCrownLandscape = api;
 })(typeof window !== 'undefined' ? window : globalThis);
