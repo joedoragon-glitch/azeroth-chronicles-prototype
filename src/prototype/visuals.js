@@ -20671,7 +20671,11 @@
       // Mill service geometry is owned by the current region layout. The
       // culvert is a dirt road over a creek, not another stone bridge.
       // The timber crossing is much smaller than either named river bridge.
-      for (const deck of [R.greenwoodLayout.creekCulvert, R.greenwoodLayout.millBridge]) {
+      for (const deck of [
+        R.greenwoodLayout.creekCulvert,
+        R.greenwoodLayout.woodlandCulvert,
+        R.greenwoodLayout.millBridge,
+      ]) {
         if (!deck) continue;
         const a = deck.from, b = deck.to,
           length = Math.hypot(b.x - a.x, b.y - a.y) || 1,
@@ -20701,15 +20705,19 @@
               '#7d674d', 1.25,
             );
           }
-          const mid = { x: (a.x+b.x)/2, y: (a.y+b.y)/2 };
+          const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+          // For a diagonal creek, follow the water centerline out from each shoulder.
+          const flowAcross = deck.flow ? deck.flow.x * nx + deck.flow.y * ny : 0;
+          const flowX = flowAcross ? deck.flow.x / flowAcross : nx;
+          const flowY = flowAcross ? deck.flow.y / flowAcross : ny;
           for (const side of [-1, 1]) {
             const rim = {
-              x: mid.x + nx*(half+3)*side,
-              y: mid.y + ny*(half+3)*side,
+              x: mid.x + flowX * (half + 3) * side,
+              y: mid.y + flowY * (half + 3) * side,
             };
             const outer = {
-              x: rim.x + nx*9*side,
-              y: rim.y + ny*9*side,
+              x: rim.x + flowX * 9 * side,
+              y: rim.y + flowY * 9 * side,
             };
             // The mouth is a small water-darkened gap between stone cheeks,
             // not a solid black stripe through the middle of the road.

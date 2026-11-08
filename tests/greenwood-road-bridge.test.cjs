@@ -52,6 +52,15 @@ assert(g.clearSegment(
   {x:1530,y:2297}, {x:1940,y:2297}, 15, true,
 ), 'southern footbridge has body clearance even with modest off-center walking');
 const prepared = Landscape.prepareRoadPaint(z.roads, z.footpaths, z.greenwoodRoadKinds);
+assert.deepEqual(prepared.wide[0].points[0], { x: 0, y: 600 },
+  'Millhaven carriageway extends all the way to the west boundary');
+assert.deepEqual(z.roads[0][0], { x: 250, y: 600 },
+  'west continuation is presentation-only');
+const millhavenLane = prepared.fragments.find((run) =>
+  run.some((point) => point.x < 180 && point.y > 300 && point.y < 500));
+assert(millhavenLane, 'woodland lane curves into the west approach');
+assert(millhavenLane[0].x > 200 && millhavenLane[0].y > 560,
+  'the narrow lane meets the cart surface well before the map edge');
 // The principal road now continues across the north boundary instead of
 // turning toward the merchant stop. A modest farm-width branch still serves
 // the original wagon anchor without changing the underlying authored route.

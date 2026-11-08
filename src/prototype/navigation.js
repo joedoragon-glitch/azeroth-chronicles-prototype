@@ -1531,17 +1531,16 @@
             }),
           );
         }
-        // Open western road shoulder: clear of the hamlet roofs and lantern.
-        // Reposition the same resident on old saves as well as fresh campaigns.
-        witness.name = R.greenwoodLayout?.version === 2
-          ? 'Western road observer'
-          : 'Orchard trail witness';
-        Object.assign(
-          witness,
-          R.greenwoodLayout?.version === 2
-            ? this.safe(850 * R.greenwoodLayout.scale, 750 * R.greenwoodLayout.scale, 'vale')
-            : this.safe(780, 740, 'vale'),
-        );
+        this.positionThornWitness(witness);
+      }
+      positionThornWitness(witness) {
+        const layout = R.greenwoodLayout;
+        // The west road shoulder is outside the Captain's interaction radius.
+        witness.name = layout?.version === 2 ? 'Western road observer' : 'Orchard trail witness';
+        const position = layout?.version === 2
+          ? this.safe(680 * layout.scale, 1020 * layout.scale, 'vale')
+          : this.safe(780, 740, 'vale');
+        Object.assign(witness, position);
       }
       thornReport(concise = false) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
@@ -1554,19 +1553,48 @@
           return 'Thornfang was defeated. Mira waits near ' + cfg.names[i] +
             '. Your journal can guide you to her last known waiting place.';
         }
-        // Never turn a static roadside witness into a global GPS receiver.
-        // Track evidence expires, and only pawprints actually near the observer
-        // or the investigating player can support a recent local claim.
         const z = this.s.zones.vale;
-        const observer = z?.npcs.find((n) => n.id === 'thorn-local-report');
-        const origin = concise ? (observer || this.hero) : this.hero;
+        if (concise) {
+          const thorn = z?.enemies.find(
+            (e) =>
+              e.type === 'boss' &&
+              e.family === 'thorn' &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.developerSummon,
+          );
+          const cfg = R.thornPatrol;
+          let lead =
+            'I haven’t seen Thornfang on the trail lately. Check back and I’ll tell you when he’s out on patrol.';
+          if (thorn) {
+            if (
+              thorn.aggro ||
+              thorn.returning ||
+              thorn.thornReturn ||
+              thorn.thornIntroRetreat != null ||
+              thorn.thornPause > 0
+            ) {
+              const nearest = cfg.route.reduce(
+                (best, [x, y], i) =>
+                  dist(thorn, { x, y }) < dist(thorn, { x: cfg.route[best][0], y: cfg.route[best][1] })
+                    ? i
+                    : best,
+                0,
+              );
+              lead = 'Last word puts Thornfang near ' + cfg.names[nearest] + '.';
+            } else {
+              lead =
+                'Thornfang’s patrol is heading toward ' +
+                (cfg.names[thorn.thornLeg] || cfg.names[cfg.startLeg]) +
+                '.';
+            }
+          }
+          return lead + '\n\n' +
+            'He used to scout for the Crown. Now he takes Mira along to inspect security at the Dark Lord’s winter estate. He pays her, then tells her she can’t leave. Some employer. If you catch up with him, get her out of there.';
+        }
         const fresh = z?.npcs.some((n) => n.thornFootprint &&
           n.expires > this.s.time && Number.isFinite(n.x) && Number.isFinite(n.y) &&
-          dist(n, origin) <= 230);
-        if (concise)
-          return fresh
-            ? 'Recent pawprints were found by the western road. They may already be old; follow the tracks.'
-            : 'No recent sighting from the western road. Search for scout tracks near the southern woods and both crossings.';
+          dist(n, this.hero) <= 230);
         const context = 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
         return (fresh ? 'Fresh pawprints mark this nearby path. Follow their direction. ' : '') + context;
       }

@@ -423,10 +423,12 @@
     'Northern freight crossing, east bank': 'Paso comercial del norte, orilla oriental',
     'Goblin perimeter': 'Perímetro goblin',
     'Skeleton watch perimeter': 'Perímetro del puesto de vigilancia esqueleto',
-    'No recent sighting from the western road. Search for scout tracks near the southern woods and both crossings.':
-      'No hay avistamientos recientes desde el camino occidental. Busca huellas del explorador en el bosque del sur y junto a ambos pasos.',
-    'Recent pawprints were found by the western road. They may already be old; follow the tracks.':
-      'Se encontraron huellas recientes junto al camino occidental. Puede que ya sean antiguas; sigue el rastro.',
+    'I haven’t seen Thornfang on the trail lately. Check back and I’ll tell you when he’s out on patrol.':
+      'Hace tiempo que no veo a Thornfang por el sendero. Vuelve y te diré cuando salga de patrulla.',
+    'Thornfang’s patrol is heading toward': 'La patrulla de Thornfang se dirige hacia',
+    'Last word puts Thornfang near': 'Según lo último que me contaron, Thornfang anda cerca de',
+    'He used to scout for the Crown. Now he takes Mira along to inspect security at the Dark Lord’s winter estate. He pays her, then tells her she can’t leave. Some employer. If you catch up with him, get her out of there.':
+      'Antes era explorador de la Corona. Ahora se lleva a Mira para inspeccionar la seguridad de la residencia invernal del Dark Lord. Le paga y luego le dice que no puede irse. Vaya patrón. Si lo alcanzas, saca a Mira de allí.',
     'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.':
       'Thornfang fue explorador de los territorios salvajes de la Corona. Lleva a Mira desde su guarida temporal del sur por el puente peatonal meridional, el perímetro de la Cripta del Bosque, la vigilancia esqueleto, el paso comercial del norte y el territorio goblin. Evitan Millhaven. Mira realiza inspecciones obligatorias aunque recibe un salario. Cuando termine la finca de invierno y sus habitantes puedan protegerla, Thornfang piensa volver a su lejano hogar.',
     'Fresh pawprints mark this nearby path. Follow their direction.':
@@ -1622,6 +1624,13 @@
         spanishText['Fresh pawprints mark this nearby path. Follow their direction.'] +
         ' ' +
         spanishText[thornLore]
+      );
+    const patrolLead = /^(Thornfang’s patrol is heading toward|Last word puts Thornfang near) (.+)\.$/.exec(
+      piece,
+    );
+    if (patrolLead)
+      return (
+        spanishText[patrolLead[1]] + ' ' + (spanishText[patrolLead[2]] || patrolLead[2]) + '.'
       );
     const miraWaiting =
       /^Thornfang was defeated\. Mira waits near (.+)\. Your journal can guide you to her last known waiting place\.$/.exec(
@@ -7089,6 +7098,10 @@
     const n = nearestNPC();
     if (!n) {
       status('Nothing nearby to interact with.');
+      return;
+    }
+    if (n.thornReport) {
+      openMenu(n.name, game.thornReport(true));
       return;
     }
     if (game.s.mode === 'arena' && n.kind === 'arena-guide') {

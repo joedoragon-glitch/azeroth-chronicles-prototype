@@ -281,6 +281,12 @@
         from: q([1070, 725]), to: q([1145, 805]),
         width: 76 * scale, kind: 'stone-culvert',
       },
+      woodlandCulvert = {
+        // The north woodland lane crosses the same creek upstream of Millhaven.
+        from: q([1232, 258]), to: q([1292, 290]),
+        width: 24 * scale, kind: 'stone-culvert',
+        flow: { x: 40, y: 170 },
+      },
       // One genuine service road branches from the existing west-bank farm road,
       // ends on dry ground; its NARROW footpath crosses the true
       // millrace timber bridge before reaching the loading doorway.
@@ -364,6 +370,7 @@
       upperCreek,
       millBridge,
       creekCulvert,
+      woodlandCulvert,
       millServiceLane,
       millDoorFootpath,
       millEntrance: q([1210, 1485]),
@@ -1475,7 +1482,6 @@
             'goblin-camp': plan.goblin,
             'supply-entrance': plan.treasury,
             'mini-field-thorn': [920, 2880],
-            'thorn-local-report': [850, 750],
           };
           for (const n of z.npcs) {
             if (npcPositions[n.id]) Object.assign(n, q(npcPositions[n.id]));
@@ -1897,7 +1903,7 @@
               if (p && this.blocked(p.x, p.y, 'vale'))
                 Object.assign(p, this.safe(p.x, p.y, 'vale'));
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
-          if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
+          if (witness) this.positionThornWitness(witness);
           // Shape authored routes and bridge corridors before positioning
           // homestead and botanical overlays against their final road footprint.
           // The method's own version guard keeps restore idempotent.
@@ -3050,7 +3056,13 @@
         Math.abs(source.at(-2).x - 2480 * scale) < 1 &&
         Math.abs(source.at(-2).y - 650 * scale) < 1) {
       const fork = { x: 2480 * scale, y: 650 * scale };
+      const westStart = source[0];
+      const millhavenWest =
+        Math.abs(westStart.x - 250 * scale) < 1 && Math.abs(westStart.y - 600 * scale) < 1
+          ? [{ x: 0, y: westStart.y }]
+          : [];
       wide[0].points = smoothRoad([
+        ...millhavenWest,
         ...source.slice(0, -1),
         { x: 2450 * scale, y: 490 * scale },
         { x: 2350 * scale, y: 240 * scale },
@@ -3096,9 +3108,18 @@
         distance(path[0], { x: 250 * northScale, y: 600 * northScale }) < 1 &&
         distance(path.at(-1), { x: 1330 * northScale, y: 1000 * northScale }) < 1;
       const paintedPath = northernConnector
-        ? [...path.slice(0, -2),
-          { x: 1510 * northScale, y: 885 * northScale },
-          { x: 1510 * northScale, y: 1000 * northScale }]
+        ? [
+            // Merge into the straight westbound carriageway at a shallow angle.
+            { x: 315 * northScale, y: 600 * northScale },
+            { x: 225 * northScale, y: 577 * northScale },
+            { x: 155 * northScale, y: 515 * northScale },
+            { x: 112 * northScale, y: 404 * northScale },
+            { x: 108 * northScale, y: 265 * northScale },
+            { x: 153 * northScale, y: 187 * northScale },
+            ...path.slice(3, -2),
+            { x: 1510 * northScale, y: 885 * northScale },
+            { x: 1510 * northScale, y: 1000 * northScale },
+          ]
         : path;
       const points = smoothRoad(paintedPath, 'path');
       // Short village/service spurs are maintained roads, not moss-colored
@@ -3233,7 +3254,8 @@
       for (const road of wide) {
         const w = roadWidths[road.kind] * widthFactor;
         appendRoadRibbon(ctx, screen, road.points, w);
-        appendRoadCap(ctx, screen, road.points[0], w);
+        // A west-boundary carriageway ends flush with the map edge.
+        if (road.points[0].x !== 0) appendRoadCap(ctx, screen, road.points[0], w);
         appendRoadCap(ctx, screen, road.points.at(-1), w);
       }
       const footWidth = roadWidths.path * widthFactor;
