@@ -209,8 +209,16 @@ function contrast(item) {
           await frame.locator('#modal-actions .menu-section')
             .filter({ hasText: language === 'es' ? 'Gráficos de Canvas' : 'Canvas graphics' })
             .count(),
+          0,
+          'redundant Canvas graphics heading was removed',
+        );
+        assert.equal(
+          await frame.getByRole('combobox', {
+            name: language === 'es' ? 'Modo de optimización' : 'Optimization Mode',
+            exact: true,
+          }).count(),
           1,
-          'active Canvas graphics is one inline section, not a submenu',
+          'Canvas optimization remains an inline working control',
         );
         assert.equal(
           await frame.getByRole('combobox', {

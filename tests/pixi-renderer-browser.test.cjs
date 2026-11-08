@@ -36,7 +36,6 @@ async function selectPixi(page) {
   await page.getByRole('button', {name: 'Settings', exact: true}).click();
   await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
-  await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
   try {
     // A complete current-region atlas can legitimately take much longer than
@@ -283,12 +282,12 @@ async function run() {
         await page.locator('#menu-button').click();
         await page.getByRole('button', { name: 'Settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
-        await page.getByRole('button', { name: 'Pixi graphics', exact: true }).click();
         assert.equal(await page.getByRole('combobox', { name: 'Optimization Mode' }).count(), 0);
         const preset = page.getByRole('switch', { name: /^Optimization Mode/ });
         await preset.click();
         assert.equal(await preset.getAttribute('aria-checked'), 'true');
-        assert.match(await page.locator('#modal').innerText(), /Effective atmospheric particles\s+Off/);
+        assert.equal(await page.getByRole('switch', { name: /^Atmospheric particles/ }).count(), 1);
+        assert.match(await page.locator('#modal').innerText(), /Saved choice\. The preset currently hides decorative particles\./);
         await page.evaluate(() => {
           const canvas = document.querySelector('#world-pixi-experimental');
           if (!canvas) throw Error('Confirmed WebGL canvas missing');
@@ -299,11 +298,10 @@ async function run() {
         assert.equal(failed.lastFailure?.type, 'context-loss');
         assert.equal(failed.preferredRenderer, 'webgl2',
           'Safety fallback must preserve preferred Pixi renderer');
-        await page.getByRole('heading', { name: 'Canvas graphics', exact: true }).waitFor();
-        await page.locator('#close-button').click();
+        await page.getByRole('combobox', { name: 'Optimization Mode' }).waitFor();
         assert.match(await page.locator('#modal').innerText(), /Active renderer\s+Canvas 2D/);
-        assert.match(await page.locator('#modal').innerText(), /Preferred renderer\s+PixiJS WebGL2/);
-        await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
+        assert.equal(await page.getByRole('combobox', { name: 'Graphics renderer' }).inputValue(), 'webgl2',
+          'Canvas fallback preserves the chosen Pixi renderer');
         assert.equal(await page.locator('select[aria-label="Optimization Mode"]').count(), 1,
           'Active Canvas fallback must expose effective Canvas quality policy');
         assert.equal(await page.getByText('Atmospheric particles', {exact:true}).count(), 0,
@@ -364,7 +362,6 @@ async function run() {
       await page.locator('#menu-button').click();
       await page.getByRole('button', {name: 'Settings', exact: true}).click();
       await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
-      await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
       const optimization = page.locator('select[aria-label="Optimization Mode"]');
       await optimization.selectOption('on');
       assert.equal(await page.evaluate(() => Prototype.renderer.metrics().optimizationMode), 'on');
@@ -423,7 +420,6 @@ async function run() {
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Settings', exact:true}).click();
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        await page.getByRole('button', { name: 'Pixi graphics', exact: true }).click();
         const preset = page.getByRole('switch', { name: /^Optimization Mode/ });
         const density = page.getByRole('combobox', { name: 'Rendering resolution' });
         await density.selectOption('100');
@@ -603,7 +599,6 @@ async function run() {
           await page.locator('#menu-button').click();
           await page.getByRole('button', {name:'Settings', exact:true}).click();
           await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-          await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
           assert.equal(await page.locator('select[aria-label="Optimization Mode"]').count(), 1,
             'Active Canvas fallback must offer its effective quality selector');
           assert.equal(await page.getByText('Atmospheric particles', {exact:true}).count(), 0,

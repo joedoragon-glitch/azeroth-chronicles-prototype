@@ -1,6 +1,15 @@
 # Screen & Performance settings
 
-## Current owner correction — one page, no title-screen migration notice (7 Nov 2026)
+## Owner-marked compact layout — dev.275 candidate (7 November 2026)
+
+The owner's annotated phone screenshots define the visible cleanup. Remove **Display**, **Active layout** and its current value, the **Pixi graphics / Canvas graphics** heading, **Effective atmospheric particles** and analogous **Effective optimization** readout, **Frame pacing**, and the separate **Active draw target** with its FPS value. Also remove the redundant descriptions beneath **Screen layout** and **Graphics renderer**, and “Decorative motes only.” beneath the particle switch. These are noninteractive labels and tips, not feature removals. The conditional explanation that Optimization Mode temporarily hides particles is still necessary and remains; so do the useful camera zoom and resolution explanations.
+
+Reflow without gaps: start with Screen layout and Camera zoom immediately below the page description; keep **Renderer and recovery** as a separator; then show effective density, inline active-renderer graphics controls, Drawing target (FPS), and Adaptive frame skip. No nested settings pages. Preserve real fallback explanations, selectable Canvas/Pixi, the 15-second Keep/Revert trial and crash protection, AI, saves and renderer behavior. The FPS selector already carries the selected target; actual measured drawing rate stays in Playtest tools → Performance details.
+
+**Verified baseline:** dev.274 merged as [PR #857](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/857), [main c1c33b8](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/c1c33b8effd5939eb67384a69af59a4c23c342c9), and [successful Pages #42445318925](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42445318925). Dev.275 is a new unreleased proposal pending focused verification and its own publication receipt; owner device appearance/FPS acceptance remains separate.
+
+
+## Previous one-page correction — dev.274 (7 Nov 2026)
 
 **Base:** published `main@97cb3b8af9c24976e5946a786d33f22461a78049`, dev.273, following merged #855 and #856 ([Pages #42430517255](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42430517255)). **Current candidate:** dev.274 on [PR #857](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/857), not player-published pending relevant exact-head checks; owner authorized merge after validation. Physical-device acceptance is separate.
 
