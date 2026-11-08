@@ -82,7 +82,7 @@ async function main(){
     await page.waitForFunction(()=>document.querySelector('#modal')?.hidden===true);
     async function options(renderer) {
       await page.locator('#menu-button').click();
-      await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+      await page.getByRole('button',{name:'Settings',exact:true}).click();
       await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
       await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
       await page.locator('select[aria-label="Optimization Mode"]').selectOption('on');
@@ -100,7 +100,7 @@ async function main(){
         await page.locator('#gpu-renderer-trial button').first().click({timeout:8000});
         await page.waitForFunction(()=>Prototype.experimentalGraphics.phase==='confirmed');
         await page.locator('#menu-button').click();
-        await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+        await page.getByRole('button', { name: 'Settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
         await page.getByRole('button', { name: 'Pixi graphics', exact: true }).click();
         await page.getByRole('switch', { name: /^Optimization Mode/ }).click();

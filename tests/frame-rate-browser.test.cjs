@@ -96,7 +96,7 @@ const server = http.createServer((req, res) => {
       await enterPlayableGame(page);
       const openSettings = async () => {
         await page.locator('#menu-button').click();
-        await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+        await page.getByRole('button', { name: 'Settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
         await page.getByRole('button', { name: 'Frame pacing', exact: true }).click();
       };

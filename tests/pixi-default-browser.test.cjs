@@ -43,7 +43,7 @@ function installedChromium() {
 }
 async function selectPixi(page) {
   await page.locator('#menu-button').click();
-  await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
   await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
@@ -253,8 +253,8 @@ const server = http.createServer((req, res) => {
 });
 async function downloadReport(page) {
   await page.locator('#menu-button').click();
-  await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
-  await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Playtest tools', exact: true }).click();
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: /^Export playtest report/ }).click();
   const report = JSON.parse(fs.readFileSync(await (await download).path(), 'utf8'));
@@ -415,8 +415,8 @@ async function startupCase(browser, host, scenario) {
       );
       await page.keyboard.press('Escape');
       await page.locator('#menu-button').click();
-      await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
-      await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+      await page.getByRole('button', { name: 'Settings', exact: true }).click();
+      await page.getByRole('button', { name: 'Playtest tools', exact: true }).click();
       const downloaded = page.waitForEvent('download');
       await page.getByRole('button', { name: /^Export playtest report/ }).click();
       const report = JSON.parse(fs.readFileSync(await (await downloaded).path(), 'utf8'));
@@ -498,10 +498,8 @@ async function startupCase(browser, host, scenario) {
           }));
           const observedModes = [];
           await page.locator('#menu-button').click();
-          await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
-          await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
-          const details = page.getByRole('button', { name: /^Diagnostics/ });
-          if (await details.isVisible()) await details.click();
+          await page.getByRole('button', { name: 'Settings', exact: true }).click();
+          await page.getByRole('button', { name: 'Playtest tools', exact: true }).click();
           await page.getByRole('button', { name: /^Start renderer profiling/ }).click();
           await page.getByRole('button', { name: /^Start effect recording/ }).click();
           await page.getByRole('button', { name: /^Start navigation profiling/ }).click();
@@ -517,9 +515,8 @@ async function startupCase(browser, host, scenario) {
             );
           }
           await page.locator('#menu-button').click();
-          await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
-          await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
-          await page.getByRole('button', { name: 'Diagnostics', exact: true }).click();
+          await page.getByRole('button', { name: 'Settings', exact: true }).click();
+          await page.getByRole('button', { name: 'Playtest tools', exact: true }).click();
           await page.getByRole('button', { name: /^Stop renderer profiling/ }).click();
           await page.getByRole('button', { name: /^Stop effect recording/ }).click();
           await page.getByRole('button', { name: /^Stop navigation profiling/ }).click();
@@ -762,7 +759,7 @@ async function run() {
         if (!phone) {
           await migrationPage.locator('#menu-button').click();
           await migrationPage
-            .getByRole('button', { name: 'Game and settings', exact: true })
+            .getByRole('button', { name: 'Settings', exact: true })
             .click();
           await migrationPage
             .getByRole('button', { name: 'Screen and performance', exact: true })

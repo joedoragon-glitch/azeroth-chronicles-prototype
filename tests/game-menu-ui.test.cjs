@@ -23,7 +23,7 @@ for (const language of ['en', 'es']) {
   for (const label of [
     t('Character', 'Personaje'),
     t('Quest journal', 'Diario de misiones'),
-    t('Game and settings', 'Juego y ajustes'),
+    t('Settings', 'Ajustes'),
   ])
     assert(e.get('modal-actions').children.some((b) => b.textContent === label));
   const initial = JSON.stringify(g.snapshot());
@@ -72,7 +72,7 @@ for (const language of ['en', 'es']) {
   back();
   title('Quest journal', 'Diario de misiones');
   back();
-  click(t('Game and settings', 'Juego y ajustes'));
+  click(t('Settings', 'Ajustes'));
   click(t('Screen and performance', 'Pantalla y rendimiento'));
   title('Screen and performance', 'Pantalla y rendimiento');
   short();
@@ -97,7 +97,7 @@ for (const language of ['en', 'es']) {
   };
   section('Active renderer', 'Motor gráfico activo');
   section('Preferred renderer', 'Motor gráfico preferido');
-  assert(rows().some((node) => node.textContent.startsWith(
+  assert(!rows().some((node) => node.textContent.startsWith(
     t('Export playtest report', 'Exportar informe de prueba'))));
   assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 0);
   const writes = [];
@@ -157,21 +157,25 @@ for (const language of ['en', 'es']) {
 
   assert(!writes.some((key) => key.startsWith('azeroth-v4-')), 'device settings write no campaign saves');
   back();
-  click(t('Diagnostics', 'Diagnósticos'));
+  back();
+  click(t('Playtest tools', 'Herramientas de prueba'));
+  assert(rows().some((node) => node.textContent.startsWith(t('Export playtest report', 'Exportar informe de prueba'))));
   section('Performance details', 'Detalles de rendimiento');
+  click(t('Help and privacy', 'Ayuda y privacidad'));
+  title('Help and privacy', 'Ayuda y privacidad');
+  back();
+  title('Playtest tools', 'Herramientas de prueba');
   click(t('Start renderer profiling', 'Iniciar registro del renderizador'));
   click(t('Stop renderer profiling', 'Detener registro del renderizador'));
   click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
   title('Reset performance sample', 'Reiniciar muestra de rendimiento');
   back();
-  title('Diagnostics', 'Diagnósticos');
+  title('Playtest tools', 'Herramientas de prueba');
   click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
   click(t('Confirm sample reset', 'Confirmar reinicio de la muestra'));
-  title('Diagnostics', 'Diagnósticos');
+  title('Playtest tools', 'Herramientas de prueba');
   back();
-  title('Screen and performance', 'Pantalla y rendimiento');
-  back();
-  title('Game and settings', 'Juego y ajustes');
+  title('Settings', 'Ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
   title('Music and sound', 'Música y sonido');
   writes.length = 0;
@@ -243,7 +247,7 @@ for (const language of ['en', 'es']) {
     'sound sliders and mute must not trigger full-campaign saves');
   storage.set = originalSet;
   back();
-  title('Game and settings', 'Juego y ajustes');
+  title('Settings', 'Ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
   title('Music and sound', 'Música y sonido');
   for (const [key, en, es] of channels) {
@@ -256,7 +260,7 @@ for (const language of ['en', 'es']) {
   back();
   click(t('Language', 'Idioma'));
   click(language === 'en' ? 'English' : 'Español');
-  title('Game and settings', 'Juego y ajustes');
+  title('Settings', 'Ajustes');
   click(t('Controls', 'Controles'));
   short();
   assert.equal(e.get('modal-actions').children.length, 2,
@@ -408,7 +412,7 @@ for (const language of ['en', 'es']) {
   back();
   title('Controls', 'Controles');
   back();
-  title('Game and settings', 'Juego y ajustes');
+  title('Settings', 'Ajustes');
   assert(!e.get('modal-actions').children.some((node) =>
     node.textContent.includes('Save and game management') ||
       node.textContent.includes('Partidas guardadas')),
@@ -512,7 +516,7 @@ console.log(
     button.click();
   };
   normal.elements.get('menu-button').click();
-  open('Game and settings');
+  open('Settings');
   assert(!normalActions().some((item) => /Save and game management|Check for game update/.test(item.textContent)),
     'settings do not duplicate save/update navigation');
   normal.elements.get('close-button').click();
@@ -535,7 +539,7 @@ console.log(
     assert(button && !button.disabled, 'Playtest menu item: ' + label);
     button.click();
   };
-  specialOpen('Game and settings');
+  specialOpen('Settings');
   assert(!special.get('modal-actions').children.some((item) =>
     /Save and game management|Check for game update/.test(item.textContent)));
   special.get('close-button').click();

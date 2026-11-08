@@ -9,16 +9,20 @@ Baseline: published dev.272 (`0a7397bfb39e456f1d88584bca8f71c8fbe0c114`). The Oc
 | Settings hierarchy and renderer state | F01–F02 | Landing identifies active and preferred renderer before any settings. Display, renderer/recovery, active graphics, pacing and diagnostics have separate destinations. Deliberate Canvas and GPU fallback are distinguishable. |
 | Effective controls | F03–F04, F09–F10 | Pixi device sharpness is fixed during play; Canvas Auto can adapt. Preset reports applied density/particles and retained choices. Zoom mentions rendering load and the FPS label describes a draw target. |
 | Device preferences and recovery | F05–F08 | Returning devices receive the reset once, partial writes remain retryable, fresh installs use defaults, and post-reset edits persist. Trial interruption and safety holds still reach Canvas. Device-only selections produce zero campaign writes. |
-| Diagnostics and accessibility | F11–F13 | EN/ES menu and recovery flows have clear focus/back navigation. Local export stays one click from the landing. Sample deletion requires confirmation and describes the evidence cleared. |
+| Diagnostics and accessibility | F11–F13 | EN/ES menu and recovery flows have clear focus/back navigation. Local export stays one click from Playtest tools. Sample deletion requires confirmation and describes the evidence cleared. |
 | Build and acceptance | F14 | Record candidate SHA and focused shell, renderer, migration, packaging and browser results. Physical installed buildCommit and full-campaign performance are separate acceptance evidence. |
 
 Resume in order: verify main and the open PR, finish the preference/safety contract, complete the player-facing pages, then run targeted shell and browser journeys and reconcile this document and the development ledger. Candidate acceptance requires the exact branch head and concrete pass/fail evidence. Publication requires separate owner authorization.
 
 Checkpoint: initial runtime implementation is in draft [PR #856](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/856). It splits the settings pages, uses the live renderer for graphics controls, separates saved and effective values, and adds a pre-controller settings migration. An interrupted trial preserves the guard’s Canvas decision rather than being retried by the migration. Current checks and remaining acceptance are tracked in the PR.
 
+### Playtest tools
+
+The parent menu is **Settings** (**Ajustes**). **Playtest tools** is a sibling of **Screen and performance**. Its single working page includes report export, the screenshot-friendly Performance details readout, inline profiling, and sample reset. **Help and privacy** is its only informational child page. The readout uses existing frame and profiler snapshots on page open or refresh, labels issued draws separately from display FPS, and distinguishes empty samples from measured zero. The full JSON export remains device-local and unchanged. Effect recording remains developer-gated.
+
 ### Candidate controls and recovery
 
-The landing shows active and preferred renderers, fallback status when applicable, effective backing resolution and the current draw target. Export remains on the landing. The Display page shows resolved layout and camera zoom. Renderer and recovery keeps Canvas as a selectable backup and closes the menu for a deliberate Pixi trial. Graphics follows the active backend, including after a context loss while the menu is open. Frame pacing and Diagnostics each have a dedicated page.
+The landing shows active and preferred renderers, fallback status when applicable, effective backing resolution and the current draw target. The Display page shows resolved layout and camera zoom. Renderer and recovery keeps Canvas as a selectable backup and closes the menu for a deliberate Pixi trial. Graphics follows the active backend, including after a context loss while the menu is open. Frame pacing has its own settings page.
 
 The versioned migration runs before settings controllers. It resets display and camera, both renderers’ quality, draw target and routine skip. It defaults to Pixi when safe. An interrupted trial is resolved by the existing startup guard, including retaining Canvas where the trial was unconfirmed. An existing recovery hold remains in force. The migration is allowlisted, its completion marker is written last, and a later successful retry completes a partially written migration. Device-only changes do not serialize a campaign save.
 

@@ -42,8 +42,8 @@ function choose(app, label) {
         return 'test-blob';
       };
       app.elements.get('menu-button').click();
-      choose(app, language === 'es' ? 'Juego y ajustes' : 'Game and settings');
-      choose(app, language === 'es' ? 'Pantalla y rendimiento' : 'Screen and performance');
+      choose(app, language === 'es' ? 'Ajustes' : 'Settings');
+      choose(app, language === 'es' ? 'Herramientas de prueba' : 'Playtest tools');
       choose(app, language === 'es' ? 'Exportar informe de prueba' : 'Export playtest report');
       const report = JSON.parse(await blob.text());
       assert.equal(report.performance.graphicsRenderer.activeRenderer, 'canvas2d');

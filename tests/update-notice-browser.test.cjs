@@ -199,7 +199,7 @@ const server = http.createServer((req, res) => {
       );
       await page
         .locator('#modal-actions')
-        .getByRole('button', { name: phone ? 'Juego y ajustes' : 'Game and settings', exact: true })
+        .getByRole('button', { name: phone ? 'Ajustes' : 'Settings', exact: true })
         .click();
       assert(
         await page
@@ -267,7 +267,7 @@ const server = http.createServer((req, res) => {
       failUpdateCheck = true;
       await page.locator('#menu-button').click();
       await page.locator('#modal-actions').getByRole('button', {
-        name: phone ? 'Juego y ajustes' : 'Game and settings', exact: true,
+        name: phone ? 'Ajustes' : 'Settings', exact: true,
       }).click();
       assert.equal(await page.locator('#modal-actions').getByRole('button', {
         name: phone ? 'Buscar actualización' : 'Check for game update',

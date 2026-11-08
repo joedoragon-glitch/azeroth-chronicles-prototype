@@ -123,7 +123,55 @@
       'Pueden usar ataques y habilidades seguros; retirarse tiene prioridad.',
     'Choose your language': 'Elige tu idioma',
     'Adventure menu': 'Menú de aventura',
-    'Game and settings': 'Juego y ajustes',
+    Settings: 'Ajustes',
+    'Refresh performance details': 'Actualizar detalles de rendimiento',
+    'Confirm clear capture': 'Confirmar borrado de la grabación',
+    'Clear renderer capture?': '¿Borrar la grabación del motor gráfico?',
+    'Clear effect capture?': '¿Borrar la grabación de efectos?',
+    'Export first to keep a copy. This clears the optional capture, not your campaign.': 'Exporta primero para guardar una copia. Esto borra la grabación opcional y conserva tu partida.',
+    'Playtest tools': 'Herramientas de prueba',
+    'Help and privacy': 'Ayuda y privacidad',
+    'Optional profiling': 'Mediciones opcionales',
+    'Download locally. Review before sharing.': 'Descarga local. Revisa antes de compartir.',
+    'Last gameplay sample · game paused': 'Última muestra de juego · juego en pausa',
+    'No gameplay sampled yet': 'Aún no hay muestras de juego',
+    callbacks: 'ciclos',
+    Build: 'Versión',
+    Drawing: 'Dibujo',
+    'draws/s': 'dibujos/s',
+    target: 'objetivo',
+    'Slow frames': 'Fotogramas lentos',
+    'work p95': 'CPU p95',
+    'gap p95': 'intervalo p95',
+    'Retained slow-frame events': 'Eventos lentos guardados',
+    Renderer: 'Motor gráfico',
+    Navigation: 'Navegación',
+    Effects: 'Efectos',
+    Recording: 'Grabando',
+    'Waiting for gameplay': 'En espera de juego',
+    'Results available': 'Hay resultados',
+    'Collect a report': 'Obtener un informe',
+    'What the report includes': 'Qué incluye el informe',
+    'Choose a profiler': 'Elegir una medición',
+    'Local data and sharing': 'Datos locales y cómo compartirlos',
+    'Read the numbers': 'Cómo leer las cifras',
+    'Fallback · safety hold': 'Respaldo · pausa de seguridad',
+    'Fallback · retry pending': 'Respaldo · reintento pendiente',
+    'Fallback · trial interrupted': 'Respaldo · prueba interrumpida',
+    'Fallback · Pixi startup failed': 'Respaldo · falló el inicio de Pixi',
+    'Preparing Pixi': 'Preparando Pixi',
+    'Pixi confirmation trial': 'Prueba de confirmación de Pixi',
+    'Reproduce the problem, return to Playtest tools, and export. A report is useful with every optional profiler off.':
+      'Reproduce el problema, vuelve a Herramientas de prueba y exporta. El informe sirve aunque todas las mediciones opcionales estén desactivadas.',
+    'Build and game settings, renderer and recovery state, recent timings and startup history, browser and device details, audio and asset diagnostics, and in-game context such as hero, party, statistics and sampled locations. Available optional captures are included in the same file.':
+      'Versión y ajustes, motor gráfico y recuperación, tiempos recientes e historial de inicio, datos del navegador y dispositivo, diagnósticos de audio y recursos, y contexto de juego como héroe, grupo, estadísticas y ubicaciones muestreadas. Las grabaciones disponibles se incluyen en el mismo archivo.',
+    'Renderer records frame spikes and graphics activity. Navigation samples terrain checks, routes and companion movement. Developer Effects records painter calls. Each adds measurement work. Start the relevant profiler, play, then stop and export.':
+      'Motor gráfico registra fotogramas lentos y actividad gráfica. Navegación mide comprobaciones del terreno, rutas y movimiento de compañeros. Efectos, en modo desarrollador, registra llamadas de dibujo. Cada medición añade trabajo. Inicia la que necesites, juega, detenla y exporta.',
+    'Diagnostics stay on this device. Export downloads a JSON file and does not upload it. Some bounded history can survive a reload. Review browser and in-game details before sharing. Reset clears the current performance sample and slow-frame events. It does not delete downloads or all diagnostic history.':
+      'Los diagnósticos se quedan en este dispositivo. Exportar descarga un archivo JSON sin subirlo. Parte del historial puede conservarse al recargar. Revisa los datos del navegador y del juego antes de compartirlo. Reiniciar borra la muestra actual de rendimiento y los eventos lentos. No borra descargas ni todo el historial.',
+    'Drawing counts issued draws, not displayed FPS. P95 is the value at or below which about 95% of samples fell. Work is CPU time and gaps include browser scheduling. Some stages overlap.':
+      'Dibujo cuenta las órdenes de dibujo emitidas, no los FPS mostrados. P95 es el valor que no superó cerca del 95 % de las muestras. CPU mide tiempo de trabajo y los intervalos incluyen las esperas del navegador. Algunas etapas se superponen.',
+
     'Challenge condition': 'Tipo de desafío',
     'Standard death and refuge recovery': 'Muerte normal y recuperación en refugio',
     'Succession challenge': 'Desafío de sucesión',
@@ -3415,7 +3463,7 @@
           ? 'credits'
           : title === 'Adventure menu'
             ? 'adventure'
-            : title === 'Game and settings'
+            : title === 'Settings'
               ? 'settings'
               : 'default'),
     );
@@ -4812,8 +4860,8 @@
               read(
                 'Renderer profiling',
                 'Medir el renderizado',
-                'To investigate a slowdown, open Settings → Screen and performance → Diagnostics → Start renderer profiling. Return to the game, reproduce the slowdown, then stop profiling and choose Export playtest report. The measurements indicate CPU work and slow frames; they do not measure actual displayed FPS. Keep profiling off during normal play.',
-                'Para investigar una pausa, abre Ajustes → Pantalla y rendimiento → Diagnósticos → Iniciar medición del renderizado. Vuelve al juego, reproduce la pausa y luego detén la medición y exporta el informe. Los datos indican trabajo de CPU y fotogramas lentos; no miden directamente los fotogramas mostrados. Deja la medición desactivada al jugar normalmente.',
+                'To investigate a slowdown, open Settings → Playtest tools → Start renderer profiling. Return to the game, reproduce the slowdown, then stop profiling and choose Export playtest report. The measurements indicate CPU work and slow frames; they do not measure actual displayed FPS. Keep profiling off during normal play.',
+                'Para investigar una pausa, abre Ajustes → Herramientas de prueba → Iniciar medición del renderizado. Vuelve al juego, reproduce la pausa y luego detén la medición y exporta el informe. Los datos indican trabajo de CPU y fotogramas lentos; no miden directamente los fotogramas mostrados. Deja la medición desactivada al jugar normalmente.',
                 advancedDiagnostics,
               ),
             'Record slow frames when requested.',
@@ -4823,8 +4871,8 @@
             read(
               'Navigation profiling',
               'Medir la navegación',
-              'Navigation profiling records selected movement and route-finding work. Find it under Settings → Screen and performance → Diagnostics. Stop the recording after the problem, then export a playtest report. It is not needed for normal gameplay.',
-              'La medición de navegación registra parte del trabajo de movimiento y búsqueda de rutas. Está en Ajustes → Pantalla y rendimiento → Diagnósticos. Detén la medición tras el problema y exporta un informe. No se necesita para jugar normalmente.',
+              'Navigation profiling records selected movement and route-finding work. Find it under Settings → Playtest tools. Stop the recording after the problem, then export a playtest report. It is not needed for normal gameplay.',
+              'La medición de navegación registra parte del trabajo de movimiento y búsqueda de rutas. Está en Ajustes → Herramientas de prueba. Detén la medición tras el problema y exporta un informe. No se necesita para jugar normalmente.',
               advancedDiagnostics,
             ),
           ),
@@ -6211,15 +6259,16 @@
     );
   }
   let effectRecording = false;
-  const performanceAction = (label, callback, detail) => ({
+  const performanceAction = (label, callback, detail, key) => ({
     ...action(label, callback, detail),
+    key,
     saveCampaign: false,
   });
   const performanceExport = () =>
     performanceAction(
       'Export playtest report',
       exportPlaytestReport,
-      'Download a local JSON report to share yourself.',
+      'Download locally. Review before sharing.',
     );
   const performanceSelect = (label, value, options, onChange, detail) =>
     menuControls.select(label, value, options, onChange, detail, false);
@@ -6462,89 +6511,6 @@
       ]);
       return;
     }
-    if (page === 'Diagnostics') {
-      drawPage(
-        page,
-        [
-          performanceExport(),
-          performanceAction(
-            rendererRecording ? 'Stop renderer profiling' : 'Start renderer profiling',
-            () => {
-              if (rendererRecording) stopRendererRecording();
-              else beginRendererRecording();
-              performancePage('Diagnostics');
-            },
-            'Record frame spikes and renderer activity while playing.',
-          ),
-          ...((lastRendererRecording || playtestJournal.capture?.state === 'stopped') &&
-          !rendererRecording
-            ? [
-                performanceAction('Clear renderer profiling', () => {
-                  lastRendererRecording = null;
-                  playtestJournal.capture = null;
-                  playtestJournal.active = false;
-                  playtestJournal.segments = [];
-                  notePlaytestLifecycle('renderer-profiling-cleared');
-                  performancePage('Diagnostics');
-                }),
-              ]
-            : []),
-          menuControls.section(
-            'Performance details',
-            tr(pixiSettings ? 'Canvas combat overlay timing' : 'Canvas world timing') +
-              '\n' +
-              runtime.describe({
-                ...renderer.metrics(),
-                measuredLayer:
-                  graphicsController.status().mode === 'webgl2'
-                    ? 'canvas-combat-overlay'
-                    : 'canvas-full-world',
-              }) +
-              '\n\n' +
-              frameProfile.describe() +
-              '\n\n' +
-              game.crowdDiagnosticsDescribe(),
-          ),
-          performanceAction(
-            game.crowdDiagnosticsReport().recording
-              ? 'Stop navigation profiling'
-              : 'Start navigation profiling',
-            () => {
-              if (game.crowdDiagnosticsReport().recording) game.stopCrowdDiagnostics();
-              else game.startCrowdDiagnostics();
-              performancePage('Diagnostics');
-            },
-            'Capture navigation and terrain work, then export a playtest report.',
-          ),
-          ...(developerEnabled && game.s.mode === 'developer'
-            ? [
-                menuControls.section('Developer effect diagnostics'),
-                performanceAction(
-                  effectRecording ? 'Stop effect recording' : 'Start effect recording',
-                  () => {
-                    effectRecording = renderer.setEffectDiagnostics(!effectRecording);
-                    performancePage('Diagnostics');
-                  },
-                  'Bounded, in-memory recording. Export with the existing playtest report.',
-                ),
-                performanceAction('Clear effect recording', () => {
-                  renderer.resetEffectDiagnostics();
-                  effectRecording = false;
-                  performancePage('Diagnostics');
-                }),
-                menuControls.section(
-                  'Effect recording · ' +
-                    (effectRecording ? 'ON' : 'OFF') +
-                    ' · painter calls, not pixel verification',
-                ),
-              ]
-            : []),
-          performanceAction('Reset performance sample', confirmPerformanceReset),
-        ],
-        'Local samples are diagnostic estimates, not verified display FPS.',
-      );
-      return;
-    }
     openMenu(
       'Screen and performance',
       'Choose how the game looks and runs.',
@@ -6557,8 +6523,6 @@
           performancePage('Graphics'),
         ),
         performanceAction('Frame pacing', () => performancePage('Frame pacing')),
-        performanceAction('Diagnostics', () => performancePage('Diagnostics')),
-        performanceExport(),
       ],
       systemMenu,
       { view: 'performance-Screen and performance' },
@@ -6575,8 +6539,190 @@
       if (!ready) status('WebGL2 unavailable. Canvas backup remains active.');
     });
   }
-  function performanceDiagnostics() {
-    performancePage('Diagnostics');
+  function playtestTools() {
+    const graphics = graphicsController.status();
+    const frame = frameProfile.report();
+    const navigation = game.crowdDiagnosticsReport();
+    const effectsAvailable = developerEnabled && game.s.mode === 'developer';
+    const effects = effectsAvailable ? renderer.effectDiagnosticsReport() : null;
+    const capture = rendererRecording || lastRendererRecording || playtestJournal.capture;
+    const state = (recording, count) =>
+      tr(
+        recording
+          ? count
+            ? 'Recording'
+            : 'Waiting for gameplay'
+          : count
+            ? 'Results available'
+            : 'Off',
+      );
+    const version = PrototypeBuild.version.replace(/^.*\+snapshot\./, '');
+    const commit = PrototypeBuild.commit?.slice(0, 7);
+    const rendererName = graphics.mode === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D';
+    const fallback = graphics.mode === 'webgl2' && graphics.phase !== 'trial' ? ''
+      : graphics.recoveryPaused
+      ? 'Fallback · safety hold'
+      : graphics.recoveryPending
+        ? 'Fallback · retry pending'
+        : graphics.phase === 'trial'
+          ? 'Pixi confirmation trial'
+          : graphics.phase === 'preparing'
+            ? 'Preparing Pixi'
+            : graphics.lastFallbackReason === 'interrupted-trial'
+              ? 'Fallback · trial interrupted'
+              : rendererFallbackMessage(graphics)
+                ? 'Fallback · Pixi startup failed'
+                : '';
+    const timings = frame.stages;
+    const timing = (stage) => (stage.samples ? stage.p95Ms + ' ms' : '—');
+    const details = [
+      frame.activeFrames
+        ? tr('Last gameplay sample · game paused') +
+          ' · ' +
+          frame.activeFrames +
+          ' ' +
+          tr('callbacks')
+        : tr('No gameplay sampled yet'),
+      tr('Build') + ' · ' + version + (commit ? ' / ' + commit : ''),
+      tr('Active renderer') +
+        ' · ' +
+        rendererName +
+        ' / ' +
+        resolutionStatus().ratio.toFixed(2) +
+        '×' +
+        (fallback ? '\n' + tr(fallback) : ''),
+      tr('Drawing') +
+        ' · ' +
+        (frame.activeFrames > 1 ? frame.displayedFps : '—') +
+        ' ' +
+        tr('draws/s') +
+        ' / ' +
+        fps.target +
+        ' ' +
+        tr('target'),
+      tr('Slow frames') +
+        ' · ' +
+        timing(timings.frameWorkMs) +
+        ' ' +
+        tr('work p95') +
+        ' / ' +
+        timing(timings.intervalMs) +
+        ' ' +
+        tr('gap p95'),
+      tr('Retained slow-frame events') + ' · ' + frame.slowdownIncidents.records.length,
+      tr('Renderer') +
+        ' · ' +
+        state(rendererRecording, capture?.frames || playtestJournal.segments.length) +
+        ' / ' +
+        tr('Navigation') +
+        ' · ' +
+        state(navigation.recording, navigation.sampledSimulationTicks),
+      ...(effects ? [tr('Effects') + ' · ' + state(effects.recording, effects.drawFrames)] : []),
+    ].join('\n');
+    openMenu(
+      'Playtest tools',
+      '',
+      [
+        performanceExport(),
+        menuControls.section('Performance details', details),
+        menuControls.section('Optional profiling'),
+        performanceAction(
+          rendererRecording ? 'Stop renderer profiling' : 'Start renderer profiling',
+          () => {
+            if (rendererRecording) stopRendererRecording();
+            else beginRendererRecording();
+            playtestTools();
+          },
+          'Record frame spikes and renderer activity while playing.',
+          'renderer-profiler',
+        ),
+        ...((lastRendererRecording || playtestJournal.capture?.state === 'stopped') &&
+        !rendererRecording
+          ? [
+              performanceAction('Clear renderer profiling', () => confirmCaptureClear('Clear renderer capture?', () => {
+                lastRendererRecording = null;
+                playtestJournal.capture = null;
+                playtestJournal.active = false;
+                playtestJournal.segments = [];
+                notePlaytestLifecycle('renderer-profiling-cleared');
+              })),
+            ]
+          : []),
+        performanceAction(
+          navigation.recording ? 'Stop navigation profiling' : 'Start navigation profiling',
+          () => {
+            if (navigation.recording) game.stopCrowdDiagnostics();
+            else game.startCrowdDiagnostics();
+            playtestTools();
+          },
+          'Capture navigation and terrain work, then export a playtest report.',
+          'navigation-profiler',
+        ),
+        ...(developerEnabled && game.s.mode === 'developer'
+          ? [
+              menuControls.section('Developer effect diagnostics'),
+              performanceAction(
+                effectRecording ? 'Stop effect recording' : 'Start effect recording',
+                () => {
+                  effectRecording = renderer.setEffectDiagnostics(!effectRecording);
+                  playtestTools();
+                },
+                'Bounded, in-memory recording. Export with the existing playtest report.',
+                'effects-profiler',
+              ),
+              performanceAction('Clear effect recording', () => confirmCaptureClear('Clear effect capture?', () => {
+                renderer.resetEffectDiagnostics();
+                effectRecording = false;
+              })),
+            ]
+          : []),
+        performanceAction('Refresh performance details', playtestTools),
+        performanceAction('Reset performance sample', confirmPerformanceReset),
+        performanceAction('Help and privacy', playtestHelp),
+      ],
+      systemMenu,
+      { view: 'playtest-tools', layout: 'stack' },
+    );
+  }
+  function playtestHelp() {
+    openMenu(
+      'Help and privacy',
+      {
+        sections: [
+          {
+            title: 'Collect a report',
+            text: 'Reproduce the problem, return to Playtest tools, and export. A report is useful with every optional profiler off.',
+          },
+          {
+            title: 'What the report includes',
+            text: 'Build and game settings, renderer and recovery state, recent timings and startup history, browser and device details, audio and asset diagnostics, and in-game context such as hero, party, statistics and sampled locations. Available optional captures are included in the same file.',
+          },
+          {
+            title: 'Choose a profiler',
+            text: 'Renderer records frame spikes and graphics activity. Navigation samples terrain checks, routes and companion movement. Developer Effects records painter calls. Each adds measurement work. Start the relevant profiler, play, then stop and export.',
+          },
+          {
+            title: 'Local data and sharing',
+            text: 'Diagnostics stay on this device. Export downloads a JSON file and does not upload it. Some bounded history can survive a reload. Review browser and in-game details before sharing. Reset clears the current performance sample and slow-frame events. It does not delete downloads or all diagnostic history.',
+          },
+          {
+            title: 'Read the numbers',
+            text: 'Drawing counts issued draws, not displayed FPS. P95 is the value at or below which about 95% of samples fell. Work is CPU time and gaps include browser scheduling. Some stages overlap.',
+          },
+        ],
+      },
+      [],
+      playtestTools,
+    );
+  }
+  function confirmCaptureClear(title, clear) {
+    openMenu(title, 'Export first to keep a copy. This clears the optional capture, not your campaign.', [
+      performanceExport(),
+      performanceAction('Confirm clear capture', () => {
+        clear();
+        playtestTools();
+      }),
+    ], playtestTools);
   }
   function confirmPerformanceReset() {
     openMenu(
@@ -6588,15 +6734,15 @@
           runtime.reset();
           frameProfile.reset();
           frameProfile.clearSlowdowns();
-          performanceDiagnostics();
+          playtestTools();
         }),
       ],
-      performanceDiagnostics,
+      playtestTools,
     );
   }
   function systemMenu() {
     openMenu(
-      'Game and settings',
+      'Settings',
       language === 'es' ? 'Opciones de juego y dispositivo.' : 'Game and device options.',
       [
         ...(!runningAsApp() && platform.mode === 'phone'
@@ -6607,6 +6753,7 @@
           ? [action('Install available game update', updateApp)]
           : []),
         performanceAction('Screen and performance', platformMenu),
+        performanceAction('Playtest tools', playtestTools),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
         action('Language · ' + (language === 'es' ? 'Español' : 'English'), () =>
@@ -6686,7 +6833,7 @@
           }),
           action('Character', characterMenu),
           action('Skill journal', () => skillBook(openMain)),
-          action('Game and settings', systemMenu),
+          action('Settings', systemMenu),
           action('Return to Main Menu', returnToTitleScreen),
         ],
       );
@@ -6732,7 +6879,7 @@
             ),
           ]
         : []),
-      action('Game and settings', systemMenu),
+      action('Settings', systemMenu),
       action('Return to Main Menu', returnToTitleScreen),
     ]);
   }

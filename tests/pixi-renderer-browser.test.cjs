@@ -33,7 +33,7 @@ function installedChromium() {
 }
 async function selectPixi(page) {
   await page.locator('#menu-button').click();
-  await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
+  await page.getByRole('button', {name: 'Settings', exact: true}).click();
   await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
   await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
@@ -281,7 +281,7 @@ async function run() {
           'Required WebGL2 context must become active during deliberate selection');
         await keepPixiTrial(page, false, 'focused Canvas fallback settings');
         await page.locator('#menu-button').click();
-        await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+        await page.getByRole('button', { name: 'Settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
         await page.getByRole('button', { name: 'Pixi graphics', exact: true }).click();
         assert.equal(await page.getByRole('combobox', { name: 'Optimization Mode' }).count(), 0);
@@ -362,7 +362,7 @@ async function run() {
       assert.equal(await page.evaluate(() =>
         localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
       await page.locator('#menu-button').click();
-      await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
+      await page.getByRole('button', {name: 'Settings', exact: true}).click();
       await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
       await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
       const optimization = page.locator('select[aria-label="Optimization Mode"]');
@@ -421,7 +421,7 @@ async function run() {
           typeof Prototype.experimentalGraphics.backgroundOptimized === 'boolean',
           null, {timeout:15000});
         await page.locator('#menu-button').click();
-        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Settings', exact:true}).click();
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
         await page.getByRole('button', { name: 'Pixi graphics', exact: true }).click();
         const preset = page.getByRole('switch', { name: /^Optimization Mode/ });
@@ -453,10 +453,8 @@ async function run() {
         // Open the real export menu: verify the user-facing playtest JSON,
         // not merely an internal profiler object or a static source assertion.
         await page.locator('#menu-button').click();
-        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
-        // The current UI owns diagnostics under Screen and performance, not
-        // the Save and game management section used by the older pilot.
-        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        await page.getByRole('button', {name:'Settings', exact:true}).click();
+        await page.getByRole('button', {name:'Playtest tools', exact:true}).click();
         // Headless Chromium does not reliably deliver downloads from a
         // detached, script-clicked blob anchor. Exercise the actual menu action
         // and inspect its generated JSON blob, without claiming OS download
@@ -603,7 +601,7 @@ async function run() {
           // A saved Pixi preference must not make the active Canvas backup
           // display controls that only change a non-rendering Pixi scene.
           await page.locator('#menu-button').click();
-          await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+          await page.getByRole('button', {name:'Settings', exact:true}).click();
           await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
           await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
           assert.equal(await page.locator('select[aria-label="Optimization Mode"]').count(), 1,

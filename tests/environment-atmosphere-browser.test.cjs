@@ -53,7 +53,7 @@ async function enterGame(page){
 }
 async function enablePixiPreset(page) {
   await page.locator('#menu-button').click();
-  await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
   await page.getByRole('button', { name: 'Pixi graphics', exact: true }).click();
   const preset = page.getByRole('switch', { name: /^Optimization Mode/ });
@@ -63,7 +63,7 @@ async function enablePixiPreset(page) {
 }
 async function switchPixi(page){
   await page.locator('#menu-button').click();
-  await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+  await page.getByRole('button',{name:'Settings',exact:true}).click();
   await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
   await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
   await page.locator('select[aria-label="Optimization Mode"]').selectOption('off');
