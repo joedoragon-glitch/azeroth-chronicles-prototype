@@ -66,7 +66,9 @@ for (const language of ['en', 'es']) {
   back();
   title('Adventure menu', 'Menú de aventura');
   click(t('Quest journal', 'Diario de misiones'));
-  assert(e.get('modal-actions').children.some((b) => b.textContent.includes('Mira')));
+  assert(e.get('modal-description').textContent.includes('Mira'));
+  assert(e.get('modal-actions').children.some((b) =>
+    b.textContent.startsWith(t('A Teacher Taken', 'Una maestra cautiva'))));
   click(t('Announcements', 'Anuncios'));
   short();
   back();

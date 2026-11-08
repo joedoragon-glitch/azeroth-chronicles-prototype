@@ -69,6 +69,10 @@ const groups = [
   },
   { match: /^\.github\//, tests: [TEST + 'focused-ci-report.test.cjs'] },
   {
+    match: /^tests\/helpers\/notice-browser\.cjs$/,
+    tests: [TEST + 'notice-presentation.test.cjs'],
+  },
+  {
     match: /^tests\/helpers\/native-fixture-contracts\.cjs$/,
     tests: [
       TEST + 'native-fixture-contracts.test.cjs',

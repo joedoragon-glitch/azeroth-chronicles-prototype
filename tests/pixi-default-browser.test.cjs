@@ -660,9 +660,22 @@ async function startupCase(browser, host, scenario) {
       );
       // Actual explicit button, unchanged real 15-second Keep/Revert protection.
       await page.getByRole('button', { name: 'Retry PixiJS WebGL2', exact: true }).click();
-      await page.waitForFunction(() => Prototype.experimentalGraphics.phase === 'trial', null, {
-        timeout: 180000,
-      });
+      try {
+        // Manual recovery preloads the same full region as the Settings trial.
+        await page.waitForFunction(() => Prototype.experimentalGraphics.phase === 'trial', null, {
+          timeout: 240000,
+        });
+      } catch (error) {
+        const diagnostic = await page.evaluate(() => {
+          const { phase, lastFailure, lastFallbackReason, loadedTextures,
+            terrainTilesPrepared, neighborhoodPrepared, gpuPreparationBatches } =
+            Prototype.experimentalGraphics;
+          return { phase, lastFailure, lastFallbackReason, loadedTextures,
+            terrainTilesPrepared, neighborhoodPrepared, gpuPreparationBatches };
+        });
+        throw Error('Explicit startup-hold retry did not reach the trial: ' +
+          JSON.stringify(diagnostic), { cause: error });
+      }
       await keepPixiTrial(page, false, 'explicit startup-hold retry');
       assert.equal(
         await page.evaluate(() => localStorage.getItem('azeroth-webgl2-recovery-hold-v1')),
