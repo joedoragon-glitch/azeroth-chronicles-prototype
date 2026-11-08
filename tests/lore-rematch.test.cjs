@@ -99,7 +99,7 @@ function harness(g) {
   g.s.party = [];
   g.line = () => true;
   assert(g.startAttack(e, { x: e.x + 65, y: e.y }, 0));
-  assert.equal(e.telegraph.timer, 0.72, 'first rematch shrinks the 0.8s arc warning by ten percent');
+  assert(Math.abs(e.telegraph.timer - 0.72) < 1e-9, 'first rematch shrinks the 0.8s arc warning by ten percent');
   assert.equal(g.bossEnemy(boss, 'true', e.home).rematchTier, undefined,
     'TRUE form has no rematch tier');
 }
