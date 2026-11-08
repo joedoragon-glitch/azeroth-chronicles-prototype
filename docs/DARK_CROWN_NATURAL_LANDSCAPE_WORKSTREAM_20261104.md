@@ -1,9 +1,33 @@
 # Dark Crown natural landscape — parallel workstream, source ownership and integration gate
 
-> **8 November execution checkpoint.** The draft integrates the #794 model through the shared Canvas/Pixi floor painter and locates three habitats, including one at Ash Refuge. The candidate bypasses and unregisters outdoor T005 while retaining the approved rollback record. Native Node tests and a desktop Chromium WebGL2 sample verify operation. A walked day/night camera survey and measured final performance remain open. Earlier phase holds and isolated-model statuses below are historical.
+## Current implementation and acceptance — 8 November 2026
 
+The approved reference pair is **Craters of the Moon, Idaho (primary)** and **Newberry, Oregon (complementary)**. All sixteen owner selections and their written blends below remain binding. #794 supplied the field model now integrated into #769. The exact audited head is `47b00c1` (runtime dev.286). The design questionnaire is complete. The natural landscape is playable in the draft and still requires visual acceptance and performance correction.
 
-## Current owner priority and design-review gate — 4 November 2026
+| Decision | Evidence on the draft | What remains before acceptance |
+| --- | --- | --- |
+| NL01 Dark basalt, green islands, secondary ashy high desert | World-coordinate age, cinder and soil fields, with clustered older-ground vegetation | Confirm all three reads in a single walked regional sequence. |
+| NL02 Broad rounded lobes | Seven authored overlapping flow lobes in `dark-crown-landscape.js` | Verify rounded edges frame islands and remain visible under game zoom. |
+| NL03 Layered ridges and walkable open ground | Crownwatch basalt shoulder, native walking checks | Review depth and skyline composition; strengthen weak silhouettes without adding collision. |
+| NL04 Charcoal, slate and subdued violet | Low-saturation pigment formula | Inspect exposure and color in both renderers, day and night. |
+| NL05 Gradual weathering and drifting ash | Age blending and shared corner gradients | Verify legible young-to-old flow transitions; localized drifting ash remains unverified. |
+| NL06 Three or four memorable islands | Exactly three named, authored habitat footprints | Walk through each and check that it reads at landscape-phone scale. |
+| NL07 Western and southern emphasis | Southwest and southern-fold sites plus the Ash Refuge perimeter | Verify route order and separation in play. |
+| NL08 Golden bunchgrasses and sparse flowers | Site-filtered bunchgrass and occasional wildflower placements | Check density and visibility against rock without a uniform grass carpet. |
+| NL09 Small sheltered conifer clusters | Pine candidates restricted to older cores of the two distant islands | Verify final placed silhouettes and shelter, including representative seeds. |
+| NL10 Ropes, clinker/fractures and granular cinders | Fracture strokes and cinder grain in the painter | Ropy lava and distinct jagged clinker silhouettes are not separately established. Add or strengthen these only where the source and walk show a gap. |
+| NL11 Crownwatch integrated into old shelves | Painted north shoulder, existing streets and city footprints | Walk the city reveal and check that basalt reads as a foundation rather than a detached patch. |
+| NL12 Ash Refuge wild island | A dedicated older-ground island and a separate cultivated courtyard | Verify wild-to-domestic contrast on foot. |
+| NL13 Industrial scoria, rust and ash margins | Regional mineral and oxidation fields, protected hot works and freight corridors | Check the margin at glassworks, ceramic works and Foundry; add local treatment where generic ground persists. |
+| NL14 Heat-scarred roost to cooler pioneer margins | Protected roosts, heatwork exclusions and separate communal roost art | Verify the visible ecological gradient and absence of greenery in active hot cores. |
+| NL15 Cool dry night, occasional local ash and geothermal shimmer/warmth | Night captures and existing localized practical lighting | Verify cool open views, subtle effects and warning readability. Localized ash and shimmer remain unverified. |
+| NL16 Civilization → lava → refuge rhythm | All three scene types exist and native routes are available | Capture continuous transitions; isolated screenshots cannot establish pacing or composition. |
+
+The active outdoor T005 surface is retired in the draft. Its approved source PNG and rollback record remain. The 2,304-tile field check, native route and restore checks, and terrain-only pixel comparison establish technical behavior. They do not certify the above visual decisions. Keep the original molten divide, exactly two main bridges, the game's fantasy architecture, combat warnings, and v4 saves. Read the [current completion plan](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md#current-completion-register) for sequencing and the release hold.
+
+The following November 4 priority, review and isolated-model statuses are historical. Current execution and integration status is above.
+
+## Historical owner priority and design-review gate — 4 November 2026
 
 **LATEST OWNER PRIORITY OVERRIDE.** The owner is now prioritizing **the version 0.9.2 release**, the **portrait-versus-landscape / new-default orientation work** and improvements to the **first game regions, including UI and menus**. These are collectively higher priority than the broader Dark Crown regional overhaul. Do not pull attention or source/build/deployment resources away from those release-critical efforts, infer a new release schedule, or suggest Dark Crown is a prerequisite for 0.9.2. Existing PR #769 remains a separate ongoing but subordinate regional overhaul; do not impose a new stop order on unrelated chats beyond respecting this explicit priority.
 
