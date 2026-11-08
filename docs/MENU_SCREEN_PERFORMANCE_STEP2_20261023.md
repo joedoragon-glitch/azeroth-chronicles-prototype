@@ -30,7 +30,7 @@ Baseline: published dev.272 (`0a7397bfb39e456f1d88584bca8f71c8fbe0c114`). The Oc
 
 Resume in order: verify main and the open PR, finish the preference/safety contract, complete the player-facing pages, then run targeted shell and browser journeys and reconcile this document and the development ledger. Candidate acceptance requires the exact branch head and concrete pass/fail evidence. Publication requires separate owner authorization.
 
-Historical checkpoint: initial runtime implementation was in [PR #856](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/856). It split the settings pages (subsequently rejected by the owner), used the live renderer for graphics controls, separates saved and effective values, and adds a pre-controller settings migration. An interrupted trial preserves the guard’s Canvas decision rather than being retried by the migration. PR #856 merged/published dev.273 before the owner's later one-page correction. Its original checks are historical evidence, not acceptance of the revised navigation.
+Historical checkpoint: initial runtime implementation was in [PR #856](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/856). It split the settings pages (subsequently rejected by the owner), used the live renderer for graphics controls, separated saved and effective values, and adds a pre-controller settings migration. An interrupted trial preserves the guard’s Canvas decision rather than being retried by the migration. PR #856 merged/published dev.273 before the owner's later one-page correction. Its original checks are historical evidence, not acceptance of the revised navigation.
 
 ### Playtest tools
 
