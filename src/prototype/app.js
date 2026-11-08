@@ -6279,7 +6279,8 @@
     // Before entry, show the intended Pixi settings instead of presenting the
     // title's independent Canvas surface as a failed world renderer.
     const pixiSettings = graphics.mode === 'webgl2' ||
-      (!started && previousRendererChoice.renderer === 'webgl2' &&
+      (!started && graphics.preferredRenderer === 'webgl2' &&
+        previousRendererChoice.renderer === 'webgl2' &&
         !graphics.recoveryPaused && !graphics.lastFallbackReason);
     const note = rendererFallbackMessage(graphics);
     const density = resolutionStatus().ratio.toFixed(2) + '×';
