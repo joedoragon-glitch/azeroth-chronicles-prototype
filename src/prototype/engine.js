@@ -1762,6 +1762,21 @@
         e.name = e.name.replace(/ store guard/i, ' treasury guard');
       z.treasuryVersion = targetVersion;
     }
+    applyCaptainRematchLevel(e, region) {
+      // Existing save actors can be present before the first post-update
+      // respawn. Only a living, disengaged named captain can be normalized.
+      const account = this.s.treasuryRecovery?.[region];
+      if (!account || e.hp <= 0 || e.aggro || e.returning) return;
+      const victories = Number.isInteger(account.captainVictories)
+        ? account.captainVictories
+        : account.unlocked || account.respawnAt > 0 ? 1 : 0;
+      const tier = Math.min(2, Math.max(0, victories));
+      const prior = e.rematchTier || 0;
+      if (tier > prior) {
+        e.level += tier - prior;
+        e.rematchTier = tier;
+      }
+    }
     upgradeCaptainEndurance(e, profile) {
       if (!e || !profile?.enduranceHp) return;
       // The new Greenwood health budget must migrate existing v2 captains,
@@ -1808,6 +1823,7 @@
         captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;
       this.upgradeCaptainEndurance(captain, profile);
+      this.applyCaptainRematchLevel(captain, this.supplyRoom(z.id).region);
       if (captain.name !== profile.name) captain.name = profile.name;
     }
     fieldCaptainPopulation(z) {
@@ -1856,6 +1872,7 @@
       captain.captainPatrolWait = Math.max(0, captain.captainPatrolWait || 0);
       captain.fieldCaptainVersion = 1;
       this.upgradeCaptainEndurance(captain, profile);
+      this.applyCaptainRematchLevel(captain, 'frontier');
       if (captain.name !== profile.name) captain.name = profile.name;
       z.fieldCaptainVersion = 1;
     }
@@ -7223,7 +7240,17 @@
               !z.enemies.some((a) => a !== e && a.family === e.family && a.hp > 0) &&
               !(e.family === 'darklord' && this.s.true.darklord)
             ) {
-              Object.assign(e, this.bossEnemy(this.boss(e.family), 'normal', e.home));
+              const fresh = this.bossEnemy(this.boss(e.family), 'normal', e.home);
+              // The second Normal encounter is a practiced rematch. TRUE
+              // spawns keep their separate established difficulty contract.
+              if (e.family !== 'darklord' && this.boss(e.family)?.kind === 'field') {
+                const tier = Math.min(1, this.s.fieldBossKills?.[e.family] || 0);
+                if (tier) {
+                  fresh.rematchTier = tier;
+                  fresh.level += tier;
+                }
+              }
+              Object.assign(e, fresh);
               this.say(this.boss(e.family).name + ' has returned.');
             }
           }
