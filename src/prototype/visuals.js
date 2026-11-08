@@ -13998,6 +13998,15 @@
           for (const x of [-21, 22])
             line([[x - 5, 3], [x + 5, -1]], '#a4a6a4', 1.3);
           break;
+        case 'crown-crystal-sorting':
+          blockwork(-38, 8, 76, 10, '#686270', 5);
+          for (const x of [-27, 26]) softRect(x - 3, -15, 6, 27, '#534751', 1.5);
+          softRect(-38, -22, 76, 20, '#93828b', 2);
+          for (const [x, shade] of [[-25, '#9280ab'], [-3, '#ad91bf'], [20, '#d3b5dd']]) {
+            softRect(x - 7, -19, 16, 11, '#4c434f', 1);
+            poly([[x - 5, -11], [x - 4, -17], [x + 2, -19], [x + 6, -13], [x + 3, -10]], shade);
+          }
+          break;
         case 'crown-foundry-stock-bay':
           blockwork(-38, 9, 76, 10, '#747783', 5);
           crateBody(-17, 0, 0.69);

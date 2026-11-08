@@ -161,18 +161,26 @@ assert(industrial.every(link => link.from.startsWith('recovery-heat-crown-') &&
 assert(industrial.some(link => link.roadConnected),
   'At least one local industry corridor must tie into an original carriageway');
 const freight = civic.zone().props.filter(p => p.crownIndustrialFreight);
-assert.equal(civic.zone().crownIndustrialFreightVersion, 1,
+assert.equal(civic.zone().crownIndustrialFreightVersion, 2,
   'Industrial staging has a separate once-only v4 migration guard');
 assert(freight.length >= 1 && freight.length <= rules.crownIndustrialFreight.length,
   'Real heatwork sites must stage at least one visible receiving/cooling/dispatch scene');
 assert(freight.every(p => p.crownFoundryExterior !== true),
   'Regional freight dressing must not impersonate the three original Foundry gate props');
+assert.deepEqual(
+  freight.filter(p => p.industrialRole.startsWith('crystal-')).map(p => p.industrialRole),
+  ['crystal-sorting', 'crystal-storage', 'crystal-dispatch'],
+  'Crystal Deposit must actually place all three freight stages',
+);
 assert(freight.every(p => p.r === 0 && p.decorative &&
   p.id.startsWith('crown-industrial-freight-') &&
-  rules.crownIndustrialFreight.some(([role, heatIndex]) => role === p.industrialRole &&
-    civic.zone().props.some(q => q.id === 'recovery-heat-crown-' + heatIndex &&
-      Math.hypot(q.x - p.x, q.y - p.y) < 320))),
-  'Real-site freight must remain nonblocking and anchored to placed production props');
+  rules.crownIndustrialFreight.some(([role, anchor]) => {
+    const source = typeof anchor === 'number'
+      ? civic.zone().props.find(q => q.id === 'recovery-heat-crown-' + anchor)
+      : civic.zone().npcs.find(q => q.id === anchor);
+    return role === p.industrialRole && source && Math.hypot(source.x - p.x, source.y - p.y) < 320;
+  })),
+  'Real-site freight must remain nonblocking and anchored to production or deposit sites');
 const freightPositions = c => c.zone().props.filter(p => p.crownIndustrialFreight)
   .map(p => [p.id, p.structure, p.x, p.y]).sort((a,b) => a[0].localeCompare(b[0]));
 assert.deepEqual(freightPositions(restoredCivic), freightPositions(civic),
@@ -309,7 +317,7 @@ const cameraAnchors = new Map([
   ['bridge-north', ['npcs', 'bridge-north', 0, 0, true]],
   ['bridge-south', ['npcs', 'bridge-south', 0, 0, true]],
   ['foundry-exterior', ['npcs', 'foundry', 65, 55, true]],
-  ['crystal-dispatch', ['nodes', 'tribute-crown-crystal-shipment', 65, 55, false]],
+  ['crystal-dispatch', ['props', 'crown-industrial-freight-crystal-dispatch', -20, -85, true]],
   ['heatworks-night', ['props', 'recovery-heat-crown-0', 65, 60, false]],
   ['foundry-receiving', ['props', 'crown-foundry-work-receiving', 65, 45, true]],
   ['foundry-forming', ['props', 'crown-foundry-work-forming', 65, 45, true]],

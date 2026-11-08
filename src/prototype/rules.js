@@ -2627,7 +2627,7 @@
     ['south-kiln-to-distribution', 10, 11],
     ['washhouse-service', 13, 14],
   ];
-  // Freight, cooling and stock dressing follows REAL placed heatwork props.
+  // Freight dressing follows the placed heatworks or Crystal Deposit landmark.
   // These environmental objects are not resources, recipes or new economy.
   const crownIndustrialFreight = Object.freeze([
     Object.freeze(['east-receiving', 1, -110, 95, 'crown-foundry-yard-loading']),
@@ -2635,6 +2635,9 @@
     Object.freeze(['south-receiving', 7, 110, -95, 'crown-foundry-yard-loading']),
     Object.freeze(['south-shipping', 9, 115, 100, 'crown-foundry-yard-shipping']),
     Object.freeze(['south-protected-stock', 10, 145, -85, 'crown-foundry-stock-bay']),
+    Object.freeze(['crystal-sorting', 'shelf', -110, -60, 'crown-crystal-sorting']),
+    Object.freeze(['crystal-storage', 'shelf', -110, 190, 'crown-foundry-stock-bay']),
+    Object.freeze(['crystal-dispatch', 'shelf', 130, -50, 'crown-foundry-yard-loading']),
   ]);
   // N1a: inspectable evidence belongs to real scene positions, not generic
   // dungeon entrances. IDs do not replace quests, loot or mechanical triggers.

@@ -922,14 +922,16 @@
       // Nonblocking staging at genuine placed industrial facilities, not
       // arbitrary map coordinates or a new freight/crafting economy.
       crownIndustrialFreight(z) {
-        if (z.id !== 'crown' || z.crownIndustrialFreightVersion === 1) return;
+        if (z.id !== 'crown' || z.crownIndustrialFreightVersion === 2) return;
         const previous = this.s.zone;
         this.s.zone = z.id;
         try {
-          for (const [role, heatIndex, dx, dy, structure] of R.crownIndustrialFreight || []) {
+          for (const [role, anchor, dx, dy, structure] of R.crownIndustrialFreight || []) {
             const id = 'crown-industrial-freight-' + role;
             if (z.props.some((p) => p.id === id)) continue;
-            const source = z.props.find((p) => p.id === 'recovery-heat-crown-' + heatIndex);
+            const source = typeof anchor === 'number'
+              ? z.props.find((p) => p.id === 'recovery-heat-crown-' + anchor)
+              : z.npcs.find((n) => n.id === anchor);
             if (!source) continue;
             let chosen = null;
             for (const radius of [0, 36, 72, 110, 148]) {
@@ -972,7 +974,7 @@
               // crownFoundryExterior; workyard stock is a separate family.
             });
           }
-          z.crownIndustrialFreightVersion = 1;
+          z.crownIndustrialFreightVersion = 2;
         } finally {
           this.s.zone = previous;
         }

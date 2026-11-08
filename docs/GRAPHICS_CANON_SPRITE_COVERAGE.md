@@ -234,6 +234,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `crown-foundry-yard-shipping` | PROCEDURAL — existing entrance prop with a stationary loading gantry and parked hook |
 | `crown-foundry-cooling-rack` | PROCEDURAL — existing Foundry floor cooling station, not a loot or recipe object |
 | `crown-foundry-stock-bay` | PROCEDURAL — existing Foundry floor material-storage composition |
+| `crown-crystal-sorting` | PROCEDURAL — graded trays of raw crystal at the existing deposit, without refining or new resources |
 | `crown-foundry-receiving` | PROCEDURAL — static receiving crates and handling bench |
 | `crown-foundry-furnace` | PROCEDURAL — maintained furnace, static hot-work tools and original heat source |
 | `crown-foundry-forming` | PROCEDURAL — static forming press and mold |
