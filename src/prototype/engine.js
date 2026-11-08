@@ -5007,8 +5007,11 @@
       const composition = (plan.composition || Array(cap).fill('melee')).slice(0, cap),
         missing = [...composition],
         sc = R.summonScaling[this.regionIndex()],
-        baseHp = Math.round((40 + e.level * 15) * sc.hp),
-        baseDamage = Math.round((5 + e.level) * sc.damage),
+        // Rematch level changes awareness/XP band, not the summoned
+        // broodlings' inherited health and attack budgets.
+        summonLevel = e.level - (e.rematchTier || 0),
+        baseHp = Math.round((40 + summonLevel * 15) * sc.hp),
+        baseDamage = Math.round((5 + summonLevel) * sc.damage),
         spawnPoint = (slot) => {
           for (let n = 0; n < 30; n++) {
             const a = ((slot + n) * Math.PI) / 3,
@@ -5038,7 +5041,7 @@
               species: plan.species || 'ashbeast',
               name: ranged ? 'Cinder broodling' : 'Ash broodling',
               icon: '👻',
-              level: e.level,
+              level: summonLevel,
               hp: baseHp,
               damage: baseDamage,
               gold: 0,
