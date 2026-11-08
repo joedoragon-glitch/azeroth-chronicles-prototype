@@ -125,9 +125,14 @@ function harness(g) {
   assert(first && first.hp > 0, 'named captain returned');
   assert.equal(first.level, originalLevel + 1);
   assert.equal(first.rematchTier, 1);
-  assert(first.gold > 0 && first.xp > 0, 'repeated captain can pay crowns and XP');
+  const ordinary = g.regionalEnemyRewards(0);
+  assert.equal(first.gold, Math.max(1, Math.floor(ordinary.gold / 2)));
+  assert.equal(first.xp, Math.max(1, Math.floor(ordinary.xp / 4)));
+  assert(first.gold < ordinary.gold && first.xp < ordinary.xp,
+    'Treasury captain reward must be smaller than an ordinary foe');
   const expected = g.enemyReward(first);
-  assert(expected.gold > 0 && expected.xp > 0);
+  assert(expected.gold <= first.gold && expected.xp <= first.xp,
+    'normal level-gap reductions are retained');
   const restored = C.restore(g.snapshot());
   const after = restored.s.zones['supply-vale'].enemies.find(e => e.roomCaptain);
   assert.equal(after.level, originalLevel + 1, 'save preserves captain level');
