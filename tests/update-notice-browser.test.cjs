@@ -272,7 +272,7 @@ const server = http.createServer((req, res) => {
       assert.equal(await page.locator('#modal-actions').getByRole('button', {
         name: phone ? 'Buscar actualización' : 'Check for game update',
         exact: true,
-      }).count(), 1, 'Settings offers an explicit optional check alongside hourly discovery');
+      }).count(), 0, 'Settings has no redundant manual check; startup owns discovery');
       // A rejected Service Worker check does not pause the current campaign.
       // Failure is exercised at the original browser API boundary, not through
       // a user control which no longer exists.
