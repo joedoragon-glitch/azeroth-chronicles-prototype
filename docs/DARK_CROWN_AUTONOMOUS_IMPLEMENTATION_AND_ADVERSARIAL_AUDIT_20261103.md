@@ -19,7 +19,7 @@
 | 9. Market and freight | Existing market, Crown freight and five industrial props | Roadside wagon, storefront and provisioning audit open |
 | 10. Foundry | Five static work stages, static gantry, original 14 guards, 7 columns, 4 traps and exit. Native routes and save round trip | Full exterior and walked interior combat/readability open |
 | 11. Citadel | Existing academy with a nonblocking exterior muster and arms station | Walked day/night framing and separate armory composition open |
-| 12. Cindermaw | Existing encounters and ministry facade retained | Public/private/communal scene separation and walk open |
+| 12. Cindermaw | Existing ministry facade, sheltered communal nesting shelf and distinct private bed | Walked public/private/communal separation and night review open |
 | 13. Crystals | Existing shipment with graded raw-crystal trays, protected stock and loading canopy | Walked day/night composition and security review open |
 | 14. Orrery | Existing landmark retained with bronze service fasteners and a walkable engraved survey court | Walked approaches and matched lighting review open |
 | 15. Fortress logistics | Existing logistics and checkpoints, Crown flag painter uses coin portrait | Full standard census and graduated approach open |

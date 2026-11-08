@@ -14325,6 +14325,17 @@
           crateBody(-30, 0, 0.45);
           break;
         case 'ashbeast-roost-scene':
+          // Multiple scooped beds share a sheltered, warm basalt shelf.
+          fillOval(0, 15, 62, 21, '#27242e', 0.4);
+          rockPiece(-42, 3, 18, 31, true);
+          rockPiece(35, 0, 20, 28, true);
+          rockPiece(0, -12, 34, 20, true);
+          nest(-28, 9, 0.72);
+          nest(24, 8, 0.76);
+          nest(-1, 20, 0.88);
+          line([[-20, -6], [-6, -4], [4, -8], [16, -5]], '#925844', 2);
+          for (const x of [-14, 12]) fillOval(x, -5, 2.5, 1.5, '#d3905a', 0.75);
+          break;
         case 'roost':
           rockPiece(-24, 5, 15, 28, true);
           rockPiece(24, 8, 18, 22, true);
@@ -14358,7 +14369,11 @@
           });
           rockPiece(-26, 6, 12, 16, true);
           rockPiece(29, 8, 10, 14, true);
-          nest(0, 10, 0.9);
+          // A single broad bed and claw-scored jamb distinguish the private den.
+          nest(0, 11, 1.22);
+          for (const x of [-23, -19, -15]) {
+            line([[x, -5], [x + 4, -13]], '#a38b88', 1.2);
+          }
           break;
         case 'dreadmaw-vault-post':
           blockwork(-36, -20, 11, 34, '#5a5667');
