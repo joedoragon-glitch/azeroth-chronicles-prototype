@@ -3,40 +3,40 @@
   'use strict';
   const siteBriefings = {
     'supply-vale': [
-      'Reclaimed timber and scaffold fittings are hauled here from the winter-estate works. The yard belongs to Scornfang, Thornfang’s Goblin disciple and Greenwood’s superintendent of reclamation.',
-      'Aquí llegan madera recuperada y herrajes de andamios de las obras de la residencia invernal. El recinto pertenece a Scornfang, discípulo goblin de Thornfang y encargado de la recuperación de materiales en Greenwood.',
+      "Reclaimed timber and fittings are sorted outside this converted farm storehouse. Scornfang, Thornfang's Goblin disciple, supplies the winter estate from here.",
+      "Madera y herrajes recuperados se clasifican frente a este antiguo almacén agrícola. Scornfang, discípulo goblin de Thornfang, abastece desde aquí la residencia invernal.",
     ],
     'supply-march': [
-      'Mirejaw’s storehouse sits among the wetland supply routes. His disciple Direjaw commands the guards posted here.',
-      'El almacén de Mirejaw se encuentra entre las rutas de abastecimiento de las marismas. Su discípulo Direjaw manda a los guardias de este puesto.',
+      "Water marks climb the mooring posts; provisions sit above the flood line. Direjaw, Mirejaw's disciple, commands the guards.",
+      "Las marcas de agua ascienden por los postes; las provisiones están por encima de la línea de inundación. Direjaw, discípulo de Mirejaw, manda a los guardias.",
     ],
     'supply-highlands': [
-      'Coin shipments from Stonecross travel under guard. This Treasury is under Crag Tyrant, a disciple of the Master of Coin. Armored direwolf riders patrol its approaches.',
-      'Los cargamentos de moneda de Stonecross viajan bajo escolta. Crag Tyrant, discípulo del Maestro de la Moneda, está al mando de este Tesoro. Jinetes montados en lobos terribles acorazados patrullan los accesos.',
+      "Armored direwolf riders guard the household and coin stores of Crag Tyrant, disciple of the Master of Coin.",
+      "Jinetes sobre lobos terribles acorazados protegen las viviendas y monedas de Crag Tyrant, discípulo del Maestro de la Moneda.",
     ],
     'supply-crown': [
-      'The Crown’s food convoys come through this Treasury. Cindermaw shares its administration with Dreadmaw, the Minister of Agriculture.',
-      'Los convoyes de alimentos de la Corona pasan por este Tesoro. Cindermaw comparte su administración con Dreadmaw, el ministro de Agricultura.',
+      "Food manifests from five provinces hang beside the vault. Dreadmaw, Minister of Agriculture, shares this Treasury with Cindermaw of Interior and Welfare.",
+      "Manifiestos de alimentos de cinco provincias cuelgan junto a la cámara. Dreadmaw, ministro de Agricultura, comparte el Tesoro con Cindermaw, de Interior y Bienestar.",
     ],
     crypt: [
-      'An old burial crypt stands behind the scaffolding. The Lifebinder oversees the work here, converting it into a winter retreat for the Dark Lord.',
-      'Una antigua cripta funeraria se alza tras los andamios. El Lifebinder dirige las obras para convertirla en la residencia invernal del Dark Lord.',
+      "Scaffolding surrounds an old burial crypt. The Lifebinder and his skeleton crews are converting it into the Dark Lord's unfinished winter estate.",
+      "Los andamios rodean una antigua cripta funeraria. Lifebinder y sus cuadrillas de esqueletos la convierten en la residencia invernal, aún inconclusa, del Dark Lord.",
     ],
     archive: [
-      'The Drowned Keeper is the archivist responsible for this collection. Water stains on the masonry mark how high the flood reached.',
-      'El Drowned Keeper es el archivero a cargo de esta colección. Las manchas en la mampostería marcan hasta dónde llegó el agua.',
+      "Water-damaged books and restoration supplies lie outside the Sunken Archive. Its Keeper is trying to save a collection from a flood whose cause remains unknown.",
+      "Libros dañados por el agua y materiales de restauración se amontonan fuera de Sunken Archive. Su Guardián intenta salvar una colección inundada por causas desconocidas.",
     ],
     mine: [
-      'Ore carts still roll out of Colossus Mine. Ogre wardens and Crown riders guard the workings for Garun, the Stone Colossus.',
-      'Los carros de mineral siguen saliendo de Colossus Mine. Guardianes ogros y jinetes de la Corona protegen la explotación para Garun, el Coloso de Piedra.',
+      "Ore wagons pass between the workshops and the mine. Ogre wardens and Crown riders protect Garun's stone-built domain.",
+      "Carretas de mineral circulan entre los talleres y la mina. Guardianes ogros y jinetes de la Corona protegen el dominio de piedra de Garun.",
     ],
     abyss: [
-      'The Crown has set aside Abyss Bastion for its military dragons. The unfinished launch platform overlooks the approach. Veyrith, the Dark Lord’s mount, commands the post.',
-      'La Corona ha reservado Abyss Bastion para sus dragones militares. La plataforma de despegue, aún en obras, domina el acceso. Veyrith, montura del Dark Lord, manda en el puesto.',
+      "Harness stations and an unfinished launch platform mark Veyrith's military air project. The Dark Lord's purple dragon commands the Bastion.",
+      "Puestos de arneses y una plataforma de despegue sin terminar señalan el proyecto aéreo militar de Veyrith. El dragón púrpura del Dark Lord manda en el Bastión.",
     ],
     citadel: [
-      'The Citadel of Ashes is the garrison of Marshal Veyra’s standing army. Orders, drills and changes of watch set the pace here.',
-      'La Ciudadela de Ceniza es la guarnición del ejército permanente de la mariscal Veyra. Las órdenes, los ejercicios y los cambios de guardia marcan el ritmo del lugar.',
+      "Drill yards and polished equipment mark Marshal Veyra's garrison. This is where the Crown's professional standing army trains.",
+      "Los patios de instrucción y el equipo pulido anuncian la guarnición de la mariscal Veyra. Aquí se entrena el ejército permanente de la Corona.",
     ],
     'side-vale-cellars': [
       'These cellars once stored the orchard’s fruit. The orchard has newer stores now, but the old doorway still sees use.',
@@ -59,8 +59,8 @@
       'Los muros exteriores de la fundición están marcados por los daños. El humo de la chimenea y el sonido de los martillos llegan hasta el camino.',
     ],
     'thorn-homestead': [
-      'Thornfang was a Crown wilderness scout. The gear here is for scent work, recall drills and caring for his hounds. He was put in charge of patrolling the winter estate’s approaches. He took Mira on those rounds to inspect its defenses, paying her while forbidding her to leave. Once the estate can keep itself secure, Thornfang means to return to his distant home.',
-      'Thornfang fue explorador de la Corona. Aquí guarda el equipo de rastreo, de entrenamiento y de cuidado de sus sabuesos. Le encargaron patrullar los accesos de la residencia invernal. Se llevaba a Mira para inspeccionar las defensas, le pagaba y le prohibía marcharse. Cuando la finca pueda protegerse por sí sola, Thornfang piensa volver a su lejano hogar.',
+      "A worn Crown scout's badge hangs beside a whistle. The door rail is scratched at hound height; a water bowl sits beside a well-used sleeping place.",
+      "Una insignia gastada de explorador de la Corona cuelga junto a un silbato. La baranda tiene arañazos a la altura de un sabueso; hay un cuenco de agua junto al lecho.",
     ],
   };
   const rescueBriefings = {
@@ -208,13 +208,9 @@
       const camp = side ? null : game.dungeonCamp(entrance),
         reason = side ? '' : game.dungeonCampReason(entrance),
         cost = camp || side ? 0 : game.barracksBuildCost();
-      const reset = 'Leaving resets an unfinished encounter. Defeated leaders keep their normal return time; earned progress stays saved.';
       const description = [
         siteBriefing(entrance.family),
-        treasury && !game.peace
-          ? 'Treasuries are guarded supply stores. Clear the guards before collecting the caches.'
-          : null,
-        game.peace || side ? null : reset,
+        treasury && !game.peace ? 'Defeat the guards to recover the caches.' : null,
       ].filter(Boolean).join('\n\n');
       const enterLabel = treasury ? 'Enter Treasury' : side ? 'Go inside' : 'Enter dungeon';
       openMenu(
