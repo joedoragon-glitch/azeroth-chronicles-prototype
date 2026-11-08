@@ -37,6 +37,14 @@ for (const [id, region, label] of sites) {
   catalog.dungeonEntranceMenu(entrance);
   const english = catalog.siteBriefing(id);
   assert(english && briefing.description.startsWith(english), id);
+  assert(!briefing.description.includes('Leaving resets an unfinished encounter'),
+    'No technical reset paragraph crowds the entry lore');
+  if (label === 'Enter Treasury') {
+    assert(briefing.description.includes('Defeat the guards to recover the caches.'),
+      'Treasury has one concise necessary instruction');
+    assert(!briefing.description.includes('Treasuries are guarded supply stores'),
+      'No repetitive general explanation');
+  }
   assert.equal(briefing.actions[0].label, label);
   assert.equal(briefing.actions.length, label === 'Go inside' ? 1 : 2);
   assert.equal(game.zoneId, region, 'reading stays outside');
@@ -60,7 +68,9 @@ for (const language of ['en', 'es']) {
   elements.get('touch-interact-button').click();
   assert.equal(elements.get('modal-title').textContent,
     language === 'en' ? "Thornfang's Homestead" : 'Hogar de Thornfang');
-  assert(elements.get('modal-description').textContent.includes('Mira'));
+  assert(elements.get('modal-description').textContent.includes(language === 'en' ? 'whistle' : 'silbato'));
+  assert(!elements.get('modal-description').textContent.includes('Mira'),
+    'The homestead only reveals physical clues; Mira tells her own story after rescue');
 }
 for (const [from, to, clueEn, clueEs] of [
   ['vale', 'march', 'Fishing', 'pesca'],
