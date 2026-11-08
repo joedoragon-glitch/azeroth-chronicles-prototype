@@ -2,7 +2,7 @@
 
 ## Current owner correction — one page, no title-screen migration notice (7 Nov 2026)
 
-**Base:** released `main@97cb3b8af9c24976e5946a786d33f22461a78049`, dev.273, following merged #855 and #856. **Status:** implementation staged on branch `fix/screen-performance-one-page-20261107`, unmerged and **not player-published**; exact-head checks and physical-device acceptance are separate.
+**Base:** published `main@97cb3b8af9c24976e5946a786d33f22461a78049`, dev.273, following merged #855 and #856 ([Pages #42430517255](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42430517255)). **Current candidate:** dev.274 on [PR #857](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/857), not player-published pending relevant exact-head checks; owner authorized merge after validation. Physical-device acceptance is separate.
 
 The owner rejected dev.273's four clickable child menus and duplicate technical readouts. **Screen and performance is now a single scrollable Settings page**, with inline section headings and their controls:
 - **Display:** current layout, layout choice and zoom.
