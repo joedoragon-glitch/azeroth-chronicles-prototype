@@ -106,6 +106,132 @@
     "La mariscal Veyra dirige el ejército permanente de la Corona, formado por distintas especies. Libera a Tovan para completar tu entrenamiento."
   ]
 };
+  // One-time, in-person accounts: deliberately distinct from the Keeper's deeper archive.
+  const specialistFirstConversations = {
+  "thorn": [
+    "Thanks. I thought my feet would give out before that dog ever got tired! Thornfang paid me to inspect the winter estate and train its defenders. Whenever I tried to head back to Millhaven, his hounds turned me around. He's a trained scout; don't expect him to forget your last fight.",
+    "Gracias. ¡Creí que mis pies se rendirían antes de que aquel perro se cansara! Thornfang me pagaba por inspeccionar la residencia invernal y entrenar a sus defensores. Cada vez que intentaba volver a Millhaven, sus sabuesos me hacían regresar. Es un explorador experto; no esperes que olvide vuestro último combate."
+  ],
+  "crypt": [
+    "It's good to be home. The Lifebinder had me repairing the old crypt while it becomes the Dark Lord's winter retreat. His skeleton crews came with him; they're aware of what's happening and have their own opinions about it. Scornfang's Goblins kept bringing salvaged beams and fittings. The work is far from finished—and I wasn't allowed to leave mine.",
+    "Qué gusto volver a casa. El Lifebinder me tenía reparando la antigua cripta para convertirla en la residencia invernal del Dark Lord. Sus cuadrillas de esqueletos llegaron con él; son conscientes de lo que ocurre y tienen sus propias opiniones. Los goblins de Scornfang traían vigas y herrajes recuperados sin parar. Aún queda mucho por hacer, y a mí no me dejaban marcharme."
+  ],
+  "mire": [
+    "Thank you. Mirejaw kept me teaching his fighters, though nobody there knows the marsh like he does. He understands which channels are shallow and where the mud will catch you. Direjaw sees to the guards and supplies along those routes. Mirejaw has his own territory; the fishing villages beyond it are another world entirely.",
+    "Gracias. Mirejaw me retenía para entrenar a sus combatientes, aunque nadie conoce las marismas como él. Sabe qué canales son poco profundos y dónde el barro te atrapará. Direjaw organiza los guardias y las provisiones de esas rutas. Mirejaw tiene su territorio; los pueblos pesqueros de fuera son otro mundo."
+  ],
+  "archive": [
+    "I'm glad to be free. The Keeper needed my alchemy to save his waterlogged records. He genuinely loves those books; he'd talk about a rescued page almost as long as he talks about fishing. I spent my days drying and treating them, but I couldn't leave. I still don't know what flooded the Archive.",
+    "Me alegra ser libre. El Keeper necesitaba mi alquimia para salvar sus archivos empapados. De verdad adora esos libros; podía hablar de una página recuperada casi tanto como de la pesca. Pasé los días secándolos y tratándolos, pero no podía marcharme. Aún no sé qué inundó el Archivo."
+  ],
+  "ridge": [
+    "Good to be out. I trained guards at the Ridge Tyrant's watchtower while he kept the payroll and caravans moving. He's the Master of Coin, and he can explain exactly how much a sound road or a regular wage is worth. The roads do work, and the archers get paid. He doesn't quite grasp why that wasn't enough to make me want to stay.",
+    "Qué alivio salir de allí. Entrené a los guardias de la atalaya de Ridge Tyrant mientras él organizaba las nóminas y las caravanas. Es el Maestro de la Moneda y sabe calcular cuánto vale un buen camino o un salario puntual. Los caminos funcionan y los arqueros cobran. Lo que no entiende es por qué eso no bastaba para que yo quisiera quedarme."
+  ],
+  "mine": [
+    "Thank you. Garun paid me fairly for mine repairs and some very peculiar commissions. He loves making little mechanisms and stone pieces just because they interest him; that mine is his workshop as much as his post. I could negotiate a price, but not permission to leave. It would have been a pleasant job if it had been my choice.",
+    "Gracias. Garun me pagaba bien por reparar equipo de la mina y por algunos encargos bastante extraños. Le encanta hacer pequeños mecanismos y piezas de piedra simplemente porque le interesan; esa mina es tanto su taller como su puesto. Podía negociar el precio, pero no el permiso para irme. Habría sido un trabajo agradable si hubiera podido elegirlo."
+  ],
+  "warlord": [
+    "I'm relieved to be away from that checkpoint. The Ashen Warlord had me training his troops. His escorts really do keep food and repairs moving across the Frontier, but the same soldiers collect levies and enforce every inspection. People are rebuilding their lives under armed supervision. I was paid to teach—and forbidden to go.",
+    "Me alivia haber salido de aquel puesto de control. Ashen Warlord me hacía entrenar a sus tropas. Sus escoltas de verdad mantienen el paso de alimentos y materiales de reparación, pero esos mismos soldados cobran tributos y hacen cumplir cada inspección. La gente reconstruye su vida bajo vigilancia armada. Me pagaban por enseñar, pero me prohibían irme."
+  ],
+  "abyss": [
+    "Glad you came. They put my rune work to use on dragon equipment while Veyrith prepared the air force. The hatchery and harness stations are busy, but the launch platform isn't finished yet. He's proud, disciplined and certain that controlling the skies will keep the peace below. He never asked whether I shared his enthusiasm for staying.",
+    "Me alegra que vinieras. Usaban mis runas en equipo para dragones mientras Veyrith preparaba la fuerza aérea. Hay actividad en la zona de cría y los arneses, pero la plataforma de despegue aún no está terminada. Es orgulloso, disciplinado y está convencido de que controlar los cielos mantendrá la paz. Nunca me preguntó si yo quería quedarme."
+  ],
+  "cindermaw": [
+    "Thank you. I traveled with Cindermaw's inspections, working at a portable forge and repairing his Ash beasts' defenses while guards watched me. He does pay attention to roads, shelter and supplies; those services matter to people. I just wish he'd let me decide whether I wanted to work for him.",
+    "Gracias. Acompañaba a Cindermaw en sus inspecciones, trabajando en una forja portátil y reparando las defensas de sus bestias de ceniza mientras me vigilaban los guardias. De verdad se ocupa de los caminos, los refugios y las provisiones; esos servicios importan a la gente. Solo habría querido poder decidir si trabajaba para él."
+  ],
+  "citadel": [
+    "Thank you. I spent my time training recruits at the Citadel. Veyra has Goblins, Ogres and Humans drilling together as a real standing army. She notices everything, from a crooked formation to badly fitted equipment, and insists it should work and look right. I respect her skill. I would have preferred to volunteer.",
+    "Gracias. Me pasé el tiempo entrenando reclutas en la Ciudadela. Veyra hace que goblins, ogros y humanos se instruyan juntos como un verdadero ejército permanente. Se fija en todo, desde una formación torcida hasta el equipo mal ajustado, e insiste en que funcione y tenga buen aspecto. Respeto su habilidad. Habría preferido estar allí por voluntad propia."
+  ]
+};
+  // A short regional clue beside each existing objective; quest rules and rewards are unchanged.
+  const questLore = {
+  "Roads Under Threat": [
+    "The tracks between Millhaven and the farms are no longer entirely safe.",
+    "Los caminos entre Millhaven y las granjas ya no son del todo seguros."
+  ],
+  "Stolen Stores": [
+    "Scornfang's reclamation crews have taken usable timber and fittings for the winter estate. Millhaven's carters want their stores back.",
+    "Las cuadrillas de recuperación de Scornfang se han llevado madera y herrajes útiles para la residencia invernal. Los carreteros de Millhaven quieren recuperar sus provisiones."
+  ],
+  "Keeping Trade Open": [
+    "The mill crossing links orchard wagons to Millhaven's working road.",
+    "El puente del molino conecta los carros del huerto con el camino comercial de Millhaven."
+  ],
+  "Who Owns the Woods?": [
+    "Farms, woodland creatures and the Crown's unfinished estate all share Greenwood's paths.",
+    "Granjas, criaturas del bosque y la residencia inacabada de la Corona comparten los caminos de Greenwood."
+  ],
+  "Unsafe Crossings": [
+    "Raised roads keep the fishing settlements connected, but the wetlands around them are dangerous.",
+    "Los caminos elevados comunican los pueblos pesqueros, pero las marismas que los rodean son peligrosas."
+  ],
+  "Hidden Provisions": [
+    "Direjaw controls the guards at Mirejaw's supply landing. Fisher crews want the provisions held beyond it.",
+    "Direjaw manda sobre los guardias del embarcadero de Mirejaw. Los pescadores quieren recuperar las provisiones retenidas allí."
+  ],
+  "Shadows After Sundown": [
+    "At Lantern Shore, some lights belong to neither boats nor villages.",
+    "En Lantern Shore, algunas luces no pertenecen a barcos ni a aldeas."
+  ],
+  "Beyond the Main Road": [
+    "Reedport, Fisher Camp and Mirejaw's marsh territory do not all answer to the same authority.",
+    "Reedport, Fisher Camp y el territorio de Mirejaw no responden todos a la misma autoridad."
+  ],
+  "Ore Workers at Risk": [
+    "Ironroot's working mines depend on dangerous roads through wolf country.",
+    "Las minas activas de Ironroot dependen de caminos peligrosos que atraviesan territorio de lobos."
+  ],
+  "The Master's Reserve": [
+    "Crag Tyrant keeps the Master of Coin's private Treasury, with paid riders guarding its stores.",
+    "Crag Tyrant custodia el Tesoro privado del Maestro de la Moneda, protegido por jinetes a sueldo."
+  ],
+  "Whose Mountain?": [
+    "The Crown claims Ironroot's silver and copper, but people still live and work on those slopes.",
+    "La Corona reclama la plata y el cobre de Ironroot, pero hay familias que viven y trabajan en esas laderas."
+  ],
+  "Follow the Crowns": [
+    "Silver and copper travel from separate ore workings to Stonecross, where the Dark Lord's portrait is struck on crowns.",
+    "La plata y el cobre llegan de minas distintas a Stonecross, donde se acuñan coronas con el retrato del Dark Lord."
+  ],
+  "An Army Needs Supplies": [
+    "Cinder Warlord inspects the Frontier's convoys and work crews for the military governor; the rebuilt roads have a price.",
+    "Cinder Warlord inspecciona los convoyes y cuadrillas de la Frontera en nombre del gobernador militar; reconstruir los caminos tiene un precio."
+  ],
+  "Roads Still Contested": [
+    "The army keeps the Frontier's repaired crossings open, but fighting has not ended.",
+    "El ejército mantiene abiertos los pasos reparados de la Frontera, pero la lucha no ha terminado."
+  ],
+  "Rebuilding Under Guard": [
+    "New gardens and pale saplings grow beside burned homes. Reconstruction continues under military orders.",
+    "Nuevos huertos y árboles jóvenes crecen junto a casas quemadas. La reconstrucción continúa bajo órdenes militares."
+  ],
+  "A Different Kind of Flight": [
+    "Emberwatch's civilian dragon passage is not Veyrith's unfinished military air project.",
+    "El transporte civil en dragón de Emberwatch no es el proyecto militar aéreo, aún inacabado, de Veyrith."
+  ],
+  "Hostile Ground": [
+    "The Crown's roads connect homes and workshops despite lava channels and Ash-beast territory.",
+    "Los caminos de la Corona conectan casas y talleres pese a los ríos de lava y los territorios de las bestias de ceniza."
+  ],
+  "Dreadmaw's Duty": [
+    "Dreadmaw handles food production and distribution across the provinces, and shares Treasury authority with Cindermaw.",
+    "Dreadmaw organiza la producción y distribución de alimentos entre las provincias y comparte la autoridad del Tesoro con Cindermaw."
+  ],
+  "The Machinery of Rule": [
+    "Crownwatch's public heat, roads and workshops function beside guarded gates, taxes and compulsory work.",
+    "La calefacción pública, los caminos y los talleres de Crownwatch funcionan junto a puertas vigiladas, impuestos y trabajos obligatorios."
+  ],
+  "Ready for the Dark Lord": [
+    "The final fortress lies beyond the Crown's military and ministerial strongholds.",
+    "La fortaleza final se alza tras los bastiones militares y ministeriales de la Corona."
+  ]
+};
   const travelBriefings = {
     march: [
       'The wagon stops at Reedport. Fishing keeps the Marches fed, and raised roads carry people and goods between the villages. Stick to those roads around the lake and give Mirejaw’s marsh island a wide berth.',
@@ -127,6 +253,7 @@
   function create({
     getGame,
     getLanguage = () => 'en',
+    onSpecialistIntroduction = () => {},
     Campaign,
     D,
     action,
@@ -189,6 +316,21 @@
     }
     function siteBriefing(id) {
       return siteBriefings[id]?.[getLanguage() === 'es' ? 1 : 0];
+    }
+    function firstSpecialistConversation(n) {
+      // Remote Barracks services must not consume the first actual conversation.
+      if (!n || n.id !== 'service-' + n.family ||
+          !getGame().zone().npcs.includes(n) ||
+          !getGame().s.rescued[n.family]) return '';
+      const entry = specialistFirstConversations[n.family];
+      const flag = 'specialist:introduction:' + n.family;
+      if (!entry || getGame().s.discovered[flag]) return '';
+      getGame().s.discovered[flag] = true;
+      onSpecialistIntroduction();
+      return entry[getLanguage() === 'es' ? 1 : 0];
+    }
+    function questStory(q) {
+      return questLore[q.name]?.[getLanguage() === 'es' ? 1 : 0] || '';
     }
     function dungeonEntranceMenu(ref, back = closeMenu) {
       const game = getGame(),
@@ -367,7 +509,7 @@
         );
       openMenu(
         n.name,
-        'Choose your training.',
+        firstSpecialistConversation(n) || 'Choose your training.',
         [
           action(
             'Hero skills',
@@ -1025,11 +1167,11 @@
       }
       openMenu(
         n.name,
-        n.presentation === 'archive-restorer'
+        firstSpecialistConversation(n) || (n.presentation === 'archive-restorer'
           ? approvedNarrative.P04.en
           : manaEnabled
             ? approvedNarrative.P07.en
-            : approvedNarrative.P07_nomana.en,
+            : approvedNarrative.P07_nomana.en),
         [
           { kind: 'section', label: 'Preparation Tonics' },
           action(
@@ -1139,11 +1281,9 @@
             '. ';
       openMenu(
         n.name,
-        equipmentStatus +
-          'Equipment replaces the earlier tier in its slot. Tier purchases are one-time; bonuses do not stack.' +
-          (supportActions.length
-            ? ' This specialist also teaches companion equipment inheritance.'
-            : ''),
+        firstSpecialistConversation(n) ||
+          (equipmentStatus + 'Equipment replaces the earlier tier in its slot. Tier purchases are one-time; bonuses do not stack.' +
+          (supportActions.length ? ' This specialist also teaches companion equipment inheritance.' : '')),
         [
           { kind: 'section', label: 'Equipment upgrades' },
           action(
@@ -3250,7 +3390,7 @@
                       : 'No destination is currently available. ' + q.objective,
                   );
               },
-              q.objective +
+              (questStory(q) ? questStory(q) + '\n' : '') + q.objective +
                 ' · ' +
                 (q.tutorial ? 'Tutorial' : q.gold + ' crowns / ' + q.xp + ' XP') +
                 ' · ' +
