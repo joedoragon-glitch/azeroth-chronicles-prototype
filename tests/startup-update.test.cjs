@@ -36,7 +36,7 @@ function startup({ online = true, controller = true, waiting = false,
     location: { protocol: 'http:', hostname: 'localhost', search: '',
                 reload() { reloads++; } },
     navigator: { serviceWorker: sw, onLine: online },
-    onInterval() { backgroundChecks++; },
+    onInterval(_fn, milliseconds) { if (milliseconds >= 60000) backgroundChecks++; },
   });
   return {
     ...app, registration, events, registrationEvents, worker, messages,
