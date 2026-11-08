@@ -31,6 +31,7 @@ function harness(g) {
     const entries = last().actions.filter(a => typeof a?.label === 'string' &&
       a.label.endsWith(' · ACTIVE') && a.label !== 'Completed quests · ACTIVE');
     const regional = C.data.quests.filter(q => q[0] === region.id &&
+      q[1] !== 'Ready for the Dark Lord' &&
       !['Defeat Thornfang; free Mira','Defeat Lifebinder; free Borin',
          'Defeat Mirejaw; free Sela','Defeat Drowned Keeper; free Neri',
          'Defeat Ridge Tyrant; free Orin','Defeat Stone Colossus; free Dara',
