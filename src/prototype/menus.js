@@ -4,8 +4,8 @@
   // Brief observable clues here; deeper historical accounts belong to the Keeper.
   const siteBriefings = {
   "supply-vale": [
-    "A former farm storehouse now holds Scornfang's reclaimed beams, fittings and relocation supplies for the winter estate.",
-    "Un antiguo almacén agrícola guarda ahora las vigas, los herrajes y los materiales recuperados por Scornfang para la residencia invernal."
+    "Scornfang sorts reclaimed beams and fittings here for the unfinished winter estate. His reclamation office answers to Thornfang.",
+    "Scornfang clasifica aquí vigas y herrajes recuperados para la residencia invernal, todavía inacabada. Su oficina de recuperación responde ante Thornfang."
   ],
   "supply-march": [
     "Mooring posts carry marks for high water. Direjaw's guards watch this landing and the provisions crossing Mirejaw's marsh channels.",
@@ -141,8 +141,8 @@
     "Me alegra que vinieras. Usaban mis runas en equipo para dragones mientras Veyrith preparaba la fuerza aérea. Hay actividad en la zona de cría y los arneses, pero la plataforma de despegue aún no está terminada. Es orgulloso, disciplinado y está convencido de que controlar los cielos mantendrá la paz. Nunca me preguntó si yo quería quedarme."
   ],
   "cindermaw": [
-    "Thank you. I traveled with Cindermaw's inspections, working at a portable forge and repairing his Ash beasts' defenses while guards watched me. He does pay attention to roads, shelter and supplies; those services matter to people. I just wish he'd let me decide whether I wanted to work for him.",
-    "Gracias. Acompañaba a Cindermaw en sus inspecciones, trabajando en una forja portátil y reparando las defensas de sus bestias de ceniza mientras me vigilaban los guardias. De verdad se ocupa de los caminos, los refugios y las provisiones; esos servicios importan a la gente. Solo habría querido poder decidir si trabajaba para él."
+    "Thank you. Cindermaw paid me for my smithing and put guards on my movements. I saw how carefully he followed the roads, supplies and shelters under his ministry. People genuinely depend on those services. He seemed to think that meant he could decide where I worked, too.",
+    "Gracias. Cindermaw me pagaba por mi trabajo de herrera y ponía guardias a vigilar mis movimientos. Vi lo mucho que se ocupa de los caminos, las provisiones y los refugios de su ministerio. La gente depende de esos servicios. Parecía pensar que por eso también podía decidir dónde trabajaba yo."
   ],
   "citadel": [
     "Thank you. I spent my time training recruits at the Citadel. Veyra has Goblins, Ogres and Humans drilling together as a real standing army. She notices everything, from a crooked formation to badly fitted equipment, and insists it should work and look right. I respect her skill. I would have preferred to volunteer.",
