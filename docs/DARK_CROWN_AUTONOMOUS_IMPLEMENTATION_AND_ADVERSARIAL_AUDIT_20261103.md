@@ -21,7 +21,7 @@
 | 11. Citadel | Existing native academy and interior, military features preserved | Exterior drill and armory views open |
 | 12. Cindermaw | Existing encounters and ministry facade retained | Public/private/communal scene separation and walk open |
 | 13. Crystals | Existing shipment and resource identity | Sorting, security and dispatch composition open |
-| 14. Orrery | Existing landmark retained | Four approved civic meanings and approach open |
+| 14. Orrery | Existing landmark retained with bronze service fasteners and a walkable engraved survey court | Walked approaches and matched lighting review open |
 | 15. Fortress logistics | Existing logistics and checkpoints, Crown flag painter uses coin portrait | Full standard census and graduated approach open |
 | 16. Day/night continuity | Shared painter, bath entrance fixture and reconnaissance frames | Paired walked view set and matched browser performance open |
 

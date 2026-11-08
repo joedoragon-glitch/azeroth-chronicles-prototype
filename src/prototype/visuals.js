@@ -16362,6 +16362,11 @@
             '#d3b574',
           );
           fillOval(0, -61, 34, 10, '#c1a168', 1);
+          for (const x of [-16, 16]) {
+            fillOval(x, -43, 2.5, 2.5, '#d3b574', 1);
+            fillOval(x, -20, 2.5, 2.5, '#d3b574', 1);
+          }
+          line([[-7, -17], [7, -17]], '#b79c70', 1.5);
           // Bronze astronomical rings, with a single clear silhouette.
           for (const [rx, ry, angle] of [
             [47, 24, -0.55],
@@ -20843,11 +20848,35 @@
     for (const p of R.terrain[region]) {
       const kind = p.kind || 'cliff';
       if (kind === 'orrery') {
-        rect(p.x - 150, p.x + 150, p.y - 140, p.y + 160, '#81768b88');
-        rect(p.x - 130, p.x + 130, p.y - 120, p.y + 140, '#5e566c');
-        for (let d = -120; d <= 120; d += 40) {
-          line({ x: p.x + d, y: p.y - 120 }, { x: p.x + d, y: p.y + 140 }, '#b2a5b333', 1);
-          line({ x: p.x - 130, y: p.y + d }, { x: p.x + 130, y: p.y + d }, '#b2a5b333', 1);
+        // The existing walkable court doubles as an engraved survey
+        // instrument. The inlay stays flush with the original approaches.
+        const point = (dx, dy) => ({ x: p.x + dx, y: p.y + dy });
+        const rim = [
+          [-116, -144], [116, -144], [144, -116], [144, 116],
+          [116, 144], [-116, 144], [-144, 116], [-144, -116],
+        ];
+        const perimeter = rim.map(([x, y]) => point(x, y));
+        if (outsideScreen(perimeter.map(screen), bounds, 100)) continue;
+        poly(perimeter, '#39313d');
+        poly(rim.map(([x, y]) => point(x * 0.93, y * 0.93)), '#756a78');
+        for (const radius of [82, 105, 117]) {
+          ctx.beginPath();
+          for (let i = 0; i < 16; i++) {
+            const angle = (i * Math.PI) / 8;
+            const vertex = screen(point(radius * Math.cos(angle), radius * Math.sin(angle)));
+            if (i === 0) ctx.moveTo(vertex.x, vertex.y);
+            else ctx.lineTo(vertex.x, vertex.y);
+          }
+          ctx.closePath();
+          ctx.strokeStyle = radius === 105 ? '#c6a875' : '#a396a5';
+          ctx.lineWidth = radius === 105 ? 2 : 1;
+          ctx.stroke();
+        }
+        for (const [dx, dy] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) {
+          const along = (distance, across = 0) =>
+            point(dx * distance - dy * across, dy * distance + dx * across);
+          line(along(62), along(131), '#c6a875', 2);
+          poly([along(130), along(111, 7), along(115), along(111, -7)], '#dfc68c');
         }
         continue;
       }
