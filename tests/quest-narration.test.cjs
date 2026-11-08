@@ -41,14 +41,24 @@ const polishedKeeps = new Map([
 ]);
 const authored = prose.filter(Boolean);
 assert.equal(authored.length, 13, 'Only approved events are announced');
-// Locked English/Spanish transcription fingerprint from the 24 October editorial master DOCX.
-// Recompute against the owner's document; never revise this to legitimize invented prose.
-const transcription = authored.map((entry) => [entry.id, entry.text, entry.es]);
+// The 24 October manuscript remains a historical fingerprint. The owner
+// expressly revised C11's Wraith/ferry story on 8 November; compare every
+// unaffected entry to the historical manuscript and check the revised C11.
+const historicalC11 = [
+  "Two Lantern Wraiths have fallen, but they return at night. For a nighttime departure from the Marches, the Wraiths blocking the ferry must first be cleared.",
+  "Han caído dos Lantern Wraiths, pero aparecen de nuevo por la noche. Para zarpar de las Marismas de noche, primero hay que despejar de Wraiths la salida del ferry.",
+];
+const transcription = authored.map((entry) =>
+  entry.id === 'C11' ? [entry.id, ...historicalC11] : [entry.id, entry.text, entry.es]
+);
 assert.equal(
   createHash('sha256').update(JSON.stringify(transcription)).digest('hex'),
   'd26c0d5a85ddaf6cdf964c9026e3063594fe6ace256cd8759b2b6dc884447d45',
-  'N1 Chronicle wording must match all thirteen approved EN/ES pairs verbatim',
+  'Unaffected manuscript text must remain verbatim; only C11 has explicit author revision',
 );
+assert(prose[10].text.includes('they want you dead') &&
+  prose[10].text.includes('ferryman will not sail'),
+  'C11 explains the Wraiths specifically target the hero and block nighttime ferry departure');
 assert.equal(new Set(authored.map((x) => x.text)).size, authored.length);
 for (let i = 0; i < prose.length; i++) {
   const number = i + 1;
