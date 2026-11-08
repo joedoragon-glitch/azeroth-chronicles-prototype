@@ -395,6 +395,15 @@ const server = http.createServer((req, res) => {
         await other.locator('#modal-actions').getByRole('button', {
           name: 'Instalar actualización', exact: true,
         }).click();
+        // Prove the other tab really completed the new worker activation:
+        // an updatefound notification alone must not masquerade as takeover.
+        await other.waitForFunction(async () => {
+          const reg = await navigator.serviceWorker.getRegistration();
+          const names = await caches.keys();
+          return reg?.active?.state === 'activated' && !reg.waiting &&
+            names.includes('azeroth-app-v' + PrototypeBuild.version + '-notice-b') &&
+            !names.includes('azeroth-app-v' + PrototypeBuild.version + '-notice-c');
+        }, null, { timeout: 90000 });
         // The other tab may change controller without reporting a new load.
         // Verify the *playing* tab remains alive and offers an optional update.
         await page.waitForFunction(() =>
