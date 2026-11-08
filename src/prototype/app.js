@@ -6281,7 +6281,6 @@
     const pixiSettings = graphics.mode === 'webgl2' ||
       (!started && previousRendererChoice.renderer === 'webgl2' &&
         !graphics.recoveryPaused && !graphics.lastFallbackReason);
-    const preferred = graphics.preferredRenderer === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D';
     const note = rendererFallbackMessage(graphics);
     const density = resolutionStatus().ratio.toFixed(2) + '×';
     const choices = (values) => values.map(([value, label]) => ({ value, label }));
@@ -6366,10 +6365,10 @@
         ? [performanceAction('Retry PixiJS WebGL2', requestPerformancePixi)]
         : []),
       menuControls.section(pixiSettings ? 'Pixi graphics' : 'Canvas graphics'),
-      menuControls.section(
+      ...(started ? [menuControls.section(
         'Effective density',
         density + ' · ' + canvas.width + ' × ' + canvas.height,
-      ),
+      )] : []),
       ...(pixiSettings
         ? [menuControls.section(
             'Effective atmospheric particles',
