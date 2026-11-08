@@ -543,7 +543,7 @@ const server = http.createServer((req, res) => {
       JSON.stringify(bounds),
     );
     await page.locator('#menu-button').click();
-    await page.getByRole('button', { name: /^Game and settings/ }).click();
+    await page.getByRole('button', { name: /^Settings/ }).click();
     await page.getByRole('button', { name: /^Language/ }).click();
     await page.getByRole('button', { name: /^Español/ }).click();
     await page.evaluate(() => Prototype.closeMenu());

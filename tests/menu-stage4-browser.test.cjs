@@ -125,6 +125,7 @@ function contrast(item) {
       });
       await context.addInitScript((lang) => {
         localStorage.setItem('azeroth-display-language-v1', lang);
+        localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
         localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
         localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
       }, language);
@@ -203,7 +204,22 @@ function contrast(item) {
         await frame.locator('#title-settings').tap();
         const settingsFit = await assertDialogGeometry(frame, 'Settings', { noScroll: true });
         await frame.getByRole('button', { name: language === 'es' ? /Pantalla y rendimiento/ : /Screen and performance/ }).tap();
-        const graphicsFit = await assertDialogGeometry(frame, 'Graphics settings');
+        await assertDialogGeometry(frame, 'Screen and performance');
+        await frame.getByRole('button', { name: language === 'es' ? 'Gráficos de Canvas' : 'Canvas graphics', exact: true }).tap();
+        const graphicsFit = await assertDialogGeometry(frame, 'Canvas graphics');
+        await frame.locator('#close-button').tap();
+        await frame.locator('#close-button').tap();
+        await frame.getByRole('button', { name: language === 'es' ? 'Herramientas de prueba' : 'Playtest tools', exact: true }).tap();
+        await assertDialogGeometry(frame, 'Playtest tools');
+        const readout = frame.locator('#modal-actions .menu-section-detail').first();
+        assert(await readout.isVisible(), 'Performance details is visible without opening another page');
+        assert(await readout.evaluate((row) =>
+          row.getBoundingClientRect().bottom <= document.querySelector('#modal-content').getBoundingClientRect().bottom),
+          'The entire initial quick readout fits without scrolling');
+        await page.screenshot({ path: path.join(output, language + '-playtest-tools.png') });
+        await frame.getByRole('button', { name: language === 'es' ? 'Ayuda y privacidad' : 'Help and privacy', exact: true }).tap();
+        await frame.locator('#close-button').tap();
+        assert(await readout.isVisible(), 'Back returns to the working page');
         await frame.locator('#close-button').tap();
         await frame.locator('#close-button').tap();
         await frame.locator('#title-help').tap();
@@ -241,9 +257,19 @@ function contrast(item) {
         const characterFit = await assertDialogGeometry(frame, 'In-game Character');
         await frame.locator('#close-button').tap();
         await frame.getByRole('button', {
-          name: language === 'es' ? /Juego y ajustes|Configuración|Ajustes/i : /Game and settings/,
+          name: language === 'es' ? /Ajustes|Configuración/i : /Settings/,
         }).tap();
         const gameSettingsFit = await assertDialogGeometry(frame, 'In-game Settings', { noScroll: true });
+        await frame.getByRole('button', { name: language === 'es' ? 'Herramientas de prueba' : 'Playtest tools', exact: true }).tap();
+        assert(await readout.evaluate((row) =>
+          row.getBoundingClientRect().bottom <= document.querySelector('#modal-content').getBoundingClientRect().bottom),
+          'The in-game quick readout fits before scrolling');
+        await frame.getByRole('button', { name: language === 'es' ? /^Iniciar registro del renderizador/ : /^Start renderer profiling/ }).tap();
+        const stopProfiler = frame.getByRole('button', { name: language === 'es' ? /^Detener registro del renderizador/ : /^Stop renderer profiling/ });
+        assert(await stopProfiler.evaluate((button) => document.activeElement === button),
+          'Profiler toggle retains focus across its label change');
+        await stopProfiler.tap();
+        await frame.locator('#close-button').tap();
         await frame.locator('#close-button').tap();
         await frame.getByRole('button', {
           name: language === 'es' ? /Mapa|rutas/i : /Map and travel routes/,

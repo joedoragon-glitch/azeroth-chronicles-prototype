@@ -183,8 +183,8 @@ function menu(app, label) {
       return 'test-blob';
     };
     app.elements.get('menu-button').click();
-    menu(app, language === 'es' ? 'Juego y ajustes' : 'Game and settings');
-    menu(app, language === 'es' ? 'Pantalla y rendimiento' : 'Screen and performance');
+    menu(app, language === 'es' ? 'Ajustes' : 'Settings');
+    menu(app, language === 'es' ? 'Herramientas de prueba' : 'Playtest tools');
     menu(app, language === 'es' ? 'Exportar informe de prueba' : 'Export playtest report');
     const report = JSON.parse(await blob.text());
     assert.equal(report.performance.startupDiagnostics.attempts.at(-1).outcome, 'ready');

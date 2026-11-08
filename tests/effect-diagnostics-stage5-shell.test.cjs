@@ -35,7 +35,6 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     return 'blob:effect-stage5-test';
   };
   const exportReport = async () => {
-    click('Screen and performance');
     click('Export playtest report');
     assert(saved instanceof Blob, 'actual playtest export was not produced');
     return JSON.parse(await saved.text());
@@ -67,11 +66,8 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     assert(h.scope.Prototype.started,
       'Developer campaign must finish first-scene preparation before diagnostics');
     h.elements.get('menu-button').click();
-    h.click('Game and settings');
-    h.click('Screen and performance');
-    assert(!h.contains('Start effect recording'),
-      'diagnostic controls should not clutter collapsed performance view');
-    h.click('Show performance details');
+    h.click('Settings');
+    h.click('Playtest tools');
     assert(h.contains('Start effect recording'));
     assert(h.contains('Clear effect recording'));
     const renderer = h.scope.Prototype.renderer;
@@ -94,7 +90,6 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     const retained = renderer.effectDiagnosticsReport();
     assert(retained.identities.some((x) => x.id === 'impact' && x.queued === 1),
       'Stop must retain in-memory records for shared export');
-    h.elements.get('close-button').click();
     const report = await h.exportReport();
     assert.equal(report.mode, 'developer');
     assert.equal(report.performance.effectDiagnostics.recording, false);
@@ -106,9 +101,10 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     assert.equal(report.currency, 'crowns');
 
     // Clearing must discard the in-memory trace without altering normal save.
-    h.elements.get('close-button').click(); // Return to Game and settings
-    h.click('Screen and performance');
+    h.elements.get('close-button').click(); // Return to Settings
+    h.click('Playtest tools');
     h.click('Clear effect recording');
+    h.click('Confirm clear capture');
     assert.equal(renderer.effectDiagnosticsReport().captured, false);
   }
   {
@@ -116,12 +112,10 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     assert.equal(h.scope.Prototype.game.s.mode, 'normal');
     assert.equal(h.scope.Prototype.renderer.setEffectDiagnostics(true), false);
     h.elements.get('menu-button').click();
-    h.click('Game and settings');
-    h.click('Screen and performance');
-    h.click('Show performance details');
+    h.click('Settings');
+    h.click('Playtest tools');
     assert(!h.contains('Start effect recording'), 'ordinary player must not see developer recorder');
     assert(!h.contains('Clear effect recording'), 'ordinary player must not see recorder reset');
-    h.elements.get('close-button').click();
     const report = await h.exportReport();
     assert.equal(Object.hasOwn(report.performance, 'effectDiagnostics'), false,
       'ordinary playtest export must not contain effect diagnostic data');
@@ -131,9 +125,8 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     assert.equal(h.scope.Prototype.game.s.mode, 'normal',
       'developer URL alone must not make a normal campaign a developer campaign');
     h.elements.get('menu-button').click();
-    h.click('Game and settings');
-    h.click('Screen and performance');
-    h.click('Show performance details');
+    h.click('Settings');
+    h.click('Playtest tools');
     assert(!h.contains('Start effect recording'),
       'developer query parameter with a Normal run must not enable diagnostics');
   }

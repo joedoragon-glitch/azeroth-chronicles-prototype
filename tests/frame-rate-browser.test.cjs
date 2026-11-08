@@ -30,6 +30,7 @@ const mime = {
 // Keep this Canvas/frame-cadence fixture independent of Pixi startup and migration.
 const startCanvas = () => {
   if (localStorage.getItem('azeroth-renderer-webgl-primary-v1') !== 'applied') {
+    localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
     localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
     localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
   }
@@ -95,8 +96,9 @@ const server = http.createServer((req, res) => {
       await enterPlayableGame(page);
       const openSettings = async () => {
         await page.locator('#menu-button').click();
-        await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+        await page.getByRole('button', { name: 'Settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+        await page.getByRole('button', { name: 'Frame pacing', exact: true }).click();
       };
       await openSettings();
       for (const [value] of [
@@ -105,10 +107,10 @@ const server = http.createServer((req, res) => {
         ['auto', 'Auto 20–30 FPS'],
       ]) {
         const before = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
-        await page.locator('select[aria-label="Frame rate"]').selectOption(value);
+        await page.locator('select[aria-label="Drawing target (FPS)"]').selectOption(value);
         assert.match(
           await page.locator('#modal').innerText(),
-          new RegExp('Active draw target: ' + (value === '60' ? 60 : value === '20' ? 20 : 30) + ' FPS'),
+          new RegExp('Active draw target:\\s+' + (value === '60' ? 60 : value === '20' ? 20 : 30) + ' FPS'),
           'Settings must show the effective draw target, not only the saved FPS preference',
         );
         assert.deepEqual(
@@ -125,7 +127,7 @@ const server = http.createServer((req, res) => {
           'Changing rendering preferences cannot mutate a paused campaign',
         );
       }
-      await page.locator('select[aria-label="Frame rate"]').selectOption('60');
+      await page.locator('select[aria-label="Drawing target (FPS)"]').selectOption('60');
       await page.reload();
       await enterPlayableGame(page);
       assert.equal(
@@ -134,7 +136,7 @@ const server = http.createServer((req, res) => {
         'UI preference survives reload',
       );
       await openSettings();
-      await page.locator('select[aria-label="Frame rate"]').selectOption('20');
+      await page.locator('select[aria-label="Drawing target (FPS)"]').selectOption('20');
       await page.evaluate(() => {
         Prototype.closeMenu();
         window.__fpsCounts = { ticks: 0, updates: 0, observations: 0, draws: 0 };
@@ -192,7 +194,7 @@ const server = http.createServer((req, res) => {
           // This test exercises deliberate user choices after the one-time
           // upgrade, not the first-launch preference migration.
           localStorage.setItem('azeroth-optimization-auto-default-v1', 'applied');
-          localStorage.setItem('azeroth-performance-defaults-dev170-v1', 'applied');
+          localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
           sessionStorage.setItem('optimization-seeded', 'true');
         }
       });

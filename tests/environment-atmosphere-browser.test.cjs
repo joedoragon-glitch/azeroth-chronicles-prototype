@@ -32,17 +32,16 @@ function executable(){
   return null;
 }
 async function enterGame(page){
-  await page.waitForFunction(()=>!!window.Prototype?.renderer);
-  await require('./helpers/language-browser.cjs').selectEnglish(page);
+  await page.waitForFunction(()=>!!window.Prototype?.renderer && document.querySelector('#startup-update')?.hidden);
+  if (await page.locator('#language-welcome').isVisible())
+    await page.locator('#language-welcome [data-language="en"]').click();
   const title=page.locator('#title-screen');
   if(await title.evaluate(el=>!el.hidden)){
     if(!(await page.locator('#title-continue').isDisabled()))
       await page.locator('#title-continue').click();
     else{
       await page.locator('#title-new').click();
-      await page.getByRole('button',{name:'New Normal game',exact:true}).click();
-      await page.getByRole('button',{name:/^English(?: ✓)?$/}).click();
-      await page.getByRole('button',{name:'Standard death and refuge recovery',exact:true}).click();
+      await page.getByRole('button', { name: /^Choose Hero/ }).click();
       await page.getByRole('button',{name:/Paladin/}).first().click();
     }
   }
@@ -52,18 +51,24 @@ async function enterGame(page){
     null,{timeout:180000});
   await page.waitForFunction(()=>document.querySelector('#modal')?.hidden===true);
 }
-async function setOptimizationMode(page,mode) {
+async function enablePixiPreset(page) {
   await page.locator('#menu-button').click();
-  await page.getByRole('button',{name:'Game and settings',exact:true}).click();
-  await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
-  await page.locator('select[aria-label="Optimization Mode"]').selectOption(mode);
-  await page.evaluate(()=>Prototype.closeMenu());
+  await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+  await page.getByRole('button', { name: 'Pixi graphics', exact: true }).click();
+  const preset = page.getByRole('switch', { name: /^Optimization Mode/ });
+  await preset.click();
+  assert.equal(await preset.getAttribute('aria-checked'), 'true');
+  await page.evaluate(() => Prototype.closeMenu());
 }
 async function switchPixi(page){
   await page.locator('#menu-button').click();
-  await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+  await page.getByRole('button',{name:'Settings',exact:true}).click();
   await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+  await page.getByRole('button', { name: 'Canvas graphics', exact: true }).click();
   await page.locator('select[aria-label="Optimization Mode"]').selectOption('off');
+  await page.locator('#close-button').click();
+  await page.getByRole('button', { name: 'Renderer and recovery', exact: true }).click();
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
   await page.waitForFunction(()=>{
     const r=Prototype.experimentalGraphics;
@@ -89,6 +94,11 @@ async function main(){
         '--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']
     });
     const context=await browser.newContext({viewport:{width:1180,height:750}});
+    await context.addInitScript(() => {
+      localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
+      localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+      localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+    });
     const page=await context.newPage();
     const errors=[];
     page.on('pageerror',e=>errors.push(String(e)));
@@ -132,8 +142,7 @@ async function main(){
         sourceCount:g.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length,
         lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
         motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
-        optimized:Prototype.experimentalGraphics.backgroundOptimized,
-        optimizationSetting:localStorage.getItem('azeroth-optimization-mode-v1'),
+        preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1'))?.preset ?? false,
         time:g.s.clock
       };
     });
@@ -141,12 +150,10 @@ async function main(){
     assert.equal(withWraith.phase,'night','Wraith scene must be night');
     const gpu=page.locator('#world-pixi-experimental');
     assert((await gpu.screenshot({path:path.join(out,'marches-wraith-pixi.png')})).length>1024);
-    // The emergency graphics override intentionally enables Optimization
-    // under critical software-GPU load even when Off is the saved preference.
-    // Compare Wraith contribution in one STABLE effective state instead of
-    // confusing a genuine emergency tier transition with missing lighting.
-    await setOptimizationMode(page,'on');
-    await page.waitForFunction(()=>Prototype.experimentalGraphics.backgroundOptimized===true);
+    // Match the current Pixi preset across both screenshots. Canvas
+    // Optimization no longer controls Pixi's graphics or particle policy.
+    await enablePixiPreset(page);
+    await page.waitForFunction(()=>Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes===0);
     // This source test must isolate ONE fixed living lantern; otherwise
     // ordinary Marches Wraith spawns while the software GPU is preparing can
     // replace the removed light and make a correct renderer look broken.
@@ -160,8 +167,7 @@ async function main(){
     const withWraithOn=await page.evaluate(()=>({
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
       motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
-      optimized:Prototype.experimentalGraphics.backgroundOptimized,
-      optimizationSetting:localStorage.getItem('azeroth-optimization-mode-v1'),
+      preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1'))?.preset ?? false,
       wraithCount:Prototype.game.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length
     }));
     assert((await gpu.screenshot({path:path.join(out,'marches-wraith-pixi-opt-on.png')})).length>1024);
@@ -179,8 +185,7 @@ async function main(){
     const withoutWraith=await page.evaluate(()=>({
       mode:Prototype.experimentalGraphics.mode,
       zone:Prototype.game.zoneId,
-      optimized:Prototype.experimentalGraphics.backgroundOptimized,
-      optimizationSetting:localStorage.getItem('azeroth-optimization-mode-v1'),
+      preset:JSON.parse(localStorage.getItem('azeroth-pixi-quality-v1'))?.preset ?? false,
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
       motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
       sourceCount:Prototype.game.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length
@@ -193,11 +198,9 @@ async function main(){
     assert.deepEqual(errors,[], 'No page errors during actual atmosphere painting');
     assert.equal(withWraith.gameSame,true,'GPU transition replaced the live campaign');
     assert.equal(withWraith.wraithAlive,true,'Wraith must still exist before computing GPU light parity');
-    assert.equal(withWraith.optimizationSetting,'off','Initial Off preference must be selected');
-    assert.equal(withWraithOn.optimizationSetting,'on','Controlled On preference must persist');
-    assert.equal(withWraithOn.optimized,true);
-    assert.equal(withoutWraith.optimizationSetting,'on','Same On preference must persist after Wraith removal');
-    assert.equal(withoutWraith.optimized,true,'No emergency state transition across compared frames');
+    assert.equal(withWraith.preset,false,'Pixi preset starts Off');
+    assert.equal(withWraithOn.preset,true,'Preset stays On with the lantern');
+    assert.equal(withoutWraith.preset,true,'Preset stays On after lantern removal');
     assert.equal(withWraithOn.wraithCount,1,
       'Matched-source comparison must contain only one injected living Wraith');
     assert.equal(withoutWraith.sourceCount,0,

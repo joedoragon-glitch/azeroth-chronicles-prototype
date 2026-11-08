@@ -13,7 +13,7 @@ for (const language of ['en', 'es']) {
     return button;
   };
   elements.get('menu-button').click();
-  byLabel(language === 'en' ? 'Game and settings' : 'Juego y ajustes').click();
+  byLabel(language === 'en' ? 'Settings' : 'Ajustes').click();
   byLabel(language === 'en' ? 'Controls' : 'Controles').click();
   const controlsMenu = elements.get('modal-content');
   controlsMenu.scrollTop = 85;

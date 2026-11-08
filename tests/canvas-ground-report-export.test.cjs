@@ -51,8 +51,8 @@ for (const language of ['en', 'es']) {
     button.click();
   };
   elements.get('menu-button').click();
-  click(language === 'es' ? 'Juego y ajustes' : 'Game and settings');
-  click(language === 'es' ? 'Pantalla y rendimiento' : 'Screen and performance');
+  click(language === 'es' ? 'Ajustes' : 'Settings');
+  click(language === 'es' ? 'Herramientas de prueba' : 'Playtest tools');
   click(language === 'es' ? 'Exportar informe de prueba' : 'Export playtest report');
   assert.equal(exported.length, 1, 'one actual playtest JSON export');
   assert.equal(exported[0].type, 'application/json');

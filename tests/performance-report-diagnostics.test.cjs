@@ -24,13 +24,12 @@ const { shell } = require('./helpers/production-shell.cjs');
     };
     const openPerformance = () => {
       elements.get('menu-button').click();
-      click(label('Game and settings', 'Juego y ajustes'));
-      click(label('Screen and performance', 'Pantalla y rendimiento'));
+      click(label('Settings', 'Ajustes'));
+      click(label('Playtest tools', 'Herramientas de prueba'));
     };
     openPerformance();
     assert(actions().some((item) => item.textContent.startsWith(
       label('Export playtest report', 'Exportar informe de prueba'))));
-    click(label('Show performance details', 'Mostrar detalles de rendimiento'));
     click(label('Start renderer profiling', 'Iniciar registro del renderizador'));
     assert(actions().some((item) => item.textContent.startsWith(
       label('Stop renderer profiling', 'Detener registro del renderizador'))));
@@ -149,6 +148,7 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert(!Object.prototype.hasOwnProperty.call(capture, 'campaign'),
       'diagnostic data never embeds game state');
     click(label('Clear renderer profiling', 'Borrar registro del renderizador'));
+    click(label('Confirm clear capture', 'Confirmar borrado de la grabación'));
     click(label('Export playtest report', 'Exportar informe de prueba'));
     const cleared = JSON.parse(await exported.text());
     assert(cleared.performance.frameProfile.slowdownIncidents.records.length >= 1,
@@ -178,8 +178,7 @@ const { shell } = require('./helpers/production-shell.cjs');
       assert(entry && !entry.disabled, 'Missing title settings action: ' + labelText);
       entry.click();
     };
-    settingsClick(label('Screen and performance', 'Pantalla y rendimiento'));
-    settingsClick(label('Show performance details', 'Mostrar detalles de rendimiento'));
+    settingsClick(label('Playtest tools', 'Herramientas de prueba'));
     assert(settingsActions().some((item) => item.textContent.startsWith(
       label('Stop renderer profiling', 'Detener registro del renderizador'))),
       'profiler remains opt-in active after document restart');

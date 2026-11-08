@@ -156,7 +156,7 @@ for (const [preference, skipping] of [
   // Auto Optimization would legitimately choose a lighter graphics mode.
   // A player-selected Off remains respected outside true critical emergencies.
   const storage = new Map([
-    ['azeroth-performance-defaults-dev170-v1', 'applied'],
+    ['azeroth-pixi-settings-baseline-v1', 'applied'],
     ['azeroth-optimization-auto-default-v1', 'applied'],
     ['azeroth-optimization-mode-v1', 'off'],
   ]);

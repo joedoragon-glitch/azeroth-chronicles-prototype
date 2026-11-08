@@ -27,15 +27,11 @@ exports.verifyCamera = async function (page, results, tag, touch, capture = fals
     const hud = await page.locator('#hud').boundingBox();
     for (const scale of [1, 1.5, 1.75]) {
       await page.keyboard.press('Escape');
-      await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+      await page.getByRole('button', { name: 'Settings', exact: true }).click();
       await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
-      await page.getByRole('button', { name: 'Camera zoom', exact: true }).click();
-      await page
-        .getByRole('button', {
-          name: new RegExp('^Camera ' + Math.round(scale * 100) + '%(?: ✓)?$'),
-          exact: true,
-        })
-        .click();
+      await page.getByRole('button', { name: 'Display', exact: true }).click();
+      await page.getByRole('combobox', { name: 'Camera zoom', exact: true }).selectOption(String(scale));
+      await page.evaluate(() => Prototype.closeMenu());
       assert(await page.locator('#modal').isHidden());
       const probe = await page.evaluate(() => {
         const p = Prototype,
