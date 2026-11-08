@@ -96,10 +96,7 @@ for (const language of ['en', 'es']) {
     assert(rows().some((node) => node.className === 'menu-section' && node.textContent === t(en, es)));
   };
   // All screen, renderer, graphics and pacing settings are inline: no child pages.
-  section('Display', 'Pantalla');
   section('Renderer and recovery', 'Motor gráfico y recuperación');
-  section('Canvas graphics', 'Gráficos de Canvas');
-  section('Frame pacing', 'Ritmo de fotogramas');
   assert(!rows().some((node) => node.textContent.startsWith(
     t('Export playtest report', 'Exportar informe de prueba'))));
   assert(!rows().some((node) => ['menu-action', 'menu-action menu-highlight'].includes(node.className)),
@@ -109,7 +106,15 @@ for (const language of ['en', 'es']) {
     'preferred renderer belongs to the selected graphics control, not a duplicate label');
   section('Active renderer', 'Motor gráfico activo');
   section('Effective density', 'Densidad efectiva');
-  section('Active draw target', 'Objetivo de dibujo activo');
+  assert(!rows().some((node) => node.className === 'menu-section' &&
+    [t('Display', 'Pantalla'), t('Canvas graphics', 'Gráficos de Canvas'),
+      t('Frame pacing', 'Ritmo de fotogramas'),
+      t('Active draw target', 'Objetivo de dibujo activo'),
+      t('Active layout', 'Disposición activa'),
+      t('Effective optimization', 'Optimización efectiva')].includes(node.textContent)),
+    'redundant headings and status readouts should be absent');
+  assert(!e.get('modal').textContent.includes('Choose phone or desktop controls. Your save stays the same.'),
+    'unneeded layout explanation should be absent');
   assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 6);
 
   // On a fresh title screen the Canvas DOM surface is not a failed Pixi world.
@@ -129,8 +134,10 @@ for (const language of ['en', 'es']) {
   assert(screenEntry, 'Screen and performance is accessible from title settings');
   screenEntry.click();
   const titleSections = titleActions().filter((node) => node.className === 'menu-section');
-  assert(titleSections.some((node) => node.textContent === t('Pixi graphics', 'Gráficos de Pixi')),
-    'the planned Pixi backend gets graphics settings before gameplay');
+  assert(!titleSections.some((node) => node.textContent === t('Pixi graphics', 'Gráficos de Pixi')),
+    'no redundant Pixi graphics heading at the title screen');
+  assert(titleActions().some((node) => node.textContent.includes(t('Optimization Mode', 'Modo de optimización'))),
+    'Pixi optimization remains available inline on the title screen');
   assert(!titleSections.some((node) => node.textContent.startsWith(
     t('Active renderer', 'Motor gráfico activo'))),
     'do not present the title Canvas surface as a world renderer');
@@ -158,7 +165,8 @@ for (const language of ['en', 'es']) {
   assert.equal(s.Prototype.experimentalGraphics.mode, 'canvas2d');
 
   selectSetting('Graphics renderer', 'Motor gráfico', 'canvas2d');
-  section('Canvas graphics', 'Gráficos de Canvas');
+  assert(setting('Optimization Mode', 'Modo de optimización'),
+    'Canvas optimization remains available without a graphics heading');
   selectSetting('Screen layout', 'Disposición de pantalla', 'phone');
   assert.equal(s.Prototype.platform.mode, 'phone');
   assert.equal(storage.get(s.PrototypePlatform.preferenceKey), 'phone');
