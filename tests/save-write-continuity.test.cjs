@@ -118,6 +118,19 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
   assert.equal(saved.get(Persistence.saveKey('normal')), written);
 }
 
+// Existing producer-side limits already prevent other otherwise fatal writes.
+{
+  const c = new Campaign('normal', 'paladin', () => 0.5);
+  for (let i = 0; i < 410; i++) c.event('gold');
+  assert.equal(c.s.statistics.events.length, 400);
+  Campaign.validate(c.snapshot());
+  c.s.rescued.archive = true;
+  c.hero.tonicStock = 10000;
+  const gold = c.hero.gold;
+  assert.equal(c.purchasePreparationTonic(), false);
+  assert.equal(c.hero.gold, gold, 'no charge at the existing potion-stock ceiling');
+}
+
 // High but finite v4 capacities must be enforced *before* a paid action
 // mutates the world. These are artificial boundary fixtures, not normal usage.
 {
