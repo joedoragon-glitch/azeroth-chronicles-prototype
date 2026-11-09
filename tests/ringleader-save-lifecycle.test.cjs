@@ -199,6 +199,62 @@ assert(!one.s.pending[oneMembers[0].species]);
 assert(!oneZone.enemies.some((enemy) => enemy.id === solo.id));
 assert(oneMembers.every((enemy) => oneZone.enemies.some((present) => present.id === enemy.id)));
 Campaign.validate(one.snapshot());
+// A real pre-fix v4 save could validly contain 1,999 actors, most of them
+// paid/generated corpses. Reconstruct that legacy payload shape with native
+// enemy records and verify the next ordinary cohort is pruned *before* spawn,
+// not merely after its defeat. Never rewrite the old durable save to achieve it.
+{
+  const old = new Campaign('normal', 'paladin', () => 0.2);
+  const oldZone = old.zone();
+  const pair = oldZone.enemies.filter(
+    (enemy) => enemy.pack === members[0].pack && enemy.type === 'mob' && enemy.form === 'normal',
+  );
+  assert.equal(pair.length, 2);
+  for (const enemy of pair) {
+    enemy.hp = 0;
+    enemy.heroParticipated = true;
+    old.kill(enemy);
+  }
+  const key = pair[0].species;
+  assert(old.s.pending[key] && !old.s.pending[key].active);
+  const original = new Set(oldZone.enemies.map((enemy) => enemy.id));
+  while (oldZone.enemies.length < 1999) {
+    const corpse = old.makeEnemy(
+      { species: key, name: 'Old paid Ringleader', form: 'ringleader',
+        level: pair[0].level + 2, hp: pair[0].baseHp, damage: pair[0].baseDamage,
+        gold: 0, xp: 0 },
+      { x: pair[0].home.x, y: pair[0].home.y },
+    );
+    corpse.eliteKey = key;
+    corpse.hp = 0;
+    corpse.deathPaid = true;
+    oldZone.enemies.push(corpse);
+  }
+  assert.equal(oldZone.enemies.length, 1999);
+  const historical = old.snapshot();
+  Campaign.validate(historical);
+  const current = Campaign.restore(historical, () => 0.2);
+  assert.equal(current.zone().enemies.length, 1999);
+  current.s.time += 2.1;
+  current.updateElites(2.1);
+  assert(current.s.pending[key]?.active);
+  assert.equal(current.zone().enemies.filter(
+    (enemy) => enemy.form === 'ringleader' && enemy.hp > 0 && enemy.eliteKey === key,
+  ).length, 2);
+  assert(current.zone().enemies.length < 64, 'legacy corpses retire before new leaders arrive');
+  assert([...original].every((id) => current.zone().enemies.some((enemy) => enemy.id === id)));
+  Campaign.validate(current.snapshot());
+  const storage = new Map();
+  const adapter = Persistence.create({
+    Campaign,
+    storage: {
+      getItem: (k) => storage.get(k) ?? null,
+      setItem: (k, v) => storage.set(k, v),
+      removeItem: (k) => storage.delete(k),
+    },
+  });
+  assert(adapter.save(current, {}), 'old valid v4 session remains saveable during its new cohort');
+}
 console.log(
-  'PASS #634 native 984-wave bound, live-reference protection, original packs, rewards, dungeon/night leaders and v4 save/restore',
+  'PASS #634 native 984-wave bound, pre-fix legacy near-cap recovery, live-reference protection, original packs, rewards, dungeon/night leaders and v4 save/restore',
 );
