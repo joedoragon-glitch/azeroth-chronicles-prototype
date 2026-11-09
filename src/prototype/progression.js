@@ -499,6 +499,9 @@
 
       trainCompanionVitality(family = 'archive') {
         if (family !== 'archive' || !this.s.rescued.archive) return false;
+        // v4 saves allow at most one million ranks. This very distant edge
+        // must refuse a new purchase before money or companion stats change.
+        if (this.companionVitalityRank() >= 1000000) return false;
         const cost = this.companionVitalityCost();
         if (!this.spend(cost)) return false;
         this.s.companionVitalityRank = this.companionVitalityRank() + 1;
