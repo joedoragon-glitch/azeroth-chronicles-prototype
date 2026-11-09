@@ -33,7 +33,7 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
     : [Campaign.data.regions[0].id, Campaign.dungeonIds[0],
         Campaign.rules.sideDungeons[0].id];
   for (const zoneId of selected) {
-    const c = new Campaign(mode, 'paladin', () => 0.5);
+    let c = new Campaign(mode, 'paladin', () => 0.5);
     c.enter(zoneId);
     for (let pass = 0; pass < (mode === 'normal' ? 2 : 1); pass++) {
       const snapshot = c.snapshot();
@@ -44,7 +44,7 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
       const { storage } = memory();
       const persist = Persistence.create({ Campaign, storage });
       assert(persist.save(restored, {}), mode + ':' + zoneId + ' pass ' + pass);
-      c.s = restored.s;
+      c = restored; // Continue with the genuine restored instance and its own caches.
       c.enter(zoneId);
       visits++;
     }
