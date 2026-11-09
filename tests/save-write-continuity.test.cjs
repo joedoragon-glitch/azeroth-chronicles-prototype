@@ -118,6 +118,25 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
   assert.equal(saved.get(Persistence.saveKey('normal')), written);
 }
 
+// High but finite v4 capacities must be enforced *before* a paid action
+// mutates the world. These are artificial boundary fixtures, not normal usage.
+{
+  const c = new Campaign('normal', 'paladin', () => 0.5);
+  c.s.rescued.archive = true;
+  c.s.companionVitalityRank = 1000000;
+  const gold = c.hero.gold;
+  assert.equal(c.trainCompanionVitality(), false);
+  assert.equal(c.hero.gold, gold, 'training at the v4 ceiling cannot charge the hero');
+}
+{
+  const c = new Campaign('normal', 'paladin', () => 0.5);
+  c.zone().buildings = Array.from({ length: 300 }, (_, i) => ({ id: 'fixture-barracks-' + i }));
+  const gold = c.hero.gold;
+  assert.equal(c.build(), false);
+  assert.equal(c.hero.gold, gold, '301st Barracks cannot be purchased');
+  assert.match(c.messages.at(-1), /Barracks capacity/);
+}
+
 // Historical #605: the 5,000-loot constraint still has a producible technical
 // failure boundary. This fixture intentionally holds XP at zero and is *not*
 // evidence of 5,001 rewards through ordinary play; preserve real money and
