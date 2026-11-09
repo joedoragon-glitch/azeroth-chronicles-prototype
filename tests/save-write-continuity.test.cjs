@@ -108,6 +108,10 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
   fresh.hero.gold += 1;
   assert.equal(refusing.save(fresh, {}), false);
   assert.equal(saved.get(Persistence.saveKey('normal')), lastGood);
+  assert(
+    Campaign.restore(JSON.parse(Persistence.prepareExternalExport(fresh, Campaign).text)),
+    'valid in-memory progress remains manually exportable despite a storage quota error',
+  );
 }
 
 // A second tab or stale writer must not roll back a newer primary.
