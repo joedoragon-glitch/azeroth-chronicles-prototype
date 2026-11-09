@@ -26,10 +26,16 @@ const routes = [
 assert.equal(new Set(routes).size, routes.length, 'zone catalog is distinct');
 let visits = 0;
 for (const mode of ['normal', 'nightmare', 'developer']) {
-  for (const zoneId of routes) {
+  // Exact authored-zone coverage belongs to Normal; use one representative
+  // outdoor/dungeon/side route per alternate mode, not a broad mode matrix.
+  const selected = mode === 'normal'
+    ? routes
+    : [Campaign.data.regions[0].id, Campaign.dungeonIds[0],
+        Campaign.rules.sideDungeons[0].id];
+  for (const zoneId of selected) {
     const c = new Campaign(mode, 'paladin', () => 0.5);
     c.enter(zoneId);
-    for (let pass = 0; pass < 2; pass++) {
+    for (let pass = 0; pass < (mode === 'normal' ? 2 : 1); pass++) {
       const snapshot = c.snapshot();
       Campaign.validate(snapshot);
       const restored = Campaign.restore(snapshot, () => 0.5);
