@@ -10116,10 +10116,21 @@
           craftedDecoration('crown-fortress-checkpoint');
           break;
         case 'foundry':
-          craftAt(-12, 2, 0.8, () => hearth(true));
-          blockwork(22, -45, 12, 56, '#7c877c', 8);
-          fillOval(27, -44, 7, 3, '#354b3d', 0.4);
-          craftAt(25, 7, 0.45, () => table(30));
+          // Keep the doorway at the existing interaction marker. Match the
+          // working yard's dressed basalt, fired trim and capped exhausts.
+          blockwork(-41, -28, 82, 45, '#69646e', 7);
+          craftedRoof(47, -28, -50, 2);
+          for (const x of [-33, 28]) {
+            blockwork(x, -48, 11, 60, '#7e7580', 7);
+            softRect(x - 2, -50, 15, 6, '#aaa0a3', 1.4);
+            oval(x + 5, -51, 5, 2.2, '#363039');
+          }
+          recessedDoor(0, -25, 26, 39, true);
+          softRect(-16, 12, 32, 4, '#a08c7f', 1);
+          for (const x of [-21, 21]) {
+            softRect(x - 3, -19, 6, 12, '#332e38', 1);
+            line([[x, -17], [x, -10]], '#c28c64', 1.5);
+          }
           break;
         case 'shelf':
           rockPiece(0, 11, 33, 19, true);
@@ -20178,11 +20189,42 @@
       points.every((p) => p.y > viewport.height + margin)
     );
   }
+  // World-anchored traces share the live terrain layer and stay beneath actors.
+  const crownThermalVents = R.crownThermalWorksScenes.filter(([, , kind]) =>
+    kind === 'geothermal-heat-intake',
+  );
+  function crownTerrainMotion(visible, line, time) {
+    for (const [x, y] of crownThermalVents) {
+      if (!visible({ x, y })) continue;
+      const drift = Math.sin(time * 1.35 + x) * 4;
+      for (let i = 0; i < 2; i++) {
+        const offset = i * 9;
+        line(
+          { x: x - 19 + offset, y: y + 19 + offset },
+          { x: x - 7 + offset + drift, y: y + 11 + offset + drift },
+          '#dcad7c43',
+          1,
+        );
+      }
+    }
+    // A short gust crosses only the exposed ground beside the communal roost.
+    const gust = (time % 18) / 18;
+    const origin = { x: 1665, y: 3240 };
+    if (gust > 0.22 || !visible(origin)) return;
+    const travel = gust * 290;
+    const opacity = Math.round(Math.sin((gust / 0.22) * Math.PI) * 96)
+      .toString(16)
+      .padStart(2, '0');
+    for (let i = 0; i < 4; i++) {
+      const x = origin.x + travel + i * 9;
+      const y = origin.y + i * 13 + Math.sin(time * 1.7 + i) * 5;
+      line({ x, y }, { x: x + 5 + i, y: y - 1 }, '#c4b6ae' + opacity, 1);
+    }
+  }
+
   // World-space surfaces avoid losing narrow barriers between coarse tile samples.
-  // Original water/lava motion as a small, read-only list of screen-space
-  // strokes. Pixi's immutable 512px terrain tiles must omit ONLY these strokes,
-  // then draw the same authored ripples over the cached background.
-  // No new animation family, biome, palette or saved/gameplay state.
+  // Pixi's immutable terrain tiles omit these live strokes and draw them
+  // over the cached background using the same world-space composition.
   function terrainMotionLines(region, screen, viewport, time) {
     if (
       !Number.isInteger(region) ||
@@ -20282,6 +20324,7 @@
         strip(kind, p.x1, p.x2, at, p.y2);
       }
     }
+    if (region === 4) crownTerrainMotion(visible, line, time);
     return lines;
   }
 
@@ -20892,14 +20935,43 @@
       for (const y of [450, 700]) line({ x: 450, y }, { x: 790, y }, '#b5a081', 2);
     }
     if (region === 4) {
-      // Exposed basalt at Crownwatch's north shoulder. Existing streets
-      // overpaint the shelf and retain their authored grades and collision.
-      poly([{x: 765, y: 345}, {x: 855, y: 300}, {x: 1008, y: 332},
-        {x: 1090, y: 395}, {x: 986, y: 425}, {x: 852, y: 402}], '#393340');
-      poly([{x: 765, y: 345}, {x: 852, y: 402}, {x: 986, y: 425},
-        {x: 979, y: 438}, {x: 842, y: 414}], '#292633');
-      poly([{x: 815, y: 350}, {x: 863, y: 321}, {x: 987, y: 346},
-        {x: 1025, y: 378}, {x: 974, y: 392}, {x: 866, y: 374}], '#514959');
+      // Build the visible edge from staggered ledges, then let the existing
+      // roads and civic paving cover the cuts where they cross the shelf.
+      const shoulder = [
+        { x: 765, y: 345 },
+        { x: 855, y: 300 },
+        { x: 1008, y: 332 },
+        { x: 1090, y: 395 },
+        { x: 1062, y: 427 },
+        { x: 980, y: 451 },
+        { x: 915, y: 445 },
+        { x: 842, y: 414 },
+      ];
+      if (!outsideScreen(shoulder.map(screen), bounds, 60)) {
+        poly(shoulder, '#292633');
+        poly([
+          ...shoulder.slice(0, 4),
+          { x: 1001, y: 427 },
+          { x: 920, y: 429 },
+          { x: 852, y: 402 },
+        ], '#393340');
+        poly([
+          { x: 815, y: 350 },
+          { x: 863, y: 321 },
+          { x: 987, y: 346 },
+          { x: 1025, y: 378 },
+          { x: 974, y: 392 },
+          { x: 866, y: 374 },
+        ], '#514959');
+        for (const [x, y, dx, dy] of [
+          [849, 399, -7, 14],
+          [896, 420, -4, 14],
+          [949, 429, -2, 17],
+          [1004, 426, 5, 15],
+          [1042, 413, 8, 15],
+        ]) line({ x, y }, { x: x + dx, y: y + dy }, '#655966', 1.3);
+      }
+      if (!omitTerrainMotion) crownTerrainMotion(visible, line, time);
     }
     for (const p of R.terrain[region]) {
       const kind = p.kind || 'cliff';
@@ -22002,7 +22074,7 @@
     optimized = false,
     time = 0,
   } = {}) {
-    if (optimized) return [];
+    if (optimized || (region === 4 && !dungeon && !room)) return [];
     const dayMotes = ['#eadf9e', '#b8d8ca', '#dedcc7', '#b98569', '#aa8ec0'],
       nightMotes = ['#c5cbda', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
       count = dungeon || room ? 8 : region === 3 || region === 4 ? 18 : 14,

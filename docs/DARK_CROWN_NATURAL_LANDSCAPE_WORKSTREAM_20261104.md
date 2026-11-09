@@ -2,7 +2,7 @@
 
 ## Current implementation and acceptance — 8 November 2026
 
-The approved reference pair is **Craters of the Moon, Idaho (primary)** and **Newberry, Oregon (complementary)**. All sixteen owner selections and their written blends below remain binding. #794 supplied the field model now integrated into #769. The exact audited head is `47b00c1` (runtime dev.286). The design questionnaire is complete. The natural landscape is playable in the draft and still requires visual acceptance and performance correction.
+The approved reference pair is **Craters of the Moon, Idaho (primary)** and **Newberry, Oregon (complementary)**. All sixteen owner selections and their written blends below remain binding. #794 supplied the field model now integrated into #769. The dev.288 draft follows the last recorded focused CI at `47b00c1` (runtime dev.286). The design questionnaire is complete. The natural landscape is playable in the draft and still requires visual acceptance and performance correction.
 
 | Decision | Evidence on the draft | What remains before acceptance |
 | --- | --- | --- |
@@ -10,17 +10,17 @@ The approved reference pair is **Craters of the Moon, Idaho (primary)** and **Ne
 | NL02 Broad rounded lobes | Seven authored overlapping flow lobes in `dark-crown-landscape.js` | Verify rounded edges frame islands and remain visible under game zoom. |
 | NL03 Layered ridges and walkable open ground | Crownwatch basalt shoulder, native walking checks | Review depth and skyline composition; strengthen weak silhouettes without adding collision. |
 | NL04 Charcoal, slate and subdued violet | Low-saturation pigment formula | Inspect exposure and color in both renderers, day and night. |
-| NL05 Gradual weathering and drifting ash | Age blending and shared corner gradients | Verify legible young-to-old flow transitions; localized drifting ash remains unverified. |
+| NL05 Gradual weathering and drifting ash | Age blending, shared corner gradients and a short, localized gust beside the communal roost | Verify legible young-to-old transitions and subtle ash in play. |
 | NL06 Three or four memorable islands | Exactly three named, authored habitat footprints with a subdued older-soil tint | Walk through each and check that it reads at landscape-phone scale. |
 | NL07 Western and southern emphasis | Southwest and southern-fold sites plus the Ash Refuge perimeter | Verify route order and separation in play. |
 | NL08 Golden bunchgrasses and sparse flowers | Site-filtered bunchgrass and occasional wildflower placements | Check density and visibility against rock without a uniform grass carpet. |
 | NL09 Small sheltered conifer clusters | Pine candidates restricted to older cores of the two distant islands | Verify final placed silhouettes and shelter, including representative seeds. |
 | NL10 Ropes, clinker/fractures and granular cinders | Dev.287 adds clustered curved ribs on younger basalt, jagged marks on fractured ground, and granular speckling on ash and older ground. | Reviewed at landscape-phone scale in sampled views. Confirm the full walked transition and natural composition in the final sweep. |
-| NL11 Crownwatch integrated into old shelves | Painted north shoulder, existing streets and city footprints | Walk the city reveal and check that basalt reads as a foundation rather than a detached patch. |
+| NL11 Crownwatch integrated into old shelves | Staggered exposed basalt ledges and a blended shelf beneath existing streets and city footprints | Walk the city reveal and check that basalt reads as a foundation rather than a detached patch. |
 | NL12 Ash Refuge wild island | A dedicated older-ground island and a separate cultivated courtyard | Verify wild-to-domestic contrast on foot. |
-| NL13 Industrial scoria, rust and ash margins | Regional mineral and oxidation fields, protected hot works and freight corridors | Check the margin at glassworks, ceramic works and Foundry; add local treatment where generic ground persists. |
-| NL14 Heat-scarred roost to cooler pioneer margins | Protected roosts, heatwork exclusions and separate communal roost art | Verify the visible ecological gradient and absence of greenery in active hot cores. |
-| NL15 Cool dry night, occasional local ash and geothermal shimmer/warmth | Night captures and existing localized practical lighting | Verify cool open views, subtle effects and warning readability. Localized ash and shimmer remain unverified. |
+| NL13 Industrial scoria, rust and ash margins | Four locally blended rusty scoria margins at the glass, ceramic and Foundry workyards | Review the relationship between rough margins and the working yards in play. |
+| NL14 Heat-scarred roost to cooler pioneer margins | Heat-darkened communal shelf with a fading margin into the southern island, plus existing vegetation exclusions | Verify the visible ecological gradient and absence of greenery in active hot cores. |
+| NL15 Cool dry night, occasional local ash and geothermal shimmer/warmth | Existing practical lights, intermittent roost ash and shared terrain shimmer at the two geothermal intakes | Verify cool open views, subtle effects and warning readability in play. |
 | NL16 Civilization → lava → refuge rhythm | All three scene types exist and native routes are available | Capture continuous transitions; isolated screenshots cannot establish pacing or composition. |
 
 The active outdoor T005 surface is retired in the draft. Its approved source PNG and rollback record remain. The 2,304-tile field check, native route and restore checks, and terrain-only pixel comparison establish technical behavior. They do not certify the above visual decisions. Keep the original molten divide, exactly two main bridges, the game's fantasy architecture, combat warnings, and v4 saves. Read the [current completion plan](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md#current-completion-register) for sequencing and the release hold.

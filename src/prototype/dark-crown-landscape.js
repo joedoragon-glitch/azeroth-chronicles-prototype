@@ -3,7 +3,7 @@
   'use strict';
 
   const VERSION = 2;
-  const PAINT_REVISION = 3;
+  const PAINT_REVISION = 4;
   const WORLD_SIZE = 3800;
   const clamp = (n) => Math.max(0, Math.min(1, n));
   const smooth = (t) => t * t * (3 - 2 * t);
@@ -127,12 +127,40 @@
     Object.freeze({ id: 'southern-fold', x: 1770, y: 3410, rx: 240, ry: 195, seed: 181 }),
   ]);
   const authored = { flows, islands };
+  const crownwatchShelf = { x: 940, y: 390, rx: 310, ry: 145, angle: 0.24 };
+  const workyardMargins = [
+    { x: 2930, y: 890, rx: 270, ry: 180, angle: -0.38 },
+    { x: 3000, y: 1280, rx: 220, ry: 135, angle: 0.23 },
+    { x: 1980, y: 2730, rx: 270, ry: 180, angle: 0.27 },
+    { x: 2230, y: 2200, rx: 210, ry: 160, angle: -0.37 },
+  ];
+  const roostScar = { x: 1780, y: 3270, rx: 185, ry: 95, angle: 0.35 };
+
+  function samplePaintField(x, y) {
+    const field = sample(x, y, authored);
+    const shelf = flowMask(x, y, crownwatchShelf);
+    const scoria = workyardMargins.reduce(
+      (coverage, margin) => Math.max(coverage, flowMask(x, y, margin)),
+      0,
+    );
+    const scar = flowMask(x, y, roostScar);
+    // Mineral gradients are underlays. Roads, yards and the lava channel
+    // keep their original geometry and overpaint the local geology.
+    return {
+      ...field,
+      cinder: Math.max(field.cinder, scoria * 0.84, scar * 0.92),
+      island: field.island * (1 - scar),
+      shelf,
+      scoria,
+      scar,
+    };
+  }
   function pigment(field) {
-    const age = field.age;
+    const { age, oxidization, island, shelf, scoria, scar } = field;
     return [
-      48 + age * 21 + field.oxidization * 18 - field.island * 5,
-      47 + age * 17 + field.island * 18,
-      57 + age * 19 - field.island * 20,
+      48 + age * 21 + oxidization * 18 - island * 5 - shelf * 9 + scoria * 9 - scar * 8,
+      47 + age * 17 + island * 18 - shelf * 10 - scoria * 5 - scar * 11,
+      57 + age * 19 - island * 20 - shelf * 8 - scoria * 8 - scar * 9,
     ];
   }
   const rgb = (channels) => 'rgb(' + channels.map(Math.round).join(',') + ')';
@@ -142,11 +170,11 @@
   const paintedFields = new Map();
   function authoredPaintField(x, y) {
     if (x < 0 || y < 0 || x > WORLD_SIZE + 80 || y > WORLD_SIZE + 80 || x % 80 !== y % 80 || x % 40)
-      return sample(x, y, authored);
+      return samplePaintField(x, y);
     const key = x * (WORLD_SIZE + 81) + y;
     let field = paintedFields.get(key);
     if (!field) {
-      field = sample(x, y, authored);
+      field = samplePaintField(x, y);
       paintedFields.set(key, field);
     }
     return field;
@@ -188,9 +216,10 @@
       tileY = y / 80;
     // Select marks by substrate so a lava lobe, a broken flow edge and a
     // cinder bed read differently at gameplay zoom. All share the tile cache.
-    const rope = field.material === 'young-basalt' && field.fracture < 0.58;
+    const rope = field.material === 'young-basalt' && field.fracture < 0.58 && field.cinder < 0.66;
     const clinker = !rope && field.fracture > 0.58 && field.cinder < 0.66;
     const grainCount = Math.round(5 + 8 * field.cinder);
+    const mineralGlint = field.scoria > 0.35 ? '#c384655c' : '#c7b0a94a';
     for (let n = 0; n < grainCount; n++) {
       const u = 10 + hash2(tileX, tileY, 401 + n * 23) * 60;
       const v = 10 + hash2(tileX, tileY, 719 + n * 31) * 60;
@@ -218,7 +247,7 @@
         ctx.lineTo(px + span * 0.25, py + bend * 2);
         ctx.lineTo(px + span, py - bend);
       } else {
-        ctx.strokeStyle = n % 3 === 0 ? '#c7b0a94a' : '#20202d62';
+        ctx.strokeStyle = n % 3 === 0 ? mineralGlint : '#20202d62';
         ctx.lineWidth = 0.8 + variation * 0.6;
         ctx.moveTo(px, py);
         ctx.lineTo(px + 0.6 + variation * 2.4, py - variation);
