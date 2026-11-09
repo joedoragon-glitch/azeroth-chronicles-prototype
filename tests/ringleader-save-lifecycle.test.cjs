@@ -57,8 +57,9 @@ for (let wave = 1; wave <= 984; wave++) {
   assert.equal(leaders.length, 2);
   if (wave === 1) {
     // Real outstanding references are stronger than retirement eligibility.
-    game.s.projectiles.push({ sourceId: leaders[0].id });
-    game.s.heroTarget = leaders[1].id;
+    // A still-travelling *incoming* shot can refer to the slain target.
+    // Outgoing enemy shots are correctly cancelled by cancelEncounter on death.
+    game.s.projectiles.push({ sourceId: 'hero', targetId: leaders[0].id });
     pinnedIds = leaders.map((enemy) => enemy.id);
   }
   defeat(leaders[0], false);
@@ -68,6 +69,7 @@ for (let wave = 1; wave <= 984; wave++) {
     assert(zone.enemies.some((enemy) => enemy.id === leaders[0].id));
   }
   defeat(leaders[1], false);
+  if (wave === 1) game.s.heroTarget = leaders[1].id;
   game.updateElites(0.01);
   assert(!game.s.pending[members[0].species]);
   if (wave === 1) {
@@ -125,6 +127,15 @@ function verifyGuardAndNight(zoneId, species, guard) {
     c.updateNight();
   }
   const z = c.zone();
+  if (!species) {
+    const candidates = z.enemies.filter(
+      (enemy) => enemy.type === 'mob' && enemy.form === 'normal' && !!enemy.guard === guard,
+    );
+    species = candidates.find(
+      (enemy) => candidates.filter((other) => other.species === enemy.species).length >= 2,
+    )?.species;
+    assert(species, zoneId + ' has an authored repeated guard species');
+  }
   const originals = z.enemies.filter(
     (enemy) =>
       enemy.species === species &&
@@ -159,7 +170,7 @@ function verifyGuardAndNight(zoneId, species, guard) {
   Campaign.validate(c.snapshot());
   assert(Campaign.restore(c.snapshot(), () => 0.2));
 }
-verifyGuardAndNight('crypt', 'skeleton', true);
+verifyGuardAndNight('crypt', null, true);
 verifyGuardAndNight('march', 'wraith', false);
 console.log(
   'PASS #634 native 984-wave bound, live-reference protection, original packs, rewards, dungeon/night leaders and v4 save/restore',
