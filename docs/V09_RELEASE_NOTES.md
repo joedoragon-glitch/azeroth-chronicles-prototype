@@ -1,8 +1,14 @@
-# So I Became the Dark Lord's Problem — October 2026 Community Snapshot
+# So I Became the Dark Lord's Problem — current release and planned v0.9.2
 
-**Published runtime: `0.9.1+snapshot.dev.119`. Today’s requested work is complete.** The former unpublished v0.9.0 candidate notice is preserved in [documentation history](PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md). It no longer describes release status.
+**Current published runtime (9 November 2026): `0.9.1+snapshot.dev.288`**, exact merged [main `e97dd771`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/e97dd771190ee83f37fc61d091671e4d110c3a36) and [successful GitHub Pages #42541651863](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42541651863). The later Dark Crown regional overhaul #769 is included; owner-device acceptance of this particular build is not implied. **v0.9.2 is the next planned functional-completion milestone, not a published release or approved release candidate.** The former v0.9.2 version/PWA draft [#781](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/781) is obsolete and must not be merged unchanged. The older dev.119 snapshot sections below are dated history, not live release notes.
 
-## 20 October published updates
+## Planned v0.9.2 — functional completion, not new feature expansion
+
+The next work is to reconcile actual dev.288 gameplay against the unresolved functional backlog, investigate the material long-session save-record risk [#634](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/634), and validate current early-game progression starting in Greenwood Vale, continuing region by region when evidence supports it. Prioritize reproducible defects in quests, rescues, battles, companion/Barracks services, saves/backups and travel; preserve stable existing mechanics and v4 compatibility. The [current development-state plan](DEVELOPMENT_STATE.md#v092-functional-completion-milestone--active-development-priority-9-november-2026) owns detailed scope/evidence, while [#213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) tracks acceptance. No 0.9.2 changes, tests, release version or publication are claimed by this plan.
+
+The current four hero classes and their existing Tap/Charged skills stay unchanged pending owner-led full playthroughs; the proposed fifth Strategist class, Field Labs, speculative class overhaul, broad new terrain/content and another general performance sprint are not 0.9.2 requirements. The recently published Dark Crown overhaul is baseline content, not an unfinished v0.9.2 feature. When a real candidate is prepared, revise release notes and versions against exact tested source, with separate consent for certification and deployment.
+
+## Historical 20 October published updates
 
 Improved adaptive performance/caches and crowd recovery; safer companion support, resource routes and one-press Recall; enemy healing/regrouping and nighttime balance; fortified ranged defense and clean arc landings; Frontier/Crown town, roads, river/lava and dungeon improvements; first-person Keeper Archive and NPC visibility; passage-fare recovery and visible update notices. All eleven pets have current roster/skill behavior, distinct roles and readable skill effects. Character appearance and selected procedural scenery/cottage replacements are live.
 
