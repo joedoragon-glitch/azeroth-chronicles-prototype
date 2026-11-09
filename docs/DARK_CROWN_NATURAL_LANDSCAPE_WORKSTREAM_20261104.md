@@ -2,7 +2,7 @@
 
 ## Current implementation and acceptance — 8 November 2026
 
-The approved reference pair is **Craters of the Moon, Idaho (primary)** and **Newberry, Oregon (complementary)**. All sixteen owner selections and their written blends below remain binding. #794 supplied the field model now integrated into #769. The dev.288 draft follows the last recorded focused CI at `47b00c1` (runtime dev.286). The design questionnaire is complete. The natural landscape is playable in the draft and still requires visual acceptance and performance correction.
+The approved reference pair is **Craters of the Moon, Idaho (primary)** and **Newberry, Oregon (complementary)**. All sixteen owner selections and their written blends below remain binding. #794 supplied the field model now integrated into #769. The dev.288 draft follows the last recorded focused CI at `47b00c1` (runtime dev.286). The design questionnaire is complete. The owner will review the landscape in the published game. Crown-entry performance is a separate follow-up based on the owner’s eventual playtest report.
 
 | Decision | Evidence on the draft | What remains before acceptance |
 | --- | --- | --- |
@@ -23,7 +23,7 @@ The approved reference pair is **Craters of the Moon, Idaho (primary)** and **Ne
 | NL15 Cool dry night, occasional local ash and geothermal shimmer/warmth | Existing practical lights, intermittent roost ash and shared terrain shimmer at the two geothermal intakes | Verify cool open views, subtle effects and warning readability in play. |
 | NL16 Civilization → lava → refuge rhythm | All three scene types exist and native routes are available | Capture continuous transitions; isolated screenshots cannot establish pacing or composition. |
 
-The active outdoor T005 surface is retired in the draft. Its approved source PNG and rollback record remain. The 2,304-tile field check, native route and restore checks, and terrain-only pixel comparison establish technical behavior. They do not certify the above visual decisions. Keep the original molten divide, exactly two main bridges, the game's fantasy architecture, combat warnings, and v4 saves. Read the [current completion plan](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md#current-completion-register) for sequencing and the release hold.
+The active outdoor T005 surface is retired in the draft. Its approved source PNG and rollback record remain. The 2,304-tile field check, native route and restore checks, and terrain-only pixel comparison establish technical behavior. They do not certify the above visual decisions. Keep the original molten divide, exactly two main bridges, the game's fantasy architecture, combat warnings, and v4 saves. Read the [current completion plan](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md#current-completion-register) for focused release checks and the post-publication visual review.
 
 The following November 4 priority, review and isolated-model statuses are historical. Current execution and integration status is above.
 
