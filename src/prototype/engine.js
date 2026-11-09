@@ -8224,6 +8224,11 @@
             points.push(point);
           }
         if (points.length !== p.count) continue;
+        // Pre-fix v4 saves may already have ~2,000 paid, generated corpses.
+        // Retire eligible old bodies *before* a new cohort is appended, or a
+        // legitimate resumed run can cross the population cap mid-encounter.
+        // Active references and authored/respawning enemies remain protected.
+        if (p.kind === 'mob') this.retireSpentRingleaders(this.zone(), new Set([key]));
         for (const point of points) {
           const e =
             p.kind === 'field'
