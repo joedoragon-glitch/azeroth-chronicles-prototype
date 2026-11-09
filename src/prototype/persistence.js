@@ -196,11 +196,16 @@
         writeSnapshot(game);
         if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;
         if (game.peace && !['developer', 'arena'].includes(game.s.mode)) profile.nightmareUnlocked = true;
-        if (!saveProfile(profile)) return false;
+        const profileSaved = saveProfile(profile);
+        // The validated primary has already been committed. An optional
+        // profile/preferences write failure must not lie about campaign progress
+        // or force the live game into a false save-failure pause.
         status(
-          backupWarning
-            ? 'Saved locally, but a recovery checkpoint could not be stored. Export a backup.'
-            : 'Saved locally · export for a backup',
+          !profileSaved
+            ? 'Saved locally, but preference storage unavailable. Export a backup.'
+            : backupWarning
+              ? 'Saved locally, but a recovery checkpoint could not be stored. Export a backup.'
+              : 'Saved locally · export for a backup',
         );
         return true;
       } catch (_) {
