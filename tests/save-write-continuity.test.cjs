@@ -137,10 +137,11 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
   assert.match(c.messages.at(-1), /Barracks capacity/);
 }
 
-// Historical #605: the 5,000-loot constraint still has a producible technical
-// failure boundary. This fixture intentionally holds XP at zero and is *not*
-// evidence of 5,001 rewards through ordinary play; preserve real money and
-// require an explicit design decision before changing drop pickup semantics.
+// Historical #605: test the controlled 5,001st reward boundary using the
+// game's own award method. Holding XP at zero is deliberately artificial and
+// does not prove natural-player incidence; the failure mode remains real.
+// The new continuity fallback must retain the first 5,000 physical drops and
+// credit only overflow crowns directly, without duplicating paid loot.
 {
   const { saved, storage } = memory();
   const c = new Campaign('normal', 'paladin', () => 0.5);
@@ -152,13 +153,21 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
   assert.equal(c.s.loot.length, 5000);
   Campaign.validate(c.snapshot());
   assert(p.save(c, {}));
-  const durable = saved.get(Persistence.saveKey('normal'));
+  const originalIds = c.s.loot.map((drop) => drop.id);
+  const originalTotal = c.s.loot.reduce((sum, drop) => sum + drop.gold, 0);
+  const before = c.hero.gold;
   c.awardEnemyReward(award);
-  assert.equal(c.s.loot.length, 5001);
-  assert.throws(() => Campaign.validate(c.snapshot()), /Invalid reward state/);
-  assert.equal(p.save(c, {}), false, 'the same validator also blocks continued local saving');
-  assert.throws(() => Persistence.prepareExternalExport(c, Campaign), /Invalid reward state/);
-  assert.equal(saved.get(Persistence.saveKey('normal')), durable, 'last valid primary remains');
+  assert.equal(c.s.loot.length, 5000, 'the 5,001st reward cannot overrun the v4 validator');
+  assert.deepEqual(c.s.loot.map((drop) => drop.id), originalIds);
+  assert.equal(c.s.loot.reduce((sum, drop) => sum + drop.gold, 0), originalTotal,
+    'all existing physical drops remain available at their original positions');
+  assert.equal(c.hero.gold, before + ordinary.gold,
+    'overflow currency is neither lost nor duplicated');
+  Campaign.validate(c.snapshot());
+  assert.equal(p.save(c, {}), true, 'the same native saver keeps writing');
+  const exported = Persistence.prepareExternalExport(c, Campaign);
+  assert(Campaign.restore(JSON.parse(exported.text)), 'external export remains reloadable');
+  assert.equal(JSON.parse(saved.get(Persistence.saveKey('normal'))).hero.gold, c.hero.gold);
 }
 console.log('PASS save-continuity audit: ' + visits +
-  ' native zone visits, v4 save/restore, optional profile, bad-data/quota/second-tab protection and controlled loot boundary');
+  ' native zone visits, v4 save/restore, optional profile, bad-data/quota/second-tab protection and bounded controlled loot overflow');
