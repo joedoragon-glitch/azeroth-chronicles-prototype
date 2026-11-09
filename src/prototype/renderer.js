@@ -3284,9 +3284,11 @@
             height: canvas.height,
             origin,
             scene: z,
-            revision: optimized
-              ? 'optimization-procedural-v1'
-              : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
+            revision: i === 4 && root.PrototypeDarkCrownLandscape
+              ? 'crown-landscape-' + root.PrototypeDarkCrownLandscape.PAINT_REVISION
+              : optimized
+                ? 'optimization-procedural-v1'
+                : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
             paint: paintFloor,
           });
         } else groundCache?.clear();

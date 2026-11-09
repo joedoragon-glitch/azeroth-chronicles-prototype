@@ -56,8 +56,8 @@
     "Soldados orcos han ocupado un antiguo santuario junto al camino militar de la Frontera."
   ],
   "side-crown-foundry": [
-    "Hammering and smoke carry from the damaged foundry, where Crown workers still make use of the volcanic heat.",
-    "Los golpes de martillo y el humo salen de la fundición dañada, donde los trabajadores de la Corona aún aprovechan el calor volcánico."
+    "Warm air escapes the foundry flues. Inside, Crownguards defend the furnaces and the finished stock.",
+    "De los respiraderos de la fundición sale aire caliente. Dentro, los guardias de la Corona defienden los hornos y las mercancías terminadas."
   ],
   "thorn-homestead": [
     "A worn Crown scout's badge hangs beside a whistle. The rail by the doorway is scratched at hound height, and a bowl of fresh water stands nearby.",

@@ -179,11 +179,15 @@ const entry = (n) => ({
       ),
       'approved T001 raster remains in rollback history',
     );
-    for (const key of [
-      'terrain:ground:crown',
-      'terrain:road:vale',
-      'terrain:road:highlands',
-    ])
+    const crownGround = 'terrain:ground:crown';
+    assert(!stored.assets[crownGround], 'outdoor Crown ground uses its shared procedural painter');
+    assert(!require('../assets/materials/manifest.json').materials[crownGround],
+      'the superseded Crown ground is not downloaded at runtime');
+    assert(stored.history[crownGround].some((revision) =>
+      revision.revision === 'a121d57534feac0a5ccd9413ac084caff6f4a2a8b9daa92d3ad18b5954fee5f7' &&
+      revision.review?.status === 'approved'),
+    'original approved Crown texture remains available for rollback');
+    for (const key of ['terrain:road:vale', 'terrain:road:highlands'])
       assert(stored.assets[key], 'unreviewed material stays active: ' + key);
 
     assert(

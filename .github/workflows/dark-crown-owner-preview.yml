@@ -1,0 +1,53 @@
+name: Dark Crown owner preview smoke (NO deploy)
+on:
+  push:
+    branches: ['feat/dark-crown-regional-overhaul-20261103']
+    paths:
+      - 'dark-crown-owner-preview.html'
+      - 'tools/dark-crown-owner-preview.js'
+      - 'tools/dark-crown-owner-preview.css'
+      - 'tests/dark-crown-owner-preview-browser.test.cjs'
+      - '.github/workflows/dark-crown-owner-preview.yml'
+permissions:
+  contents: read
+jobs:
+  preview:
+    name: Focused desktop/phone LANDSCAPE and rotation safety; immutable review URL
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Verify existing unmodified game package
+        run: node scripts/build.cjs --check
+      - name: Install Chromium for focused smoke only
+        run: npx playwright install --with-deps chromium
+      - name: Verify desktop, phone 800x375/844x390 and portrait rotation guard
+        run: node tests/dark-crown-owner-preview-browser.test.cjs
+      - name: Preserve owner guide visual evidence (two real browser layouts)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dark-crown-owner-guide-ui
+          path: test-artifacts/crown-owner-review/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Verify separate immutable HTTPS preview URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://rawcdn.githack.com/joedoragon-glitch/azeroth-chronicles-prototype/$GITHUB_SHA/dark-crown-owner-preview.html"
+          for attempt in 1 2 3 4 5; do
+            if curl -fsSL --connect-timeout 10 --max-time 35 "$url" -o "$RUNNER_TEMP/crown-preview.html" \
+               && grep -q 'dark-crown-owner-preview.js' "$RUNNER_TEMP/crown-preview.html"; then
+              echo "Verified preview address: $url" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "CDN not verified; do not claim external playability." >&2
+          exit 1

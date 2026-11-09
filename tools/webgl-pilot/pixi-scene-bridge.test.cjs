@@ -618,7 +618,9 @@ test('Canvas atmosphere mote contract preserves regional counts, deterministic m
   const moved = Visuals.atmosphereMotes({ ...options, time: 12 });
   assert.notEqual(moved[0].x, first[0].x, 'Canvas drift animates without player movement');
   assert.equal(Visuals.atmosphereMotes({ ...options, region: 3 }).length, 18);
-  assert.equal(Visuals.atmosphereMotes({ ...options, region: 4 }).length, 18);
+  assert.deepEqual(Visuals.atmosphereMotes({ ...options, region: 4 }), [],
+    'outdoor Crown uses localized ash in the shared terrain-motion layer');
+  assert.equal(Visuals.atmosphereMotes({ ...options, region: 4, dungeon: true }).length, 8);
   assert.equal(Visuals.atmosphereMotes({ ...options, dungeon: true }).length, 8);
   assert.equal(Visuals.atmosphereMotes({ ...options, room: true }).length, 8);
   assert.deepEqual(Visuals.atmosphereMotes({ ...options, optimized: true }), []);

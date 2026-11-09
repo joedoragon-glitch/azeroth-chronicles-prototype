@@ -143,6 +143,7 @@ function audit(options = {}) {
     // Greenwood's procedural terrain/roads are an authored visual surface.
     // Source drift must be reviewed just like the core renderer sources.
     'src/prototype/greenwood-landscape.js',
+    'src/prototype/dark-crown-landscape.js',
   ])
     sources[file] = crypto.createHash('sha256').update(read(file)).digest('hex');
   return {

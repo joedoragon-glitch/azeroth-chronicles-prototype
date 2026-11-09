@@ -1,0 +1,568 @@
+/* Standalone owner preview only. Never included in normal game/PWA styles. */
+.crown-review-launcher {
+  position: fixed;
+  z-index: 200;
+  right: max(12px, env(safe-area-inset-right, 0px));
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  border: 1px solid #d8ba77;
+  border-radius: 999px;
+  color: #fff0c6;
+  background: #15382e;
+  box-shadow: 0 3px 13px #0009;
+  padding: 12px 19px;
+  min-height: 48px;
+  max-width: min(235px, 72vw);
+  font: 700 14px/1.2 system-ui, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.crown-review-launcher::before { content: '✦'; margin-right: 8px; color: #f4cc7f; }
+.crown-review-launcher:focus-visible,
+.crown-review-dialog button:focus-visible,
+.crown-review-search:focus-visible { outline: 3px solid #fbd98c; outline-offset: 3px; }
+.crown-review-backdrop[hidden], .crown-review-empty[hidden] { display: none !important; }
+.crown-review-backdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: #040c0bdb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  font: 14px/1.45 system-ui, sans-serif;
+  color: #f5e8c9;
+}
+/* Only while the owner guide occupies the native game pause menu:
+ * turn that menu into a transparent full-screen host. Pointer events on the
+ * guide remain INSIDE #modal, bypassing ordinary outside-menu dismissal. */
+body.crown-review-open #modal {
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  display: block !important;
+  z-index: 999 !important;
+}
+body.crown-review-open #modal > :not(#crown-review-backdrop) { display: none !important; }
+body.crown-review-open #modal #crown-review-title {
+  border: 0;
+  padding: 0;
+  letter-spacing: normal;
+  margin: 0 0 5px;
+  font-size: clamp(20px, 3.5vw, 26px);
+  color: #fff3d9;
+}
+
+.crown-review-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(760px, 100%);
+  max-height: min(880px, calc(100dvh - 32px));
+  min-height: 0;
+  border: 1px solid #7d745b;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #14251f;
+  box-shadow: 0 15px 55px #000e;
+}
+.crown-review-header {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 22px 12px;
+  border-bottom: 1px solid #53634d;
+  background: #1c352a;
+}
+.crown-review-headings { min-width: 0; }
+.crown-review-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .13em;
+  color: #d8bc83;
+  margin: 0 0 4px;
+}
+.crown-review-header h2 { color: #fff3d9; margin: 0 0 5px; font-size: clamp(20px, 3.5vw, 26px); line-height: 1.15; }
+.crown-review-subtitle { color: #bfcdbd; font-size: 13px; margin: 0; }
+.crown-review-close {
+  flex: 0 0 44px;
+  width: 44px; height: 44px;
+  border: 1px solid #819180;
+  border-radius: 12px;
+  background: #283f32;
+  color: white;
+  font: 30px/1 system-ui, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.crown-review-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 22px 20px;
+}
+.crown-review-current {
+  margin: 0 0 12px;
+  padding: 11px 13px;
+  border-left: 3px solid #d4af69;
+  border-radius: 7px;
+  background: #233f32;
+  color: #f5e9cc;
+  font-size: 13px;
+}
+.crown-review-search {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  border-radius: 11px;
+  border: 1px solid #73836f;
+  background: #071810;
+  color: #f9f0df;
+  font: 16px system-ui, sans-serif;
+}
+.crown-review-search::placeholder { color: #a0b0a4; opacity: 1; }
+.crown-review-categories {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  margin: 12px 0 15px;
+  padding: 0 0 6px;
+  scrollbar-width: thin;
+}
+.crown-review-category {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  min-height: 42px;
+  border: 1px solid #6a7e6b;
+  border-radius: 999px;
+  background: #263d31;
+  color: #e9ecdf;
+  font: 650 13px system-ui, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.crown-review-category[aria-pressed='true'] {
+  color: #16271c;
+  background: #e3c786;
+  border-color: #e3c786;
+}
+.crown-review-group-title {
+  margin: 16px 0 10px;
+  font: 750 15px system-ui, sans-serif;
+  color: #edd1a2;
+}
+.crown-review-section:first-child .crown-review-group-title { margin-top: 6px; }
+.crown-review-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+.crown-review-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 164px;
+  gap: 9px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #465e4e;
+  background: #1c3228;
+}
+.crown-review-card-top { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.crown-review-card h4 { color: #fff1d3; margin: 0; font: 750 16px/1.25 system-ui, sans-serif; }
+.crown-review-tag {
+  flex-shrink: 0;
+  border: 1px solid #5d7662;
+  border-radius: 7px;
+  padding: 2px 7px;
+  font: 650 10px/1.45 system-ui, sans-serif;
+  color: #b6d4bd;
+}
+.crown-review-tag.danger { color: #ffe0ae; border-color: #9c774d; background: #4a3525; }
+.crown-review-description { color: #c6d0c5; margin: 0; font-size: 12px; flex: 1; }
+.crown-review-visit {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 10px;
+  border: 1px solid #d7c18e;
+  border-radius: 8px;
+  background: #52755a;
+  color: #fff8df;
+  font: 750 13px system-ui, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.crown-review-dialog button:disabled { opacity: .45; cursor: not-allowed; }
+.crown-review-feedback { color: #ffe1a6; margin: 0; }
+.crown-review-feedback:empty { display: none; }
+.crown-review-empty { margin: 16px 0; }
+.crown-review-footer {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 22px max(14px, env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid #53634d;
+  background: #1c352a;
+}
+.crown-review-back, .crown-review-done {
+  min-height: 46px;
+  padding: 11px 15px;
+  border: 1px solid #8a9d87;
+  border-radius: 9px;
+  background: #2a4637;
+  color: #fff0d1;
+  font: 750 13px system-ui, sans-serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.crown-review-done { background: #dbc38f; color: #182a1d; border-color: #dbc38f; }
+@media (max-width: 640px) {
+  .crown-review-launcher {
+    top: calc(66px + env(safe-area-inset-top, 0px));
+    right: max(9px, env(safe-area-inset-right, 0px));
+    min-height: 46px;
+    padding: 10px 13px;
+    font-size: 12px;
+  }
+  .crown-review-backdrop { padding: 0; }
+  .crown-review-dialog {
+    height: 100dvh;
+    max-height: 100dvh;
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+  }
+  .crown-review-header { padding: max(14px, env(safe-area-inset-top, 0px)) 16px 12px; }
+  .crown-review-main { padding: 12px 14px 16px; }
+  .crown-review-grid { grid-template-columns: minmax(0, 1fr); gap: 9px; }
+  .crown-review-card { min-height: auto; gap: 8px; }
+  .crown-review-footer { padding: 12px 12px max(14px, env(safe-area-inset-bottom, 0px)); }
+  .crown-review-back, .crown-review-done { flex: 1; font-size: 12px; padding: 10px 8px; }
+  .crown-review-subtitle { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crown-review-dialog { scroll-behavior: auto; }
+}
+
+
+/* LANDSCAPE PHONE — follows PR #793's 800×375 CSS pixel reference and
+   844×390 validation profile. No global gameplay/CSS/PWA changes. */
+@media (orientation: landscape) and (min-width: 560px) and (max-height: 560px) {
+  body[data-experience='phone'] .crown-review-launcher {
+    top: calc(7px + env(safe-area-inset-top, 0px));
+    right: calc(10px + env(safe-area-inset-right, 0px));
+    width: auto;
+    max-width: 195px;
+    min-height: 44px;
+    padding: 8px 13px;
+    font-size: 12px;
+  }
+  body[data-experience='phone'] .crown-review-backdrop {
+    box-sizing: border-box;
+    padding: max(4px, env(safe-area-inset-top, 0px))
+             max(8px, env(safe-area-inset-right, 0px))
+             max(4px, env(safe-area-inset-bottom, 0px))
+             max(8px, env(safe-area-inset-left, 0px));
+    align-items: center;
+    justify-content: center;
+  }
+  body[data-experience='phone'] .crown-review-dialog {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    min-height: 0;
+    border: 1px solid #7d745b;
+    border-radius: 10px;
+  }
+  body[data-experience='phone'] .crown-review-header {
+    padding: 6px 13px;
+    gap: 8px;
+    align-items: center;
+  }
+  body[data-experience='phone'] .crown-review-header h2 {
+    font-size: 17px !important;
+    line-height: 1.2;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body[data-experience='phone'] .crown-review-eyebrow,
+  body[data-experience='phone'] .crown-review-subtitle { display: none; }
+  body[data-experience='phone'] .crown-review-close {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    border-radius: 8px;
+  }
+  body[data-experience='phone'] .crown-review-main {
+    display: grid;
+    grid-template-columns: minmax(150px, 188px) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "current search"
+      "categories results"
+      "categories feedback";
+    column-gap: 10px;
+    row-gap: 6px;
+    overflow: hidden;
+    min-height: 0;
+    padding: 7px 10px;
+  }
+  body[data-experience='phone'] .crown-review-current {
+    grid-area: current;
+    font-size: 11px;
+    margin: 0;
+    padding: 5px 8px;
+    line-height: 1.25;
+    min-height: 0;
+    max-height: 54px;
+    overflow-y: auto;
+  }
+  body[data-experience='phone'] .crown-review-search {
+    grid-area: search;
+    min-height: 44px;
+    font-size: 16px;
+    padding: 7px 10px;
+    border-radius: 8px;
+  }
+  body[data-experience='phone'] .crown-review-categories {
+    grid-area: categories;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 3px 0 0;
+    margin: 0;
+    gap: 5px;
+  }
+  body[data-experience='phone'] .crown-review-category {
+    flex: 0 0 auto;
+    text-align: left;
+    width: 100%;
+    padding: 8px 10px;
+    min-height: 44px;
+    border-radius: 8px;
+    font-size: 12px;
+    white-space: normal;
+  }
+  body[data-experience='phone'] .crown-review-results {
+    grid-area: results;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 4px 0 0;
+  }
+  body[data-experience='phone'] .crown-review-group-title {
+    margin: 9px 0 6px;
+    font-size: 13px;
+  }
+  body[data-experience='phone'] .crown-review-section:first-child .crown-review-group-title {
+    margin-top: 0;
+  }
+  body[data-experience='phone'] .crown-review-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+  body[data-experience='phone'] .crown-review-card {
+    min-height: 0;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 9px;
+  }
+  body[data-experience='phone'] .crown-review-card h4 {
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  body[data-experience='phone'] .crown-review-description {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+  body[data-experience='phone'] .crown-review-visit {
+    min-height: 44px;
+    font-size: 12px;
+    margin-top: auto;
+  }
+  body[data-experience='phone'] .crown-review-feedback {
+    grid-area: feedback;
+    font-size: 11px;
+    margin: 0;
+  }
+  body[data-experience='phone'] .crown-review-empty {
+    grid-area: results;
+    align-self: center;
+    justify-self: center;
+  }
+  body[data-experience='phone'] .crown-review-footer {
+    padding: 6px 12px max(6px, env(safe-area-inset-bottom, 0px));
+    gap: 10px;
+  }
+  body[data-experience='phone'] .crown-review-back,
+  body[data-experience='phone'] .crown-review-done {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 44px;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
+@media (orientation: landscape) and (min-width: 560px) and (max-width: 700px) and (max-height: 560px) {
+  body[data-experience='phone'] .crown-review-main {
+    grid-template-columns: minmax(142px, 170px) minmax(0, 1fr);
+  }
+  body[data-experience='phone'] .crown-review-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Portrait phone is not a playable review presentation. The native game
+   Stage 3 rotation guard on PR #793 is pending; this narrow independent
+   preview uses the *same* contract without modifying main, app.js, or PWA. */
+.crown-review-rotate[hidden] { display: none !important; }
+.crown-review-rotate {
+  position: fixed;
+  z-index: 1500;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: #0e1c17;
+  padding: max(18px, env(safe-area-inset-top, 0px))
+           max(18px, env(safe-area-inset-right, 0px))
+           max(18px, env(safe-area-inset-bottom, 0px))
+           max(18px, env(safe-area-inset-left, 0px));
+  color: #f5e8cc;
+  font: 16px/1.5 system-ui, sans-serif;
+  text-align: center;
+}
+.crown-review-rotate-card { max-width: 340px; }
+.crown-review-rotate-icon {
+  display: block;
+  font-size: 54px;
+  line-height: 1;
+  margin-bottom: 12px;
+  color: #e6c785;
+}
+.crown-review-rotate h2 {
+  font: 750 22px/1.2 system-ui, sans-serif;
+  margin: 0 0 14px;
+  color: #f5e6c3;
+}
+.crown-review-rotate p { margin: 0; font-size: 14px; }
+body.crown-review-orientation-blocked #modal {
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  display: block !important;
+  z-index: 999 !important;
+}
+body.crown-review-orientation-blocked #modal > :not(#crown-review-rotate) {
+  display: none !important;
+}
+
+
+/* Preview's existing dev.258 title/menu CSS predates merged #791. This
+   preview-only compatibility bridge keeps the journey into Developer Mode
+   usable in short-landscape phones; PR #793 owns the real game's Stage 2. */
+@media (orientation: landscape) and (min-width: 560px) and (max-height: 560px) {
+  body[data-experience='phone'] #title-screen {
+    padding: max(8px, env(safe-area-inset-top, 0px))
+             max(10px, env(safe-area-inset-right, 0px))
+             max(8px, env(safe-area-inset-bottom, 0px))
+             max(10px, env(safe-area-inset-left, 0px));
+    overflow: hidden;
+  }
+  body[data-experience='phone'] #title-screen .title-panel {
+    box-sizing: border-box;
+    width: min(740px, 100%);
+    max-width: none;
+    max-height: 100%;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(255px, 1.1fr);
+    grid-template-rows: repeat(3, auto) 1fr;
+    align-items: center;
+    align-content: center;
+    gap: 5px 14px;
+    padding: 12px 16px;
+    border-radius: 12px;
+  }
+  body[data-experience='phone'] #title-screen .title-panel #title-tagline,
+  body[data-experience='phone'] #title-screen .title-panel #title-heading,
+  body[data-experience='phone'] #title-screen .title-panel #title-preview,
+  body[data-experience='phone'] #title-screen .title-panel #owner-crown-note {
+    grid-column: 1;
+    margin: 0;
+    min-width: 0;
+  }
+  body[data-experience='phone'] #title-screen .title-panel #title-heading {
+    font-size: clamp(18px, 2.8vw, 23px);
+    line-height: 1.18;
+  }
+  body[data-experience='phone'] #title-screen .title-panel #owner-crown-note {
+    font-size: 10px !important;
+    line-height: 1.3;
+  }
+  body[data-experience='phone'] #title-screen .title-panel #title-preview {
+    min-height: 0;
+    font-size: 11px;
+  }
+  body[data-experience='phone'] #title-screen .title-panel nav {
+    grid-column: 2;
+    grid-row: 1 / span 5;
+    display: grid;
+    align-self: center;
+    margin: 0;
+    gap: 5px;
+  }
+  body[data-experience='phone'] #title-screen .title-panel nav button {
+    min-height: 44px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  body[data-experience='phone'].title-active #modal[data-dialog-size] {
+    box-sizing: border-box;
+    width: min(690px, calc(100vw - 28px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+    max-height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 7px;
+  }
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions > .character-name-field {
+    grid-column: 1 / -1;
+  }
+  body[data-experience='phone'].title-active #modal-actions button {
+    min-height: 44px;
+  }
+}

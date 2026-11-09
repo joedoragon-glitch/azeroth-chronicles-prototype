@@ -360,6 +360,14 @@ const groups = [
       /^scripts\/(?:sprite-pipeline|sprite-scope-audit|material-pipeline)\.cjs$|^tools\/sprites\/(?:terrain-specifications\.json|approved\.json|materials\/approved\.json)$|^assets\/(?:sprites|materials)\/manifest\.json$/,
     tests: [TEST + 'artwork-pipeline-checks.test.cjs'],
   },
+  {
+    match: /^src\/prototype\/dark-crown-landscape\.js$/,
+    tests: [TEST + 'dark-crown-landscape-field.test.cjs', TEST + 'dark-crown-routes.test.cjs'],
+  },
+  {
+    match: /^(?:dark-crown-owner-preview\.html|tools\/dark-crown-owner-preview\.(?:css|js))$/,
+    tests: [TEST + 'dark-crown-owner-preview-browser.test.cjs'],
+  },
   { match: /^src\/prototype\/input\.js$/, tests: [TEST + 'input.test.cjs'] },
   {
     match: /^src\/prototype\/.*(?:combat|enemy|pet|skills).*\.js$/,
@@ -504,6 +512,7 @@ function run(
       file === TEST + 'pixi-renderer-phone-browser.test.cjs';
     const statusBrowser = file === TEST + 'status-renderer-browser.test.cjs';
     const narrowBrowser =
+      file === TEST + 'dark-crown-owner-preview-browser.test.cjs' ||
       pixiBrowser ||
       statusBrowser ||
       file === TEST + 'environment-atmosphere-browser.test.cjs' ||

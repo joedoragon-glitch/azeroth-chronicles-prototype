@@ -308,6 +308,23 @@ async function main() {
           room.npcs = [];
         }
         if (['march', 'crown'].includes(name)) g.enter(name);
+        const crownView = {
+          'crown-young-flow': [1600, 880, 245],
+          'crown-west-flow': [660, 2520, 245],
+          'crown-southwest-island': [710, 3120, 480],
+          'crown-courtyard-day': [880, 2000, 245],
+          'crown-courtyard-night': [880, 2000, 480],
+          'crown-fortress-freight': [3085, 2325, 245],
+          'crown-fortress-checkpoint': [3160, 2910, 480],
+          'crown-fortress-gate': [3060, 3040, 480],
+        }[name];
+        if (crownView) {
+          if (!g.enter('crown') || g.zone().id !== 'crown') {
+            throw Error('Crown fixture did not enter Dark Crown: ' + name);
+          }
+          Object.assign(g.hero, g.safe(crownView[0], crownView[1], 'crown'));
+          g.s.clock = crownView[2];
+        }
         window.clock = 0;
       }, fixture);
       console.log('PREPARE ' + fixture);

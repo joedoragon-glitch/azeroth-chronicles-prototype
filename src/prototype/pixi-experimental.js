@@ -787,6 +787,7 @@
         zone?.highlandsLandscapeVersion || 0,
         zone?.frontierSceneVersion || 0,
         zone?.crownSceneVersion || 0,
+        current.zoneId === 'crown' ? root.PrototypeDarkCrownLandscape?.VERSION || 0 : 0,
       ].join('|');
     }
     function tileCache(current) {

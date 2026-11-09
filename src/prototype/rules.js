@@ -1487,6 +1487,28 @@
       ],
     ],
   };
+  // Dark Crown owner contract CV01/CV04: a civic court centered on the
+  // existing, interactable Crownwatch rest service. Offsets are relative to
+  // that service's ACTUAL collision-safe position, not an assumed map point.
+  // Flat paving, seating and planters do not create gameplay water/heat sources.
+  const crownCivicForecourt = Object.freeze([
+    Object.freeze([0, 115, 'crown-civic-tilecourt', 'public-circulation']),
+    Object.freeze([-117, 107, 'crown-sheltered-planter', 'sheltered-greenery']),
+    Object.freeze([117, 107, 'crown-sheltered-planter', 'sheltered-greenery']),
+    Object.freeze([-133, 165, 'crown-ceramic-bench', 'civic-rest']),
+    Object.freeze([133, 165, 'crown-ceramic-bench', 'civic-rest']),
+  ]);
+  // Municipal water is imported through a buried clean main. Only service
+  // buildings and access points are visible. Heat and wastewater stay separate.
+  const crownWaterworks = [
+    ['west-levy-water-inlet-service', 315, 1710, 45, 'crown-water-inlet'],
+    ['crownwatch-water-tower', 1150, 545, 48, 'crown-water-tower'],
+    ['ash-refuge-water-tower', 332, 2158, 45, 'crown-water-tower'],
+    ['east-service-water-tower', 2980, 2700, 48, 'crown-water-tower'],
+    ['public-geothermal-bathhouse', 1039, 672, 72, 'crown-bathhouse'],
+    ['cool-west-bank-heat-exchanger', 1155, 818, 25, 'crown-bath-exchanger'],
+    ['southwest-covered-wastewater-service', 450, 3257, 53, 'crown-wastewater-house'],
+  ];
   const crownDistricts = [
     {
       id: 'labor-quarter',
@@ -2548,7 +2570,7 @@
       enemyCount: 14,
       theme: 'foundry',
       species: 'crownguard',
-      lore: "The foundry's walls are damaged, but the forge is working. Crown soldiers eat and sleep near the repair benches, with weapons and equipment on racks between duties.",
+      lore: 'Repaired stone courts surround a maintained working forge. Receiving bays, furnace tools and finishing racks stand ready behind the guarded entrance. The Crownguards have left the work floor clear to defend it.',
       decor: [
         [180, 215, 'forge'],
         [315, 210, 'supply-stack'],
@@ -2557,8 +2579,8 @@
         [835, 235, 'bunk'],
         [210, 550, 'ember-pit'],
         [390, 555, 'field-kitchen'],
-        [640, 535, 'roost'],
-        [825, 565, 'bone-pile'],
+        [640, 535, 'crown-foundry-cooling-rack'],
+        [825, 565, 'crown-foundry-stock-bay'],
         [335, 835, 'training-dummy'],
         [720, 825, 'crown-banner'],
         [170, 745, 'bunk'],
@@ -2582,6 +2604,41 @@
     },
   ];
 
+  // A maintained industrial process inside the existing side dungeon.
+  // Generic input/output is intentional: no unapproved product, recipes,
+  // crafting economy, renamed site, added enemy or worker dialogue.
+  const crownFoundryStations = [
+    ['receiving', 285, 200, 'crown-foundry-receiving', 'stock-in'],
+    ['furnace', 175, 375, 'crown-foundry-furnace', 'heat-tending'],
+    ['forming', 595, 260, 'crown-foundry-forming', 'hot-forming'],
+    ['finishing', 915, 515, 'crown-foundry-finishing', 'cool-and-inspect'],
+    ['dispatch', 895, 875, 'crown-foundry-dispatch', 'stock-out'],
+  ];
+  // Both courts use their REAL placed heatwork props for pedestrian/freight
+  // circulation, never nominal static coordinates or new lava crossings.
+  // These local links join existing works and roads, not isolated regions.
+  const crownIndustrialLinks = [
+    ['east-intake-to-glass', 0, 1],
+    ['east-glass-to-distribution', 1, 4],
+    ['south-intake-to-glass', 6, 7],
+    ['south-glass-to-drying', 7, 9],
+    ['south-drying-to-foundry', 9, 'foundry'],
+    ['south-drying-to-kiln', 9, 10],
+    ['south-kiln-to-distribution', 10, 11],
+    ['washhouse-service', 13, 14],
+  ];
+  // Freight dressing follows the placed heatworks or Crystal Deposit landmark.
+  // These environmental objects are not resources, recipes or new economy.
+  const crownIndustrialFreight = Object.freeze([
+    Object.freeze(['east-receiving', 1, -110, 95, 'crown-foundry-yard-loading']),
+    Object.freeze(['east-cooling', 3, 115, 100, 'crown-foundry-cooling-rack']),
+    Object.freeze(['south-receiving', 7, 110, -95, 'crown-foundry-yard-loading']),
+    Object.freeze(['south-shipping', 9, 115, 100, 'crown-foundry-yard-shipping']),
+    Object.freeze(['south-protected-stock', 10, 145, -85, 'crown-foundry-stock-bay']),
+    Object.freeze(['crystal-sorting', 'shelf', -110, -60, 'crown-crystal-sorting']),
+    Object.freeze(['crystal-storage', 'shelf', -110, 190, 'crown-foundry-stock-bay']),
+    Object.freeze(['crystal-dispatch', 'shelf', 130, -50, 'crown-foundry-yard-loading']),
+  ]);
   // N1a: inspectable evidence belongs to real scene positions, not generic
   // dungeon entrances. IDs do not replace quests, loot or mechanical triggers.
   const narrativeSceneInspections = {
@@ -8038,6 +8095,8 @@
     frontierDistricts,
     crownRoutes,
     crownSceneLayout,
+    crownCivicForecourt,
+    crownWaterworks,
     crownDistricts,
     teachers,
     expeditionSupportSkills,
@@ -8118,6 +8177,9 @@
     greenwoodRuralScenes,
     frontierRecoveryScenes,
     crownThermalWorksScenes,
+    crownIndustrialLinks,
+    crownIndustrialFreight,
+    crownFoundryStations,
     dungeonWalls,
     dungeonArchitecture,
     frontierEdgeLayout,

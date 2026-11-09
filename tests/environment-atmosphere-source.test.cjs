@@ -1,8 +1,8 @@
 'use strict';
-// Issue #708. Native source-behavior audit: no new effects, no scene changes.
+// Issue #708. Native source-behavior audit for shared terrain motion and atmosphere.
 const assert = require('node:assert/strict');
 const V = require('../src/prototype/visuals.js');
-const expectedCount = [14,14,14,18,18];
+const expectedCount = [14,14,14,18,0];
 const phaseValues = [0,0.001,0.5,0.999,1];
 let moteCases = 0, canvasCases = 0;
 for (let region = 0; region < 5; region++) {
@@ -22,12 +22,26 @@ for (let region = 0; region < 5; region++) {
       m.r>0 && m.r<=2.5 && m.alpha>=0 && m.alpha<=1 &&
       m.rgb.length===3 && m.rgb.every(n=>Number.isInteger(n)&&n>=0&&n<=255)));
     assert(a.every(m=>m.alpha>=precedingAlpha),'darkening must not reduce alpha');
-    precedingAlpha = a[0].alpha;
-    assert.notDeepEqual(a,V.atmosphereMotes({...spec,time:102.5}),
+    precedingAlpha = a[0]?.alpha ?? 0;
+    if (a.length) assert.notDeepEqual(a,V.atmosphereMotes({...spec,time:102.5}),
       'motes must animate with presentation time');
     moteCases++;
   }
 }
+const nearbyMotion = (x, y, time) =>
+  V.terrainMotionLines(4, (p) => ({ x: p.x - x + 120, y: p.y - y + 80 }), {
+    width: 240,
+    height: 160,
+  }, time);
+const ash = (lines) => lines.filter(({ color }) => color.startsWith('#c4b6ae'));
+const shimmer = (lines) => lines.filter(({ color }) => color === '#dcad7c43');
+assert.equal(ash(nearbyMotion(1665, 3240, 2)).length, 4, 'ash visits the exposed roost edge');
+assert.equal(ash(nearbyMotion(1665, 3240, 8)).length, 0, 'clear air between short gusts');
+assert.equal(ash(nearbyMotion(940, 390, 2)).length, 0, 'ash stays away from Crownwatch');
+assert.equal(shimmer(nearbyMotion(2770, 710, 2)).length, 2, 'two faint geothermal traces');
+assert.notDeepEqual(shimmer(nearbyMotion(2770, 710, 2)), shimmer(nearbyMotion(2770, 710, 3)));
+assert.equal(shimmer(nearbyMotion(940, 390, 2)).length, 0, 'geothermal effects stay local');
+
 function recordCanvas() {
   const calls = {circles:0,gradients:[],save:0,restore:0,fill:0,rects:0};
   const grad = ()=>({
