@@ -2968,6 +2968,12 @@
 
     build(anchor = this.hero) {
       if (this.isDungeon() || this.recallLaborBlocked()) return false;
+      // Native barracks are persisted as zone buildings; do not append a
+      // 301st object that the unchanged v4 zone-asset validator would reject.
+      if (this.zone().buildings.length >= 300) {
+        this.say('This region has reached its Barracks capacity.');
+        return false;
+      }
       const builder = this.availableLabor()[0],
         cost = this.barracksBuildCost();
       if (!builder) return false;
