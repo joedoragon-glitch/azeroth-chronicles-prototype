@@ -172,6 +172,33 @@ function verifyGuardAndNight(zoneId, species, guard) {
 }
 verifyGuardAndNight('crypt', null, true);
 verifyGuardAndNight('march', 'wraith', false);
+
+// The one-leader RNG branch must obey the same completion and reward boundary.
+const one = new Campaign('normal', 'paladin', () => 0.9);
+const oneZone = one.zone();
+const oneMembers = oneZone.enemies.filter(
+  (enemy) => enemy.pack === members[0].pack && enemy.type === 'mob' && enemy.form === 'normal',
+);
+assert.equal(oneMembers.length, 2);
+for (const enemy of oneMembers) {
+  enemy.hp = 0;
+  enemy.heroParticipated = true;
+  one.kill(enemy);
+}
+assert.equal(one.s.pending[oneMembers[0].species].count, 1);
+one.s.time += 2.1;
+one.updateElites(2.1);
+const solo = oneZone.enemies.find(
+  (enemy) => enemy.form === 'ringleader' && enemy.eliteKey === oneMembers[0].species,
+);
+assert(solo?.hp > 0);
+solo.hp = 0;
+one.kill(solo);
+one.updateElites(0.01);
+assert(!one.s.pending[oneMembers[0].species]);
+assert(!oneZone.enemies.some((enemy) => enemy.id === solo.id));
+assert(oneMembers.every((enemy) => oneZone.enemies.some((present) => present.id === enemy.id)));
+Campaign.validate(one.snapshot());
 console.log(
   'PASS #634 native 984-wave bound, live-reference protection, original packs, rewards, dungeon/night leaders and v4 save/restore',
 );
