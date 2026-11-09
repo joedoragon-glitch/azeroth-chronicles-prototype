@@ -8298,6 +8298,9 @@
           );
         } else this.say('Ringleaders have appeared.');
       }
+      // Only a fully defeated, acknowledged mob cohort can retire its spent
+      // generated bodies. The pending record protects partial waves and TRUE bosses.
+      let settledMobKeys = null;
       for (const [key, p] of Object.entries(this.s.pending))
         if (
           p.active &&
@@ -8308,8 +8311,66 @@
               e.hp > 0 &&
               (e.eliteKey === key || (p.kind === 'field' && e.family === key && e.form === 'true')),
           )
-        )
+        ) {
+          if (p.kind === 'mob') {
+            if (!settledMobKeys) settledMobKeys = new Set();
+            settledMobKeys.add(key);
+          }
           delete this.s.pending[key];
+        }
+      if (settledMobKeys) this.retireSpentRingleaders(this.zone(), settledMobKeys);
+    }
+    retireSpentRingleaders(z, settledMobKeys) {
+      // These are generated and already paid, not authored originals, living
+      // combatants, companions, revivable bosses, or pack respawn anchors.
+      const disposable = (e) =>
+        e.type === 'mob' &&
+        e.form === 'ringleader' &&
+        settledMobKeys.has(e.eliteKey) &&
+        e.hp <= 0 &&
+        e.deathPaid === true &&
+        !e.neutral &&
+        !e.summon &&
+        !e.developerSummon &&
+        !e.captain &&
+        !e.roomCaptain &&
+        !e.fieldCaptain &&
+        !e.family &&
+        !e.owner &&
+        !(e.respawn > 0) &&
+        !e.supportHeal;
+      if (!z.enemies.some(disposable)) return 0;
+      const referenced = this.referencedEnemyIds(z);
+      const before = z.enemies.length;
+      z.enemies = z.enemies.filter((e) => !disposable(e) || referenced.has(e.id));
+      return before - z.enemies.length;
+    }
+    referencedEnemyIds(z) {
+      // Shared by both narrow retirement policies. Check live IDs before
+      // removing an enemy; neither path edits payout receipts or save schemas.
+      const referenced = new Set();
+      const retain = (v) => {
+        if (typeof v === 'string') referenced.add(v);
+      };
+      for (const p of [...this.s.projectiles, ...this.s.hazards]) {
+        retain(p.sourceId);
+        retain(p.targetId);
+        retain(p.target);
+        retain(p.owner);
+      }
+      for (const p of Object.values(this.s.pending)) retain(p.base?.id);
+      retain(this.s.heroTarget);
+      for (const u of [this.hero, ...this.s.party, ...z.enemies]) {
+        retain(u.owner);
+        // A discarded pre-modern hero attack order cannot pin dead enemies
+        // in memory. Only actual deliberate skill approach owns a hero ID.
+        if (u !== this.hero || u.order?.type === 'skill-approach') retain(u.order?.id);
+        retain(u.targetId);
+        retain(u.supportHeal?.source);
+        retain(u.telegraph?.targetId);
+        retain(u.rangedAim?.targetId);
+      }
+      return referenced;
     }
     retireSpentReinforcements(z) {
       // Native corpses still anchor respawns and specialist revivals. Only
@@ -8336,28 +8397,7 @@
           (e.type === 'boss' && e.family === 'ridge') ||
           ['supply-highlands', 'frontier-overseer'].includes(e.captainProfile),
       );
-      const referenced = new Set();
-      const retain = (v) => {
-        if (typeof v === 'string') referenced.add(v);
-      };
-      for (const p of [...this.s.projectiles, ...this.s.hazards]) {
-        retain(p.sourceId);
-        retain(p.targetId);
-        retain(p.target);
-        retain(p.owner);
-      }
-      for (const p of Object.values(this.s.pending)) retain(p.base?.id);
-      retain(this.s.heroTarget);
-      for (const u of [this.hero, ...this.s.party, ...z.enemies]) {
-        retain(u.owner);
-        // A discarded pre-modern hero attack order cannot pin dead enemies
-        // in memory. Only actual deliberate skill approach owns a hero ID.
-        if (u !== this.hero || u.order?.type === 'skill-approach') retain(u.order?.id);
-        retain(u.targetId);
-        retain(u.supportHeal?.source);
-        retain(u.telegraph?.targetId);
-        retain(u.rangedAim?.targetId);
-      }
+      const referenced = this.referencedEnemyIds(z);
       const count = z.enemies.length;
       z.enemies = z.enemies.filter(
         (e) =>
