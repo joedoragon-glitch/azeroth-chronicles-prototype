@@ -508,21 +508,106 @@ async function startBrowsableShowroom() {
           ? word('playableHero', 'Playable hero') + ' · ' : '';
     return prefix + use;
   }
+  function belongsToCollection(entry, collection = state.collection) {
+    const dated = entry.sourceKind === 'dated-reference' ||
+      entry.sourceKind === 'archived-material';
+    if (collection === 'current') return !dated;
+    if (collection === 'dated') return dated || !!entry.datedStates?.length;
+    return true;
+  }
+  function inRegion(entry, selected) {
+    return !selected || (entry.regions || [entry.region]).includes(selected);
+  }
+  function collectionCounters() {
+    return {
+      current: state.entries.filter((e) => belongsToCollection(e, 'current')).length,
+      dated: state.entries.filter((e) => belongsToCollection(e, 'dated')).length,
+      all: state.entries.length,
+    };
+  }
+  const originalRegionNames = Object.freeze([...regions]);
+  function localeCount(base, count) {
+    return base + ' · ' + count;
+  }
+  function updateCollectionControls() {
+    const counts = collectionCounters();
+    const terms = language === 'es'
+      ? { current: 'Arte actual', dated: 'Revisiones históricas', all: 'Todo' }
+      : { current: 'Current game artwork', dated: 'Historical reviews', all: 'All entries' };
+    for (const button of document.querySelectorAll('.library-collection [data-collection]')) {
+      const name = button.dataset.collection;
+      button.textContent = terms[name] + ' (' + counts[name] + ')';
+      button.setAttribute('aria-pressed', String(state.collection === name));
+    }
+    const message = state.collection === 'current'
+      ? 'Current renderer identities are shown first; dated reviews are available separately.'
+      : state.collection === 'dated'
+        ? 'These are dated design references and preserved material records. A preview may use newer renderer code.'
+        : 'Current and historical entries are together. Use the category and region filters to narrow the list.';
+    $('collection-explain').textContent = language === 'es'
+      ? (state.collection === 'current'
+        ? 'Primero se muestra el arte del juego actual; las revisiones anteriores están en otra colección.'
+        : state.collection === 'dated'
+          ? 'Son referencias históricas y materiales conservados. Las vistas previas pueden usar el código actual.'
+          : 'Se muestran el arte actual y el histórico. Filtra por categoría y región para reducir resultados.')
+      : message;
+  }
+  function optionCounts() {
+    const current = state.entries.filter((e) => belongsToCollection(e));
+    for (const option of $('asset-group').options) {
+      if (!option.value) continue;
+      const count = current.filter((e) => e.group === option.value).length;
+      option.dataset.count = String(count);
+      option.textContent = localeCount(language === 'es'
+        ? categoryEs[option.value] || option.value : option.value, count);
+    }
+    for (const option of $('asset-region').options) {
+      if (!option.value) continue;
+      const count = current.filter((e) => inRegion(e, option.value)).length;
+      option.dataset.count = String(count);
+      option.textContent = localeCount(language === 'es'
+        ? regionEs[option.value] || option.value : option.value, count);
+    }
+  }
+  function progressiveFacets() {
+    const group = $('asset-group').value, region = $('asset-region').value;
+    const available = state.entries.filter((e) =>
+      belongsToCollection(e) && inRegion(e, region) && (!group || e.group === group));
+    const sub = $('asset-subcategory'), oldSub = sub.value;
+    const subs = group ? [...new Set(available.map((e) => e.subcategory).filter(Boolean))]
+      .sort() : [];
+    sub.replaceChildren(new Option(language === 'es' ? 'Todas las clases' : 'Every kind', ''));
+    for (const name of subs) sub.add(new Option(
+      name + ' · ' + available.filter((e) => e.subcategory === name).length, name));
+    sub.value = subs.includes(oldSub) ? oldSub : '';
+    $('asset-subcategory-wrap').hidden = subs.length <= 1;
+    const area = $('asset-area'), oldArea = area.value;
+    const areas = region ? [...new Set(available.flatMap((e) => e.areas || []))].sort() : [];
+    area.replaceChildren(new Option(language === 'es' ? 'Todas las zonas' : 'Every area', ''));
+    for (const name of areas)
+      area.add(new Option(human(name) + ' · ' +
+        available.filter((e) => e.areas?.includes(name)).length, name));
+    area.value = areas.includes(oldArea) ? oldArea : '';
+    $('asset-area-wrap').hidden = areas.length <= 1;
+  }
   function filterResults() {
     const query = $('asset-query').value.trim().toLowerCase();
     const group = $('asset-group').value, region = $('asset-region').value;
+    const sub = $('asset-subcategory').value, area = $('asset-area').value;
     const kind = $('asset-kind').value;
     state.filtered = state.entries.filter((entry) => {
+      if (!belongsToCollection(entry)) return false;
       if (group && entry.group !== group) return false;
-      if (region && entry.region !== region) return false;
-      if (query && ![entry.id, entry.name, entry.region, entry.group]
-        .join(' ').toLowerCase().includes(query)) return false;
-      if (kind === 'raster' && entry.representation !== 'raster') return false;
+      if (!inRegion(entry, region)) return false;
+      if (sub && entry.subcategory !== sub) return false;
+      if (area && !entry.areas?.includes(area)) return false;
+      if (kind === 'raster' && entry.displayStatus !== 'sprite-active') return false;
       if (kind === 'procedural' && entry.representation !== 'procedural') return false;
-      if (kind === 'retained' && !rasterAvailable(entry)) return false;
-      if (kind === 'dated' && entry.sourceKind !== 'dated-reference' &&
-        !entry.datedStates?.length) return false;
-      if (kind === 'material' && !isMaterial(entry)) return false;
+      if (kind === 'retained' && entry.displayStatus !== 'procedural-with-sprite')
+        return false;
+      if (query && ![entry.id, entry.name, entry.region, entry.group,
+        entry.subcategory, ...(entry.tags || []), ...(entry.areas || [])]
+        .join(' ').toLowerCase().includes(query)) return false;
       return true;
     });
     if (query) {
@@ -531,6 +616,12 @@ async function startBrowsableShowroom() {
           : entry.id.toLowerCase().startsWith(query) ? 2
             : entry.name.toLowerCase().startsWith(query) ? 3 : 4;
       state.filtered.sort((a, b) => rank(a) - rank(b) ||
+        a.name.localeCompare(b.name));
+    } else {
+      // The roster is organized by visible category, then its more useful
+      // subcategory and name; archival source-order is not browsing order.
+      state.filtered.sort((a, b) => a.group.localeCompare(b.group) ||
+        String(a.subcategory || '').localeCompare(String(b.subcategory || '')) ||
         a.name.localeCompare(b.name));
     }
   }
@@ -767,21 +858,39 @@ async function startBrowsableShowroom() {
     }
   }
   function syncVisibleSelection() {
-    if (!state.filtered.length) return;
+    if (!state.filtered.length) {
+      state.selected = null;
+      $('asset-inspector').hidden = true;
+      return;
+    }
+    $('asset-inspector').hidden = false;
     if (!state.filtered.some((entry) => entry.id === state.selected?.id))
       selectAsset(state.filtered[0].id, 0, false);
+    else void inspect();
   }
-  for (const id of ['asset-query', 'asset-group', 'asset-region', 'asset-kind'])
-    $(id).addEventListener(id === 'asset-query' ? 'input' : 'change', () => {
-      state.visible = 24;
-      renderCards();
-      syncVisibleSelection();
-    });
-  $('asset-reset').addEventListener('click', () => {
-    for (const id of ['asset-query', 'asset-group', 'asset-region', 'asset-kind']) $(id).value = '';
+  function filtersChanged({ rebuildFacets = false } = {}) {
     state.visible = 24;
+    if (rebuildFacets) progressiveFacets();
     renderCards();
     syncVisibleSelection();
+  }
+  $('asset-query').addEventListener('input', () => filtersChanged());
+  for (const id of ['asset-group', 'asset-region'])
+    $(id).addEventListener('change', () => filtersChanged({ rebuildFacets: true }));
+  for (const id of ['asset-subcategory', 'asset-area', 'asset-kind'])
+    $(id).addEventListener('change', () => filtersChanged());
+  document.querySelector('.library-collection').addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-collection]');
+    if (!button) return;
+    state.collection = button.dataset.collection;
+    updateCollectionControls();
+    optionCounts();
+    filtersChanged({ rebuildFacets: true });
+  });
+  $('asset-reset').addEventListener('click', () => {
+    for (const id of ['asset-query', 'asset-group', 'asset-region', 'asset-kind',
+      'asset-subcategory', 'asset-area']) $(id).value = '';
+    filtersChanged({ rebuildFacets: true });
   });
   $('asset-more').addEventListener('click', () => {
     state.visible += 24;
