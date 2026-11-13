@@ -73,9 +73,27 @@ async function main() {
       await page.locator('#asset-grid .asset-card').first().click();
       assert.match(await page.locator('#asset-selection').textContent(), /road material/);
       assert.equal(await page.locator('button[data-view="compare"]').isDisabled(), true);
-      await page.locator('#asset-query').fill('enemy:skeleton');
+      const historical = index.entries.find((entry) =>
+        entry.sourceKind === 'dated-reference' && entry.states?.length > 0);
+      assert(historical, 'at least one dated-only historical reference must be browsable');
+      await page.locator('#asset-query').fill(historical.id);
       await page.locator('#asset-grid .asset-card').first().click();
+      assert.equal(new URL(page.url()).searchParams.get('asset'), historical.id);
       assert.match(await page.locator('#asset-selection').textContent(), /Dated review fixture/);
+      // A current world entity may share a historical identity. In that case
+      // both live and dated states must remain accessible within one card.
+      const overlapping = index.entries.find((entry) =>
+        entry.sourceKind !== 'dated-reference' && entry.datedStates?.length > 0);
+      assert(overlapping, 'a current/historical identity collision should retain both states');
+      await page.locator('#asset-query').fill(overlapping.id);
+      await page.locator('#asset-grid .asset-card').first().click();
+      assert.equal(new URL(page.url()).searchParams.get('asset'), overlapping.id);
+      assert((await page.locator('#asset-state option').count()) > 1,
+        'overlapping dated reference states should not be silently discarded');
+      await page.locator('#asset-kind').selectOption('dated');
+      assert((await page.locator('#asset-grid .asset-card').count()) > 0,
+        'dated references filter must include preserved states on modern cards');
+      await page.locator('#asset-kind').selectOption('');
       await page.locator('#asset-query').fill('');
       await page.locator('#asset-group').selectOption('World & scenery');
       assert.equal((await page.locator('#asset-grid .asset-card').count()) > 0, true);
