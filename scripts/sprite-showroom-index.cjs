@@ -217,7 +217,12 @@ function build() {
   }
   // Enumerate the current world rather than assuming the October handoff
   // archive contains every new region fixture or the playable Rogue class.
-  const currentWorld = census();
+  const currentWorld = census({
+    protectedKeys: [
+      ...Object.keys(manifest.sprites),
+      ...specs.assets.map((asset) => asset.key),
+    ],
+  });
   for (const live of currentWorld.rows) {
     if (result.has(live.id)) {
       const entry = result.get(live.id);
