@@ -203,6 +203,134 @@ async function startBrowsableShowroom() {
     scale: 'close',
     generation: 0,
   };
+
+  // UI localization is ephemeral and independent of save/persistence language.
+  // Exact source entity names and stable IDs deliberately remain canonical.
+  const requestedLanguage = new URL(location.href).searchParams.get('lang');
+  let language = ['en', 'es'].includes(requestedLanguage)
+    ? requestedLanguage : /^es\b/i.test(navigator.language || '') ? 'es' : 'en';
+  const spanish = {
+    back: '← Volver al juego',
+    intro: 'Todo el arte visual del juego en un solo lugar. Explora dibujos procedurales, sprites registrados y referencias conservadas sin entrar en una partida.',
+    search: 'Buscar arte', category: 'Categoría', location: 'Ubicación', artworkType: 'Tipo de arte',
+    browse: 'Explorar el arte', clear: 'Borrar filtros', more: 'Mostrar más',
+    footnote: 'Las referencias históricas tienen fecha. Sus vistas actuales usan el código de dibujo vigente, pero no demuestran por sí solas que ese estado aparezca aún en una escena de la campaña.',
+    selected: 'Arte seleccionado', gameSelection: 'En el juego', procedural: 'Procedural',
+    sprite: 'Sprite', compare: 'Comparar', appearance: 'Apariencia o estado',
+    revision: 'Versión del sprite', lighting: 'Iluminación', viewScale: 'Escala',
+    prev: '← Anterior', next: 'Siguiente →', copyLink: 'Copiar enlace',
+    technical: 'Identidad, fuentes y datos técnicos', noteTitle: 'Escribir una observación sobre el arte',
+    noteLabel: 'Tu observación (no se envía automáticamente)', copyNote: 'Copiar observación',
+    footer: 'Esta sala es de solo lectura. Nunca abre, modifica ni reemplaza partidas guardadas. La aceptación artística y la publicación son decisiones independientes.',
+    searchPlaceholder: 'Busca Paladín, huerto, ferry, material…',
+    notePlaceholder: '¿Qué deberíamos conservar, cambiar o comparar?',
+    allArtwork: 'Todo el arte', everyLocation: 'Todas las ubicaciones', allTypes: 'Todos los tipos',
+    rasterFilter: 'Sprite seleccionado', proceduralFilter: 'Procedural seleccionado',
+    retainedFilter: 'Tiene sprite para comparar', datedFilter: 'Referencias históricas',
+    materials: 'Materiales', day: 'Día', night: 'Noche', closeUp: 'Vista ampliada',
+    game100: '100% del juego', game150: '150% del juego', game200: '200% del juego',
+    matches: 'resultados', shown: 'visibles', selectedRaster: 'Sprite seleccionado para este estado',
+    selectedProcedural: 'Procedural seleccionado para este estado',
+    referenceUnavailable: 'Referencia no disponible', historicalFixture: 'Referencia histórica',
+    worldFixture: 'Estado del mundo actual', playableHero: 'Personaje jugable',
+    historicalMaterial: 'Material histórico · ya no está en el juego',
+    currentMaterial: 'Material de camino registrado',
+    reviewedFixture: 'Referencia de octubre de 2026', materialCard: 'Material',
+    rasterCard: 'Sprite seleccionado', proceduralCard: 'Procedural seleccionado',
+    gameCaption: 'Lo que usa el juego para este estado',
+    spriteCaption: 'Sprite registrado o conservado', proceduralCaption: 'Dibujo procedural actual',
+    compareCaption: 'Sprite registrado o conservado',
+    previewUnavailable: 'Este estado no puede aislarse de forma fiable aquí. No se ha inventado ninguna imagen.',
+    studioClose: 'vista ampliada (no es escala del juego)',
+    gameScale: 'escala del juego', nightGrade: 'estudio nocturno', dayGrade: 'estudio diurno',
+    isolatedCaveat: 'Estudio de un recurso aislado. No es una captura de la escena completa ni una aceptación del renderizador del dispositivo.',
+    currentFixture: 'Estado actual', registeredSprite: 'Sprite registrado / material',
+    retiredMaterial: 'Material retirado', priorVersion: 'Versión conservada',
+    animationFrame: 'Animación', copied: 'Copiado',
+    clipboardUnavailable: 'No se puede acceder al portapapeles. Enlace exacto:',
+    currentWorld: 'identidades del mundo actual', visualEntries: 'recursos visuales',
+    registeredSprites: 'sprites registrados', datedCases: 'referencias históricas',
+    stableId: 'ID estable', region: 'Ubicación', origin: 'Fuente',
+    renderer: 'Selección del renderizador', catalogNo: 'Número de catálogo',
+    activeRaster: 'Identidad del sprite activo', registeredRevision: 'Revisión registrada',
+    historicalVersions: 'Versiones conservadas', none: 'Ninguno',
+  };
+  const categoryEs = {
+    'Characters': 'Personajes', 'Buildings & services': 'Edificios y servicios',
+    'World & scenery': 'Mundo y escenarios', 'Materials': 'Materiales',
+    'Visual states': 'Estados visuales',
+  };
+  const regionEs = {
+    'Greenwood Vale': 'Valle de Greenwood', 'Flooded Marches': 'Marismas inundadas',
+    'Ironroot Highlands': 'Tierras Altas de Ironroot', 'Ashen Frontier': 'Frontera de Cenizas',
+    'Dark Crown': 'Corona Oscura', 'Historical': 'Histórico',
+    'Mixed / interior': 'Mixto / interior',
+  };
+  const staticTargets = [
+    ['.library-back','back'], ['.library-lede','intro'],
+    ['.library-search','search'], ['.library-controls label:nth-child(2)','category'],
+    ['.library-controls label:nth-child(3)','location'],
+    ['.library-controls label:nth-child(4)','artworkType'],
+    ['#browse-heading','browse'], ['#asset-reset','clear'],
+    ['#asset-more','more'], ['.library-footnote','footnote'],
+    ['.library-inspector > .library-eyebrow','selected'],
+    ['#asset-view-buttons [data-view="current"]','gameSelection'],
+    ['#asset-view-buttons [data-view="procedural"]','procedural'],
+    ['#asset-view-buttons [data-view="raster"]','sprite'],
+    ['#asset-view-buttons [data-view="compare"]','compare'],
+    ['.library-detail-controls label:nth-child(1)','appearance'],
+    ['.library-detail-controls label:nth-child(2)','revision'],
+    ['.library-detail-controls label:nth-child(3)','lighting'],
+    ['.library-detail-controls label:nth-child(4)','viewScale'],
+    ['#asset-prev','prev'], ['#asset-next','next'], ['#asset-copy','copyLink'],
+    ['.library-details:first-of-type summary','technical'],
+    ['.library-details:last-of-type summary','noteTitle'],
+    ['.library-details label[for="asset-note"]','noteLabel'],
+    ['#asset-copy-note','copyNote'], ['.library-footer','footer'],
+    ['#asset-group option[value=""]','allArtwork'],
+    ['#asset-region option[value=""]','everyLocation'],
+    ['#asset-kind option[value=""]','allTypes'],
+    ['#asset-kind option[value="raster"]','rasterFilter'],
+    ['#asset-kind option[value="procedural"]','proceduralFilter'],
+    ['#asset-kind option[value="retained"]','retainedFilter'],
+    ['#asset-kind option[value="dated"]','datedFilter'],
+    ['#asset-kind option[value="material"]','materials'],
+    ['#asset-light option[value="day"]','day'],
+    ['#asset-light option[value="night"]','night'],
+    ['#asset-scale option[value="close"]','closeUp'],
+    ['#asset-scale option[value="1"]','game100'],
+    ['#asset-scale option[value="1.5"]','game150'],
+    ['#asset-scale option[value="2"]','game200'],
+  ];
+  const originalTexts = new Map();
+  const word = (key, english) => language === 'es' ? (spanish[key] || english || key) : english || key;
+  function localeStatic() {
+    document.documentElement.lang = language;
+    $('asset-language').value = language;
+    for (const [selector, key] of staticTargets) {
+      const item = document.querySelector(selector);
+      if (!item) continue;
+      const node = item.querySelector('input,select')
+        ? [...item.childNodes].find((child) => child.nodeType === 3 && child.textContent.trim())
+        : item;
+      if (!node) continue;
+      if (!originalTexts.has(node)) originalTexts.set(node, node.textContent);
+      node.textContent = language === 'es' ? spanish[key] : originalTexts.get(node);
+    }
+    $('asset-query').placeholder = language === 'es' ? spanish.searchPlaceholder
+      : 'Find Paladin, orchard, ferry, material…';
+    $('asset-note').placeholder = language === 'es' ? spanish.notePlaceholder
+      : 'What should we keep, change or compare?';
+    for (const option of $('asset-group').options) {
+      if (option.value) option.textContent = language === 'es'
+        ? categoryEs[option.value] || option.value : option.value;
+    }
+    for (const option of $('asset-region').options) {
+      if (option.value) option.textContent = language === 'es'
+        ? regionEs[option.value] || option.value : option.value;
+    }
+  }
+
   const imageCache = new Map();
   const reviewNotes = new Map();
   const groups = [...new Set(state.entries.map((e) => e.group))].sort();
