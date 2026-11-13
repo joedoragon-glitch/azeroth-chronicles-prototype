@@ -45,11 +45,19 @@ function labelFor(entity, kind) {
 function trackIdentity(entity, region, zone, kind) {
   const candidate = Sprites.candidateKeys(entity, region)[0];
   if (candidate && !candidate.startsWith('landmark:')) return candidate;
+  // A shared drawing is one asset with selectable regional states, not five
+  // copies of "Barrel" or "Crate" solely because it spawns in five regions.
+  // Named people retain their own identity even if they offer the same service.
+  const actor = (entity.renderKind || kind) === 'npc';
+  const visualName = actor
+    ? (entity.name || entity.id || entity.kind || kind)
+    : (entity.structure || entity.species || entity.family ||
+      entity.greenwoodNature || entity.highlandsNature ||
+      entity.greenwoodFacility || entity.greenwoodInteriorAsset ||
+      entity.miningFacility || entity.kind || entity.type || entity.name || kind);
   const semantic = [
-    zone,
     entity.renderKind || kind,
-    entity.structure || entity.species || entity.family ||
-      entity.kind || entity.type || entity.name || kind,
+    visualName,
     entity.sceneRole || entity.captainProfile || entity.masterId || '',
     entity.form || '',
     entity.crowned ? 'crowned' : '',
@@ -90,13 +98,18 @@ function census() {
             // One artwork identity can appear in several authored areas.
             // Keep each location browseable without duplicating the art card.
             if (!existing.areas.includes(area)) existing.areas.push(area);
-            if (existing.states.length < 6 &&
+            if (!existing.regions.includes(regionNames[region]))
+              existing.regions.push(regionNames[region]);
+            const newRegion = !existing.states.some((s) => s.region === region);
+            if ((newRegion || existing.states.length < 10) &&
                 !existing.states.some((s) => s.area === area)) {
               existing.states.push({
                 label: 'Observed world fixture · ' + human(area),
                 entity: visual, region, area,
               });
             }
+            if (visual.name && !existing.aliases.includes(visual.name))
+              existing.aliases.push(visual.name);
             continue;
           }
           rows.set(id, {
@@ -108,7 +121,8 @@ function census() {
                 ? 'Buildings & services' : 'World & scenery',
             region: regionNames[region] || human(area),
             regionIndex: region,
-            areas: [area],
+            areas: [area], regions: [regionNames[region] || human(area)],
+            aliases: visual.name ? [visual.name] : [],
             sourceKind: 'current-world-fixture',
             catalogId: null,
             states: [{ label: 'Observed world fixture · ' + human(area),
@@ -132,6 +146,7 @@ function census() {
     rows.set(id, {
       id, name: human(heroClass), group: 'Characters',
       region: regionNames[0], regionIndex: 0, areas: [],
+      regions: [regionNames[0]], aliases: [],
       sourceKind: 'current-hero-fixture', catalogId: null,
       states: [{ label: 'Current playable hero', entity, region: 0 }],
       representation: selected ? 'raster' : 'procedural',
