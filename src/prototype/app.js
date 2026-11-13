@@ -822,6 +822,11 @@
     "TUTORIAL · ": "TUTORIAL · ",
     "COMPANIONS · Charm an eligible monster with Rogue automatic attacks; you begin alone.": "COMPAÑEROS · Encanta un monstruo elegible con ataques automáticos de la Pícara; empiezas sola.",
   });
+  Object.assign(spanishText, {
+    'Complete · lesson learned': 'Completa · lección aprendida',
+    'Critical executions': 'Ejecuciones críticas',
+    'A critical execution strengthens a real attack or supported effect; it does not make a missed attack hit. The Art of Misdirection permanently increases your hero critical chance by one percentage point. The Keeper Archive explains detailed critical rules.': 'Una ejecución crítica refuerza un ataque real o un efecto compatible, pero no convierte un fallo en un acierto. El arte del engaño aumenta permanentemente la probabilidad crítica de tu héroe en un punto porcentual. El Archivo del Guardián explica las reglas detalladas.',
+  });
   // #684: Match the authored timed-Recall feedback and bilingual tutorial.
   Object.assign(spanishText, {
     'Squad Recall cancelled.': 'Reagrupación cancelada.',
@@ -7238,6 +7243,10 @@
         'critical-codex',
       ].includes(n.kind)
     ) {
+      const codexLesson =
+        n.kind === 'critical-codex' && n.sideCodex === 'side-vale-cellars' &&
+        game.s.quests['quest-tutorial-board']?.active &&
+        !game.s.criticalCodices?.['side-vale-cellars'];
       const success = game.interact(n);
       if (!success) {
         if (n.kind === 'cage' && !game.s.keys[n.family])
@@ -7261,6 +7270,13 @@
       save();
       updateHUD();
       if (success && n.kind === 'throne' && !game.hero.regnalName) nameHeroMenu(true, closeMenu);
+      if (success && codexLesson)
+        openMenu(
+          'Critical executions',
+          'A critical execution strengthens a real attack or supported effect; it does not make a missed attack hit. The Art of Misdirection permanently increases your hero critical chance by one percentage point. The Keeper Archive explains detailed critical rules.',
+          [action('Continue', closeMenu)],
+          closeMenu,
+        );
       return;
     }
     if (n.kind === 'appointment') appointmentMenu(n);
