@@ -1424,11 +1424,17 @@
               ? 'Meet the Captain: Rogues Charm monsters rather than hire Soldiers and Rangers.'
               : 'Meet the town Captain to learn about your Soldier and Ranger.';
           case 'charm':
-            return 'Charm an eligible monster with Rogue automatic attacks; you begin alone.';
+            return this.s.party.some((u) => this.isCharmedCompanion(u))
+              ? 'Recover a fallen Charmed companion or Charm another eligible monster before practicing Recall.'
+              : 'Charm an eligible monster with Rogue automatic attacks; the Rogue begins without companions.';
           case 'recall':
-            return 'Try Recall squad to bring your companions back to you.';
+            return this.activeLivingParty().length
+              ? 'Try Recall squad to bring your companions back to you.'
+              : 'Recover or reactivate a living companion before practicing Recall.';
           case 'construction':
-            return 'Construction in progress · keep an eligible companion assigned until complete';
+            return this.activeLivingParty().some((u) => u.order?.type === 'build')
+              ? 'Construction in progress · keep an eligible companion assigned until complete'
+              : 'Construction paused · assign an available companion at your unfinished Barracks.';
           case 'barracks':
             return 'Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).';
           default:
@@ -3871,8 +3877,9 @@
         id: 'quest-barracks',
         region: 'vale',
         name: 'Your First Company',
-        objective:
-          'Meet the Captain, try Recall squad, then build your first Basic Barracks (free).',
+        objective: this.hero.class === 'rogue'
+          ? 'Meet the Captain, Charm an eligible monster, practice Recall with your companion, then build your first Basic Barracks (free).'
+          : 'Meet the Captain, try Recall squad, then build your first Basic Barracks (free).',
         gold: 0,
         xp: 0,
         index: -1,
