@@ -154,6 +154,14 @@ const root = path.resolve(__dirname, '..');
           height,
       );
     }
+    // Focused showroom acceptance exercises the existing A/B viewer itself.
+    // The remainder of this historical test also boots a full game, PWA and
+    // save fixture, which is a separate acceptance scope and must not be
+    // silently conflated with the library's visual UI validation.
+    if (process.argv.includes('--comparison-only')) {
+      console.log('PASS retained single-candidate showroom across all six viewport profiles');
+      return;
+    }
     const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
     const gamePage = await context.newPage();
     const origin = 'http://127.0.0.1:' + server.address().port;
