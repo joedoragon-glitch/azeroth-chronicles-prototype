@@ -15,6 +15,11 @@
       ],
       sections: [
         {
+          path: 'gameTitle',
+          meaning:
+            'Official player-facing title So I Became the Dark Lord\'s Problem (SIBDLP). This identifies the game that generated the report; it is not a repository slug, version, installed build SHA or save compatibility identifier.',
+        },
+        {
           path: 'version',
           meaning:
             'Exporting game version label, not an immutable build identity. Use root buildCommit when present and valid; if absent, exact installed source SHA is unknown. Do not infer installation from current GitHub main or a green PR.',
