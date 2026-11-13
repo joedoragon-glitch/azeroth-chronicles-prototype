@@ -1399,7 +1399,9 @@
       if (p?.paid)
         return q.kind === 'barracks'
           ? 'Complete · field base established'
-          : 'Complete · reward delivered';
+          : q.tutorial
+            ? 'Complete · lesson learned'
+            : 'Complete · reward delivered';
       if (p?.closedByPeace) return 'Resolved by peace';
       if (p?.done) return 'Complete';
       if (q.kind === 'tutorial-board') {
