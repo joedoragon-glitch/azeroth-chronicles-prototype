@@ -812,7 +812,7 @@
     "Recover a companion first": "Recupera antes un compañero",
     "Charm an eligible surviving monster with your automatic bell strikes.": "Encanta un monstruo elegible que sobreviva a los golpes automáticos de tu cascabel.",
     "Recall needs a living active companion.": "Reagrupar necesita un compañero vivo y activo.",
-    "Leave town. Find open ground off the road.\\nOpen Menu → Establish Basic Barracks (FREE).\\nAn idle eligible Charmed companion builds it.\\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.": "Sal del pueblo. Busca terreno abierto fuera del camino.\\nAbre Menú → Establecer cuartel básico (GRATIS).\\nLo construye un compañero encantado disponible.\\nAl terminar: Curar heridas restaura toda la salud del grupo por 30 coronas cuando sea seguro.",
+    "Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nAn idle eligible Charmed companion builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.": "Sal del pueblo. Busca terreno abierto fuera del camino.\nAbre Menú → Establecer cuartel básico (GRATIS).\nLo construye un compañero encantado disponible.\nAl terminar: Curar heridas restaura toda la salud del grupo por 30 coronas cuando sea seguro.",
     "An idle active Charmed companion is needed": "Hace falta un compañero encantado activo y disponible",
     "Gathering basics": "Lo básico de la recolección",
     "Choose a tribute source": "Elegir una fuente de tributo",
