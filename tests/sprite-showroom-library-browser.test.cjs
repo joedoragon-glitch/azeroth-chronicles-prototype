@@ -91,6 +91,17 @@ async function main() {
         return pixels;
       });
       assert(roguePixels > 150, 'Rogue must display a real current painter, not a blank tile');
+      // The gallery alone is bilingual; language selection neither boots
+      // gameplay nor changes the player's existing save preferences.
+      await page.locator('#asset-language').selectOption('es');
+      assert.equal(await page.locator('#browse-heading').textContent(), 'Explorar el arte');
+      assert.match(await page.locator('#asset-selection').textContent(), /Personaje jugable/);
+      assert.match(await page.locator('#library-count').textContent(), /recursos visuales/);
+      assert.equal(await page.locator('#asset-view-buttons button[data-view="current"]').textContent(), 'En el juego');
+      assert.equal(new URL(page.url()).searchParams.get('lang'), 'es');
+      await page.locator('#asset-language').selectOption('en');
+      assert.equal(await page.locator('#browse-heading').textContent(), 'Browse artwork');
+      assert.equal(new URL(page.url()).searchParams.get('lang'), null);
       await page.locator('#asset-query').fill('registered-terrain:road:vale');
       await page.locator('#asset-grid .asset-card').first().click();
       assert.match(await page.locator('#asset-selection').textContent(), /road material/);
