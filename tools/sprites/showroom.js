@@ -363,6 +363,14 @@ async function startBrowsableShowroom() {
       if (kind === 'material' && !isMaterial(entry)) return false;
       return true;
     });
+    if (query) {
+      const rank = (entry) => entry.id.toLowerCase() === query ? 0
+        : entry.name.toLowerCase() === query ? 1
+          : entry.id.toLowerCase().startsWith(query) ? 2
+            : entry.name.toLowerCase().startsWith(query) ? 3 : 4;
+      state.filtered.sort((a, b) => rank(a) - rank(b) ||
+        a.name.localeCompare(b.name));
+    }
   }
   let observer;
   if ('IntersectionObserver' in window) {
