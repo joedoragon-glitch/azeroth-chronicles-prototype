@@ -3,6 +3,7 @@
 // generation, save access or duplicate approval registry.
 const fs = require('node:fs');
 const path = require('node:path');
+const { createHash } = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
 const Sprite = require('../src/prototype/sprites.js');
@@ -47,6 +48,128 @@ function choose(entity, region, manifest) {
     activeRaster: definition?.key ? manifest.sprites[definition.key]?.src || null : null,
   };
 }
+// UI facets and source provenance are derived automatically; this is not an
+// additional editable sprite registry or a second approval list.
+const painterPaths = [
+  'src/prototype/visuals.js',
+  'src/prototype/greenwood-landscape.js',
+  'src/prototype/greenwood-interiors.js',
+  'src/prototype/highlands.js',
+  'src/prototype/dark-crown-landscape.js',
+  'src/prototype/hero-presentation.js',
+  'src/prototype/sprites.js',
+  'src/prototype/materials.js',
+];
+function subtypeOf(entry, entity) {
+  const id = entry.id.toLowerCase(), kind = String(entity.renderKind || '').toLowerCase();
+  const type = String(entity.structure || entity.kind || entity.type || '').toLowerCase();
+  if (entry.group === 'Characters') {
+    if (id.startsWith('hero:') || kind === 'hero') return 'Playable heroes';
+    if (/^(ally|pet|captive|companion)/.test(id) || ['ally', 'pet'].includes(kind))
+      return 'Allies & companions';
+    if (/^(enemy|boss|raider|crown-troop|mounted-direwolf)/.test(id) ||
+        ['enemy', 'boss'].includes(kind)) return 'Enemies & bosses';
+    return 'People & NPCs';
+  }
+  if (entry.group === 'Buildings & services') {
+    if (/interior|bunk|room|hall|quarters|lounge/.test(id + ':' + type))
+      return 'Interiors';
+    if (/barracks|wall|watch|fort|tower|gate|defense|guard/.test(id + ':' + type))
+      return 'Fortifications';
+    if (/merchant|shop|service|smith|rest|healer|specialist|teacher/.test(id + ':' + type))
+      return 'Services & workshops';
+    return 'Structures';
+  }
+  if (entry.group === 'World & scenery') {
+    if (/ferry|boat|wagon|cart|caravan|bridge|transport|flight/.test(id + ':' + type))
+      return 'Transport & crossings';
+    if (/grass|tree|bush|flower|reed|sapling|moss|heather|fungus|scrub|shrub|lily|plant|root|vines|poppy|weed|foliage|thicket/.test(id + ':' + type))
+      return 'Vegetation';
+    if (/rock|ore|crystal|lava|stone|cliff|ground|water|pool|mud|obsidian|driftwood|geology/.test(id + ':' + type))
+      return 'Geology & waters';
+    if (/bed|desk|table|chair|chair|shelf|lamp|bench|workstation|rack|barrel|crate|rug|tent|seat|bunk|candle|furnish/.test(id + ':' + type))
+      return 'Furniture & objects';
+    if (/wall|building|facility|structure|home|gate|watchpost/.test(id + ':' + type))
+      return 'Landmarks & facilities';
+    return 'Other scenery';
+  }
+  if (entry.group === 'Materials') return entry.sourceKind === 'archived-material'
+    ? 'Retired terrain' : 'Road textures';
+  return 'Other visual states';
+}
+function painterFor(entry, entity) {
+  if (entry.group === 'Materials') return ['src/prototype/materials.js'];
+  const paths = [];
+  if (entity.greenwoodNature || entity.greenwoodFacility || entity.greenwoodWall)
+    paths.push('src/prototype/greenwood-landscape.js');
+  if (entity.greenwoodInteriorAsset) paths.push('src/prototype/greenwood-interiors.js');
+  if (entity.highlandsNature || entity.miningFacility)
+    paths.push('src/prototype/highlands.js');
+  if (entry.group === 'Characters' && (entity.renderKind === 'hero' || entry.id.startsWith('hero:')))
+    paths.push('src/prototype/hero-presentation.js');
+  // The shared visual fallback owns the majority of authored character/prop
+  // bodies. The actual runtime selector remains src/prototype/sprites.js.
+  paths.push('src/prototype/visuals.js');
+  if (entry.regionIndex === 4 && /^(terrain|landscape|world):/.test(entry.id))
+    paths.push('src/prototype/dark-crown-landscape.js');
+  return [...new Set(paths.filter((p) => fs.existsSync(path.join(root, p))))];
+}
+function sourceTerms(entry, entity) {
+  const tokens = [
+    entity.structure, entity.greenwoodNature, entity.highlandsNature,
+    entity.greenwoodFacility, entity.greenwoodInteriorAsset, entity.miningFacility,
+    entity.species, entity.family, entity.class, entity.kind, entity.type,
+    entry.id.split(':').slice(1).filter((s) => !regionIds.includes(s))[0],
+  ].filter((t) => typeof t === 'string' && t.length >= 3 && t.length <= 90);
+  return [...new Set(tokens)].slice(0, 6);
+}
+function enhance(entry, decisions) {
+  const state = entry.states?.[0] || entry.datedStates?.[0];
+  const entity = state?.entity || {};
+  const locations = new Set([entry.region]);
+  for (const fixture of [...(entry.states || []), ...(entry.datedStates || [])])
+    if (Number.isInteger(fixture.region) && regionNames[fixture.region])
+      locations.add(regionNames[fixture.region]);
+  entry.regions = [...locations];
+  entry.areas = [...new Set((entry.areas || []).filter(Boolean))];
+  entry.subcategory = subtypeOf(entry, entity);
+  const visualTags = [
+    entry.subcategory, entity.renderKind, entity.class, entity.species,
+    entity.structure, entity.kind, entity.type, entity.family, entity.form,
+    entity.captainProfile, entity.crownRole, entity.crownRank,
+    entity.ranged ? 'ranged' : null, entity.guard ? 'guard' : null,
+    entity.crowned ? 'crowned' : null, entity.ringleader ? 'ringleader' : null,
+    ...entry.areas, ...entry.regions,
+  ];
+  entry.tags = [...new Set(visualTags.filter((x) =>
+    typeof x === 'string' && x.length <= 90))].slice(0, 18);
+  entry.sourceFiles = painterFor(entry, entity);
+  entry.sourceTerms = sourceTerms(entry, entity);
+  const decision = decisions.assets?.[entry.id] ||
+    (entry.activeSpriteKey ? decisions.assets?.[entry.activeSpriteKey] : null);
+  if (decision?.traits) entry.currentDesign = {
+    summary: String(decision.traits).slice(0, 850),
+    documents: (decision.decisionDocuments || []).filter((p) => /^docs\/[a-zA-Z0-9_/-]+\.md$/.test(p)),
+    provenance: 'Recorded owner design decision; verify later supersessions against current source',
+  };
+  entry.displayStatus = entry.group === 'Materials'
+    ? entry.sourceKind === 'archived-material' ? 'retired' : 'material'
+    : entry.representation === 'raster' ? 'sprite-active'
+      : entry.registeredRaster || entry.archive?.length ? 'procedural-with-sprite'
+        : 'procedural-only';
+}
+function fingerprints() {
+  const list = [...painterPaths, 'src/prototype/sprite-format.js',
+    'assets/sprites/manifest.json', 'assets/materials/manifest.json',
+    'tools/sprites/specifications.json', 'tools/sprites/current-design-decisions.json'];
+  const out = {};
+  for (const file of list) if (fs.existsSync(path.join(root, file))) {
+    out[file] = createHash('sha256').update(fs.readFileSync(path.join(root, file)))
+      .digest('hex').slice(0, 16);
+  }
+  return out;
+}
+
 function build() {
   const manifest = read('assets/sprites/manifest.json');
   const specs = read('tools/sprites/specifications.json');
@@ -54,6 +177,7 @@ function build() {
   const materials = read('assets/materials/manifest.json');
   const materialReviews = read('tools/sprites/materials/approved.json');
   const cases = read('tools/visual-review/approved-art-pass/handoff-index.json');
+  const decisions = read('tools/sprites/current-design-decisions.json');
   if (!Sprite.installManifest(manifest)) throw Error('Invalid sprite showroom source manifest');
   const result = new Map();
   for (const spec of specs.assets) {
@@ -98,6 +222,7 @@ function build() {
     if (result.has(live.id)) {
       const entry = result.get(live.id);
       entry.observedInWorldSource = true;
+      entry.areas = [...new Set([...(entry.areas || []), ...(live.areas || [])])];
       for (const state of live.states)
         if (!entry.states.some((s) => s.label === state.label))
           entry.states.push(state);
@@ -136,6 +261,10 @@ function build() {
       // the dated historical capture.
       result.get(item.id).datedStates = states;
       result.get(item.id).referenceDate = '2026-10-19';
+      result.get(item.id).historicalDesign = {
+        summary: String(handoff.context?.decisionSummary || '').slice(0, 650),
+        source: item.handoff, date: '2026-10-19',
+      };
       continue;
     }
     const sample = states[0];
@@ -166,6 +295,10 @@ function build() {
       archive: selected.activeSpriteKey ? archives(approved, selected.activeSpriteKey)
         .filter((a) => a.src !== activeEntry?.src) : [],
       referenceDate: '2026-10-19',
+      historicalDesign: {
+        summary: String(handoff.context?.decisionSummary || '').slice(0, 650),
+        source: item.handoff, date: '2026-10-19',
+      },
     });
   }
   for (const [key, entry] of Object.entries(materials.materials)) {
@@ -200,6 +333,7 @@ function build() {
     });
   }
   const entries = [...result.values()];
+  for (const entry of entries) enhance(entry, decisions);
   const allResources = new Set();
   for (const entry of entries) {
     if (entry.registeredRaster && (entry.registeredRaster.startsWith('./assets/materials/') ||
@@ -214,6 +348,7 @@ function build() {
     schemaVersion: 1,
     title: 'Sprite Showroom',
     provenance: 'Current checked-in renderer and dated review fixtures; not full-scene player acceptance',
+    sourceFingerprints: fingerprints(),
     counts: {
       exactContracts: specs.assets.length,
       liveRegistrations: Object.keys(manifest.sprites).length,
