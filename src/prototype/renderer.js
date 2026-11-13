@@ -3077,7 +3077,8 @@
       if (entity.kind === 'quests' && entity.id === 'board') {
         const chapter = game.s.quests['quest-tutorial-board'];
         return !!game.s.quests['quest-barracks']?.paid &&
-          !!chapter && !chapter.paid && !chapter.boardOpened;
+          !!chapter && !chapter.paid &&
+          (!chapter.boardOpened || !chapter.storyViewed || !chapter.sideViewed);
       }
       return false;
     }
