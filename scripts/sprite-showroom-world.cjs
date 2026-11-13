@@ -86,7 +86,19 @@ function census() {
           const selected = Sprites.definitionFor(visual, region);
           observedInstances++;
           const existing = rows.get(id);
-          if (existing) continue;
+          if (existing) {
+            // One artwork identity can appear in several authored areas.
+            // Keep each location browseable without duplicating the art card.
+            if (!existing.areas.includes(area)) existing.areas.push(area);
+            if (existing.states.length < 6 &&
+                !existing.states.some((s) => s.area === area)) {
+              existing.states.push({
+                label: 'Observed world fixture · ' + human(area),
+                entity: visual, region, area,
+              });
+            }
+            continue;
+          }
           rows.set(id, {
             id,
             name: human(labelFor(visual, inferred)),
@@ -96,10 +108,11 @@ function census() {
                 ? 'Buildings & services' : 'World & scenery',
             region: regionNames[region] || human(area),
             regionIndex: region,
+            areas: [area],
             sourceKind: 'current-world-fixture',
             catalogId: null,
             states: [{ label: 'Observed world fixture · ' + human(area),
-              entity: visual, region }],
+              entity: visual, region, area }],
             representation: selected ? 'raster' : 'procedural',
             activeSpriteKey: selected?.key || null,
             activeRaster: selected?.entry?.src || null,
@@ -118,7 +131,7 @@ function census() {
     const selected = Sprites.definitionFor(entity, 0);
     rows.set(id, {
       id, name: human(heroClass), group: 'Characters',
-      region: regionNames[0], regionIndex: 0,
+      region: regionNames[0], regionIndex: 0, areas: [],
       sourceKind: 'current-hero-fixture', catalogId: null,
       states: [{ label: 'Current playable hero', entity, region: 0 }],
       representation: selected ? 'raster' : 'procedural',
