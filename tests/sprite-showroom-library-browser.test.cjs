@@ -120,6 +120,18 @@ async function main() {
       await page.locator('#asset-language').selectOption('en');
       assert.equal(await page.locator('#browse-heading').textContent(), 'Browse artwork');
       assert.equal(new URL(page.url()).searchParams.get('lang'), null);
+      const sharedBarrel = index.entries.find((e) => e.id === 'shared:prop:barrel');
+      assert(sharedBarrel && sharedBarrel.regions.length >= 5,
+        'common barrels should be one asset with selectable regional states');
+      await page.locator('#asset-query').fill(sharedBarrel.id);
+      await page.locator('#asset-region').selectOption('Dark Crown');
+      await page.locator('#asset-grid .asset-card').first().click();
+      assert.equal(new URL(page.url()).searchParams.get('asset'), sharedBarrel.id);
+      assert.match(await page.locator('#asset-selection').textContent(), /Dark Crown/,
+        'a Dark Crown filter must inspect the Dark Crown state of shared artwork');
+      assert.equal(await page.locator('#asset-grid .asset-card').count(), 1,
+        'regional variants must not create redundant artwork cards');
+      await page.locator('#asset-region').selectOption('');
       await page.locator('#asset-query').fill('registered-terrain:road:vale');
       await page.locator('#asset-grid .asset-card').first().click();
       assert.match(await page.locator('#asset-selection').textContent(), /road material/);
