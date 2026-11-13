@@ -578,6 +578,16 @@
         7: 'Tap Piercing Arrow: one guard-piercing strike. Charge: stronger piercing strike plus slow.',
         8: 'Tap Hunter’s Salvo: arrows at up to 3 foes. Charge Grand Hunt: two arrows each at up to 5. Extra arrow against a lone foe; no piercing.',
       },
+      rogue: {
+        1: "The Rogue's automatic bell strikes can Charm eligible monsters that survive. Tap Ding and Sting to harm nearby foes and strengthen allied basics; charge Raise a Racket for a wider performance.",
+        2: "Lead Feet slows nearby foes while quickening the Rogue and her companions. Can't Dance reaches farther and strengthens the movement and recovery benefit.",
+        3: "Beat Breaker interrupts enemy attacks and protects allied charged preparations. Shut the Band Up expands the interruption and briefly hushes eligible non-boss foes.",
+        4: "Sour Note withers enemies while mending the Rogue and nearby allies. Rotten Chorus increases the withering and healing effects; it does not revive fallen companions.",
+        5: "Sticky Shuffle places a music station that slows foes and protects allies standing inside. Briar Boogie creates a wider station with damaging pulses.",
+        6: "Stolen Beat delays hostile skills and accelerates recovery of allied specials. Time Out spreads a stronger delay and recharge effect.",
+        7: "Wrong Foot pushes and weakens enemies while improving nearby allied attacks. Panic Party spreads a wider push, Weaken and allied damage benefit.",
+        8: "Bad Bell Day damages enemies and boosts allied critical and special attacks. Last Laugh makes the blast stronger and briefly hushes eligible non-boss foes.",
+      },
     };
     shelves.push({
       title: 'Your skills',
@@ -589,7 +599,7 @@
             game.skillCooldown
               ? game.skillCooldown(slot, charged)
               : R.balance.skills.cooldowns[slot],
-          shape = R.chargedSkills.second[game.hero.class],
+          shape = R.chargedSkills.second[game.hero.class] || null,
           milestones = Math.floor(rank / 2),
           labels = {
             paladin: {
@@ -622,13 +632,24 @@
               7: 'Piercing Arrow',
               8: 'Hunter’s Salvo / Grand Hunt',
             },
+            rogue: {
+              1: "Ding and Sting / Raise a Racket",
+              2: "Lead Feet / Can't Dance",
+              3: "Beat Breaker / Shut the Band Up",
+              4: "Sour Note / Rotten Chorus",
+              5: "Sticky Shuffle / Briar Boogie",
+              6: "Stolen Beat / Time Out",
+              7: "Wrong Foot / Panic Party",
+              8: "Bad Bell Day / Last Laugh",
+            },
           },
           effects = {
             1: 'Automatic attacks build a same-target three-hit combo and finishing splash. Tap is an immediate focused attack. Charging uses the longer class technique, but Tap returns after its shorter cooldown; using Tap never extends Charged.',
-            2:
-              'Charge this attack to spread it through a ' +
-              shape.shape +
-              (shape.slow ? ' and slow the foes it hits.' : '.'),
+            2: shape
+              ? 'Charge this attack to spread it through a ' +
+                shape.shape +
+                (shape.slow ? ' and slow the foes it hits.' : '.')
+              : '',
             ...skills[game.hero.class],
           };
         return [
@@ -666,7 +687,7 @@
                   );
                 })()
               : '') +
-            (slot === 2
+            (slot === 2 && shape
               ? '\nCharged ' +
                 shape.shape +
                 ': ' +
@@ -1049,6 +1070,22 @@
       'Estas cifras corresponden a criaturas de lugares que ya has visitado. Compara su nivel, salud máxima y daño: los guardianes, cabecillas y combatientes a distancia pueden diferir.\n\n',
 
     'The Keeper’s shelves': 'Los estantes del Guardián',
+    "The Rogue's automatic bell strikes can Charm eligible monsters that survive. Tap Ding and Sting to harm nearby foes and strengthen allied basics; charge Raise a Racket for a wider performance.": "Los golpes automáticos del cascabel de la pícara pueden encantar monstruos aptos que sobrevivan. Ding and Sting daña a enemigos cercanos y fortalece los ataques básicos aliados; Raise a Racket amplía el efecto.",
+    "Lead Feet slows nearby foes while quickening the Rogue and her companions. Can't Dance reaches farther and strengthens the movement and recovery benefit.": "Lead Feet ralentiza a enemigos cercanos y acelera a la pícara y a sus compañeros. Can't Dance amplía el alcance y mejora el movimiento y la recuperación.",
+    "Beat Breaker interrupts enemy attacks and protects allied charged preparations. Shut the Band Up expands the interruption and briefly hushes eligible non-boss foes.": "Beat Breaker interrumpe ataques enemigos y protege las habilidades cargadas del grupo. Shut the Band Up amplía la interrupción y silencia brevemente a enemigos aptos que no sean jefes.",
+    "Sour Note withers enemies while mending the Rogue and nearby allies. Rotten Chorus increases the withering and healing effects; it does not revive fallen companions.": "Sour Note debilita a los enemigos mientras cura a la pícara y a sus aliados cercanos. Rotten Chorus aumenta esos efectos, pero no revive a los compañeros caídos.",
+    "Sticky Shuffle places a music station that slows foes and protects allies standing inside. Briar Boogie creates a wider station with damaging pulses.": "Sticky Shuffle crea una zona musical que ralentiza a los enemigos y protege a los aliados que permanecen dentro. Briar Boogie amplía la zona y añade pulsos dañinos.",
+    "Stolen Beat delays hostile skills and accelerates recovery of allied specials. Time Out spreads a stronger delay and recharge effect.": "Stolen Beat retrasa las habilidades enemigas y acelera la recuperación de las habilidades especiales aliadas. Time Out amplía y refuerza ambos efectos.",
+    "Wrong Foot pushes and weakens enemies while improving nearby allied attacks. Panic Party spreads a wider push, Weaken and allied damage benefit.": "Wrong Foot empuja y debilita a los enemigos, a la vez que mejora los ataques de los aliados cercanos. Panic Party amplía el empujón, el debilitamiento y el refuerzo aliado.",
+    "Bad Bell Day damages enemies and boosts allied critical and special attacks. Last Laugh makes the blast stronger and briefly hushes eligible non-boss foes.": "Bad Bell Day daña a los enemigos y refuerza los ataques críticos y especiales aliados. Last Laugh intensifica la explosión y silencia brevemente a enemigos aptos que no sean jefes.",
+    "Ding and Sting / Raise a Racket": "Ding and Sting / Raise a Racket",
+    "Lead Feet / Can't Dance": "Lead Feet / Can't Dance",
+    "Beat Breaker / Shut the Band Up": "Beat Breaker / Shut the Band Up",
+    "Sour Note / Rotten Chorus": "Sour Note / Rotten Chorus",
+    "Sticky Shuffle / Briar Boogie": "Sticky Shuffle / Briar Boogie",
+    "Stolen Beat / Time Out": "Stolen Beat / Time Out",
+    "Wrong Foot / Panic Party": "Wrong Foot / Panic Party",
+    "Bad Bell Day / Last Laugh": "Bad Bell Day / Last Laugh",
     'Radiant Strike / Radiant Cross': 'Golpe radiante / Cruz radiante',
     'Arcane Beam / Wide Arcane Beam': 'Rayo arcano / Rayo arcano amplio',
     'Rapid Arrows / Hawk Interception': 'Flechas rápidas / Intercepción del halcón',
@@ -1996,6 +2033,7 @@
     ['normal', 'normal'],
     ['paladin', 'paladín'],
     ['mage', 'maga'],
+    ['rogue', 'pícara'],
     ['ranger', 'explorador'],
     ['Recruitable', 'Disponible para reclutar'],
     ['With you', 'Contigo'],
