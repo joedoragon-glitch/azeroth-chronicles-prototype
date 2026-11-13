@@ -401,7 +401,7 @@ async function startBrowsableShowroom() {
     const button = document.createElement('button');
     button.className = 'asset-card';
     button.type = 'button';
-    button.setAttribute('role', 'listitem');
+    // Preserve the native button role for keyboard and screen-reader users.
     button.setAttribute('aria-current', String(entry.id === state.selected?.id));
     const thumb = document.createElement('div');
     thumb.className = 'library-thumb';
@@ -428,7 +428,11 @@ async function startBrowsableShowroom() {
     if (observer) observer.observe(canvas);
     else void paint(canvas, entry, entry.representation === 'raster' ||
       isMaterial(entry) ? 'raster' : 'current', entry.states?.[0] || null, state.generation, true);
-    return button;
+    const item = document.createElement('div');
+    item.setAttribute('role', 'listitem');
+    item.className = 'asset-card-item';
+    item.append(button);
+    return item;
   }
   function renderCards() {
     filterResults();
@@ -512,6 +516,9 @@ async function startBrowsableShowroom() {
   async function inspect() {
     const entry = state.selected;
     if (!entry) return;
+    const position = state.filtered.findIndex((item) => item.id === entry.id);
+    $('asset-prev').disabled = position <= 0;
+    $('asset-next').disabled = position < 0 || position >= state.filtered.length - 1;
     const gen = ++state.generation;
     $('asset-title').textContent = entry.name;
     $('asset-selection').textContent = statusText(entry) + ' · ' + entry.region;
@@ -621,8 +628,17 @@ async function startBrowsableShowroom() {
     if (!state.filtered.length || !state.selected) return;
     let i = state.filtered.findIndex((e) => e.id === state.selected.id);
     if (i < 0) i = direction > 0 ? -1 : state.filtered.length;
-    const candidate = state.filtered[Math.max(0, Math.min(state.filtered.length - 1, i + direction))];
-    if (candidate) selectAsset(candidate.id);
+    const index = Math.max(0, Math.min(state.filtered.length - 1, i + direction));
+    const candidate = state.filtered[index];
+    if (candidate) {
+      // Browsing from the inspector automatically reveals the next page of
+      // cards, rather than selecting an invisible item offscreen.
+      if (index >= state.visible) {
+        state.visible = Math.ceil((index + 1) / 24) * 24;
+        renderCards();
+      }
+      selectAsset(candidate.id);
+    }
   }
   $('asset-prev').addEventListener('click', () => next(-1));
   $('asset-next').addEventListener('click', () => next(1));
