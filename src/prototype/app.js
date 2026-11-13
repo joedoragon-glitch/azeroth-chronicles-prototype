@@ -7316,7 +7316,9 @@
         game.s.discovered['vale:quest-board-intro'] = true;
         save();
       }
-      game.recordBoardTutorialStep('boardOpened');
+      // Visiting a previously discovered Board is still a new tutorial
+      // milestone; do not wait for an unrelated save to persist the lesson.
+      if (game.recordBoardTutorialStep('boardOpened')) save();
       quests(true);
     }
     else if (n.kind === 'transport') {
