@@ -105,6 +105,41 @@ function trackIdentity(entity, region, zone, kind, protectedKeys) {
   ].filter(Boolean).map(clean);
   return 'world:' + semantic.join(':');
 }
+// A card is a drawing identity; inspection states are the distinct contexts
+// through which gameplay supplies that drawing. Preserve role and area variants
+// before picking a bounded, deterministic set for the public JSON payload.
+function stateKey(state) {
+  const entity = state.entity || {};
+  return [
+    state.region, state.area || '', entity.sceneRole || '',
+    entity.presentation || '', entity.form || '',
+    entity.guard ? 'guard' : '', entity.ranged ? 'ranged' : '',
+    entity.full ? 'full' : '', entity.crowned ? 'crowned' : '',
+  ].join('|');
+}
+function representativeStates(states, limit = 12) {
+  const chosen = [];
+  const seen = new Set();
+  const add = (state) => {
+    const key = stateKey(state);
+    if (seen.has(key) || chosen.length >= limit) return;
+    seen.add(key); chosen.push(state);
+  };
+  // A region filter always needs a real state from that region.
+  for (const region of [...new Set(states.map((s) => s.region))]) {
+    add(states.find((s) => s.region === region && !s.entity?.sceneRole) ||
+      states.find((s) => s.region === region));
+  }
+  // Preserve author-intended function variants before filling out extra rooms.
+  for (const role of [...new Set(states.map((s) => s.entity?.sceneRole).filter(Boolean))])
+    add(states.find((s) => s.entity?.sceneRole === role));
+  for (const presentation of [...new Set(states.map((s) => s.entity?.presentation).filter(Boolean))])
+    add(states.find((s) => s.entity?.presentation === presentation));
+  for (const area of [...new Set(states.map((s) => s.area).filter(Boolean))])
+    add(states.find((s) => s.area === area));
+  for (const state of states) add(state);
+  return chosen;
+}
 function census(options = {}) {
   const protectedKeys = new Set(options.protectedKeys || []);
   const areas = [...new Set([
@@ -138,14 +173,13 @@ function census(options = {}) {
             if (!existing.areas.includes(area)) existing.areas.push(area);
             if (!existing.regions.includes(regionNames[region]))
               existing.regions.push(regionNames[region]);
-            const newRegion = !existing.states.some((s) => s.region === region);
-            if ((newRegion || existing.states.length < 10) &&
-                !existing.states.some((s) => s.area === area)) {
-              existing.states.push({
-                label: 'Observed world fixture · ' + human(area),
-                entity: visual, region, area,
-              });
-            }
+            const state = {
+              label: 'Observed world fixture · ' + human(area) +
+                (visual.sceneRole ? ' · ' + human(visual.sceneRole) : ''),
+              entity: visual, region, area,
+            };
+            if (!existing.states.some((fixture) => stateKey(fixture) === stateKey(state)))
+              existing.states.push(state);
             if (visual.name && !existing.aliases.includes(visual.name))
               existing.aliases.push(visual.name);
             continue;
@@ -193,6 +227,8 @@ function census(options = {}) {
       referenceDate: null,
     });
   }
+  for (const row of rows.values())
+    row.states = representativeStates(row.states);
   return { areas, observedInstances, rows: [...rows.values()] };
 }
 module.exports = { census };
