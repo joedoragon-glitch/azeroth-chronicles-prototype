@@ -34,7 +34,7 @@ jobs:
       - name: Verify the existing Sprite Showroom on desktop and phone
         run: node tests/sprite-showroom-library-browser.test.cjs
       - name: Verify the original single-candidate comparison still works
-        run: node tests/sprite-showroom-browser.test.cjs
+        run: node tests/sprite-showroom-browser.test.cjs --comparison-only
       - name: Preserve visual evidence without deploying
         if: always()
         uses: actions/upload-artifact@v4
