@@ -125,7 +125,11 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   assert.equal(g.hero.level, 4);
   assert.equal(g.hero.xp, 17);
   assert.equal(g.xpRequired(), 480);
-  assert.equal(g.hero.maxHp, hp + 75);
+  // Paladin's existing innate HP-per-level passive stacks with shared
+  // growth; this baseline check predates that documented class mechanic.
+  const hpPerLevel = R.balance.growth.hpPerLevel +
+    (cls === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0);
+  assert.equal(g.hero.maxHp, hp + hpPerLevel * 3);
   assert.equal(g.hero.maxMp, mp + R.manaBalance.perLevel * 3);
   assert.equal(g.hero.hp, g.hero.maxHp);
   assert.equal(g.hero.mp, R.resourceMode.manaEnabled ? g.hero.maxMp : C.classes[cls].mp);
