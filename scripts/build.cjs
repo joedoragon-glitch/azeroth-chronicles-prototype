@@ -138,7 +138,7 @@ if (site) {
     ];
     for (const asset of showroom.packagedResources) {
       const name = asset.replace(/^\.\//, '');
-      if (!/^assets\/sprites\/[a-zA-Z0-9_/-]+\.(?:png|webp)$/.test(name) ||
+      if (!/^assets\/(?:sprites|materials)\/[a-zA-Z0-9_/-]+\.(?:png|webp)$/.test(name) ||
           name.includes('..') || !fs.existsSync(path.join(root, name)))
         throw Error('Invalid preserved showroom raster: ' + asset);
       pages.push(name);
