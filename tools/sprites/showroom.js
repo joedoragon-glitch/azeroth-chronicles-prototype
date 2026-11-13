@@ -221,7 +221,9 @@ async function startBrowsableShowroom() {
   const spanish = {
     back: '← Volver al juego',
     intro: 'Todo el arte visual del juego en un solo lugar. Explora dibujos procedurales, sprites registrados y referencias conservadas sin entrar en una partida.',
-    search: 'Buscar arte', category: 'Categoría', location: 'Ubicación', artworkType: 'Tipo de arte',
+    search: 'Buscar arte', category: 'Categoría', location: 'Región',
+    artworkType: 'Representación en el juego', subcategoryLabel: 'Dentro de la categoría',
+    areaLabel: 'Zona o mazmorra', allSubcategories: 'Todas las clases', allAreas: 'Todas las zonas',
     browse: 'Explorar el arte', clear: 'Borrar filtros', more: 'Mostrar más',
     footnote: 'Las referencias históricas tienen fecha. Sus vistas actuales usan el código de dibujo vigente, pero no demuestran por sí solas que ese estado aparezca aún en una escena de la campaña.',
     selected: 'Arte seleccionado', gameSelection: 'En el juego', procedural: 'Procedural',
@@ -233,10 +235,17 @@ async function startBrowsableShowroom() {
     footer: 'Esta sala es de solo lectura. Nunca abre, modifica ni reemplaza partidas guardadas. La aceptación artística y la publicación son decisiones independientes.',
     searchPlaceholder: 'Busca Paladín, huerto, ferry, material…',
     notePlaceholder: '¿Qué deberíamos conservar, cambiar o comparar?',
-    allArtwork: 'Todo el arte', everyLocation: 'Todas las ubicaciones', allTypes: 'Todos los tipos',
-    rasterFilter: 'Sprite seleccionado', proceduralFilter: 'Procedural seleccionado',
-    retainedFilter: 'Tiene sprite para comparar', datedFilter: 'Referencias históricas',
+    allArtwork: 'Todas las categorías', everyLocation: 'Todas las regiones',
+    allTypes: 'Todas las representaciones',
+    rasterFilter: 'Usa un sprite', proceduralFilter: 'Dibujo procedural',
+    retainedFilter: 'Procedural con sprite conservado', datedFilter: 'Referencias históricas',
+    proceduralRetained: 'Dibujo procedural en el juego · existe un sprite conservado',
+    retainedCard: 'Procedural · sprite conservado',
     materials: 'Materiales', day: 'Día', night: 'Noche', closeUp: 'Vista ampliada',
+    sourceSummary: 'Cómo se define este recurso: código y diseño',
+    sourceButton: 'Mostrar código relacionado', sourceLabel: 'Archivo del dibujo',
+    exactInput: 'Datos exactos para el renderizador', drawingCode: 'Código actual de dibujo',
+    helpTitle: 'Cómo explorar y comparar el arte',
     game100: '100% del juego', game150: '150% del juego', game200: '200% del juego',
     matches: 'resultados', shown: 'visibles', selectedRaster: 'Sprite seleccionado para este estado',
     selectedProcedural: 'Procedural seleccionado para este estado',
@@ -277,9 +286,17 @@ async function startBrowsableShowroom() {
   };
   const staticTargets = [
     ['.library-back','back'], ['.library-lede','intro'],
-    ['.library-search','search'], ['.library-controls label:nth-child(2)','category'],
-    ['.library-controls label:nth-child(3)','location'],
-    ['.library-controls label:nth-child(4)','artworkType'],
+    ['.library-search','search'], ['.library-controls label:has(#asset-group)','category'],
+    ['.library-controls label:has(#asset-region)','location'],
+    ['.library-controls label:has(#asset-kind)','artworkType'],
+    ['#asset-subcategory-wrap','subcategoryLabel'],
+    ['#asset-area-wrap','areaLabel'],
+    ['.library-help summary','helpTitle'],
+    ['#asset-source-details summary','sourceSummary'],
+    ['#asset-source-details label[for="asset-source-file"]','sourceLabel'],
+    ['#asset-source-details h3:first-of-type','exactInput'],
+    ['#asset-source-details h3:last-of-type','drawingCode'],
+    ['#asset-read-code','sourceButton'],
     ['#browse-heading','browse'], ['#asset-reset','clear'],
     ['#asset-more','more'], ['.library-footnote','footnote'],
     ['.library-inspector > .library-eyebrow','selected'],
@@ -1171,11 +1188,19 @@ async function startBrowsableShowroom() {
     }
   });
   localeStatic();
-  renderCards();
   const params = new URL(location.href).searchParams;
   const selectedId = params.get('asset');
-  selectAsset(state.entries.some((e) => e.id === selectedId)
-    ? selectedId : state.entries[0]?.id, Number(params.get('state') || 0));
+  const linked = state.entries.find((e) => e.id === selectedId);
+  const requestedCollection = params.get('collection');
+  state.collection = ['current', 'dated', 'all'].includes(requestedCollection)
+    ? requestedCollection : linked && !belongsToCollection(linked, 'current')
+      ? 'dated' : 'current';
+  updateCollectionControls();
+  optionCounts();
+  progressiveFacets();
+  renderCards();
+  selectAsset(linked?.id || state.filtered[0]?.id,
+    Number(params.get('state') || 0), false);
   renderTotal();
   window.SpriteShowroom = {
     ready: true, mode: 'library', entries: state.entries.length,
