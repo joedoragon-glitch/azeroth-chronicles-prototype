@@ -687,6 +687,20 @@ async function startBrowsableShowroom() {
       }
     }, { rootMargin: '180px' });
   }
+  function locationForCard(entry, areaLabel) {
+    const selected = $('asset-region').value;
+    const names = entry.regions || [entry.region];
+    const primary = selected && names.includes(selected) ? selected : entry.region;
+    const location = selected && names.includes(selected) ? primary
+      : names.length > 1
+        ? names.length + (language === 'es' ? ' regiones' : ' regions')
+        : primary;
+    const local = language === 'es' ? regionEs[location] || location : location;
+    const area = areaLabel && entry.areas?.length === 1 &&
+      !['vale','march','highlands','frontier','crown'].includes(areaLabel)
+      ? ' · ' + human(areaLabel) : '';
+    return local + area;
+  }
   function labelCard(entry) {
     if (entry.sourceKind === 'dated-reference') return word('reviewedFixture', 'Review · Oct 2026');
     if (isMaterial(entry)) return word('materialCard', 'Material');
@@ -705,8 +719,7 @@ async function startBrowsableShowroom() {
       const entry = state.entries.find((item) => item.id === entryId);
       if (!entry) continue;
       const location = node.querySelector('.library-card-meta');
-      if (location) location.textContent = language === 'es'
-        ? regionEs[entry.region] || entry.region : entry.region;
+      if (location) location.textContent = locationForCard(entry);
       const status = node.querySelector('.library-card-state');
       if (status) status.textContent = labelCard(entry);
     }
@@ -732,11 +745,7 @@ async function startBrowsableShowroom() {
     const meta = document.createElement('span');
     meta.className = 'library-card-meta';
     const areaLabel = (entry.areas || []).find((area) => area && area !== entry.id.split(':')[0]);
-    meta.textContent = (language === 'es' ? regionEs[entry.region] || entry.region : entry.region) +
-      (areaLabel && entry.areas.length === 1 && areaLabel !== 'vale' &&
-        areaLabel !== 'march' && areaLabel !== 'highlands' &&
-        areaLabel !== 'frontier' && areaLabel !== 'crown'
-        ? ' · ' + human(areaLabel) : '');
+    meta.textContent = locationForCard(entry, areaLabel);
     const status = document.createElement('span');
     status.className = 'library-card-state';
     status.textContent = labelCard(entry);
@@ -813,7 +822,7 @@ async function startBrowsableShowroom() {
     const parts = [
       [word('stableId','Stable ID'), entry.id],
       [word('category','Category'), language === 'es' ? categoryEs[entry.group] || entry.group : entry.group],
-      [word('region','Location'), language === 'es' ? regionEs[entry.region] || entry.region : entry.region],
+      [word('region','Location'), (entry.regions || [entry.region]).join(', ')],
       [word('origin','Source'), entry.sourceKind === 'dated-reference' ? word('reviewedFixture','October 2026 review case')
         : entry.sourceKind],
       [word('renderer','Renderer selection'), entry.representation],
@@ -825,6 +834,7 @@ async function startBrowsableShowroom() {
       [word('areaMetadata','Source areas'), entry.areas?.join(', ') || '—'],
       [word('tagMetadata','Searchable tags'), entry.tags?.join(' · ') || '—'],
       [word('sourcePath','Current source modules'), entry.sourceFiles?.join(', ') || '—'],
+      [word('aliases','Other names'), entry.aliases?.join(', ') || '—'],
     ];
     el.replaceChildren(...parts.map(([key, value]) => {
       const p = document.createElement('p');
@@ -1002,8 +1012,9 @@ async function startBrowsableShowroom() {
     $('asset-next').disabled = position < 0 || position >= state.filtered.length - 1;
     const gen = ++state.generation;
     $('asset-title').textContent = entry.name;
+    const fixtureRegion = index.regionNames?.[activeState(entry)?.region] || entry.region;
     $('asset-selection').textContent = statusText(entry) + ' · ' +
-      (language === 'es' ? regionEs[entry.region] || entry.region : entry.region);
+      (language === 'es' ? regionEs[fixtureRegion] || fixtureRegion : fixtureRegion);
     updateViewButtons(entry);
     metadata(entry);
     updateTags(entry);
@@ -1075,7 +1086,13 @@ async function startBrowsableShowroom() {
     }
     state.selected = entry;
     $('asset-note').value = reviewNotes.get(id) || '';
-    state.variant = Math.min(variant, Math.max(0, statesFor(entry).length - 1));
+    const matchesRegion = $('asset-region').value;
+    const regionState = matchesRegion
+      ? statesFor(entry).findIndex((fixture) =>
+          index.regionNames?.[fixture.region] === matchesRegion) : -1;
+    state.variant = Math.max(0, Math.min(
+      variant === 0 && regionState >= 0 ? regionState : variant,
+      Math.max(0, statesFor(entry).length - 1)));
     state.view = 'current';
     rebuildStates(entry);
     updateViewButtons(entry);
@@ -1107,7 +1124,19 @@ async function startBrowsableShowroom() {
     $('asset-inspector').hidden = false;
     if (!state.filtered.some((entry) => entry.id === state.selected?.id))
       selectAsset(state.filtered[0].id, 0, false);
-    else void inspect();
+    else {
+      const region = $('asset-region').value;
+      if (region && index.regionNames?.[activeState(state.selected)?.region] !== region) {
+        const regionIndex = statesFor(state.selected).findIndex((fixture) =>
+          index.regionNames?.[fixture.region] === region);
+        if (regionIndex >= 0) {
+          state.variant = regionIndex;
+          rebuildStates(state.selected);
+          reflectUrl();
+        }
+      }
+      void inspect();
+    }
   }
   function filtersChanged({ rebuildFacets = false } = {}) {
     state.visible = 24;
