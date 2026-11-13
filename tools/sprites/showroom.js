@@ -168,7 +168,11 @@ async function startBrowsableShowroom() {
   function loadScript(name) {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = new URL('src/prototype/' + name + '.js', rootUrl).href;
+      const path = 'src/prototype/' + name + '.js';
+      const source = new URL(path, rootUrl);
+      const fingerprint = index?.sourceFingerprints?.[path];
+      if (fingerprint) source.searchParams.set('v', fingerprint);
+      script.src = source.href;
       script.onload = resolve;
       script.onerror = () => reject(Error('Could not load game painter: ' + name));
       document.head.append(script);
@@ -179,13 +183,17 @@ async function startBrowsableShowroom() {
   });
   let index;
   try {
-    for (const name of scriptOwners) await loadScript(name);
     const response = await indexResponse;
     if (!response.ok) throw Error('The published visual catalog is unavailable');
     index = await response.json();
     if (index.schemaVersion !== 1 || !Array.isArray(index.entries))
       throw Error('Invalid visual catalog version');
-    if (!await PrototypeSprites.preload(new URL('assets/sprites/manifest.json', rootUrl).href))
+    for (const name of scriptOwners) await loadScript(name);
+    const manifestUrl = new URL('assets/sprites/manifest.json', rootUrl);
+    if (index.sourceFingerprints?.['assets/sprites/manifest.json'])
+      manifestUrl.searchParams.set('v',
+        index.sourceFingerprints['assets/sprites/manifest.json']);
+    if (!await PrototypeSprites.preload(manifestUrl.href))
       throw Error('The sprite registry is unavailable');
   } catch (error) {
     $('library-count').textContent = 'Could not open showroom: ' + error.message;
@@ -195,6 +203,7 @@ async function startBrowsableShowroom() {
   const state = {
     entries: index.entries,
     filtered: [],
+    collection: 'current',
     visible: 24,
     selected: null,
     view: 'current',
@@ -334,7 +343,7 @@ async function startBrowsableShowroom() {
   const imageCache = new Map();
   const reviewNotes = new Map();
   const groups = [...new Set(state.entries.map((e) => e.group))].sort();
-  const regions = [...new Set(state.entries.map((e) => e.region))].sort();
+  const regions = [...new Set(state.entries.flatMap((e) => e.regions || [e.region]))].sort();
   for (const [id, values] of [['asset-group', groups], ['asset-region', regions]]) {
     for (const name of values) $(id).add(new Option(name, name));
   }
