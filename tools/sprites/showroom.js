@@ -497,9 +497,12 @@ async function startBrowsableShowroom() {
     const selected = fixture?.entity
       ? (PrototypeSprites.definitionFor(fixture.entity, fixture.region) ? 'raster' : 'procedural')
       : entry.representation;
-    const use = selected === 'raster' ? word('selectedRaster', 'Raster selected by this fixture')
-      : selected === 'procedural' ? word('selectedProcedural', 'Procedural selected by this fixture')
-        : word('referenceUnavailable', 'Reference unavailable');
+    const hasRetained = selected === 'procedural' && rasterAvailable(entry);
+    const use = selected === 'raster' ? word('selectedRaster', 'Sprite currently selected')
+      : hasRetained
+        ? word('proceduralRetained', 'Procedural drawing in game · retained sprite available')
+        : selected === 'procedural' ? word('selectedProcedural', 'Procedural drawing in game')
+          : word('referenceUnavailable', 'Reference unavailable');
     const prefix = entry.sourceKind === 'dated-reference'
       ? word('historicalFixture', 'Dated review fixture') + ' · '
       : entry.sourceKind === 'current-world-fixture'
@@ -639,12 +642,12 @@ async function startBrowsableShowroom() {
     }, { rootMargin: '180px' });
   }
   function labelCard(entry) {
-    return entry.sourceKind === 'dated-reference'
-      ? word('reviewedFixture', 'Review fixture · Oct 2026')
-      : isMaterial(entry) ? word('materialCard', 'Material')
-        : entry.representation === 'raster'
-          ? word('rasterCard', 'Sprite selected')
-          : word('proceduralCard', 'Procedural selected');
+    if (entry.sourceKind === 'dated-reference') return word('reviewedFixture', 'Review · Oct 2026');
+    if (isMaterial(entry)) return word('materialCard', 'Material');
+    if (entry.displayStatus === 'sprite-active') return word('rasterCard', 'Uses sprite');
+    if (entry.displayStatus === 'procedural-with-sprite')
+      return word('retainedCard', 'Procedural · sprite retained');
+    return word('proceduralCard', 'Procedural only');
   }
   function resultCaption() {
     return state.filtered.length + ' ' + word('matches', 'matching artworks') + ' · ' +
@@ -682,7 +685,12 @@ async function startBrowsableShowroom() {
     title.textContent = entry.name;
     const meta = document.createElement('span');
     meta.className = 'library-card-meta';
-    meta.textContent = language === 'es' ? regionEs[entry.region] || entry.region : entry.region;
+    const areaLabel = (entry.areas || []).find((area) => area && area !== entry.id.split(':')[0]);
+    meta.textContent = (language === 'es' ? regionEs[entry.region] || entry.region : entry.region) +
+      (areaLabel && entry.areas.length === 1 && areaLabel !== 'vale' &&
+        areaLabel !== 'march' && areaLabel !== 'highlands' &&
+        areaLabel !== 'frontier' && areaLabel !== 'crown'
+        ? ' · ' + human(areaLabel) : '');
     const status = document.createElement('span');
     status.className = 'library-card-state';
     status.textContent = labelCard(entry);
@@ -767,6 +775,10 @@ async function startBrowsableShowroom() {
       [word('activeRaster','Active raster identity'), entry.activeSpriteKey || '—'],
       [word('registeredRevision','Registered revision'), entry.revision || '—'],
       [word('historicalVersions','Preserved raster versions'), String(entry.archive?.length || 0)],
+      [word('subCategory','Kind within category'), entry.subcategory || '—'],
+      [word('areaMetadata','Source areas'), entry.areas?.join(', ') || '—'],
+      [word('tagMetadata','Searchable tags'), entry.tags?.join(' · ') || '—'],
+      [word('sourcePath','Current source modules'), entry.sourceFiles?.join(', ') || '—'],
     ];
     el.replaceChildren(...parts.map(([key, value]) => {
       const p = document.createElement('p');
@@ -778,6 +790,27 @@ async function startBrowsableShowroom() {
       return p;
     }));
   }
+  function updateTags(entry) {
+    const box = $('asset-tags');
+    box.replaceChildren();
+    const terms = (entry.tags || []).filter((term) =>
+      term && term !== entry.region && term !== entry.subcategory);
+    for (const term of terms.slice(0, 5)) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = human(term);
+      button.title = language === 'es'
+        ? 'Buscar otros recursos con esta etiqueta'
+        : 'Find other artwork with this tag';
+      button.addEventListener('click', () => {
+        $('asset-query').value = term;
+        filtersChanged();
+      });
+      box.append(button);
+    }
+    box.hidden = !box.childElementCount;
+  }
+
   async function inspect() {
     const entry = state.selected;
     if (!entry) return;
@@ -790,6 +823,21 @@ async function startBrowsableShowroom() {
       (language === 'es' ? regionEs[entry.region] || entry.region : entry.region);
     updateViewButtons(entry);
     metadata(entry);
+    updateTags(entry);
+    displaySourceDefinition(entry);
+    const explain = {
+      current: 'The current game renderer decides whether this state uses a sprite or a procedural drawing.',
+      procedural: 'Shows the current code-drawn appearance, even if the game normally selects a sprite.',
+      raster: 'Shows a registered or preserved raster. A retained sprite is not necessarily used in the game.',
+      compare: 'Both versions use the same inspection state and zoom. They are isolated artwork, not a whole gameplay scene.',
+    };
+    $('asset-view-help').textContent = language === 'es'
+      ? {
+        current: 'El renderizador decide si este estado usa un sprite o un dibujo procedural.',
+        procedural: 'Muestra el dibujo generado por el código, aunque el juego use un sprite.',
+        raster: 'Muestra el sprite registrado o conservado. No necesariamente se usa en el juego.',
+        compare: 'Ambos usan el mismo estado y escala; no representan una escena completa.',
+      }[state.view] : explain[state.view];
     const compare = state.view === 'compare';
     $('asset-secondary-frame').hidden = !compare;
     $('asset-preview-grid').dataset.compare = String(compare);
@@ -824,6 +872,8 @@ async function startBrowsableShowroom() {
     if (state.selected) link.searchParams.set('asset', state.selected.id);
     if (state.variant > 0) link.searchParams.set('state', String(state.variant));
     if (language === 'es') link.searchParams.set('lang','es');
+    if (state.collection === 'dated') link.searchParams.set('collection', 'dated');
+    if (state.collection === 'all') link.searchParams.set('collection', 'all');
     return link.href;
   }
   function reflectUrl() {
@@ -832,6 +882,14 @@ async function startBrowsableShowroom() {
   function selectAsset(id, variant = 0, scrollToInspector = true) {
     const entry = state.entries.find((item) => item.id === id);
     if (!entry) return;
+    if (!belongsToCollection(entry)) {
+      state.collection = entry.sourceKind === 'dated-reference' ||
+        entry.sourceKind === 'archived-material' ? 'dated' : 'current';
+      updateCollectionControls();
+      optionCounts();
+      progressiveFacets();
+      renderCards();
+    }
     state.selected = entry;
     $('asset-note').value = reviewNotes.get(id) || '';
     state.variant = Math.min(variant, Math.max(0, statesFor(entry).length - 1));
