@@ -355,6 +355,35 @@ async function startBrowsableShowroom() {
       if (option.value) option.textContent = language === 'es'
         ? regionEs[option.value] || option.value : option.value;
     }
+    const descriptions = language === 'es'
+      ? [
+        'Primero aparece el arte actual. Elige categoría, región o representación; después afina la selección. También puedes buscar por etiquetas, zonas e ID exacto.',
+        'En el juego muestra lo que usa el renderizador. Procedural muestra el dibujo del código; Sprite, una imagen registrada o conservada; Comparar enseña ambos.',
+        'La vista ampliada facilita revisar detalles. 100%, 150% y 200% son escalas de estudio aislado, no escenas completas. Día y noche solo aplican un tinte.',
+        'Abre «Cómo se define este recurso» para leer el estado exacto, las instrucciones artísticas y líneas del código vigente. No modifica el juego.',
+      ]
+      : [
+        'Current artwork comes first. Choose a category, region or appearance, then refine if useful. Search also recognizes tags, areas and exact asset IDs.',
+        'Game selection shows the renderer choice. Procedural forces the code drawing; Sprite shows a registered or retained image; Compare places both together.',
+        'Studio close-up magnifies details. 100%, 150%, and 200% are isolated study scales, not full scenes. Day/night adds a study tint only.',
+        'Open “How this artwork is defined” for exact render input, recorded art direction and matching code lines. Nothing here changes the game.',
+      ];
+    document.querySelectorAll('.library-help p').forEach((p, i) => {
+      if (descriptions[i]) p.textContent = descriptions[i];
+    });
+    const sourceExplanations = language === 'es'
+      ? [
+        'Los datos exactos del renderizador aparecen abajo. Las decisiones históricas pueden haber sido sustituidas.',
+        'Estos son los campos reales del estado elegido, no una descripción inventada.',
+        'Elige un módulo para leer líneas del código real; un dibujo puede usar varias funciones.',
+      ]
+      : [
+        'Exact renderer input follows. Historical decisions may have been superseded.',
+        'These are the actual fields for the selected state, not a generated description.',
+        'Choose a module to read actual source lines. Some drawings use shared functions.',
+      ];
+    document.querySelectorAll('#asset-source-details .library-source-explanation')
+      .forEach((p, i) => { if (sourceExplanations[i]) p.textContent = sourceExplanations[i]; });
   }
 
   const imageCache = new Map();
@@ -1179,6 +1208,9 @@ async function startBrowsableShowroom() {
   $('asset-language').addEventListener('change', () => {
     language = $('asset-language').value === 'es' ? 'es' : 'en';
     localeStatic();
+    optionCounts();
+    progressiveFacets();
+    updateCollectionControls();
     renderTotal();
     relabelVisibleCards();
     if (state.selected) {
