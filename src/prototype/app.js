@@ -824,6 +824,10 @@
   });
   Object.assign(spanishText, {
     'Complete · lesson learned': 'Completa · lección aprendida',
+    'Learn Main Story, Side Quests and map navigation; study The Art of Misdirection in Old Orchard Cellars.':
+      'Aprende a distinguir la Historia principal de las Misiones secundarias y a orientarte con el mapa; estudia El arte del engaño en las Antiguas bodegas del huerto.',
+    'Dispatch companions to gather tribute and recover crowns from their cargo.':
+      'Envía compañeros a recoger tributo y recupera las coronas de la carga que transporten.',
     'Critical executions': 'Ejecuciones críticas',
     'A critical execution strengthens a real attack or supported effect; it does not make a missed attack hit. The Art of Misdirection permanently increases your hero critical chance by one percentage point. The Keeper Archive explains detailed critical rules.': 'Una ejecución crítica refuerza un ataque real o un efecto compatible, pero no convierte un fallo en un acierto. El arte del engaño aumenta permanentemente la probabilidad crítica de tu héroe en un punto porcentual. El Archivo del Guardián explica las reglas detalladas.',
   });
