@@ -1,5 +1,7 @@
 # Companion onboarding, funded recruitment and quest-board navigation — dev.148
 
+**v0.9.2 draft supersession (12 November 2026; not merged/published):** [Tutorial issue #866](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/866) and [draft PR #868](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/868) preserve the original `quest-barracks` and its historical Captain/Recall/Basic Barracks sequence, while adding a class-specific Rogue first lawful Charm and a *separate* follow-on Quest Board/map-navigation learning quest involving the existing Old Orchard Cellars critical Codex. The later Board chapter distinguishes Main Story and Side Quests and records real Board/map actions; this does **not** rewrite existing regional quests or duplicate the Codex reward. A distinct first-use gathering lesson is triggered by eligible Barracks Operations; remote Resource Expeditions retain explanatory copy instead of a guided chapter. The original dev.148 account below remains the dated implementation/publication record, not a description of these unmerged changes.
+
 Joel's live new-run playtest requested a useful first Captain visit, an opening quest about companions, and a cancellable automatic recruitment request when funds alone are missing. He also requested story objectives directly on the quest board, with the existing optional board tasks under Side Quests.
 
 ## Player behavior
