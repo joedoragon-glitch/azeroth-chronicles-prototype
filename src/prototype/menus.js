@@ -1441,7 +1441,8 @@
       // A placed, unfinished Barracks is the real next milestone regardless
       // of whether the Captain/Recall briefing has been completed.
       if (tutorial && !tutorial.paid && game.tutorialStage() === 'construction')
-        return 'FIELD BASE · Construction in progress. Keep your builder assigned.';
+        return 'FIELD BASE · ' +
+          game.questProgress(game.questDefs().find((q) => q.id === 'quest-barracks'));
       if (tutorial && !tutorial.paid && game.hero.class === 'rogue')
         return 'COMPANIONS · ' + game.questProgress(game.questDefs().find((q) => q.id === 'quest-barracks'));
       if (tutorial && !tutorial.paid && !tutorial.captainBriefed)
