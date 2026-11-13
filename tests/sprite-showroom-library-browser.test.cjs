@@ -64,6 +64,11 @@ async function main() {
       await page.locator('#asset-light').selectOption('night');
       await page.waitForTimeout(180);
       assert.match(await page.locator('#asset-preview-note').textContent(), /night studio grade/);
+      assert.equal(await page.locator('#asset-scale').inputValue(), 'close');
+      await page.locator('#asset-scale').selectOption('1.5');
+      await page.waitForFunction(() =>
+        document.querySelector('#asset-preview-note').textContent.includes('150% game scale'));
+      await page.locator('#asset-scale').selectOption('close');
       await page.locator('#asset-query').fill('registered-terrain:road:vale');
       await page.locator('#asset-grid .asset-card').first().click();
       assert.match(await page.locator('#asset-selection').textContent(), /road material/);
@@ -74,6 +79,13 @@ async function main() {
       await page.locator('#asset-query').fill('');
       await page.locator('#asset-group').selectOption('World & scenery');
       assert.equal((await page.locator('#asset-grid .asset-card').count()) > 0, true);
+      // The first viewport paints lazily. Scroll each visible card before
+      // full-page screenshots so the captured gallery shows genuine artwork.
+      const cards = page.locator('#asset-grid .asset-card');
+      for (let i = 0; i < await cards.count(); i++)
+        await cards.nth(i).scrollIntoViewIfNeeded();
+      await page.waitForTimeout(250);
+      await page.evaluate(() => window.scrollTo(0, 0));
       const artifactDir = path.resolve(__dirname, '../test-artifacts/sprite-showroom');
       fs.mkdirSync(artifactDir, { recursive: true });
       await page.screenshot({
