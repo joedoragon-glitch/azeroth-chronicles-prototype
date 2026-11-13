@@ -190,6 +190,7 @@ function menu(app, label) {
     assert.equal(report.performance.startupDiagnostics.attempts.at(-1).outcome, 'ready');
     assert.equal(report.analysisGuide.version, 1);
     assert.equal(report.analysisGuide.language, 'en');
+    assert.equal(report.gameTitle, "So I Became the Dark Lord's Problem");
     const sections = new Map(
       report.analysisGuide.sections.map((section) => [section.path, section]),
     );

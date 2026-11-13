@@ -6107,6 +6107,7 @@
   function exportPlaytestReport() {
     exportJSON(
       {
+        gameTitle: "So I Became the Dark Lord's Problem",
         version: PrototypeBuild.version,
         // Provenance is embedded in the actual packaged script, not inferred
         // from the current GitHub main or another server response.
@@ -6195,7 +6196,7 @@
         partyDiagnostics: game.partyDiagnosticsReport(),
         statistics: game.s.statistics,
       },
-      'Azeroth_Playtest_Report.json',
+      'SIBDLP_Playtest_Report.json',
     );
   }
   let newAdventureMode = 'normal';

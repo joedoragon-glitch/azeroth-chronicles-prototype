@@ -14,6 +14,19 @@ const { shell } = require('./helpers/production-shell.cjs');
       commit: simulatedBuildCommit,
     });
     let exported = null;
+    let downloadedName = null;
+    const originalCreateElement = scope.document.createElement;
+    scope.document.createElement = (tag) => {
+      const element = originalCreateElement(tag);
+      if (tag === 'a') {
+        const originalClick = element.click.bind(element);
+        element.click = () => {
+          downloadedName = element.download;
+          originalClick();
+        };
+      }
+      return element;
+    };
     scope.URL.createObjectURL = (blob) => { exported = blob; return 'blob:diagnostic-test'; };
     const label = (en, es) => language === 'es' ? es : en;
     const actions = () => elements.get('modal-actions').children;
@@ -69,7 +82,11 @@ const { shell } = require('./helpers/production-shell.cjs');
     click(label('Stop renderer profiling', 'Detener registro del renderizador'));
     click(label('Export playtest report', 'Exportar informe de prueba'));
     assert(exported, 'the player receives the standard local JSON download');
+    assert.equal(downloadedName, 'SIBDLP_Playtest_Report.json',
+      'both English and Spanish player menus request the official SIBDLP report filename');
     const report = JSON.parse(await exported.text());
+    assert.equal(report.gameTitle, "So I Became the Dark Lord's Problem",
+      'report JSON identifies the official game without replacing existing diagnostic fields');
     assert(report.version, 'export retains the original version field');
     assert.equal(report.buildCommit, simulatedBuildCommit,
       'EN/ES report exports the exact loaded packaged build SHA');
