@@ -50,6 +50,9 @@ for (const language of ['en', 'es']) {
   // An earlier harvest counter records material picked up, not crowns paid.
   // In particular it must never falsely finish the first-use lesson.
   g.s.gathered.vale = 15;
+  const harvestedSite = g.visibleResourceNodes()[0];
+  assert(harvestedSite && harvestedSite.amount >= 15);
+  harvestedSite.amount -= 15; // keep the existing finite regional pool consistent
   g.s.expeditionRank = 2;
   Object.assign(g.hero, { x: base.x, y: base.y });
   s.Prototype.closeMenu();
@@ -86,9 +89,9 @@ for (const language of ['en', 'es']) {
   root();
   click(t('Quest journal', 'Diario de misiones'));
   click(t('Completed quests', 'Misiones completadas'));
-  assert(buttons().some((b) => b.textContent.startsWith(
+  assert(e.get('modal-actions').children.some((b) => b.textContent.startsWith(
     t('Your First Company', 'Tu primera compañía'))));
-  assert(buttons().some((b) => b.textContent.startsWith(
+  assert(e.get('modal-actions').children.some((b) => b.textContent.startsWith(
     t('Recover Dark Lord Tribute', 'Recuperar el tributo del Señor Oscuro'))),
     'new paid chapter appears in completed quest history');
 }
