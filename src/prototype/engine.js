@@ -1309,12 +1309,13 @@
         return z.buildings.find((b) => b.kind === 'barracks' && b.progress >= 4) || null;
       }
       if (q.kind === 'barracks') {
-        if (
-          !state.captainBriefed ||
-          (state.recallPracticed && !state.barracksBriefed && !this.hasAnyBarracks())
-        )
+        // Construction already underway supersedes tutorial dialogue,
+        // even if the player built independently before visiting the Captain.
+        if (this.hasAnyBarracks())
+          return nearest(z.buildings.filter((b) => b.kind === 'barracks' && b.progress < 4)) || null;
+        if (!state.captainBriefed || (state.recallPracticed && !state.barracksBriefed))
           return z.npcs.find((n) => n.kind === 'recruiter') || null;
-        return nearest(z.buildings.filter((b) => b.progress < 4)) || null;
+        return null;
       }
       let targetZone = q.region,
         rescue = q.kind === 'rescue' ? q.target : null;
@@ -2975,7 +2976,9 @@
       )
         return '';
       if (!this.availableLabor().length)
-        return 'An idle active Soldier or Ranger is needed to build. Recall workers or recover a fallen companion first.';
+        return this.hero.class === 'rogue'
+          ? 'An idle active Charmed companion is needed to build. Recall workers or recover a fallen companion first.'
+          : 'An idle active Soldier or Ranger is needed to build. Recall workers or recover a fallen companion first.';
       if (!camp && this.hero.gold < this.barracksBuildCost())
         return 'Not enough crowns to build a Barracks (' + this.barracksBuildCost() + ' needed).';
       return '';
@@ -3792,8 +3795,10 @@
     tutorialStage() {
       const p = this.s.quests['quest-barracks'];
       if (!p || p.paid) return 'complete';
-      if (!p.captainBriefed) return 'captain';
+      // A real construction started without the Captain still advances
+      // guidance; no invented prerequisite blocks a legitimate early build.
       if (this.hasAnyBarracks()) return 'construction';
+      if (!p.captainBriefed) return 'captain';
       if (this.hero.class === 'rogue' && !this.activeLivingParty().some((u) => this.isCharmedCompanion(u)))
         return 'charm';
       if (!p.recallPracticed) return 'recall';
