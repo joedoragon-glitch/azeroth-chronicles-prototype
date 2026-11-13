@@ -4,6 +4,9 @@ const C = require('../src/prototype/engine');
 
 function encounter(heroClass) {
   const c = new C('normal', heroClass, () => 0.9);
+  // The current native opening holds Thornfang outside the level-1 field;
+  // earn his arrival before exercising the original companion doctrine cases.
+  c.xp(120);
   const b = c.zone().enemies.find((e) => e.type === 'boss' && e.hp > 0);
   assert(b, 'Vale teaching boss exists');
   c.zone().enemies = [b];
