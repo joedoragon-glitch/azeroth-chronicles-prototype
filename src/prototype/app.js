@@ -5389,26 +5389,26 @@
     paladin: {
       en: 'Paladin',
       es: 'Paladín',
-      detail: 'Melee, healing and brief immunity',
-      detailEs: 'Combate cercano, curación e inmunidad breve',
+      detail: 'He stands between danger and his companions, sword ready and radiant magic at hand. The Paladin fights up close, mends wounds, and can withstand a devastating blow for a moment.',
+      detailEs: 'Se interpone entre el peligro y sus compañeros, espada en mano y magia sagrada a su alcance. El paladín combate de cerca, cura heridas y puede resistir por un instante un golpe devastador.',
     },
     mage: {
       en: 'Mage',
-      es: 'Mago',
-      detail: 'Ranged magic, frost control and protective barriers',
-      detailEs: 'Magia a distancia, hielo y barreras protectoras',
+      es: 'Maga',
+      detail: 'She shapes the battlefield from a distance with arcane beams and freezing spells. The Mage relies on precise timing, interruptions, and protective barriers rather than brute force.',
+      detailEs: 'Domina el combate a distancia con rayos arcanos y hechizos de hielo. La maga prefiere la precisión, la interrupción de ataques y las barreras protectoras antes que la fuerza bruta.',
     },
     ranger: {
       en: 'Ranger',
       es: 'Explorador',
-      detail: 'Ranged bow, healing and mobility',
-      detailEs: 'Arco a distancia, curación y movilidad',
+      detail: 'He stays mobile, choosing his distance before letting arrows fly. The Ranger can send his hawk to interrupt a retreat, then heal and rally his companions when the fight turns.',
+      detailEs: 'Busca siempre la distancia adecuada antes de disparar. El explorador se mueve con soltura, envía a su halcón a interrumpir retiradas y puede curar y alentar a su compañía cuando cambia el combate.',
     },
     rogue: {
       en: 'Rogue',
       es: 'Pícara',
-      detail: 'Charm surviving monsters, disrupt with music and survive',
-      detailEs: 'Encanta monstruos supervivientes, usa música y resiste',
+      detail: 'She begins alone, carrying a jingling bell instead of a company of soldiers. The Rogue can Charm monsters that survive her strikes, turning enemies into allies while her unruly music throws opponents off balance.',
+      detailEs: 'Empieza sola, con un cascabel en lugar de una escolta de soldados. La pícara puede encantar monstruos que sobreviven a sus golpes y convertirlos en aliados, mientras su música alborotada desconcierta al enemigo.',
     },
   });
   function heroClassLabel(id, localized = language === 'es') {
