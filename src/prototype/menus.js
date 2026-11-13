@@ -3176,6 +3176,7 @@
       back = closeMenu,
       present = (summary, options) => openMenu('Story journal', summary, options, back),
       returnHere = () => storyJournal(back),
+      atBoard = false,
     ) {
       const game = getGame(),
         zone = game.zone(),
@@ -3258,7 +3259,7 @@
           return action(
             q.name,
             () => {
-              getGame().recordBoardTutorialStep('storyViewed');
+              if (atBoard) getGame().recordBoardTutorialStep('storyViewed');
               const destination = getGame().questDestination(q.id);
               openMenu(
                 q.name,
@@ -3368,7 +3369,7 @@
               action(
                 'Side Quests',
                 () => {
-                  getGame().recordBoardTutorialStep('sideViewed');
+                  if (atBoard) getGame().recordBoardTutorialStep('sideViewed');
                   quests(atBoard, returnHere, false, true);
                 },
                 'Optional tasks, exploration and extra rewards.',
@@ -3378,7 +3379,7 @@
             ],
             back,
           );
-        }, returnHere);
+        }, returnHere, atBoard);
         return;
       }
       const game = getGame(),
