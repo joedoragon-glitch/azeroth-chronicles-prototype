@@ -33,27 +33,38 @@ assert(byId.has('hero:rogue'), 'fourth playable hero must not be absent from sho
 assert.equal(byId.get('hero:rogue').representation, 'procedural');
 assert(index.counts.currentWorldIdentities >= 4, 'current world census not attached');
 assert(index.counts.currentSourceAreas >= 19, 'authored areas not enumerated');
-// Audit evidence: asset names can collide even when stable IDs differ.
-for (const term of ['Crate', 'Drying Rack', 'Feed Crate', 'Game Table', 'Fish Rack']) {
+// Regression: gameplay sceneRole must not split identical procedural art
+// into separate cards even if it suppresses sprite candidate resolution.
+for (const [name, identity, minimumRegions, sceneRole] of [
+  ['Crate', 'shared:prop:crate', 5, 'sorting'],
+  ['Drying Rack', 'shared:prop:drying-rack', 3, 'pages'],
+  ['Feed Crate', 'shared:prop:feed-crate', 2, 'dreadmaw-animal-husbandry'],
+  ['Game Table', 'shared:prop:game-table', 3, 'kinetic-collection'],
+]) {
   const matches = index.entries.filter((entry) =>
-    entry.name === term && entry.sourceKind !== 'dated-reference');
-  console.log('SHOWROOM_DUPLICATE_AUDIT ' + JSON.stringify({
-    name: term, count: matches.length,
-    matches: matches.map((entry) => ({
-      id: entry.id, sourceKind: entry.sourceKind,
-      representation: entry.representation,
-      regions: entry.regions, areas: entry.areas,
-      fixtures: entry.states.slice(0, 4).map((s) => ({
-        renderKind: s.entity?.renderKind, kind: s.entity?.kind,
-        type: s.entity?.type, structure: s.entity?.structure,
-        presentation: s.entity?.presentation, sceneRole: s.entity?.sceneRole,
-        greenwoodNature: s.entity?.greenwoodNature, highlandsNature: s.entity?.highlandsNature,
-        greenwoodInteriorAsset: s.entity?.greenwoodInteriorAsset,
-        region: s.region,
-      })),
-    })),
-  }));
+    entry.name === name && entry.sourceKind === 'current-world-fixture');
+  assert.equal(matches.length, 1,
+    name + ' must be one shared-art card, not separate scene-role variants: ' +
+    matches.map((e) => e.id).join(', '));
+  const asset = matches[0];
+  assert.equal(asset.id, identity);
+  assert(asset.regions.length >= minimumRegions,
+    name + ' must retain all source regions after identity consolidation');
+  assert(asset.states.some((state) => state.entity?.sceneRole === sceneRole),
+    name + ' must retain real scene-role input as inspectable variants');
+  assert(asset.states.some((state) => !state.entity?.sceneRole),
+    name + ' must retain ordinary instances beside specialized roles');
+  assert.equal(asset.displayStatus, 'procedural-only');
 }
+const currentByName = new Map();
+for (const entry of index.entries.filter((e) =>
+  e.sourceKind === 'current-world-fixture')) {
+  const matches = currentByName.get(entry.name) || [];
+  matches.push(entry.id);
+  currentByName.set(entry.name, matches);
+}
+console.log('SHOWROOM_AUDIT_REMAINING_NAME_COLLISIONS ' + JSON.stringify(
+  [...currentByName].filter(([, ids]) => ids.length > 1).slice(0, 25)));
 const sharedBarrel = byId.get('shared:prop:barrel');
 assert(sharedBarrel, 'common barrel should have one semantic artwork identity');
 assert(sharedBarrel.regions.length >= 5,
