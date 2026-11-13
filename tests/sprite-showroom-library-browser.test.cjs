@@ -99,12 +99,22 @@ async function main() {
       await page.locator('#asset-source-details summary').click();
       assert.match(await page.locator('#asset-definition').textContent(),
         /"class": "rogue"/, 'source inspector must show the real renderer input');
+      assert.match(await page.locator('#asset-definition').textContent(),
+        /"currentChoice": "procedural"/,
+        'renderer input must distinguish procedural selection from sprite registration');
+      assert((await page.locator('#asset-tags button').count()) > 0,
+        'tags should be accessible search shortcuts');
       assert((await page.locator('#asset-source-file option').count()) > 0);
       await page.locator('#asset-read-code').click();
       await page.waitForFunction(() =>
         !document.querySelector('#asset-source-excerpt').hidden);
       assert.match(await page.locator('#asset-source-excerpt').textContent(),
         /\d+\s*│\s*/, 'live source lines must show exact line numbers');
+      const evidenceDir = path.resolve(__dirname, '../test-artifacts/sprite-showroom');
+      fs.mkdirSync(evidenceDir, { recursive: true });
+      await page.locator('#asset-source-details').screenshot({
+        path: path.join(evidenceDir, width === 393 ? 'phone-source.png' : 'desktop-source.png'),
+      });
       const fullSource = await page.locator('#asset-source-full').getAttribute('href');
       assert(fullSource.includes('src/prototype/') && fullSource.includes('?v='),
         'source link must be versioned to match this build');
