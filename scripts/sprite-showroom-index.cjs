@@ -126,7 +126,7 @@ function sourceTerms(entry, entity) {
 function enhance(entry, decisions) {
   const state = entry.states?.[0] || entry.datedStates?.[0];
   const entity = state?.entity || {};
-  const locations = new Set([entry.region]);
+  const locations = new Set([entry.region, ...(entry.regions || [])]);
   for (const fixture of [...(entry.states || []), ...(entry.datedStates || [])])
     if (Number.isInteger(fixture.region) && regionNames[fixture.region])
       locations.add(regionNames[fixture.region]);
@@ -139,7 +139,7 @@ function enhance(entry, decisions) {
     entity.captainProfile, entity.crownRole, entity.crownRank,
     entity.ranged ? 'ranged' : null, entity.guard ? 'guard' : null,
     entity.crowned ? 'crowned' : null, entity.ringleader ? 'ringleader' : null,
-    ...entry.areas, ...entry.regions,
+    ...entry.areas, ...entry.regions, ...(entry.aliases || []),
   ];
   entry.tags = [...new Set(visualTags.filter((x) =>
     typeof x === 'string' && x.length <= 90))].slice(0, 18);
@@ -223,6 +223,8 @@ function build() {
       const entry = result.get(live.id);
       entry.observedInWorldSource = true;
       entry.areas = [...new Set([...(entry.areas || []), ...(live.areas || [])])];
+      entry.regions = [...new Set([...(entry.regions || [entry.region]), ...(live.regions || [])])];
+      entry.aliases = [...new Set([...(entry.aliases || []), ...(live.aliases || [])])];
       for (const state of live.states)
         if (!entry.states.some((s) => s.label === state.label))
           entry.states.push(state);
