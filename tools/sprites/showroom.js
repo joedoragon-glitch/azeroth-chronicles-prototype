@@ -545,7 +545,7 @@ async function startBrowsableShowroom() {
   function reflectUrl() {
     if (state.selected) history.replaceState(null, '', selectedUrl());
   }
-  function selectAsset(id, variant = 0) {
+  function selectAsset(id, variant = 0, scrollToInspector = true) {
     const entry = state.entries.find((item) => item.id === id);
     if (!entry) return;
     state.selected = entry;
@@ -558,7 +558,7 @@ async function startBrowsableShowroom() {
     for (const node of $('asset-grid').querySelectorAll('.asset-card'))
       node.setAttribute('aria-current', String(node.querySelector('canvas')?.dataset.assetId === id));
     void inspect();
-    if (matchMedia('(max-width: 780px)').matches)
+    if (scrollToInspector && matchMedia('(max-width: 780px)').matches)
       $('asset-inspector').scrollIntoView({ behavior: 'auto', block: 'start' });
   }
   async function copy(text, button) {
@@ -572,15 +572,22 @@ async function startBrowsableShowroom() {
       $('asset-preview-note').textContent = 'Clipboard unavailable here. Your exact asset link: ' + selectedUrl();
     }
   }
+  function syncVisibleSelection() {
+    if (!state.filtered.length) return;
+    if (!state.filtered.some((entry) => entry.id === state.selected?.id))
+      selectAsset(state.filtered[0].id, 0, false);
+  }
   for (const id of ['asset-query', 'asset-group', 'asset-region', 'asset-kind'])
     $(id).addEventListener(id === 'asset-query' ? 'input' : 'change', () => {
       state.visible = 24;
       renderCards();
+      syncVisibleSelection();
     });
   $('asset-reset').addEventListener('click', () => {
     for (const id of ['asset-query', 'asset-group', 'asset-region', 'asset-kind']) $(id).value = '';
     state.visible = 24;
     renderCards();
+    syncVisibleSelection();
   });
   $('asset-more').addEventListener('click', () => {
     state.visible += 24;
