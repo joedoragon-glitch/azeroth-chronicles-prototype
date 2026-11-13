@@ -56,31 +56,6 @@ for (const [name, identity, minimumRegions, sceneRole] of [
     name + ' must retain ordinary instances beside specialized roles');
   assert.equal(asset.displayStatus, 'procedural-only');
 }
-const currentByName = new Map();
-for (const entry of index.entries.filter((e) =>
-  e.sourceKind === 'current-world-fixture')) {
-  const matches = currentByName.get(entry.name) || [];
-  matches.push(entry.id);
-  currentByName.set(entry.name, matches);
-}
-console.log('SHOWROOM_AUDIT_REMAINING_NAME_COLLISIONS ' + JSON.stringify(
-  [...currentByName].filter(([, ids]) => ids.length > 1).slice(0, 25).map(([name, ids]) => ({
-    name, entries: ids.map((id) => {
-      const e = byId.get(id);
-      return {
-        id, group: e.group, sourceKind: e.sourceKind,
-        representation: e.representation, regions: e.regions,
-        registeredRaster: !!e.registeredRaster,
-        fixture: e.states.slice(0, 2).map((s) => {
-          const x = s.entity || {};
-          return { renderKind: x.renderKind, kind: x.kind,
-            structure: x.structure, species: x.species, family: x.family,
-            name: x.name, type: x.type, presentation: x.presentation,
-            sceneRole: x.sceneRole, icon: x.icon, region: s.region };
-        }),
-      };
-    }),
-  }))));
 const sharedBarrel = byId.get('shared:prop:barrel');
 assert(sharedBarrel, 'common barrel should have one semantic artwork identity');
 assert(sharedBarrel.regions.length >= 5,
