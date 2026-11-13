@@ -15,8 +15,8 @@ const regionNames = [
 const regionIds = ['vale', 'march', 'highlands', 'frontier', 'crown'];
 const human = (text) => String(text || '').replace(/[:_-]+/g, ' ').replace(/\b\w/g, (a) => a.toUpperCase());
 function groupOf(id, kind = '') {
-  if (/^(hero|ally|enemy|boss|pet|captive|crowned|crown-troop|raider|appointed|mounted-direwolf)/.test(id) ||
-      /character|enemy|boss/.test(kind)) return 'Characters';
+  if (/^(hero|ally|enemy|boss|pet|npc|civilian|villager|resident|captive|crowned|crown-troop|raider|appointed|mounted-direwolf)/.test(id) ||
+      /character|enemy|boss|npc|merchant/.test(kind)) return 'Characters';
   if (/^(building|structure|service|entrance|residence-entrance|specialist)/.test(id)) return 'Buildings & services';
   if (/^(terrain|material)/.test(id)) return 'Materials';
   if (/^(dispatch|shared|renderer-alias)/.test(id)) return 'Visual states';
