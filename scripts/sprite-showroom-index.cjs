@@ -110,6 +110,9 @@ function painterFor(entry, entity) {
   // The shared visual fallback owns the majority of authored character/prop
   // bodies. The actual runtime selector remains src/prototype/sprites.js.
   paths.push('src/prototype/visuals.js');
+  // The selector and the procedural painter together explain why a retained
+  // raster may be bypassed for this particular entity/state.
+  paths.push('src/prototype/sprites.js');
   if (entry.regionIndex === 4 && /^(terrain|landscape|world):/.test(entry.id))
     paths.push('src/prototype/dark-crown-landscape.js');
   return [...new Set(paths.filter((p) => fs.existsSync(path.join(root, p))))];
@@ -319,6 +322,7 @@ function build() {
         : key.endsWith(':highlands') ? regionNames[2] : 'Mixed / interior',
       regionIndex: key.endsWith(':highlands') ? 2 : 0,
       sourceKind: 'current-material',
+      materialDefinition: entry,
       states: [], representation: 'material',
       registeredRaster: entry.src, activeRaster: entry.src,
       activeSpriteKey: null, archive: [], referenceDate: null,
@@ -335,6 +339,7 @@ function build() {
       id, name: human(key.split(':').slice(1).join(' ')) + ' (retired)',
       group: 'Materials', region: 'Historical', regionIndex: 0,
       sourceKind: 'archived-material', states: [],
+      materialDefinition: record,
       representation: 'historical', activeSpriteKey: null, activeRaster: null,
       registeredRaster: file, archive: [], referenceDate: 'historical',
       revision: null,
