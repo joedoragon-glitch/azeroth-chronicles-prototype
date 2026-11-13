@@ -15,7 +15,7 @@ for (const [key, record] of Object.entries(active)) {
   assert(x && x.registeredRaster === record.src, 'source-driven registered sprite drift');
 }
 for (const src of index.packagedResources) {
-  assert(/^\.\/assets\/sprites\/[a-zA-Z0-9_/-]+\.(png|webp)$/.test(src) &&
+  assert(/^\.\/assets\/(?:sprites|materials)\/[a-zA-Z0-9_/-]+\.(png|webp)$/.test(src) &&
     !src.includes('..'), 'archive must be within published local sprite media');
   assert(fs.existsSync(path.join(root, src.slice(2))), 'broken optional showroom archive');
 }
