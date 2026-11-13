@@ -12,6 +12,7 @@ const C = require(
   ),
 );
 const A = require('../src/prototype/archive.js');
+C.enableRoguePlaytest();
 const approved = require('../src/prototype/narration.js').approved;
 const { shell } = require('./helpers/production-shell.cjs');
 // Inspect the real matcher without adding a debug API to the shipped game.
@@ -35,7 +36,7 @@ const gapsFor = (text, names) => {
 const numbers = (text) => text.match(/\d+(?:\.\d+)?/g) || [];
 let checked = 0;
 const untranslated = new Set();
-for (const heroClass of ['paladin', 'mage', 'ranger']) {
+for (const heroClass of ['paladin', 'mage', 'ranger', 'rogue']) {
   const g = new C('normal', heroClass, () => 0.93);
   for (const boss of C.data.bosses) {
     g.enter(boss.id);
@@ -196,5 +197,5 @@ assert.equal(
 console.log(
   'PASS Archive technical-copy coverage: ' +
     checked +
-    ' fields, 3 classes, both resource modes, learned/unlearned ranks, evidence/throne gates, pets and keyboard reading',
+    ' fields, 4 classes, both resource modes, learned/unlearned ranks, evidence/throne gates, pets and keyboard reading',
 );
