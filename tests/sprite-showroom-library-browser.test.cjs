@@ -74,6 +74,12 @@ async function main() {
       await page.locator('#asset-query').fill('');
       await page.locator('#asset-group').selectOption('World & scenery');
       assert.equal((await page.locator('#asset-grid .asset-card').count()) > 0, true);
+      const artifactDir = path.resolve(__dirname, '../test-artifacts/sprite-showroom');
+      fs.mkdirSync(artifactDir, { recursive: true });
+      await page.screenshot({
+        path: path.join(artifactDir, width === 393 ? 'phone.png' : 'desktop.png'),
+        fullPage: true,
+      });
       const overflow = await page.evaluate(() =>
         document.documentElement.scrollWidth - window.innerWidth);
       assert(overflow <= 2, 'showroom must not overflow horizontally at ' + width + 'px: ' + overflow);
