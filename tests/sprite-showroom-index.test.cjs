@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { createHash } = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const { build } = require('../scripts/sprite-showroom-index.cjs');
 const index = build();
@@ -24,6 +25,10 @@ assert(Object.keys(index.sourceFingerprints || {}).length >= 8,
 for (const [file, hash] of Object.entries(index.sourceFingerprints)) {
   assert(/^[a-f0-9]{16}$/.test(hash), 'invalid source fingerprint: ' + file);
   assert(fs.existsSync(path.join(root, file)), 'fingerprinted source file missing: ' + file);
+  const actual = createHash('sha256').update(fs.readFileSync(path.join(root, file)))
+    .digest('hex').slice(0, 16);
+  assert.equal(hash, actual,
+    'source browser cache key must automatically change with drawing code: ' + file);
 }
 for (const entry of index.entries) {
   assert(entry.subcategory && typeof entry.subcategory === 'string',
