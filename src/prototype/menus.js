@@ -1435,7 +1435,9 @@
       };
     }
     function regionalSpecialistObjective() {
-      const tutorial = getGame().s.quests['quest-barracks'];
+      const game = getGame(), tutorial = game.s.quests['quest-barracks'];
+      if (tutorial && !tutorial.paid && game.hero.class === 'rogue')
+        return 'COMPANIONS · ' + game.questProgress(game.questDefs().find((q) => q.id === 'quest-barracks'));
       if (tutorial && !tutorial.paid && !tutorial.captainBriefed)
         return 'COMPANIONS · Meet the town Captain to learn about your Soldier and Ranger. Your first Barracks is FREE: Open Menu/Esc in the field → Establish Basic Barracks.';
       if (tutorial && !tutorial.paid && !tutorial.recallPracticed)
@@ -1447,6 +1449,8 @@
           ? 'FIELD BASE · Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).'
           : "COMPANIONS · Recall practiced. Continue the Captain's briefing.";
       }
+      const learning = game.activeTutorialQuests().find((q) => q.kind === 'tutorial-board' || q.kind === 'tutorial-gather');
+      if (learning) return 'TUTORIAL · ' + game.questProgress(learning);
       const p = regionalSpecialistProgress();
       if (!p.total)
         return 'Rescue specialists, rebuild your strength and continue the campaign. Map: Z.';
@@ -2561,7 +2565,16 @@
         );
       return action(
         'Gather resources',
-        () => barracksLaborMenu(b, back),
+        () => {
+          if (b.kind === 'barracks' && getGame().startGatheringTutorial()) {
+            openMenu(
+              'Gathering basics',
+              'Dark Lord Tribute is finite. Choose a source, send your idle companions, and escort them along the waypoint. They fight or withdraw when threatened, then resume work. Recovered cargo becomes crowns when delivered to Town Supplies or another valid deposit.',
+              [action('Choose a tribute source', () => barracksLaborMenu(b, back))],
+              back,
+            );
+          } else barracksLaborMenu(b, back);
+        },
         unlocked
           ? 'Choose tribute for idle companions to gather'
           : 'Rescue Mira and train Expedition to Rank 2',
@@ -2573,9 +2586,9 @@
         workers = game.s.party.filter((u) => game.canGatherTribute(u));
       openMenu(
         'Choose expedition companion',
-        'One available companion goes away for ' +
+        'Choose one eligible, living, idle companion (active or reserve). The companion is unavailable for ' +
           Math.round(game.resourceExpeditionDuration() / 60) +
-          ' minutes of active play. Reserves can go. Tribute is delivered automatically on return.',
+          ' minutes of active play; there is no dispatch fee or escort. Recovered crowns arrive automatically when the companion returns.',
         workers.length
           ? workers.map((u) => {
               const reason = game.resourceExpeditionWorkerReason(u);
@@ -2606,7 +2619,7 @@
         returnHere = () => resourceExpeditionsMenu(b, back);
       openMenu(
         'Resource expeditions',
-        'Recover leftover tribute from earlier regions after every local specialist is rescued. Choose one companion; continue playing while they work.',
+        'Full Barracks: recover finite leftover tribute from a previously visited region once all its captive specialists are rescued. Choose one eligible companion; the mission runs during active play, and recovered crowns arrive automatically on return.',
         regions.length
           ? regions.map((row) => {
               if (row.mission)
@@ -2973,11 +2986,15 @@
     function companionBasics(back = closeMenu) {
       getGame().briefCompanions();
       const practiced = !!getGame().s.quests['quest-barracks']?.recallPracticed;
+      const rogue = getGame().hero.class === 'rogue';
+      const hasCompanion = getGame().activeLivingParty().length > 0;
       openMenu(
         'Meet your company',
         practiced
           ? 'Recalled!\nOrders cancelled. Companions stay close and defend without chasing for up to five seconds.\nPress Recall again to cancel early; the button shows when it is active.\n\nNext: build your first Barracks for FREE.'
-          : 'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.',
+          : rogue
+            ? 'You begin alone. Your automatic bell strikes can Charm eligible surviving monsters. A lawful Charmed companion can fight, gather and build your first Barracks. After a Charm, return to practice Recall.'
+            : 'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.',
         [
           ...(practiced
             ? [
@@ -2990,7 +3007,12 @@
                 }),
               ]
             : []),
-          action('Practice Recall squad', () => practiceRecall(() => companionBasics(back))),
+          ...(hasCompanion
+            ? [action('Practice Recall squad', () => practiceRecall(() => companionBasics(back)))]
+            : [action(rogue ? 'Find your first Charmed companion' : 'Recover a companion first',
+              () => closeMenu(),
+              rogue ? 'Charm an eligible surviving monster with your automatic bell strikes.' :
+                'Recall needs a living active companion.')]),
         ],
         back,
       );
@@ -2998,7 +3020,9 @@
     function barracksBasics(back = closeMenu) {
       openMenu(
         'Meet your company',
-        'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.',
+        getGame().hero.class === 'rogue'
+          ? 'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nAn idle eligible Charmed companion builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.'
+          : 'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.',
         [action("Let's go", closeMenu)],
         back,
       );
@@ -3062,12 +3086,8 @@
     function partyMenu(back = closeMenu) {
       const g = getGame(),
         tutorial = g.s.quests['quest-barracks'];
-      if (g.hero.class === 'rogue') {
-        // The conventional starter-Soldier tutorial is false for a hero
-        // whose company begins empty; Charm onboarding is authored later.
-        g.briefCompanions();
-        townRecruitmentMenu(back);
-      } else if (tutorial && !tutorial.paid && !tutorial.captainBriefed && (g.s.expeditionRank || 1) === 1)
+      if (tutorial && !tutorial.paid &&
+          ['captain', 'charm', 'recall', 'brief-barracks'].includes(g.tutorialStage()))
         companionBasics(back);
       else {
         g.briefCompanions();
@@ -3238,6 +3258,7 @@
           return action(
             q.name,
             () => {
+              getGame().recordBoardTutorialStep('storyViewed');
               const destination = getGame().questDestination(q.id);
               openMenu(
                 q.name,
@@ -3327,32 +3348,29 @@
         const returnHere = () => quests(atBoard, back);
         storyJournal(back, (summary, objectives) => {
           const g = getGame(),
-            tutorial = g
-              .questDefs()
-              .find(
-                (q) => q.tutorial && !g.s.quests[q.id]?.paid && !g.s.quests[q.id]?.closedByPeace,
-              );
+            tutorials = g.activeTutorialQuests();
           openMenu(
             atBoard ? 'Quest board' : 'Quest journal',
             summary,
             [
-              ...(tutorial
-                ? [
-                    action(
-                      tutorial.name + ' · ACTIVE',
-                      () => {
-                        const destination = getGame().questDestination(tutorial.id);
-                        if (destination) storyNavigate(destination, tutorial.name, tutorial.id);
-                        else status(getGame().questProgress(tutorial));
-                      },
-                      getGame().questProgress(tutorial),
-                    ),
-                  ]
-                : []),
+              ...tutorials.map((tutorial) =>
+                action(
+                  tutorial.name + ' · ACTIVE',
+                  () => {
+                    const destination = getGame().questDestination(tutorial.id);
+                    if (destination) storyNavigate(destination, tutorial.name, tutorial.id);
+                    else status(getGame().questProgress(tutorial));
+                  },
+                  getGame().questProgress(tutorial),
+                ),
+              ),
               ...objectives,
               action(
                 'Side Quests',
-                () => quests(atBoard, returnHere, false, true),
+                () => {
+                  getGame().recordBoardTutorialStep('sideViewed');
+                  quests(atBoard, returnHere, false, true);
+                },
                 'Optional tasks, exploration and extra rewards.',
               ),
               action('Completed quests', () => quests(atBoard, returnHere, true, true)),
