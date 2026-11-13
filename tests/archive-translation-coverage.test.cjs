@@ -168,7 +168,7 @@ assert(blockSpanish.includes('Los monstruos encantados legítimamente y las masc
   'merged player reference acknowledges lawfully owned monsters at night');
 assert(blockSpanish.includes('Los soldados y arqueros no la reciben'),
   'ordinary companions are specifically excluded from monster-night Block');
-assert(A.translateArchive(blockReference[2]).includes('El héroe no tiene bloqueo general de habilidades'));
+assert(A.translateArchive(blockReference[2]).includes('Tu personaje no tiene bloqueo general de habilidades'));
 const variedBlock = A.conditionTopics({
   ...C.rules, skillBlock: { ...C.rules.skillBlock, enemySingle: 0.1775, nightEnemyBonus: 0.075 },
 }).find(([name]) => name === 'Skill Block');
