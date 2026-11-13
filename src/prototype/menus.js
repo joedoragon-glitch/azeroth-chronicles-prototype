@@ -3383,8 +3383,11 @@
       }
       const game = getGame(),
         returnHere = () => quests(atBoard, back, completed, sideQuests),
-        local = game
-          .questDefs()
+        // Paid teaching chapters belong in Completed quests just like the
+        // original Barracks tutorial. Keep active side-quest lists unchanged.
+        local = (completed
+          ? [...game.questDefs(), ...game.additionalTutorialDefs()]
+          : game.questDefs())
           .filter(
             (q) =>
               (!atBoard || q.region === game.definition().id) &&
