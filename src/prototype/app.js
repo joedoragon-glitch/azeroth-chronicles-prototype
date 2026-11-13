@@ -827,6 +827,11 @@
     'Critical executions': 'Ejecuciones críticas',
     'A critical execution strengthens a real attack or supported effect; it does not make a missed attack hit. The Art of Misdirection permanently increases your hero critical chance by one percentage point. The Keeper Archive explains detailed critical rules.': 'Una ejecución crítica refuerza un ataque real o un efecto compatible, pero no convierte un fallo en un acierto. El arte del engaño aumenta permanentemente la probabilidad crítica de tu héroe en un punto porcentual. El Archivo del Guardián explica las reglas detalladas.',
   });
+  Object.assign(spanishText, {
+    'Uses one idle active Charmed companion': 'Se necesita un compañero encantado activo y disponible',
+    'An idle active Charmed companion is needed to build. Recall workers or recover a fallen companion first.':
+      'Para construir necesitas un compañero encantado activo y disponible. Reagrupa a los trabajadores o recupera antes a un compañero caído.',
+  });
   // #684: Match the authored timed-Recall feedback and bilingual tutorial.
   Object.assign(spanishText, {
     'Squad Recall cancelled.': 'Reagrupación cancelada.',
