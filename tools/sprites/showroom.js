@@ -808,9 +808,21 @@ async function startBrowsableShowroom() {
     const id = params.get('asset');
     if (id && state.entries.some((e) => e.id === id)) selectAsset(id, Number(params.get('state') || 0));
   });
+  function renderTotal() {
+    $('library-count').textContent = language === 'es'
+      ? state.entries.length + ' ' + spanish.visualEntries + ' · ' +
+        index.counts.currentWorldIdentities + ' ' + spanish.currentWorld + ' · ' +
+        index.counts.liveRegistrations + ' ' + spanish.registeredSprites + ' · ' +
+        index.counts.datedReviewCases + ' ' + spanish.datedCases
+      : state.entries.length + ' browsable visual entries · ' +
+        index.counts.currentWorldIdentities + ' current-source identities · ' +
+        index.counts.liveRegistrations + ' registered sprites · ' +
+        index.counts.datedReviewCases + ' dated reference cases';
+  }
   $('asset-language').addEventListener('change', () => {
     language = $('asset-language').value === 'es' ? 'es' : 'en';
     localeStatic();
+    renderTotal();
     renderCards();
     if (state.selected) {
       rebuildStates(state.selected);
@@ -824,15 +836,7 @@ async function startBrowsableShowroom() {
   const selectedId = params.get('asset');
   selectAsset(state.entries.some((e) => e.id === selectedId)
     ? selectedId : state.entries[0]?.id, Number(params.get('state') || 0));
-  $('library-count').textContent = language === 'es'
-    ? state.entries.length + ' ' + spanish.visualEntries + ' · ' +
-      index.counts.currentWorldIdentities + ' ' + spanish.currentWorld + ' · ' +
-      index.counts.liveRegistrations + ' ' + spanish.registeredSprites + ' · ' +
-      index.counts.datedReviewCases + ' ' + spanish.datedCases
-    : state.entries.length + ' browsable visual entries · ' +
-      index.counts.currentWorldIdentities + ' current-source identities · ' +
-      index.counts.liveRegistrations + ' registered sprites · ' +
-      index.counts.datedReviewCases + ' dated reference cases';
+  renderTotal();
   window.SpriteShowroom = {
     ready: true, mode: 'library', entries: state.entries.length,
     select: (id) => selectAsset(id),
