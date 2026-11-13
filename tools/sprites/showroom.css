@@ -112,6 +112,14 @@ canvas {
 .library-shell :is(button,input,select,textarea,summary,a):focus-visible {
   outline: 3px solid var(--gold); outline-offset: 3px;
 }
+.library-topbar { display: flex; gap: 18px; justify-content: space-between; align-items: center; margin-bottom: 13px; }
+.library-language { display: flex; flex-direction: row; gap: 9px; align-items: center; font-size: .79rem; color: #cbd8cb; }
+.library-language select { min-height: 38px; font-size: .81rem; width: auto; }
+@media (max-width: 420px) {
+  .library-topbar { gap: 8px; }
+  .library-language { gap: 5px; font-size: .72rem; }
+  .library-language select { padding: 7px; max-width: 125px; }
+}
 .library-intro { padding: 2px 0 24px; border-bottom: 1px solid #40584f; }
 .library-back { font-size: .92rem; display: inline-block; margin-bottom: 19px; }
 .library-eyebrow { margin: 0 0 5px; font-size: .72rem; letter-spacing: .14em; font-weight: 750; text-transform: uppercase; color: var(--gold); }
