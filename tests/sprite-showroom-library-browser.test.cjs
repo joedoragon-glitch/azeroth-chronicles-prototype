@@ -69,6 +69,28 @@ async function main() {
       await page.waitForFunction(() =>
         document.querySelector('#asset-preview-note').textContent.includes('150% game scale'));
       await page.locator('#asset-scale').selectOption('close');
+      // The Rogue is a current playable class absent from the historical
+      // 75-contract and 513-art-case inventories.
+      await page.locator('#asset-query').fill('hero:rogue');
+      await page.locator('#asset-grid .asset-card').first().click();
+      assert.equal(new URL(page.url()).searchParams.get('asset'), 'hero:rogue');
+      assert.match(await page.locator('#asset-selection').textContent(), /Playable hero/);
+      await page.waitForFunction(() =>
+        document.querySelector('#asset-preview-note').textContent.includes('Isolated asset study'));
+      const roguePixels = await page.locator('#asset-preview').evaluate((canvas) => {
+        const ctx = canvas.getContext('2d');
+        const bytes = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let pixels = 0;
+        for (let i = 0; i < bytes.length; i += 4) {
+          const r = bytes[i], g = bytes[i + 1], b = bytes[i + 2];
+          // Ignore the showroom's neutral two-tone checker and ruler line.
+          const checker = (r === 35 && g === 54 && b === 46) ||
+            (r === 42 && g === 62 && b === 53);
+          if (!checker && !(r >= 150 && g >= 150 && b >= 130)) pixels++;
+        }
+        return pixels;
+      });
+      assert(roguePixels > 150, 'Rogue must display a real current painter, not a blank tile');
       await page.locator('#asset-query').fill('registered-terrain:road:vale');
       await page.locator('#asset-grid .asset-card').first().click();
       assert.match(await page.locator('#asset-selection').textContent(), /road material/);
