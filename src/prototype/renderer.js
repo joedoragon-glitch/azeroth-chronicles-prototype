@@ -3068,10 +3068,18 @@
       ctx.restore();
     }
     function millhavenCue(entity) {
-      return game.zoneId === 'vale' &&
-        ((entity.kind === 'recruiter' && game.s.party.length <= 2) ||
-          (entity.kind === 'quests' && entity.id === 'board' &&
-            !game.s.discovered?.['vale:quest-board-intro']));
+      if (game.zoneId !== 'vale') return false;
+      // The two existing ! cues serve the tutorial's real current chapter,
+      // not an arbitrary party-size rule or an unrelated discovery marker.
+      if (entity.kind === 'recruiter')
+        return game.tutorialStage() === 'captain' ||
+          game.tutorialStage() === 'brief-barracks';
+      if (entity.kind === 'quests' && entity.id === 'board') {
+        const chapter = game.s.quests['quest-tutorial-board'];
+        return !!game.s.quests['quest-barracks']?.paid &&
+          !!chapter && !chapter.paid && !chapter.boardOpened;
+      }
+      return false;
     }
     function drawQuestCue(p) {
       ctx.fillStyle = '#f9ce72';
