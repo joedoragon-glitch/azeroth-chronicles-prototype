@@ -33,6 +33,27 @@ assert(byId.has('hero:rogue'), 'fourth playable hero must not be absent from sho
 assert.equal(byId.get('hero:rogue').representation, 'procedural');
 assert(index.counts.currentWorldIdentities >= 4, 'current world census not attached');
 assert(index.counts.currentSourceAreas >= 19, 'authored areas not enumerated');
+// Audit evidence: asset names can collide even when stable IDs differ.
+for (const term of ['Crate', 'Drying Rack', 'Feed Crate', 'Game Table', 'Fish Rack']) {
+  const matches = index.entries.filter((entry) =>
+    entry.name === term && entry.sourceKind !== 'dated-reference');
+  console.log('SHOWROOM_DUPLICATE_AUDIT ' + JSON.stringify({
+    name: term, count: matches.length,
+    matches: matches.map((entry) => ({
+      id: entry.id, sourceKind: entry.sourceKind,
+      representation: entry.representation,
+      regions: entry.regions, areas: entry.areas,
+      fixtures: entry.states.slice(0, 4).map((s) => ({
+        renderKind: s.entity?.renderKind, kind: s.entity?.kind,
+        type: s.entity?.type, structure: s.entity?.structure,
+        presentation: s.entity?.presentation, sceneRole: s.entity?.sceneRole,
+        greenwoodNature: s.entity?.greenwoodNature, highlandsNature: s.entity?.highlandsNature,
+        greenwoodInteriorAsset: s.entity?.greenwoodInteriorAsset,
+        region: s.region,
+      })),
+    })),
+  }));
+}
 const sharedBarrel = byId.get('shared:prop:barrel');
 assert(sharedBarrel, 'common barrel should have one semantic artwork identity');
 assert(sharedBarrel.regions.length >= 5,
