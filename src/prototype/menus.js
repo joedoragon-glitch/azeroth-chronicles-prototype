@@ -1449,7 +1449,12 @@
           ? 'FIELD BASE · Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).'
           : "COMPANIONS · Recall practiced. Continue the Captain's briefing.";
       }
-      const learning = game.activeTutorialQuests().find((q) => q.kind === 'tutorial-board' || q.kind === 'tutorial-gather');
+      // A just-started, first-use Barracks gathering lesson must actually
+      // guide its escort/deposit even if the earlier Board lesson remains open.
+      // Both quests remain available in the journal.
+      const learningQuests = game.activeTutorialQuests(),
+        learning = learningQuests.find((q) => q.kind === 'tutorial-gather') ||
+          learningQuests.find((q) => q.kind === 'tutorial-board');
       if (learning) return 'TUTORIAL · ' + game.questProgress(learning);
       const p = regionalSpecialistProgress();
       if (!p.total)
