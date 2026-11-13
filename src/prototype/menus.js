@@ -1448,7 +1448,10 @@
       if (tutorial && !tutorial.paid && !tutorial.captainBriefed)
         return 'COMPANIONS · Meet the town Captain to learn about your Soldier and Ranger. Your first Barracks is FREE: Open Menu/Esc in the field → Establish Basic Barracks.';
       if (tutorial && !tutorial.paid && !tutorial.recallPracticed)
-        return 'COMPANIONS · Try Recall squad to bring your companions back, then build your first Barracks — FREE. Open Menu/Esc in the field → Establish Basic Barracks.';
+        return game.activeLivingParty().length
+          ? 'COMPANIONS · Try Recall squad to bring your companions back, then build your first Barracks — FREE. Open Menu/Esc in the field → Establish Basic Barracks.'
+          : 'COMPANIONS · ' +
+              game.questProgress(game.questDefs().find((q) => q.id === 'quest-barracks'));
       if (tutorial && !tutorial.paid) {
         if (getGame().hasAnyBarracks())
           return 'FIELD BASE · Construction in progress. Keep your builder assigned.';
