@@ -1430,7 +1430,7 @@
           case 'recall':
             return this.activeLivingParty().length
               ? 'Try Recall squad to bring your companions back to you.'
-              : 'Recover or reactivate a living companion before practicing Recall.';
+              : 'Recover a fallen companion or activate a resting ally before practicing Recall.';
           case 'construction':
             return this.activeLivingParty().some((u) => u.order?.type === 'build')
               ? 'Construction in progress · keep an eligible companion assigned until complete'
