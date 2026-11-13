@@ -119,6 +119,14 @@ async function main() {
       await page.locator('#asset-query').fill('');
       await page.locator('#asset-group').selectOption('World & scenery');
       assert.equal((await page.locator('#asset-grid .asset-card').count()) > 0, true);
+      const firstFiltered = await page.locator('#asset-grid .asset-card').first()
+        .locator('canvas').getAttribute('data-asset-id');
+      assert.equal(new URL(page.url()).searchParams.get('asset'), firstFiltered,
+        'inspector must show an actually visible result when filters change');
+      assert.equal(await page.locator('#asset-grid [role="listitem"]').count(), 24,
+        'artwork cards keep list semantics');
+      assert.equal(await page.locator('#asset-grid .asset-card').first().getAttribute('role'), null,
+        'card interaction must remain a native button role');
       // The first viewport paints lazily. Scroll each visible card before
       // full-page screenshots so the captured gallery shows genuine artwork.
       const cards = page.locator('#asset-grid .asset-card');
@@ -137,6 +145,16 @@ async function main() {
       assert(overflow <= 2, 'showroom must not overflow horizontally at ' + width + 'px: ' + overflow);
       assert(images.length < 40, 'opening the showroom must not decode every retained raster');
       assert.deepEqual(errors, [], 'showroom must remain free of browser errors: ' + width);
+      // Navigating across the 24-card boundary grows the visible catalog, not
+      // an invisible selection beyond the displayed browsing page.
+      await page.locator('#asset-group').selectOption('');
+      await page.locator('#asset-grid .asset-card').nth(23).click();
+      assert.equal(await page.locator('#asset-grid .asset-card').count(), 24);
+      await page.locator('#asset-next').click();
+      assert.equal(await page.locator('#asset-grid .asset-card').count(), 48);
+      const nextVisible = await page.locator('#asset-grid .asset-card').nth(24)
+        .locator('canvas').getAttribute('data-asset-id');
+      assert.equal(new URL(page.url()).searchParams.get('asset'), nextVisible);
       await page.close();
     }
     console.log('PASS single Sprite Showroom browser: desktop/phone, filters, 75+513 cases, ' +
