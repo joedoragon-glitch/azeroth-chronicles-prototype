@@ -1,106 +1,95 @@
 'use strict';
-// Production shell (English and Spanish) acceptance for the additional
-// tutorial entrypoints. Native fixtures accelerate construction/travel;
-// they do NOT certify an earned browser walk or a physical device.
+// Complement the native chapter tests and the separate bilingual Board/map
+// shell suite: this one proves payout, completed-history and Board-only credit.
+// Construction approach is isolated, not an earned full player playthrough.
 const assert = require('node:assert/strict');
 const { shell } = require('./helpers/production-shell.cjs');
 
 for (const language of ['en', 'es']) {
-  const { scope, elements: e } = shell(language);
-  const game = scope.Prototype.game;
+  const { scope: s, elements: e } = shell(language);
+  const g = s.Prototype.game;
   const t = (en, es) => language === 'en' ? en : es;
-  const actions = () => e.get('modal-actions').children;
+  const buttons = () => e.get('modal-actions').children.filter((b) => typeof b.onclick === 'function');
   const title = () => e.get('modal-title').textContent;
-  const click = (prefix) => {
-    const item = actions().find((b) => b.textContent.startsWith(prefix));
-    assert(item, 'Missing ' + prefix + ' from ' + title());
-    assert(!item.disabled, 'Disabled ' + prefix + ' in ' + title());
-    item.click();
+  const click = (text) => {
+    const b = buttons().find((x) => x.textContent.startsWith(text));
+    assert(b && !b.disabled, 'Missing/disabled ' + text + ' from ' + title());
+    b.click();
   };
-  const back = () => e.get('close-button').click();
   const root = () => {
-    scope.Prototype.closeMenu();
+    s.Prototype.closeMenu();
     e.get('menu-button').click();
   };
 
-  // First finish the real native Barracks construction. Terrain placement
-  // and labor approach are isolated; the quest receipt is not fabricated.
-  game.zone().enemies = [];
-  game.distanceToRoad = () => 400;
-  game.blocked = () => false;
-  game.s.recallActive = false;
-  assert(game.build());
-  const base = game.zone().buildings.find((b) => b.kind === 'barracks');
-  const worker = game.s.party.find((u) => u.order?.type === 'build');
+  // Real native construction with isolated scene geometry: no fake paid flag.
+  g.zone().enemies = [];
+  g.zone().props = [];
+  g.distanceToRoad = () => 400;
+  g.blocked = () => false;
+  assert(g.build());
+  const base = g.zone().buildings.find((b) => b.kind === 'barracks');
+  const worker = g.s.party.find((u) => u.order?.type === 'build');
   assert(base && worker);
   Object.assign(worker, { x: base.x, y: base.y });
-  game.updateParty(4.1);
-  assert(game.s.quests['quest-barracks'].paid);
-  assert(game.s.quests['quest-tutorial-board'].active);
-  assert(!game.s.quests['quest-tutorial-board'].boardOpened);
+  g.updateParty(4.1);
+  assert(g.s.quests['quest-barracks'].paid && g.s.quests['quest-tutorial-board'].active);
 
-  const board = game.zone().npcs.find((n) => n.kind === 'quests' && n.id === 'board');
-  assert(board);
-  Object.assign(game.hero, { x: board.x, y: board.y });
-  e.get('touch-interact-button').click();
-  assert.equal(title(), t('Quest board', 'Tablón de misiones'));
-  assert(game.s.quests['quest-tutorial-board'].boardOpened, 'real Board interaction advances quest');
-  assert(actions().some((b) => b.textContent.startsWith(t('Side Quests', 'Misiones secundarias'))));
-  const story = game.questDefs().filter((q) => q.kind === 'rescue' && q.region === 'vale')[0];
-  assert(story);
-  click(story.name);
-  assert(game.s.quests['quest-tutorial-board'].storyViewed, 'opening a real Main Story objective');
-  back();
-  click(t('Side Quests', 'Misiones secundarias'));
-  assert(game.s.quests['quest-tutorial-board'].sideViewed, 'visiting real Side Quests');
-  back();
-
+  // Opening analogous Journal sections must NOT pretend the player learned
+  // how to use the physical town Quest Board. The Board tutorial stays active.
   root();
-  click(t('Map and travel routes', 'Mapa y rutas de viaje'));
-  assert(game.s.quests['quest-tutorial-board'].mapOpened, 'real map opened');
-  const cellar = game.mapDestinations().find((p) => p.sideDungeon && p.family === 'side-vale-cellars');
-  assert(cellar, 'Old Orchard Cellars in normal map destinations');
-  click((cellar.icon || '•') + ' ' + cellar.name);
-  click(t('Navigate', 'Ir'));
-  assert(game.s.quests['quest-tutorial-board'].navigationUsed, 'real map Navigate action');
-  assert(!game.s.quests['quest-tutorial-board'].paid, 'Codex still awaits actual study');
+  click(t('Quest journal', 'Diario de misiones'));
+  click(t('A Teacher Taken', 'Una maestra cautiva'));
+  assert(!g.s.quests['quest-tutorial-board'].storyViewed,
+    'journal-only Main Story does not complete physical Board step');
+  root();
+  click(t('Quest journal', 'Diario de misiones'));
+  click(t('Side Quests', 'Misiones secundarias'));
+  assert(!g.s.quests['quest-tutorial-board'].sideViewed,
+    'journal-only Side Quests does not complete physical Board step');
 
-  game.enter('side-vale-cellars');
-  const codex = game.zone().npcs.find((n) => n.kind === 'critical-codex');
-  assert(codex);
-  Object.assign(game.hero, { x: codex.x, y: codex.y });
-  e.get('touch-interact-button').click();
-  assert(game.s.criticalCodices['side-vale-cellars']);
-  assert(game.s.quests['quest-tutorial-board'].paid);
-
-  // First eligible Barracks gathering use is a different contextual quest.
-  game.enter('vale');
-  game.s.expeditionRank = 2;
-  const camp = game.zone().buildings.find((b) => b.id === base.id);
-  assert(camp);
-  Object.assign(game.hero, { x: camp.x, y: camp.y });
+  // An earlier harvest counter records material picked up, not crowns paid.
+  // In particular it must never falsely finish the first-use lesson.
+  g.s.gathered.vale = 15;
+  g.s.expeditionRank = 2;
+  Object.assign(g.hero, { x: base.x, y: base.y });
+  s.Prototype.closeMenu();
   e.get('touch-interact-button').click();
   click(t('Operations', 'Operaciones'));
+  assert(!g.s.quests['quest-tutorial-gather'].active);
   click(t('Gather resources', 'Recoger recursos'));
-  assert.equal(title(), t('Gathering basics', 'Lo básico de la recolección'));
-  assert(game.s.quests['quest-tutorial-gather'].active);
+  const p = g.s.quests['quest-tutorial-gather'];
+  assert(p.active && p.gatherStarted && !p.gatherDeposited && !p.paid,
+    'harvested counter cannot masquerade as a delivered payout');
   click(t('Choose a tribute source', 'Elegir una fuente de tributo'));
-  assert.equal(title(), t('Resources & labor', 'Recursos y trabajo'));
-  const source = game.visibleResourceNodes()[0];
+  const choice = buttons().find((b) => /Recover Dark Lord Tribute|Recuperar.*tributo/i.test(b.textContent));
+  assert(choice && !choice.disabled, 'real finite gather choice');
+  choice.click();
+  const source = g.visibleResourceNodes()[0];
   assert(source);
-  click(t('Recover Dark Lord Tribute', 'Recuperar tributo'));
-  assert(game.s.quests['quest-tutorial-gather'].gatherStarted);
-  assert(!game.s.quests['quest-tutorial-gather'].gatherDeposited);
-  const carrying = game.s.party.filter((u) => u.order?.type === 'gather');
-  assert(carrying.length);
-  for (const u of carrying) Object.assign(u, { x: source.x, y: source.y });
-  for (let i = 0; i < 120 && !carrying.some((u) => u.carry > 0); i++)
-    game.updateParty(.1);
-  assert(carrying.some((u) => u.carry > 0));
-  const supplier = game.zone().npcs.find((n) => n.kind === 'supplier');
-  Object.assign(game.hero, { x: supplier.x, y: supplier.y });
+  const labor = g.s.party.filter((u) => u.order?.type === 'gather');
+  assert(labor.length);
+  for (const u of labor) Object.assign(u, { x: source.x, y: source.y });
+  for (let i = 0; i < 120 && !labor.some((u) => u.carry > 0); i++) g.updateParty(.1);
+  assert(labor.some((u) => u.carry > 0), 'native labor generated cargo');
+  assert(!p.gatherDeposited && !p.paid, 'cargo before deposit cannot pay lesson');
+
+  const supplier = g.zone().npcs.find((n) => n.kind === 'supplier');
+  assert(supplier);
+  const before = g.hero.gold;
+  Object.assign(g.hero, { x: supplier.x, y: supplier.y });
+  s.Prototype.closeMenu();
   e.get('touch-interact-button').click();
-  assert(game.s.quests['quest-tutorial-gather'].paid, 'real deposit completed contextual tutorial');
-  assert.equal(game.s.version, 4);
+  assert(g.hero.gold > before, 'real supplier transaction credits crowns');
+  assert(p.paid && p.done, 'saved paid state follows legitimate deposit');
+  assert(g.constructor.restore(g.snapshot()).s.quests['quest-tutorial-gather'].paid);
+
+  root();
+  click(t('Quest journal', 'Diario de misiones'));
+  click(t('Completed quests', 'Misiones completadas'));
+  assert(buttons().some((b) => b.textContent.startsWith(
+    t('Your First Company', 'Tu primera compañía'))));
+  assert(buttons().some((b) => b.textContent.startsWith(
+    t('Recover Dark Lord Tribute', 'Recuperar el tributo del Señor Oscuro'))),
+    'new paid chapter appears in completed quest history');
 }
-console.log('PASS v0.9.2 bilingual production-shell Board, map navigation, Codex and first-use gathering');
+console.log('PASS bilingual Board-only credit, real cargo/deposit, old counter safety and completed history');
