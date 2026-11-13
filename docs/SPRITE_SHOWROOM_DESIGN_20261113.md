@@ -84,3 +84,23 @@ The owner requested a separate audit of **poor organization, navigation, explana
 **Reproducibility.** `scripts/sprite-showroom-index.cjs` owns the automatic catalog build; `scripts/sprite-showroom-world.cjs` owns the current scene-entity census; `tools/sprites/showroom.html` is still the **single** user-facing review page. `tests/sprite-showroom-index.test.cjs`, `tests/sprite-showroom-library.test.cjs`, `tests/sprite-showroom-world.test.cjs` and `tests/sprite-showroom-library-browser.test.cjs` guard current identity mapping, automatic source hashes, region grouping, exact source input, desktop/phone interactions and archive separation. The preexisting six-profile focused sprite comparison runs in the same workflow. Exact-head GitHub CI should be checked before artistic acceptance or publication.
 
 **No v0.9.2 scope expansion.** These are engineering/design/navigation corrections. No sprite generation, raster activation, original art modification, gameplay save change, new class, duplicate gallery, merge or deployment is authorized by this audit.
+
+
+## Owner screenshot duplicate-asset diagnosis and targeted repair (13 November 2026)
+
+The owner visually identified two apparently identical **Crate**, **Drying Rack**, **Feed Crate**, and **Game Table** cards, despite the earlier category/regional de-duplication. A live source-derived index diagnostic reproduced **two distinct IDs for each name**, with identical current procedural `structure` and different scene context. Specifically:
+
+| Repeated artwork | Generic showroom identity | Incorrect second identity | Source context that triggered the split |
+|---|---|---|---|
+| Crate | `shared:prop:crate` | `world:prop:crate` | `sceneRole: sorting` and occupied cellar |
+| Drying Rack | `shared:prop:drying-rack` | `world:prop:drying-rack` | `sceneRole: pages` / Crown agriculture processing |
+| Feed Crate | `shared:prop:feed-crate` | `world:prop:feed-crate` | `sceneRole: dreadmaw-animal-husbandry` |
+| Game Table | `shared:prop:game-table` | `world:prop:game-table` | `sceneRole: kinetic-collection` / occupied crypt or cellar |
+
+**Root cause:** `PrototypeSprites.candidateKeys` intentionally returns no sprite candidate for entities with `sceneRole` (or certain `presentation` states). The showroom used that result to choose an **identity**, incorrectly treating a gameplay placement/role as an entirely new drawing. Both paths ultimately used the same procedural `structure` art; this was not duplicate game artwork or an indication that the owner approved separate sprites.
+
+**Correction:** `scripts/sprite-showroom-world.cjs` now identifies **unregistered, non-region-overridden generic props by structure before sprite candidate lookup**, so scene roles cannot fork the same drawing. Active sprite registrations and exact production-contract keys remain protected from unsafe automatic merging. The source census first collects distinct area, region and role fixtures, then deterministically selects up to 12 representative states, prioritizing coverage of real regions and specialized roles rather than keeping only the first 10 area samples. Every merged card retains its source areas and searchable identities; selected regional inspection is still driven by the actual source fixture.
+
+**Regression evidence:** `tests/sprite-showroom-library.test.cjs` asserts a single semantic ID for all four reports, the expected regional coverage, an ordinary fixture **and** a real role-specific fixture, plus retained registered sprite identities. `tests/sprite-showroom-library-browser.test.cjs` also searches all four names at desktop/phone sizes and requires only one card bearing each exact title. At intermediate code head `45a542a1`, focused inventory, Chromium showroom and browser PWA checks all passed; the resulting catalog had **972** distinct entries, **445** contemporary world identities and still **513** dated reference cases. Check the latest amended head's runs before release acceptance.
+
+**Not all repeated names are interchangeable artwork:** The follow-on diagnostic also found a `Crown Orc Guard` using two different enemy species, `Neri the Alchemist` as captive versus alchemist NPC, and `Scornfang Memoranda` as a physical prop versus interactive scene-detail NPC; these must not be silently merged by visible text alone. There are also unrelated generic `Prop` fallbacks and name collisions for some region/resource/transport entries that warrant separate source and visual validation rather than an automatic global name-based deduplication. The correction deliberately does not modify gameplay classes, scene roles, source art, sprite selections, manifests or saves.
