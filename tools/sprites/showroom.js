@@ -200,7 +200,7 @@ async function startBrowsableShowroom() {
     view: 'current',
     variant: 0,
     light: 'day',
-    scale: 1.5,
+    scale: 'close',
     generation: 0,
   };
   const imageCache = new Map();
@@ -258,6 +258,14 @@ async function startBrowsableShowroom() {
     ctx.lineTo(w, h * .73);
     ctx.stroke();
   }
+  function inspectionScale(entry) {
+    if (entry.id === 'transport:ferry' || entry.id.includes('transport:ferry')) return 2;
+    if (entry.group === 'Characters') return 5;
+    if (entry.group === 'Buildings & services') return 3;
+    if (entry.group === 'World & scenery') return 3.9;
+    if (entry.group === 'Visual states') return 3.3;
+    return 3;
+  }
   async function paint(canvas, entry, visual, fixture, generation, thumb = false) {
     const logicalWidth = 480, logicalHeight = 340, density = thumb ? 1 : 1.5;
     canvas.width = logicalWidth * density;
@@ -266,7 +274,7 @@ async function startBrowsableShowroom() {
     if (!ctx) return false;
     ctx.setTransform(density, 0, 0, density, 0, 0);
     stageBackground(ctx, logicalWidth, logicalHeight, state.light);
-    const zoom = thumb ? 1.45 : state.scale;
+    const zoom = thumb || state.scale === 'close' ? inspectionScale(entry) : Number(state.scale);
     const p = { x: logicalWidth / (2 * zoom), y: logicalHeight * .73 / zoom };
     const isMaterial = ['material', 'historical'].includes(entry.representation);
     const src = visual === 'raster' || isMaterial ? selectedSprite(entry, thumb) : null;
@@ -520,8 +528,10 @@ async function startBrowsableShowroom() {
     if (gen !== state.generation) return;
     $('asset-preview-note').textContent = !first || !second
       ? 'This source fixture cannot be isolated reliably here. No image has been invented.'
-      : 'Isolated asset study at ' + Math.round(state.scale * 100) +
-        '% · ' + (state.light === 'night' ? 'night studio grade' : 'day studio') +
+      : 'Isolated asset study · ' + (state.scale === 'close'
+        ? 'studio close-up (magnified, not game scale)'
+        : Math.round(Number(state.scale) * 100) + '% game scale') +
+        ' · ' + (state.light === 'night' ? 'night studio grade' : 'day studio') +
         '. This is not a full gameplay screenshot or device-renderer acceptance.';
   }
   function selectedUrl() {
@@ -590,7 +600,7 @@ async function startBrowsableShowroom() {
   for (const id of ['asset-revision', 'asset-light', 'asset-scale']) {
     $(id).addEventListener('change', () => {
       state.light = $('asset-light').value;
-      state.scale = Number($('asset-scale').value);
+      state.scale = $('asset-scale').value;
       void inspect();
     });
   }
