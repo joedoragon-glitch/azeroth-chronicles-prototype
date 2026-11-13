@@ -33,6 +33,16 @@ assert(byId.has('hero:rogue'), 'fourth playable hero must not be absent from sho
 assert.equal(byId.get('hero:rogue').representation, 'procedural');
 assert(index.counts.currentWorldIdentities >= 4, 'current world census not attached');
 assert(index.counts.currentSourceAreas >= 19, 'authored areas not enumerated');
+const sharedBarrel = byId.get('shared:prop:barrel');
+assert(sharedBarrel, 'common barrel should have one semantic artwork identity');
+assert(sharedBarrel.regions.length >= 5,
+  'shared props must retain all five region appearances');
+assert(sharedBarrel.states.length >= 5,
+  'shared props must expose actual regional states rather than five cards');
+assert.equal(index.entries.filter((e) => e.id === 'shared:prop:barrel').length, 1);
+assert.equal(index.entries.filter((e) => e.name === 'Barrel' &&
+  e.sourceKind === 'current-world-fixture').length, 1,
+  'a source-shared barrel should not flood the gallery with duplicates');
 assert.equal(byId.get('hero:paladin').representation, 'procedural');
 assert.equal(byId.get('hero:ranger').representation, 'raster');
 assert(byId.get('hero:paladin').registeredRaster,
