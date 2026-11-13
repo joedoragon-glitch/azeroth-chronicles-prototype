@@ -108,6 +108,29 @@ for (const language of ['en', 'es']) {
   assert(h.s.gatheringTarget, 'real saved worker intent');
   assert(JSON.parse(gatherUI.storage.get('azeroth-v4-normal')).quests['quest-tutorial-gather'].gatherStarted);
 }
+// A real Captain interaction must match all four playable heroes in BOTH
+// languages; the Spanish copy genders the fictional Mage/Rogue, not the user.
+for (const language of ['en', 'es']) {
+  for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
+    const { scope: scope, elements } = shell(language, cls);
+    const game = scope.Prototype.game;
+    const captain = game.zone().npcs.find((n) => n.kind === 'recruiter');
+    Object.assign(game.hero, { x: captain.x, y: captain.y });
+    elements.get('touch-interact-button').click();
+    assert.equal(elements.get('modal-title').textContent,
+      language === 'es' ? 'Conoce a tu compañía' : 'Meet your company');
+    const text = elements.get('modal-description').textContent;
+    const expected = language === 'es'
+      ? { paladin: 'Tu paladín combate', mage: 'Tu maga lanza',
+          ranger: 'Tu Ranger combate', rogue: 'Tu pícara comienza' }[cls]
+      : { paladin: 'Your Paladin fights', mage: 'Your Mage casts',
+          ranger: 'Your Ranger fights', rogue: 'Your Rogue begins' }[cls];
+    assert(text.includes(expected), cls + '/' + language + ': class-aware Captain dialogue');
+    assert(!text.includes('You begin alone'), 'old class-insensitive wording absent');
+    assert.equal(game.questDefs()[0].objective.includes('Charm an eligible monster'),
+      cls === 'rogue', 'first quest objective is accurate for the playable class');
+  }
+}
 {
   const { scope: s, elements: e } = shell('en', 'rogue');
   const g = s.Prototype.game;
@@ -116,12 +139,38 @@ for (const language of ['en', 'es']) {
   Object.assign(g.hero, { x: captain.x, y: captain.y });
   e.get('touch-interact-button').click();
   assert.equal(e.get('modal-title').textContent, 'Meet your company');
-  assert(e.get('modal-description').textContent.includes('You begin alone'));
+  assert(e.get('modal-description').textContent.includes('Your Rogue begins without companions'));
   assert(!e.get('modal-description').textContent.includes('Soldier: close combat'));
   assert(e.get('modal-actions').children.some((b) =>
     b.textContent.startsWith('Find your first Charmed companion')));
   assert(!e.get('modal-actions').children.some((b) =>
     b.textContent.startsWith('Practice Recall squad')));
   assert.equal(g.tutorialStage(), 'charm');
+  // A lawful Charm changes the actual tutorial dialogue. Losing that ally
+  // never resets the copy to "first Charm" or awards a fictitious companion.
+  g.s.mercyTime = 0;
+  g.s.valeFieldAwakened = true;
+  const foe = g.makeEnemy(
+    { species: 'goblin', name: 'Lawful onboarding encounter', level: 1,
+      hp: 10000, damage: 0, gold: 0, xp: 0 },
+    { x: g.hero.x + 55, y: g.hero.y },
+  );
+  foe.aggro = true;
+  g.zone().enemies = [foe];
+  g.s.rogueCharmRng = 12345;
+  assert(g.cast(1, foe.id, false, null, true), 'native Rogue automatic Charm attempt');
+  assert(g.s.party.some((u) => g.isCharmedCompanion(u)), 'actual lawful companion earned');
+  s.Prototype.closeMenu();
+  e.get('touch-interact-button').click();
+  assert(e.get('modal-description').textContent.includes('Your Rogue has a Charmed ally'));
+  const charmed = g.s.party.find((u) => g.isCharmedCompanion(u));
+  charmed.hp = 0;
+  s.Prototype.closeMenu();
+  e.get('touch-interact-button').click();
+  assert(e.get('modal-description').textContent.includes('has already Charmed a monster'));
+  assert(e.get('modal-actions').children.some((b) =>
+    b.textContent.startsWith('Recover or Charm a companion')));
+  assert(!e.get('modal-actions').children.some((b) =>
+    b.textContent.startsWith('Find your first Charmed companion')));
 }
-console.log('PASS production-shell EN/ES Board, map, Codex, first-use gathering and Rogue Captain');
+console.log('PASS four-class EN/ES Captain dialogue and Rogue Charm/resume, Board, map, gathering');
