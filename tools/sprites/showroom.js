@@ -6,7 +6,7 @@
   let comparison = false;
   try {
     const response = await fetch(new URL('./comparison.json', location.href), { cache: 'no-store' });
-    comparison = response.ok;
+    comparison = response.ok && (await response.clone().json().catch(() => null))?.comparisons?.length > 0;
   } catch (_) {}
   if (comparison) {
     document.getElementById('library-root').hidden = true;
@@ -204,6 +204,7 @@ async function startBrowsableShowroom() {
     generation: 0,
   };
   const imageCache = new Map();
+  const reviewNotes = new Map();
   const groups = [...new Set(state.entries.map((e) => e.group))].sort();
   const regions = [...new Set(state.entries.map((e) => e.region))].sort();
   for (const [id, values] of [['asset-group', groups], ['asset-region', regions]]) {
@@ -228,14 +229,15 @@ async function startBrowsableShowroom() {
         img.src = new URL(src.slice(2), rootUrl).href;
       });
       imageCache.set(src, promise);
+      if (imageCache.size > 24) imageCache.delete(imageCache.keys().next().value);
     }
     return imageCache.get(src);
   }
   function activeState(entry) {
     return statesFor(entry)[state.variant] || statesFor(entry)[0] || null;
   }
-  function selectedSprite(entry) {
-    const value = $('asset-revision').value;
+  function selectedSprite(entry, thumb = false) {
+    const value = thumb ? '' : $('asset-revision').value;
     return value || entry.registeredRaster || entry.archive?.[0]?.src || null;
   }
   function stageBackground(ctx, w, h, light) {
@@ -267,7 +269,7 @@ async function startBrowsableShowroom() {
     const zoom = thumb ? 1.45 : state.scale;
     const p = { x: logicalWidth / (2 * zoom), y: logicalHeight * .73 / zoom };
     const isMaterial = ['material', 'historical'].includes(entry.representation);
-    const src = visual === 'raster' || isMaterial ? selectedSprite(entry) : null;
+    const src = visual === 'raster' || isMaterial ? selectedSprite(entry, thumb) : null;
     const valid = () => thumb || generation === state.generation;
     try {
       if (isMaterial) {
@@ -289,7 +291,11 @@ async function startBrowsableShowroom() {
         const ax = Number.isFinite(data.anchorX) ? data.anchorX : .5;
         const ay = Number.isFinite(data.anchorY) ? data.anchorY : .88;
         ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(img, p.x * zoom - dw * ax, p.y * zoom - dh * ay, dw, dh);
+        const frame = Object.values(entry.spriteEntry?.clips || {}).flatMap((clip) => clip.frames || [])
+          .find((item) => item.src === src && Array.isArray(item.rect) && item.rect.length === 4);
+        if (frame) ctx.drawImage(img, ...frame.rect,
+          p.x * zoom - dw * ax, p.y * zoom - dh * ay, dw, dh);
+        else ctx.drawImage(img, p.x * zoom - dw * ax, p.y * zoom - dh * ay, dw, dh);
       } else if (fixture?.entity) {
         const entity = { ...fixture.entity };
         const region = fixture.region;
@@ -332,8 +338,12 @@ async function startBrowsableShowroom() {
     if (isMaterial(entry))
       return entry.sourceKind === 'archived-material' ? 'Historical material · not in the current game'
         : 'Registered road material';
-    const use = entry.representation === 'raster' ? 'Raster selected by this fixture'
-      : entry.representation === 'procedural' ? 'Procedural selected by this fixture'
+    const fixture = activeState(entry);
+    const selected = fixture?.entity
+      ? (PrototypeSprites.definitionFor(fixture.entity, fixture.region) ? 'raster' : 'procedural')
+      : entry.representation;
+    const use = selected === 'raster' ? 'Raster selected by this fixture'
+      : selected === 'procedural' ? 'Procedural selected by this fixture'
         : 'Reference unavailable';
     return (entry.sourceKind === 'dated-reference' ? 'Dated review fixture · ' : '') + use;
   }
@@ -430,6 +440,13 @@ async function startBrowsableShowroom() {
       if (h.src === entry.registeredRaster) continue;
       versions.add(new Option('Preserved revision ' + String(h.revision).slice(0, 10), h.src));
     }
+    for (const [clipName, clip] of Object.entries(entry.spriteEntry?.clips || {})) {
+      for (let i = 0; i < (clip.frames || []).length; i++) {
+        const frame = clip.frames[i];
+        if (frame.src && ![...versions.options].some((o) => o.value === frame.src))
+          versions.add(new Option('Animation · ' + clipName + ' · frame ' + (i + 1), frame.src));
+      }
+    }
     versions.disabled = versions.options.length < 2;
   }
   function updateViewButtons(entry) {
@@ -514,6 +531,7 @@ async function startBrowsableShowroom() {
     const entry = state.entries.find((item) => item.id === id);
     if (!entry) return;
     state.selected = entry;
+    $('asset-note').value = reviewNotes.get(id) || '';
     state.variant = Math.min(variant, Math.max(0, statesFor(entry).length - 1));
     state.view = 'current';
     rebuildStates(entry);
@@ -571,7 +589,7 @@ async function startBrowsableShowroom() {
   function next(direction) {
     if (!state.filtered.length || !state.selected) return;
     let i = state.filtered.findIndex((e) => e.id === state.selected.id);
-    if (i < 0) i = 0;
+    if (i < 0) i = direction > 0 ? -1 : state.filtered.length;
     const candidate = state.filtered[Math.max(0, Math.min(state.filtered.length - 1, i + direction))];
     if (candidate) selectAsset(candidate.id);
   }
@@ -584,6 +602,9 @@ async function startBrowsableShowroom() {
     if (event.key === 'ArrowRight') next(1);
   });
   $('asset-copy').addEventListener('click', () => copy(selectedUrl(), $('asset-copy')));
+  $('asset-note').addEventListener('input', () => {
+    if (state.selected) reviewNotes.set(state.selected.id, $('asset-note').value);
+  });
   $('asset-copy-note').addEventListener('click', () => copy(
     'Sprite Showroom art review\nAsset: ' + state.selected.id +
     '\nLink: ' + selectedUrl() +
