@@ -3840,14 +3840,12 @@
       if (p.paid) return false;
       const first = !p.active;
       p.active = true;
-      // An earned prior gathering/deposit is still earned, even if the
-      // player finds this Barracks service after visiting Town Supplies.
+      // s.gathered records collection into cargo, NOT payment. A prior
+      // harvest is legitimate evidence of labor but cannot certify a crown
+      // deposit; only the real deposit payout records gatherDeposited.
       const prior = Object.values(this.s.gathered || {}).some((v) => v > 0);
       const pendingCargo = this.s.party.some((u) => u.carry > 0);
-      if (prior && !pendingCargo) {
-        p.gatherStarted = true;
-        p.gatherDeposited = true;
-      } else if (pendingCargo || this.s.party.some((u) => u.order?.type === 'gather'))
+      if (prior || pendingCargo || this.s.party.some((u) => u.order?.type === 'gather'))
         p.gatherStarted = true;
       this.checkTutorialQuests();
       if (first) this.event('quest', { id: 'quest-tutorial-gather', tutorialStep: 'started' });
@@ -3855,7 +3853,8 @@
     }
     recordGatheringTutorialStep(step) {
       const p = this.s.quests['quest-tutorial-gather'];
-      if (!p?.active || p.paid || !['gatherStarted', 'gatherDeposited'].includes(step) || p[step])
+      if (!p?.active || p.paid || !['gatherStarted', 'gatherDeposited'].includes(step) || p[step] ||
+          (step === 'gatherDeposited' && !p.gatherStarted))
         return false;
       p[step] = true;
       this.checkTutorialQuests();
