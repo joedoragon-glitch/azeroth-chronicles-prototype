@@ -835,6 +835,34 @@
     'Uses one idle active Charmed companion': 'Se necesita un compañero encantado activo y disponible',
     'An idle active Charmed companion is needed to build. Recall workers or recover a fallen companion first.':
       'Para construir necesitas un compañero encantado activo y disponible. Reagrupa a los trabajadores o recupera antes a un compañero caído.',
+    // Introductory text describes the selected hero, not the real player's gender.
+    'Your Paladin fights up close alongside the Soldier. Your Ranger companion attacks from range and can heal. Recall brings both companions back to you.':
+      'Tu paladín combate de cerca junto al soldado. El Ranger de tu compañía ataca a distancia y puede curar. Reagrupar hace que ambos vuelvan contigo.',
+    'Your Mage casts from range while the Soldier fights up close. Your Ranger companion supports from range and can heal. Recall brings both companions back to you.':
+      'Tu maga lanza hechizos a distancia mientras el soldado combate de cerca. El Ranger de tu compañía apoya a distancia y puede curar. Reagrupar hace que ambos vuelvan contigo.',
+    'Your Ranger fights from range. Your Soldier companion handles close combat, while your Ranger companion attacks and heals. Recall brings both companions back to you.':
+      'Tu Ranger combate a distancia. El soldado se encarga del cuerpo a cuerpo y el Ranger aliado ataca y cura. Reagrupar hace que ambos vuelvan contigo.',
+    'Your Rogue has a Charmed ally who can fight, gather and build. Practice Recall together before establishing your free Barracks.':
+      'Tu pícara tiene un aliado encantado que puede luchar, recolectar y construir. Practica Reagrupar con él antes de establecer el primer cuartel gratis.',
+    'Your Rogue has already Charmed a monster, but no Charmed companion is living and active. Recover a fallen ally at the Captain or Charm another eligible monster before practicing Recall.':
+      'Tu pícara ya encantó a un monstruo, pero ahora no tiene ningún compañero encantado vivo y activo. Recupera a un aliado caído con el capitán o encanta a otro monstruo apto antes de practicar Reagrupar.',
+    'Your Rogue begins without companions. Automatic bell strikes can Charm eligible surviving monsters. A Charmed ally can fight, gather and build your first Barracks. Return to practice Recall after your first Charm.':
+      'Tu pícara comienza sin compañía. Sus golpes automáticos de cascabel pueden encantar monstruos aptos que sobrevivan. Un aliado encantado puede luchar, recolectar y construir el primer cuartel. Vuelve a practicar Reagrupar después de tu primer encantamiento.',
+    'Meet the Captain, Charm an eligible monster, practice Recall with your companion, then build your first Basic Barracks (free).':
+      'Habla con el capitán, encanta a un monstruo apto, practica Reagrupar con tu compañero y construye el primer cuartel básico (gratis).',
+    'Recover a fallen Charmed companion or Charm another eligible monster before practicing Recall.':
+      'Recupera a un compañero encantado caído o encanta a otro monstruo apto antes de practicar Reagrupar.',
+    'Charm an eligible monster with Rogue automatic attacks; the Rogue begins without companions.':
+      'Encanta a un monstruo apto con los ataques automáticos de la Pícara; esta heroína empieza sin compañía.',
+    'Recover or reactivate a living companion before practicing Recall.':
+      'Recupera o vuelve a activar a un compañero vivo antes de practicar Reagrupar.',
+    'Construction paused · assign an available companion at your unfinished Barracks.':
+      'Construcción detenida · asigna un compañero disponible al cuartel sin terminar.',
+    'Recover or Charm a companion': 'Recuperar o encantar a un compañero',
+    'Recover a fallen Charmed ally at the Captain, or Charm another eligible monster.':
+      'Recupera con el capitán a un aliado encantado caído o encanta a otro monstruo apto.',
+    'an idle active Charmed companion builds outside. Recovery switches when finished.':
+      'Un compañero encantado activo y disponible construye afuera. Al terminar, el cuartel pasa a ser el punto de recuperación.',
   });
   // #684: Match the authored timed-Recall feedback and bilingual tutorial.
   Object.assign(spanishText, {
@@ -1788,6 +1816,12 @@
   function tr(value) {
     if (language !== 'es' || typeof value !== 'string') return value;
     if (Object.prototype.hasOwnProperty.call(spanishText, value)) return spanishText[value];
+    // Tutorial HUD composes stage text at runtime; translate the stage as a
+    // whole so its bilingual instructions do not fragment around separators.
+    if (value.startsWith('COMPANIONS · '))
+      return 'COMPAÑEROS · ' + tr(value.slice('COMPANIONS · '.length));
+    if (value.startsWith('TUTORIAL · '))
+      return 'TUTORIAL · ' + tr(value.slice('TUTORIAL · '.length));
     if (chronicleTranslations.has(value)) return chronicleTranslations.get(value);
     if (narrativeTranslations.has(value)) return narrativeTranslations.get(value);
     // Archive answers can append live, rule-derived figures to an approved
