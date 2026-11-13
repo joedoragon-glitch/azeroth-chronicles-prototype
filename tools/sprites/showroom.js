@@ -529,6 +529,31 @@ async function startBrowsableShowroom() {
       }
     }, { rootMargin: '180px' });
   }
+  function labelCard(entry) {
+    return entry.sourceKind === 'dated-reference'
+      ? word('reviewedFixture', 'Review fixture · Oct 2026')
+      : isMaterial(entry) ? word('materialCard', 'Material')
+        : entry.representation === 'raster'
+          ? word('rasterCard', 'Sprite selected')
+          : word('proceduralCard', 'Procedural selected');
+  }
+  function resultCaption() {
+    return state.filtered.length + ' ' + word('matches', 'matching artworks') + ' · ' +
+      Math.min(state.visible, state.filtered.length) + ' ' + word('shown', 'shown');
+  }
+  function relabelVisibleCards() {
+    for (const node of $('asset-grid').querySelectorAll('.asset-card')) {
+      const entryId = node.querySelector('canvas')?.dataset.assetId;
+      const entry = state.entries.find((item) => item.id === entryId);
+      if (!entry) continue;
+      const location = node.querySelector('.library-card-meta');
+      if (location) location.textContent = language === 'es'
+        ? regionEs[entry.region] || entry.region : entry.region;
+      const status = node.querySelector('.library-card-state');
+      if (status) status.textContent = labelCard(entry);
+    }
+    $('asset-results').textContent = resultCaption();
+  }
   function card(entry) {
     const button = document.createElement('button');
     button.className = 'asset-card';
@@ -551,12 +576,7 @@ async function startBrowsableShowroom() {
     meta.textContent = language === 'es' ? regionEs[entry.region] || entry.region : entry.region;
     const status = document.createElement('span');
     status.className = 'library-card-state';
-    status.textContent = entry.sourceKind === 'dated-reference'
-      ? word('reviewedFixture', 'Review fixture · Oct 2026')
-      : isMaterial(entry) ? word('materialCard', 'Material')
-        : entry.representation === 'raster'
-          ? word('rasterCard', 'Sprite selected')
-          : word('proceduralCard', 'Procedural selected');
+    status.textContent = labelCard(entry);
     body.append(title, meta, status);
     button.append(thumb, body);
     button.addEventListener('click', () => selectAsset(entry.id));
@@ -574,9 +594,7 @@ async function startBrowsableShowroom() {
     if (observer) observer.disconnect();
     const grid = $('asset-grid');
     grid.replaceChildren(...state.filtered.slice(0, state.visible).map(card));
-    $('asset-results').textContent = state.filtered.length + ' ' +
-      word('matches', 'matching artworks') + ' · ' +
-      Math.min(state.visible, state.filtered.length) + ' ' + word('shown', 'shown');
+    $('asset-results').textContent = resultCaption();
     $('asset-more').hidden = state.visible >= state.filtered.length;
     for (const node of grid.querySelectorAll('.asset-card')) {
       if (node.querySelector('canvas')?.dataset.assetId === state.selected?.id)
@@ -823,7 +841,7 @@ async function startBrowsableShowroom() {
     language = $('asset-language').value === 'es' ? 'es' : 'en';
     localeStatic();
     renderTotal();
-    renderCards();
+    relabelVisibleCards();
     if (state.selected) {
       rebuildStates(state.selected);
       void inspect();
