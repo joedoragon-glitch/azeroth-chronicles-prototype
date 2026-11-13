@@ -386,7 +386,9 @@
                 (camp?.progress >= 4
                   ? 'Reuse this camp for recovery and companion services.'
                   : (camp ? 'No extra cost' : cost ? cost + ' crowns' : 'First Barracks FREE') +
-                    ' · one Soldier or Ranger builds outside. Recovery switches when finished.'),
+                    (game.hero.class === 'rogue'
+                      ? ' · an idle active Charmed companion builds outside. Recovery switches when finished.'
+                      : ' · one Soldier or Ranger builds outside. Recovery switches when finished.')),
               !!reason,
             ),
           ]),
@@ -3000,18 +3002,33 @@
     }
     function companionBasics(back = closeMenu) {
       getGame().briefCompanions();
-      const practiced = !!getGame().s.quests['quest-barracks']?.recallPracticed;
-      const rogue = getGame().hero.class === 'rogue';
-      const hasCompanion = getGame().activeLivingParty().length > 0;
+      const game = getGame();
+      const practiced = !!game.s.quests['quest-barracks']?.recallPracticed;
+      const rogue = game.hero.class === 'rogue';
+      const active = game.activeLivingParty();
+      const charmReady = rogue && active.some((u) => game.isCharmedCompanion(u));
+      const charmOwned = rogue && game.s.party.some((u) => game.isCharmedCompanion(u));
+      const canPractice = rogue ? charmReady : active.length > 0;
+      // A previously Charmed but fallen/resting ally is not a first Charm.
+      // A non-Charmed pet must not masquerade as Rogue's first lawful Charm.
+      const showPracticed = practiced && (!rogue || charmReady);
+      const conventionalIntro = {
+        paladin: 'Your Paladin fights up close alongside the Soldier. Your Ranger companion attacks from range and can heal. Recall brings both companions back to you.',
+        mage: 'Your Mage casts from range while the Soldier fights up close. Your Ranger companion supports from range and can heal. Recall brings both companions back to you.',
+        ranger: 'Your Ranger fights from range. Your Soldier companion handles close combat, while your Ranger companion attacks and heals. Recall brings both companions back to you.',
+      };
+      const rogueIntro = charmReady
+        ? 'Your Rogue has a Charmed ally who can fight, gather and build. Practice Recall together before establishing your free Barracks.'
+        : charmOwned
+          ? 'Your Rogue has already Charmed a monster, but no Charmed companion is living and active. Recover a fallen ally at the Captain or Charm another eligible monster before practicing Recall.'
+          : 'Your Rogue begins without companions. Automatic bell strikes can Charm eligible surviving monsters. A Charmed ally can fight, gather and build your first Barracks. Return to practice Recall after your first Charm.';
       openMenu(
         'Meet your company',
-        practiced
+        showPracticed
           ? 'Recalled!\nOrders cancelled. Companions stay close and defend without chasing for up to five seconds.\nPress Recall again to cancel early; the button shows when it is active.\n\nNext: build your first Barracks for FREE.'
-          : rogue
-            ? 'You begin alone. Your automatic bell strikes can Charm eligible surviving monsters. A lawful Charmed companion can fight, gather and build your first Barracks. After a Charm, return to practice Recall.'
-            : 'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.',
+          : rogue ? rogueIntro : conventionalIntro[game.hero.class],
         [
-          ...(practiced
+          ...(showPracticed
             ? [
                 action('Continue', () => {
                   if (getGame().hasAnyBarracks()) closeMenu();
@@ -3022,12 +3039,19 @@
                 }),
               ]
             : []),
-          ...(hasCompanion
+          ...(canPractice
             ? [action('Practice Recall squad', () => practiceRecall(() => companionBasics(back)))]
-            : [action(rogue ? 'Find your first Charmed companion' : 'Recover a companion first',
-              () => closeMenu(),
-              rogue ? 'Charm an eligible surviving monster with your automatic bell strikes.' :
-                'Recall needs a living active companion.')]),
+            : [action(
+                rogue
+                  ? charmOwned ? 'Recover or Charm a companion' : 'Find your first Charmed companion'
+                  : 'Recover a companion first',
+                () => rogue && charmOwned ? townRecruitmentMenu(back) : closeMenu(),
+                rogue
+                  ? charmOwned
+                    ? 'Recover a fallen Charmed ally at the Captain, or Charm another eligible monster.'
+                    : 'Charm an eligible surviving monster with your automatic bell strikes.'
+                  : 'Recall needs a living active companion.',
+              )]),
         ],
         back,
       );
