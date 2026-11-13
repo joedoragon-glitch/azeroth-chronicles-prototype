@@ -6,6 +6,7 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
 const Sprite = require('../src/prototype/sprites.js');
+const { census } = require('./sprite-showroom-world.cjs');
 const regionNames = [
   'Greenwood Vale', 'Flooded Marches', 'Ironroot Highlands',
   'Ashen Frontier', 'Dark Crown',
@@ -88,6 +89,34 @@ function build() {
       } : null,
       archive: history,
       referenceDate: null,
+    });
+  }
+  // Enumerate the current world rather than assuming the October handoff
+  // archive contains every new region fixture or the playable Rogue class.
+  const currentWorld = census();
+  for (const live of currentWorld.rows) {
+    if (result.has(live.id)) {
+      const entry = result.get(live.id);
+      entry.observedInWorldSource = true;
+      for (const state of live.states)
+        if (!entry.states.some((s) => s.label === state.label))
+          entry.states.push(state);
+      continue;
+    }
+    const registered = live.activeSpriteKey
+      ? manifest.sprites[live.activeSpriteKey] || null : null;
+    result.set(live.id, {
+      ...live, observedInWorldSource: live.sourceKind === 'current-world-fixture',
+      registeredRaster: registered?.src || null,
+      revision: registered?.revision || null,
+      spriteEntry: registered ? {
+        width: registered.width, height: registered.height,
+        displayWidth: registered.displayWidth, displayHeight: registered.displayHeight,
+        anchorX: registered.anchorX, anchorY: registered.anchorY,
+        clips: registered.clips || null, variants: registered.variants || null,
+      } : null,
+      archive: live.activeSpriteKey ? archives(approved, live.activeSpriteKey)
+        .filter((a) => a.src !== registered?.src) : [],
     });
   }
   for (const item of cases.entries) {
@@ -190,6 +219,8 @@ function build() {
       liveRegistrations: Object.keys(manifest.sprites).length,
       datedReviewCases: cases.entries.length,
       currentMaterials: Object.keys(materials.materials).length,
+      currentWorldIdentities: currentWorld.rows.length,
+      currentSourceAreas: currentWorld.areas.length,
     },
     entries, packagedResources: [...allResources],
   };
