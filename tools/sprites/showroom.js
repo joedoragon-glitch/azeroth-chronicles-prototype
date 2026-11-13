@@ -472,18 +472,22 @@ async function startBrowsableShowroom() {
   }
   function statusText(entry) {
     if (isMaterial(entry))
-      return entry.sourceKind === 'archived-material' ? 'Historical material · not in the current game'
-        : 'Registered road material';
+      return word(entry.sourceKind === 'archived-material' ? 'historicalMaterial' : 'currentMaterial',
+        entry.sourceKind === 'archived-material' ? 'Historical material · not in the current game'
+          : 'Registered road material');
     const fixture = activeState(entry);
     const selected = fixture?.entity
       ? (PrototypeSprites.definitionFor(fixture.entity, fixture.region) ? 'raster' : 'procedural')
       : entry.representation;
-    const use = selected === 'raster' ? 'Raster selected by this fixture'
-      : selected === 'procedural' ? 'Procedural selected by this fixture'
-        : 'Reference unavailable';
-    const prefix = entry.sourceKind === 'dated-reference' ? 'Dated review fixture · '
-      : entry.sourceKind === 'current-world-fixture' ? 'Current world-source fixture · '
-        : entry.sourceKind === 'current-hero-fixture' ? 'Playable hero · ' : '';
+    const use = selected === 'raster' ? word('selectedRaster', 'Raster selected by this fixture')
+      : selected === 'procedural' ? word('selectedProcedural', 'Procedural selected by this fixture')
+        : word('referenceUnavailable', 'Reference unavailable');
+    const prefix = entry.sourceKind === 'dated-reference'
+      ? word('historicalFixture', 'Dated review fixture') + ' · '
+      : entry.sourceKind === 'current-world-fixture'
+        ? word('worldFixture', 'Current world-source fixture') + ' · '
+        : entry.sourceKind === 'current-hero-fixture'
+          ? word('playableHero', 'Playable hero') + ' · ' : '';
     return prefix + use;
   }
   function filterResults() {
@@ -544,12 +548,15 @@ async function startBrowsableShowroom() {
     title.textContent = entry.name;
     const meta = document.createElement('span');
     meta.className = 'library-card-meta';
-    meta.textContent = entry.region;
+    meta.textContent = language === 'es' ? regionEs[entry.region] || entry.region : entry.region;
     const status = document.createElement('span');
     status.className = 'library-card-state';
-    status.textContent = entry.sourceKind === 'dated-reference' ? 'Review fixture · Oct 2026'
-      : isMaterial(entry) ? 'Material' : entry.representation === 'raster'
-        ? 'Sprite selected' : 'Procedural selected';
+    status.textContent = entry.sourceKind === 'dated-reference'
+      ? word('reviewedFixture', 'Review fixture · Oct 2026')
+      : isMaterial(entry) ? word('materialCard', 'Material')
+        : entry.representation === 'raster'
+          ? word('rasterCard', 'Sprite selected')
+          : word('proceduralCard', 'Procedural selected');
     body.append(title, meta, status);
     button.append(thumb, body);
     button.addEventListener('click', () => selectAsset(entry.id));
@@ -567,8 +574,9 @@ async function startBrowsableShowroom() {
     if (observer) observer.disconnect();
     const grid = $('asset-grid');
     grid.replaceChildren(...state.filtered.slice(0, state.visible).map(card));
-    $('asset-results').textContent = state.filtered.length + ' matching artworks · ' +
-      Math.min(state.visible, state.filtered.length) + ' shown';
+    $('asset-results').textContent = state.filtered.length + ' ' +
+      word('matches', 'matching artworks') + ' · ' +
+      Math.min(state.visible, state.filtered.length) + ' ' + word('shown', 'shown');
     $('asset-more').hidden = state.visible >= state.filtered.length;
     for (const node of grid.querySelectorAll('.asset-card')) {
       if (node.querySelector('canvas')?.dataset.assetId === state.selected?.id)
@@ -587,17 +595,20 @@ async function startBrowsableShowroom() {
     const versions = $('asset-revision');
     versions.replaceChildren();
     if (entry.registeredRaster)
-      versions.add(new Option(entry.sourceKind === 'archived-material' ? 'Retired material'
-        : 'Registered sprite / material', entry.registeredRaster));
+      versions.add(new Option(entry.sourceKind === 'archived-material'
+        ? word('retiredMaterial', 'Retired material')
+        : word('registeredSprite', 'Registered sprite / material'), entry.registeredRaster));
     for (const h of entry.archive || []) {
       if (h.src === entry.registeredRaster) continue;
-      versions.add(new Option('Preserved revision ' + String(h.revision).slice(0, 10), h.src));
+      versions.add(new Option(word('priorVersion', 'Preserved revision') + ' ' +
+        String(h.revision).slice(0, 10), h.src));
     }
     for (const [clipName, clip] of Object.entries(entry.spriteEntry?.clips || {})) {
       for (let i = 0; i < (clip.frames || []).length; i++) {
         const frame = clip.frames[i];
         if (frame.src && ![...versions.options].some((o) => o.value === frame.src))
-          versions.add(new Option('Animation · ' + clipName + ' · frame ' + (i + 1), frame.src));
+          versions.add(new Option(word('animationFrame', 'Animation') + ' · ' +
+            clipName + ' · ' + (i + 1), frame.src));
       }
     }
     versions.disabled = versions.options.length < 2;
@@ -619,17 +630,16 @@ async function startBrowsableShowroom() {
   function metadata(entry) {
     const el = $('asset-metadata');
     const parts = [
-      ['Stable ID', entry.id],
-      ['Category', entry.group],
-      ['Location', entry.region],
-      ['Source', entry.sourceKind === 'dated-reference' ? 'October 2026 review case'
-        : entry.sourceKind === 'current-contract' ? 'Current exact sprite-processing fixture'
-          : entry.sourceKind],
-      ['Renderer selection', entry.representation],
-      ['Catalog number', entry.catalogId || 'Not assigned'],
-      ['Active raster identity', entry.activeSpriteKey || 'None for this fixture'],
-      ['Registered revision', entry.revision || 'No registered raster revision'],
-      ['Preserved raster versions', String(entry.archive?.length || 0)],
+      [word('stableId','Stable ID'), entry.id],
+      [word('category','Category'), language === 'es' ? categoryEs[entry.group] || entry.group : entry.group],
+      [word('region','Location'), language === 'es' ? regionEs[entry.region] || entry.region : entry.region],
+      [word('origin','Source'), entry.sourceKind === 'dated-reference' ? word('reviewedFixture','October 2026 review case')
+        : entry.sourceKind],
+      [word('renderer','Renderer selection'), entry.representation],
+      [word('catalogNo','Catalog number'), entry.catalogId || '—'],
+      [word('activeRaster','Active raster identity'), entry.activeSpriteKey || '—'],
+      [word('registeredRevision','Registered revision'), entry.revision || '—'],
+      [word('historicalVersions','Preserved raster versions'), String(entry.archive?.length || 0)],
     ];
     el.replaceChildren(...parts.map(([key, value]) => {
       const p = document.createElement('p');
@@ -649,7 +659,8 @@ async function startBrowsableShowroom() {
     $('asset-next').disabled = position < 0 || position >= state.filtered.length - 1;
     const gen = ++state.generation;
     $('asset-title').textContent = entry.name;
-    $('asset-selection').textContent = statusText(entry) + ' · ' + entry.region;
+    $('asset-selection').textContent = statusText(entry) + ' · ' +
+      (language === 'es' ? regionEs[entry.region] || entry.region : entry.region);
     updateViewButtons(entry);
     metadata(entry);
     const compare = state.view === 'compare';
@@ -657,10 +668,11 @@ async function startBrowsableShowroom() {
     $('asset-preview-grid').dataset.compare = String(compare);
     const firstMode = compare ? 'procedural' : state.view;
     const secondMode = 'raster';
-    $('asset-caption').textContent = firstMode === 'raster' ? 'Registered or retained sprite'
-      : firstMode === 'procedural' ? 'Current procedural drawing'
-        : 'What the game selects for this fixture';
-    $('asset-secondary-caption').textContent = 'Registered or retained sprite';
+    $('asset-caption').textContent = firstMode === 'raster'
+      ? word('spriteCaption','Registered or retained sprite')
+      : firstMode === 'procedural' ? word('proceduralCaption','Current procedural drawing')
+        : word('gameCaption','What the game selects for this fixture');
+    $('asset-secondary-caption').textContent = word('compareCaption','Registered or retained sprite');
     const fixture = activeState(entry);
     const [first, second] = await Promise.all([
       paint($('asset-preview'), entry, firstMode, fixture, gen),
@@ -668,12 +680,15 @@ async function startBrowsableShowroom() {
     ]);
     if (gen !== state.generation) return;
     $('asset-preview-note').textContent = !first || !second
-      ? 'This source fixture cannot be isolated reliably here. No image has been invented.'
-      : 'Isolated asset study · ' + (state.scale === 'close'
-        ? 'studio close-up (magnified, not game scale)'
-        : Math.round(Number(state.scale) * 100) + '% game scale') +
-        ' · ' + (state.light === 'night' ? 'night studio grade' : 'day studio') +
-        '. This is not a full gameplay screenshot or device-renderer acceptance.';
+      ? word('previewUnavailable','This source fixture cannot be isolated reliably here. No image has been invented.')
+      : (language === 'es' ? 'Estudio de recurso aislado · ' : 'Isolated asset study · ') +
+        (state.scale === 'close'
+          ? word('studioClose','studio close-up (magnified, not game scale)')
+          : Math.round(Number(state.scale) * 100) + '% ' + word('gameScale','game scale')) +
+        ' · ' + (state.light === 'night'
+          ? word('nightGrade','night studio grade') : word('dayGrade','day studio')) +
+        '. ' + word('isolatedCaveat',
+          'This is not a full gameplay screenshot or device-renderer acceptance.');
   }
   function selectedUrl() {
     const link = new URL(location.href);
@@ -681,6 +696,7 @@ async function startBrowsableShowroom() {
     link.hash = '';
     if (state.selected) link.searchParams.set('asset', state.selected.id);
     if (state.variant > 0) link.searchParams.set('state', String(state.variant));
+    if (language === 'es') link.searchParams.set('lang','es');
     return link.href;
   }
   function reflectUrl() {
@@ -706,11 +722,12 @@ async function startBrowsableShowroom() {
     try {
       await navigator.clipboard.writeText(text);
       const old = button.textContent;
-      button.textContent = 'Copied';
+      button.textContent = word('copied','Copied');
       button.disabled = true;
       setTimeout(() => { button.textContent = old; button.disabled = false; }, 1250);
     } catch {
-      $('asset-preview-note').textContent = 'Clipboard unavailable here. Your exact asset link: ' + selectedUrl();
+      $('asset-preview-note').textContent = word('clipboardUnavailable',
+        'Clipboard unavailable here. Your exact asset link: ') + ' ' + selectedUrl();
     }
   }
   function syncVisibleSelection() {
@@ -791,15 +808,31 @@ async function startBrowsableShowroom() {
     const id = params.get('asset');
     if (id && state.entries.some((e) => e.id === id)) selectAsset(id, Number(params.get('state') || 0));
   });
+  $('asset-language').addEventListener('change', () => {
+    language = $('asset-language').value === 'es' ? 'es' : 'en';
+    localeStatic();
+    renderCards();
+    if (state.selected) {
+      rebuildStates(state.selected);
+      void inspect();
+      reflectUrl();
+    }
+  });
+  localeStatic();
   renderCards();
   const params = new URL(location.href).searchParams;
   const selectedId = params.get('asset');
   selectAsset(state.entries.some((e) => e.id === selectedId)
     ? selectedId : state.entries[0]?.id, Number(params.get('state') || 0));
-  $('library-count').textContent = state.entries.length + ' browsable visual entries · ' +
-    index.counts.currentWorldIdentities + ' current-source identities · ' +
-    index.counts.liveRegistrations + ' registered sprites · ' +
-    index.counts.datedReviewCases + ' dated reference cases';
+  $('library-count').textContent = language === 'es'
+    ? state.entries.length + ' ' + spanish.visualEntries + ' · ' +
+      index.counts.currentWorldIdentities + ' ' + spanish.currentWorld + ' · ' +
+      index.counts.liveRegistrations + ' ' + spanish.registeredSprites + ' · ' +
+      index.counts.datedReviewCases + ' ' + spanish.datedCases
+    : state.entries.length + ' browsable visual entries · ' +
+      index.counts.currentWorldIdentities + ' current-source identities · ' +
+      index.counts.liveRegistrations + ' registered sprites · ' +
+      index.counts.datedReviewCases + ' dated reference cases';
   window.SpriteShowroom = {
     ready: true, mode: 'library', entries: state.entries.length,
     select: (id) => selectAsset(id),
