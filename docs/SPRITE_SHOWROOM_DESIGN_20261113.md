@@ -41,3 +41,16 @@ No second independently maintained asset viewer; no 513-image base64 page; no 'e
 - Catalog: each of 75 current exact fixtures resolves to one known identity; all 32 active rasters can be found and classified; historical cases clearly dated; archive absent cannot break current entries.
 - Freshness: changed sprite manifest or image path affects only its own media; procedural source changes require no hand-generated image refresh.
 - Validation: focused tests pass; public site contains showroom; existing local single-candidate comparison works; no game files, saves, merges or player PWA updated as a side effect.
+
+
+## Real-browser design refinement (13 November 2026)
+
+A focused Chromium run produced **full-page desktop (1280 px) and phone (393 px) screenshots**; the initial browse-mode checks succeeded (see [Actions #43399538802](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43399538802) and its retained screenshot artifact). This was not a mere wireframe or speculative style audit. The screenshots revealed specific usability improvements:
+
+- At authentic **150% camera scale**, characters and some small props occupied too little of the inspection stage. The **default is now an explicitly labeled studio close-up**, with selectable 100%, **150% game**, and 200% game views. The paired procedural/raster comparison shares a common magnification; no studio close-up is mislabeled as native game-camera size.
+- Canvas thumbnails are intentionally drawn only when scrolled into the viewport. Full-page automated capture must scroll through the cards before taking its screenshot, rather than recording dozens of apparently empty boxes that would otherwise paint on user scroll.
+- Search results rank exact stable identity matches before approximate prefixes. After filtering, the inspector follows the first visible matching identity rather than continuing to show an unrelated previous selection; phone filter typing does **not** cause automatic scroll jumps.
+- Each thumbnail paints its **own identity** rather than accidentally inheriting the currently selected card's revision; the selected revision dropdown also exposes registered animation frame files, with atlas crop support.
+- Review notes remain in ephemeral per-asset browser memory during the current showroom session, without touching saved campaigns or claiming artistic approval.
+
+The visual design uses restrained ink/forest/gold contrast, image-first cards, a desktop sticky inspector, and a single-column inspector-above-catalog layout on narrow phones. Source and device-fidelity limitations remain as described above. Cosmetic styling does not override asset/source correctness.
