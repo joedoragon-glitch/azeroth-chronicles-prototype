@@ -172,7 +172,7 @@ function contrast(item) {
         await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
         const newGameFit = await assertDialogGeometry(frame, 'New Adventure', { noScroll: true });
         await frame
-          .getByRole('button', { name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/ })
+          .getByRole('button', { name: language === 'es' ? /^Elegir personaje/ : /^Choose Hero/ })
           .tap();
         const cards = await measure(frame, '#modal-actions button', { targets: true, minFont: 13 });
         assert.equal(cards.length, 4);
@@ -261,7 +261,7 @@ function contrast(item) {
         await frame.locator('#close-button').tap();
         await frame.locator('#title-new').tap();
         await frame.getByRole('button', {
-          name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/,
+          name: language === 'es' ? /^Elegir personaje/ : /^Choose Hero/,
         }).tap();
         await frame.getByRole('button', { name: /Palad/i }).tap();
         await frame.waitForFunction(
