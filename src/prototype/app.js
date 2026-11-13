@@ -854,8 +854,8 @@
       'Recupera a un compañero encantado caído o encanta a otro monstruo apto antes de practicar Reagrupar.',
     'Charm an eligible monster with Rogue automatic attacks; the Rogue begins without companions.':
       'Encanta a un monstruo apto con los ataques automáticos de la Pícara; esta heroína empieza sin compañía.',
-    'Recover or reactivate a living companion before practicing Recall.':
-      'Recupera o vuelve a activar a un compañero vivo antes de practicar Reagrupar.',
+    'Recover a fallen companion or activate a resting ally before practicing Recall.':
+      'Recupera a un compañero caído o activa a uno que esté en reserva antes de practicar Reagrupar.',
     'Construction paused · assign an available companion at your unfinished Barracks.':
       'Construcción detenida · asigna un compañero disponible al cuartel sin terminar.',
     'Recover or Charm a companion': 'Recuperar o encantar a un compañero',
