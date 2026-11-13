@@ -76,6 +76,12 @@ for (const language of ['en', 'es']) {
     tr('Critical executions', 'Ejecuciones críticas'));
   assert(e.get('modal-description').textContent.includes(
     tr('one percentage point', 'un punto porcentual')));
+  if (language === 'es') {
+    const lesson = e.get('modal-description').textContent;
+    assert(lesson.includes('probabilidad crítica de tu personaje'),
+      'Codex tutorial addresses the selected character without assuming masculine gender');
+    assert(!lesson.includes('probabilidad crítica de tu héroe'));
+  }
   assert(Campaign.restore(g.snapshot()).s.quests['quest-tutorial-board'].paid);
   // A previous Board visit must not be erased merely to restart its cue.
   assert(g.s.discovered['vale:quest-board-intro']);
