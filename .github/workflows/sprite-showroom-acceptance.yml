@@ -1,0 +1,43 @@
+name: Sprite Showroom focused browser acceptance
+on:
+  pull_request:
+    paths:
+      - 'tools/sprites/showroom.*'
+      - 'scripts/sprite-showroom-index.cjs'
+      - 'scripts/build.cjs'
+      - 'tests/sprite-showroom-*'
+      - 'src/prototype/visuals.js'
+      - 'src/prototype/sprites.js'
+      - 'src/prototype/sprite-format.js'
+      - 'assets/sprites/manifest.json'
+      - 'assets/materials/manifest.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    name: Read-only desktop and phone gallery
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned development dependencies
+        run: npm ci --ignore-scripts
+      - name: Install isolated Chromium browser
+        run: npx playwright install --with-deps chromium
+      - name: Build reproducible static site (do not publish)
+        run: node scripts/build.cjs --check --site
+      - name: Verify the existing Sprite Showroom on desktop and phone
+        run: node tests/sprite-showroom-library-browser.test.cjs
+      - name: Preserve visual evidence without deploying
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprite-showroom-browser-evidence
+          path: test-artifacts/sprite-showroom/
+          if-no-files-found: ignore
+          retention-days: 30
