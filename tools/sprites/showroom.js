@@ -790,6 +790,143 @@ async function startBrowsableShowroom() {
       return p;
     }));
   }
+  const sourceCache = new Map();
+  function appendReviewText(parent, label, text, provenance) {
+    if (!text) return;
+    const heading = document.createElement('strong');
+    heading.textContent = label;
+    const p = document.createElement('p');
+    p.textContent = text;
+    const note = document.createElement('p');
+    note.className = 'source-provenance';
+    note.textContent = provenance;
+    parent.append(heading, p, note);
+  }
+  function displaySourceDefinition(entry) {
+    const fixture = activeState(entry);
+    const source = $('asset-design-description');
+    source.replaceChildren();
+    appendReviewText(source,
+      language === 'es' ? 'Decisión de diseño documentada' : 'Recorded design decision',
+      entry.currentDesign?.summary,
+      language === 'es'
+        ? 'Registro del propietario; coteja posibles decisiones posteriores con el código vigente.'
+        : 'Owner decision record; later changes may supersede it. The live painter is authoritative.');
+    appendReviewText(source,
+      language === 'es' ? 'Plan de revisión histórica (octubre de 2026)'
+        : 'Dated review plan (October 2026)',
+      entry.historicalDesign?.summary,
+      (entry.historicalDesign?.source || '') +
+        (language === 'es' ? ' · referencia histórica, no necesariamente el diseño actual'
+          : ' · historical reference, not necessarily the current design'));
+    if (!source.childElementCount) {
+      const p = document.createElement('p');
+      p.textContent = language === 'es'
+        ? 'No existe una descripción artística específica para esta identidad en los registros consultados. Debajo aparece el estado real del código.'
+        : 'No asset-specific art direction is recorded for this identity in the indexed records. The actual render input is shown below.';
+      source.append(p);
+    }
+    const current = fixture?.entity
+      ? { assetId: entry.id, region: fixture.region, area: fixture.area || null,
+          renderInput: fixture.entity }
+      : { assetId: entry.id, materialOrArchive: entry.registeredRaster || null,
+          registryRevision: entry.revision || null };
+    $('asset-definition').textContent = JSON.stringify(current, null, 2);
+    const selector = $('asset-source-file'), previous = selector.value;
+    selector.replaceChildren();
+    for (const file of entry.sourceFiles || []) {
+      if (/^src\/prototype\/[a-z0-9-]+\.js$/.test(file))
+        selector.add(new Option(file.replace('src/prototype/', ''), file));
+    }
+    selector.value = [...selector.options].some((o) => o.value === previous)
+      ? previous : selector.options[0]?.value || '';
+    $('asset-read-code').disabled = !selector.value;
+    $('asset-source-excerpt').hidden = true;
+    $('asset-source-excerpt').textContent = '';
+    $('asset-source-status').textContent = language === 'es'
+      ? 'Elige «Mostrar código» para consultar el módulo usado por el juego.'
+      : 'Select “Show matching code” to inspect the current game source on demand.';
+    updateFullSourceLink();
+  }
+  function updateFullSourceLink() {
+    const file = $('asset-source-file').value;
+    const link = $('asset-source-full');
+    const valid = /^src\/prototype\/[a-z0-9-]+\.js$/.test(file);
+    link.hidden = !valid;
+    if (!valid) {
+      link.removeAttribute('href');
+      return;
+    }
+    const href = new URL(file, rootUrl);
+    const revision = index.sourceFingerprints?.[file];
+    if (revision) href.searchParams.set('v', revision);
+    link.href = href.href;
+    link.textContent = language === 'es' ? 'Abrir archivo completo: ' + file
+      : 'Open complete game source: ' + file;
+  }
+  async function showCurrentCode() {
+    const entry = state.selected, file = $('asset-source-file').value;
+    if (!entry || !/^src\/prototype\/[a-z0-9-]+\.js$/.test(file)) return;
+    const identity = entry.id;
+    const status = $('asset-source-status');
+    status.textContent = language === 'es' ? 'Leyendo código de la versión actual…'
+      : 'Reading source from this exact game build…';
+    try {
+      if (!sourceCache.has(file)) {
+        const url = new URL(file, rootUrl);
+        const revision = index.sourceFingerprints?.[file];
+        if (revision) url.searchParams.set('v', revision);
+        const request = fetch(url.href, { cache: 'no-cache' }).then(async (response) => {
+          if (!response.ok) throw Error('Painter file unavailable (' + response.status + ')');
+          return response.text();
+        });
+        sourceCache.set(file, request);
+        if (sourceCache.size > 6) sourceCache.delete(sourceCache.keys().next().value);
+      }
+      const lines = (await sourceCache.get(file)).split(/\r?\n/);
+      if (identity !== state.selected?.id || file !== $('asset-source-file').value) return;
+      const terms = (entry.sourceTerms || []).map((t) => String(t).toLowerCase());
+      let best = -1, bestScore = -1;
+      for (let i = 0; i < lines.length; i++) {
+        const row = lines[i].toLowerCase();
+        for (const term of terms) {
+          if (!row.includes(term)) continue;
+          const quoted = row.includes("'" + term + "'") || row.includes('"' + term + '"');
+          const branch = /\bcase\b|\bif\s*\(|\belse if\b|\b(?:function|const)\b/.test(row);
+          const score = (quoted ? 8 : 0) + (branch ? 5 : 0) +
+            (/draw|paint|render/.test(row) ? 3 : 0);
+          if (score > bestScore) { bestScore = score; best = i; }
+        }
+      }
+      const first = best < 0 ? 0 : Math.max(0, best - 6);
+      const last = best < 0 ? Math.min(20, lines.length) : Math.min(lines.length, best + 14);
+      $('asset-source-excerpt').textContent = lines.slice(first, last).map((line, n) =>
+        String(first + n + 1).padStart(5, ' ') + ' │ ' + line).join('\n');
+      $('asset-source-excerpt').hidden = false;
+      status.textContent = best < 0
+        ? (language === 'es'
+          ? 'Este módulo no contiene una coincidencia literal del nombre. Es código real; consulta el archivo completo para seguir las funciones compartidas.'
+          : 'No direct asset-name match was found here. This is real code; shared drawing logic may not mention the exact asset name.')
+        : (language === 'es'
+          ? 'Fragmento real en ' + file + ', cerca de la línea ' + (best + 1) +
+            '. Una coincidencia de texto no demuestra que abarque toda la función.'
+          : 'Actual code in ' + file + ' near line ' + (best + 1) +
+            '. A matching line is a navigation aid, not the entire drawing algorithm.');
+    } catch (error) {
+      if (identity !== state.selected?.id) return;
+      status.textContent = (language === 'es' ? 'No se pudo leer el código: '
+        : 'Could not read game source: ') + error.message;
+      sourceCache.delete(file);
+    }
+  }
+  $('asset-read-code').addEventListener('click', () => void showCurrentCode());
+  $('asset-source-file').addEventListener('change', () => {
+    updateFullSourceLink();
+    $('asset-source-excerpt').hidden = true;
+    $('asset-source-excerpt').textContent = '';
+    $('asset-source-status').textContent = '';
+  });
+
   function updateTags(entry) {
     const box = $('asset-tags');
     box.replaceChildren();
