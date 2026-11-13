@@ -1295,7 +1295,7 @@
     ['% per target in an area attack.\n', '% por objetivo en un ataque de área.\n'],
     ['Against Ranger hero skills, enemy Skill Block is ', 'Contra las habilidades del explorador, la probabilidad de bloqueo del enemigo es del '],
     ['% for one target and ', '% contra un objetivo y del '],
-    ['% per area target. Rogue Bard performances cannot be blocked (0%).\n', '% por objetivo de área. Las interpretaciones de la pícara bardo no se pueden bloquear (0%).\n'],
+    ['% per area target. Rogue Bard performances cannot be blocked (0%).\n', '% por objetivo de área. Las interpretaciones musicales de la pícara no se pueden bloquear (0%).\n'],
     ['At night, hostile enemies gain +', 'De noche, los enemigos obtienen +'],
     [' percentage points: ordinary skills become ', ' puntos porcentuales: contra habilidades ordinarias pasan a '],
     ['%; Ranger hero skills become ', '%; contra las habilidades del explorador pasan a '],
@@ -1370,7 +1370,7 @@
     ],
     [
       'The Mage’s Silence Field stays where cast for ',
-      'El Campo de Silencio del mago permanece donde se lanzó durante ',
+      'El Campo de Silencio de la maga permanece donde se lanzó durante ',
     ],
     [
       ' seconds by rank. It suppresses new specials, support-heal activation and unfinished companion charged releases.',
@@ -1416,7 +1416,7 @@
     ],
     [
       'The Mage’s Spell Interrupt instead cancels one current enemy warned or aimed attack, leaving later queued attacks intact.',
-      'Interrupción de Hechizo del mago cancela, en cambio, un ataque enemigo advertido o apuntado, sin afectar a los posteriores en cola.',
+      'Interrupción de Hechizo de la maga cancela, en cambio, un ataque enemigo advertido o apuntado, sin afectar a los posteriores en cola.',
     ],
     [
       'Paladin weakening reduces the affected enemy’s outgoing damage for its actual duration.',
@@ -1424,7 +1424,7 @@
     ],
     [
       'Mage Fracture is vulnerability, not Slow or Silence:',
-      'Fractura del mago es vulnerabilidad, no Ralentización ni Silencio:',
+      'Fractura de la maga es vulnerabilidad, no Ralentización ni Silencio:',
     ],
     [
       'the strongest active vulnerability applies once, helping hero and companion hits.',
@@ -1448,7 +1448,7 @@
     ],
     [
       'Ranger Skill 4 tap gives 25% hero movement haste.',
-      'El toque de la habilidad 4 del explorador concede un 25 % de celeridad de movimiento al héroe.',
+      'El toque de la habilidad 4 del explorador concede un 25 % de celeridad al movimiento del personaje.',
     ],
     [
       'Its charged Companion Rally needs living nearby allies with line of sight; with none it spends no cooldown.',
@@ -1865,7 +1865,7 @@
     ],
     [
       'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; recruiting the same pet again cannot replace treatment. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Ranged pets keep their distance when space permits and can attack while repositioning. Attacks need a clear line. Their first skill needs no further lessons. Learning your second hero skill from Mira in Millhaven also unlocks their charged second skill. Charge preparation, interruption, Slow and Silence affect them as they affect other companions. Pets share your company’s field limit.',
-      'El reclutamiento es gratuito, con un individuo por jefe. Las mascotas en descanso o caídas siguen en tu compañía y conservan su salud. Trátalas o recupéralas mediante los servicios normales del cuartel; volver a reclutar la misma mascota no sustituye el tratamiento. Heredan salud según el nivel del héroe, Vitalidad de Compañeros y bonificaciones de Expedición, como las tropas. Las mascotas a distancia se separan del enemigo cuando hay espacio y pueden atacar mientras se recolocan. Sus ataques requieren una línea despejada. La primera habilidad no necesita más lecciones. Aprender tu segunda habilidad con Mira en Millhaven también desbloquea su segunda habilidad cargada. Preparación, interrupción, Ralentización y Silencio les afectan como a los demás compañeros. Comparten el límite de integrantes en el campo de tu compañía.',
+      'El reclutamiento es gratuito, con un individuo por jefe. Las mascotas en descanso o caídas siguen en tu compañía y conservan su salud. Trátalas o recupéralas mediante los servicios normales del cuartel; volver a reclutar la misma mascota no sustituye el tratamiento. Heredan salud según el nivel de tu personaje, Vitalidad de Compañeros y bonificaciones de Expedición, como las tropas. Las mascotas a distancia se separan del enemigo cuando hay espacio y pueden atacar mientras se recolocan. Sus ataques requieren una línea despejada. La primera habilidad no necesita más lecciones. Aprender tu segunda habilidad con Mira en Millhaven también desbloquea su segunda habilidad cargada. Preparación, interrupción, Ralentización y Silencio les afectan como a los demás compañeros. Comparten el límite de integrantes en el campo de tu compañía.',
     ],
     ['A miniature companion inspired by ', 'Un compañero en miniatura inspirado en '],
     ['Shared Training', 'Entrenamiento compartido'],
@@ -1995,7 +1995,7 @@
     ['TRUE', 'TRUE'],
     ['normal', 'normal'],
     ['paladin', 'paladín'],
-    ['mage', 'mago'],
+    ['mage', 'maga'],
     ['ranger', 'explorador'],
     ['Recruitable', 'Disponible para reclutar'],
     ['With you', 'Contigo'],
