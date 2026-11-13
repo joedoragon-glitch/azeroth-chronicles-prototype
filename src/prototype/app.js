@@ -313,7 +313,7 @@
     'Edit name': 'Editar nombre',
     'Decide later': 'Decidir después',
     'Keep this name?': '¿Conservar este nombre?',
-    'Name your hero': 'Ponle nombre a tu héroe',
+    'Name your hero': 'Ponle nombre a tu personaje',
     'Choose your Dark Lord name': 'Elige tu nombre de Dark Lord',
     'Melee, healing and brief immunity': 'Combate cercano, curación e inmunidad breve',
     'Ranged magic, frost control and protective barriers':
@@ -390,8 +390,8 @@
     'Tap / charged effects and cooldowns': 'Efectos normales y cargados; tiempos de recuperación',
     'Charged skill interrupted by damage.': 'El daño interrumpió la habilidad cargada.',
     'Charged skill interrupted.': 'Habilidad cargada interrumpida.',
-    'Ranger Heal queued for the hero.': 'Curación del Ranger en cola para el héroe.',
-    'Heal queued for the hero.': 'Curación en cola para el héroe.',
+    'Ranger Heal queued for the hero.': 'Curación del Ranger en cola para tu personaje.',
+    'Heal queued for the hero.': 'Curación en cola para tu personaje.',
     'Command Heal': 'Ordenar Curar',
     'No active companion can use Heal.': 'Ningún compañero activo puede usar Curar.',
     'Healer cannot use Heal while silenced.':
@@ -465,7 +465,7 @@
     'All four classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.':
       'Las cuatro clases han caído. Esta partida terminó. Puedes exportar su progreso, pero no continuarla.',
     'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.':
-      'Elige al héroe que iniciará la resistencia. Comienzas con una habilidad; rescatar especialistas desbloquea el entrenamiento y equipo necesarios para enfrentar al Dark Lord.',
+      'Elige al personaje que iniciará la resistencia. Comienzas con una habilidad; rescatar especialistas desbloquea el entrenamiento y equipo necesarios para enfrentar al Dark Lord.',
   };
   const questTranslations = [
     [
@@ -644,7 +644,7 @@
     ],
     [
       'Ready for the Dark Lord',
-      'Listo para el Dark Lord',
+      'Rumbo al Dark Lord',
       'Free Tovan and Vera; reach fortress gate',
       'Rescata a Tovan y Vera, y llega a la puerta de la fortaleza.',
     ],
@@ -732,10 +732,10 @@
     'Full health for living companions.': 'Salud completa para los compañeros vivos.',
     'Full health for party.': 'Salud completa para el grupo.',
     'No wounds to treat.': 'No hay heridas que curar.',
-    Hero: 'Héroe',
+    Hero: 'Personaje',
     'Treat wounds': 'Curar heridas',
     'Treat wounds heals the hero and living companions for 30 crowns. Fallen companions need separate recovery. Short on crowns? Tap to queue.':
-      'Curar heridas restaura al héroe y sus compañeros vivos por 30 coronas. Los caídos necesitan recuperación aparte. ¿Te faltan coronas? Toca para dejarlo en cola.',
+      'Curar heridas restaura la salud de tu personaje y los compañeros vivos por 30 coronas. Los caídos necesitan recuperación aparte. ¿Te faltan coronas? Toca para dejarlo en cola.',
     'Treat party wounds or recover fallen companions.':
       'Cura las heridas del grupo o recupera compañeros caídos.',
     'Your field base. Recovery → Treat wounds heals your party for 30 crowns.':
@@ -744,7 +744,7 @@
       'Las heridas del grupo han sido curadas. Los compañeros caídos necesitan recuperación aparte.',
     'Wounds treated': 'Heridas curadas',
     'Hero and wounded living companions restored to full health.':
-      'El héroe y los compañeros vivos heridos recuperaron toda su salud.',
+      'Tu personaje y los compañeros vivos heridos recuperaron toda su salud.',
     'No requested party member is still wounded.':
       'Ningún miembro del grupo solicitado sigue herido.',
     'Rogue · Free slots when Charmed allies fall':
@@ -887,7 +887,7 @@
     'Basic barracks recovery is available from Expedition Rank 1.':
       'Los servicios de recuperación del cuartel básico están disponibles desde Expedición 1.',
     'Companion services require a living, available hero.':
-      'Los servicios de compañeros requieren un héroe vivo y disponible.',
+      'Los servicios de compañeros requieren que tu personaje esté con vida y disponible.',
     'Companion services wait until nearby combat has ended.':
       'Los servicios de compañeros esperan a que termine el combate cercano.',
     'The source town Captain is no longer available.':
@@ -992,7 +992,7 @@
     'Keep watch while a companion builds. Recall pauses work; progress is kept.':
       'Vigila mientras un compañero construye. Reagrupar pausa el trabajo; se conserva el progreso.',
     'Select fallen companions to recover for 40 crowns each. Short on crowns? Queue them in order. Treat wounds heals the hero and living companions for 30 crowns.':
-      'Elige qué compañeros caídos recuperar por 40 coronas cada uno. Si te faltan coronas, déjalos en cola por orden. Curar heridas devuelve toda la salud al héroe y a los compañeros vivos por 30 coronas.',
+      'Elige qué compañeros caídos recuperar por 40 coronas cada uno. Si te faltan coronas, déjalos en cola por orden. Curar heridas devuelve toda la salud a tu personaje y a los compañeros vivos por 30 coronas.',
     'Queue full: upgrade to Full Barracks for unlimited recovery requests.':
       'Cola llena: mejora a cuartel completo para recuperar compañeros sin límite de solicitudes.',
     'Your company has no fallen members.': 'No hay compañeros caídos en tu compañía.',
@@ -1021,7 +1021,7 @@
       'Las mascotas usan estas habilidades automáticamente en combate.',
     'Clear line required': 'Requiere línea despejada',
     'Automatic 0.65s charge': 'Carga automática de 0.65 s',
-    'Unlock: learn hero Skill 2 from Mira': 'Desbloqueo: aprende la habilidad 2 del héroe con Mira',
+    'Unlock: learn hero Skill 2 from Mira': 'Desbloqueo: aprende la habilidad 2 de tu personaje con Mira',
     'Joins your group for free.': 'Se une al grupo gratis.',
     'Group full. Recruits into reserve; rest a member to make room.':
       'Grupo lleno. Se recluta en reserva; deja descansar a alguien para hacer sitio.',
@@ -1331,7 +1331,7 @@
   });
   Object.assign(spanishText, {
     'Choose your training.': 'Elige tu entrenamiento.',
-    'Hero skills': 'Habilidades del héroe',
+    'Hero skills': 'Habilidades del personaje',
     'Learn or improve your class skills.': 'Aprende o mejora habilidades de tu clase.',
     'Expedition training': 'Entrenamiento de Expedición',
     FREE: 'GRATIS',
@@ -1356,7 +1356,7 @@
     'Train bonuses shared with your companions.':
       'Entrena bonificaciones compartidas con tus compañeros.',
     'This instructor teaches higher hero-skill ranks.':
-      'Este instructor enseña rangos superiores de habilidades del héroe.',
+      'Este instructor enseña rangos superiores de las habilidades de tu personaje.',
     'Magic combo / beam': 'Combo mágico / rayo',
     'Single slow / frost burst': 'Ralentizar / explosión de escarcha',
     'Basic attack / holy burst': 'Ataque básico / explosión sagrada',
@@ -1754,7 +1754,7 @@
       return piece
         .replace('Queued recovery: ', 'Recuperación en cola: ')
         .replace('Queued treatment: ', 'Tratamiento en cola: ')
-        .replace(': Hero', ': Héroe');
+        .replace(': Hero', ': Personaje');
     if (/^Cancel queued (Soldier|Ranger)/.test(piece))
       return piece.replace('Cancel queued ', 'Cancelar en cola: ').replace('Soldier', 'Soldado');
     if (/^Queued recruitment: /.test(piece))
@@ -5117,7 +5117,7 @@
               'Quick Start',
               'Primeros pasos',
               'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\n\nOn a phone, move with the joystick or tap reachable ground. Visit the Adventure menu for the map and quests. You can change touch and keyboard controls in Settings.',
-              'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un héroe y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca o toca terreno accesible. El menú Aventura ofrece el mapa y las misiones. Puedes ajustar los controles táctiles y las teclas en Ajustes.',
+              'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un personaje y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca o toca terreno accesible. El menú Aventura ofrece el mapa y las misiones. Puedes ajustar los controles táctiles y las teclas en Ajustes.',
             ),
           'Your goal and first steps.',
           'Tu objetivo y tus primeros pasos.',
@@ -5440,12 +5440,12 @@
         : mode === 'developer'
           ? 'New Developer adventure'
           : language === 'es'
-            ? 'Elegir héroe'
+            ? 'Elegir personaje'
             : 'Choose Hero',
       mode === 'arena'
         ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
         : language === 'es'
-          ? 'Elige a tu héroe. Rescata especialistas para aprender más habilidades y conseguir equipo.'
+          ? 'Elige a tu personaje. Rescata especialistas para aprender más habilidades y conseguir equipo.'
           : 'Choose your hero. Rescue specialists to learn more skills and gain equipment.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
@@ -5537,7 +5537,7 @@
     const h = game.hero,
       es = language === 'es',
       className = es
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador', rogue: 'Pícara' }[h.class]
+        ? { paladin: 'Paladín', mage: 'Maga', ranger: 'Explorador', rogue: 'Pícara' }[h.class]
         : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[h.class],
       stats = [
         { label: es ? 'PV máximos' : 'Max HP', value: String(h.maxHp) },
@@ -6300,7 +6300,7 @@
       return entry;
     };
     const primary = action(
-      es ? 'Elegir héroe' : 'Choose Hero',
+      es ? 'Elegir personaje' : 'Choose Hero',
       () => chooseClass(newAdventureMode, newAdventureSuccession),
       es ? 'Continúa con la selección de clase.' : 'Continue to class selection.',
     );
@@ -6308,7 +6308,7 @@
     openMenu(
       es ? 'Nueva aventura' : 'New Adventure',
       es
-        ? 'Elige la dificultad y el desafío opcional antes de elegir a tu héroe.'
+        ? 'Elige la dificultad y el desafío opcional antes de elegir a tu personaje.'
         : 'Choose difficulty and optional challenge before selecting your hero.',
       [
         menuControls.section(es ? 'Dificultad' : 'Difficulty'),
@@ -9884,7 +9884,7 @@
         tr((type === 'health' ? 'Command ' : 'Command Ranger ') + label) +
           (queuedHeal
             ? language === 'es'
-              ? ' · Curación del héroe en cola'
+              ? ' · Curación del personaje en cola'
               : ' · Hero heal queued'
             : ''),
       );
@@ -10873,7 +10873,7 @@
   };
   welcomeCard.append(
     welcomeText('p', 'language-welcome-eyebrow', "So I Became the Dark Lord's Problem"),
-    welcomeText('h1', '', 'Welcome · Bienvenido'),
+    welcomeText('h1', '', 'Welcome · Te damos la bienvenida'),
     welcomeText('p', 'language-welcome-intro', 'Choose your language / Elige tu idioma'),
   );
   const welcomeChoices = document.createElement('div');
