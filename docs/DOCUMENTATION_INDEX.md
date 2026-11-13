@@ -33,7 +33,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Agents](../AGENTS.md)** — **Maintained guide.** Standing developer/AI-agent instructions for authorization, focused testing, documentation and releases.
 - **[Controles](../CONTROLES.md)** — **Reference.** Legacy Spanish controls entrypoint that directs players to the current complete Spanish guide.
 - **[Architecture](ARCHITECTURE.md)** — **Maintained guide.** Current Campaign execution map and source ownership across combat, saves, rendering, sound and builds.
-- **[Brand Identity](BRAND_IDENTITY.md)** — **Maintained guide.** Official title, Spanish promotional rendering and technical legacy identifiers to preserve.
+- **[Brand Identity](BRAND_IDENTITY.md)** — **Maintained guide.** Official SIBDLP identity, report branding, legacy-compatible identifiers and planned pre-v0.9.2 repository/Pages link migration.
 - **[Communication Style](COMMUNICATION_STYLE.md)** — **Maintained guide.** Voice and scope guidance for writing the owner's public posts and player-facing updates.
 - **[Decisions](DECISIONS.md)** — **Maintained guide.** Gameplay and world rules, with dated revisions reorganized into nine subjects.
 - **[Development State](DEVELOPMENT_STATE.md)** — **Maintained guide.** Verified published-build checkpoint, implemented features, pending work and acceptance limits.

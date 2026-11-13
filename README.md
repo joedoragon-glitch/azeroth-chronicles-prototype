@@ -80,6 +80,8 @@ The **published soundtrack now includes 65 newly authored songs** (regional/area
 
 ## Development
 
+This is a **creator-led, AI-assisted project**; multiple AI development chats are not additional human team members. The owner is the confirmed source of hands-on player feedback, and no active independent external campaign testers are currently confirmed. Occasional community access does not establish independently verified playthroughs. The repository currently uses its historical slug, with a **controlled rename to `SIBDLP` planned before v0.9.2**. Continue using the working play links above until actual replacement URLs are validated; the owner will update previously shared community links after that cutover. See [brand and migration policy](docs/BRAND_IDENTITY.md#planned-repository-rename-before-v092-release--not-yet-authorized-for-execution).
+
 This is the **multi-file JavaScript / Canvas / Web Audio / PWA** game, not a single-file prototype or a backend service. Use **Node.js 22** to match CI (minimum supported version: 20.9).
 
 ```sh
@@ -107,7 +109,7 @@ Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml);
 | Development rules and release authorization | [Agent operating policy](AGENTS.md) |
 | Divide work across ChatGPT Project chats and Work sessions | [Engineering workflow — cross-chat workstreams](docs/MECHANIC_DEVELOPMENT.md#cross-chat-workstreams-in-a-chatgpt-project) |
 | Find the right guide or historical record, with a one-line explanation of each | [Annotated documentation directory](docs/DOCUMENTATION_INDEX.md) |
-| Official game identity and legacy-name rules | [Brand identity](docs/BRAND_IDENTITY.md) |
+| Official title, report naming and planned repository/link migration | [Brand identity](docs/BRAND_IDENTITY.md) |
 | Spanish player guide | [Guía del juego (Español)](GUIA_EN_ESPANOL.md) |
 
 **About the repository name:** `azeroth-chronicles-prototype` is a historical technical identifier, **not** the game's current name or setting. The official title is **So I Became the Dark Lord's Problem**, an independent fantasy RPG. The [annotated documentation directory](docs/DOCUMENTATION_INDEX.md) describes every tracked Markdown document by subject, points to dated audits and superseded plans without reviving them, and links to the original historical inventory for exact source receipts.
