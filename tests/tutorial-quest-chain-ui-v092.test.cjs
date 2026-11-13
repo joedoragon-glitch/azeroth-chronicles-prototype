@@ -131,18 +131,21 @@ for (const language of ['en', 'es']) {
       cls === 'rogue', 'first quest objective is accurate for the playable class');
   }
 }
-{
-  const { scope: s, elements: e } = shell('en', 'rogue');
+for (const language of ['en', 'es']) {
+  const t = (en, es) => language === 'es' ? es : en;
+  const { scope: s, elements: e } = shell(language, 'rogue');
   const g = s.Prototype.game;
   assert.equal(g.s.party.length, 0);
   const captain = g.zone().npcs.find((n) => n.kind === 'recruiter');
   Object.assign(g.hero, { x: captain.x, y: captain.y });
   e.get('touch-interact-button').click();
-  assert.equal(e.get('modal-title').textContent, 'Meet your company');
-  assert(e.get('modal-description').textContent.includes('Your Rogue begins without companions'));
+  assert.equal(e.get('modal-title').textContent, t('Meet your company', 'Conoce a tu compañía'));
+  assert(e.get('modal-description').textContent.includes(
+    t('Your Rogue begins without companions', 'Tu pícara comienza sin compañía')));
   assert(!e.get('modal-description').textContent.includes('Soldier: close combat'));
   assert(e.get('modal-actions').children.some((b) =>
-    b.textContent.startsWith('Find your first Charmed companion')));
+    b.textContent.startsWith(t('Find your first Charmed companion',
+      'Encuentra tu primer compañero encantado'))));
   assert(!e.get('modal-actions').children.some((b) =>
     b.textContent.startsWith('Practice Recall squad')));
   assert.equal(g.tutorialStage(), 'charm');
@@ -162,15 +165,19 @@ for (const language of ['en', 'es']) {
   assert(g.s.party.some((u) => g.isCharmedCompanion(u)), 'actual lawful companion earned');
   s.Prototype.closeMenu();
   e.get('touch-interact-button').click();
-  assert(e.get('modal-description').textContent.includes('Your Rogue has a Charmed ally'));
+  assert(e.get('modal-description').textContent.includes(
+    t('Your Rogue has a Charmed ally', 'Tu pícara tiene un aliado encantado')));
   const charmed = g.s.party.find((u) => g.isCharmedCompanion(u));
   charmed.hp = 0;
   s.Prototype.closeMenu();
   e.get('touch-interact-button').click();
-  assert(e.get('modal-description').textContent.includes('has already Charmed a monster'));
+  assert(e.get('modal-description').textContent.includes(
+    t('has already Charmed a monster', 'ya encantó a un monstruo')));
   assert(e.get('modal-actions').children.some((b) =>
-    b.textContent.startsWith('Recover or Charm a companion')));
+    b.textContent.startsWith(t('Recover or Charm a companion',
+      'Recuperar o encantar a un compañero'))));
   assert(!e.get('modal-actions').children.some((b) =>
-    b.textContent.startsWith('Find your first Charmed companion')));
+    b.textContent.startsWith(t('Find your first Charmed companion',
+      'Encuentra tu primer compañero encantado'))));
 }
 console.log('PASS four-class EN/ES Captain dialogue and Rogue Charm/resume, Board, map, gathering');
