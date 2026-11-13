@@ -792,6 +792,36 @@
     'Try Recall now': 'Prueba Reagrupar ahora',
     'Try it now': 'Pruébalo ahora',
   });
+  // v0.9.2 owner-authorized tutorial chain: authored bilingual UI.
+  Object.assign(spanishText, {
+    "The Quest Board": "El tablón de misiones",
+    "Recover Dark Lord Tribute": "Recuperar el tributo del Señor Oscuro",
+    "Visit the Greenwood Quest Board to learn about adventures.": "Visita el tablón de misiones de Greenwood para conocer las aventuras.",
+    "Open a Main Story objective at the Quest Board.": "Abre un objetivo de la Historia principal en el tablón de misiones.",
+    "Inspect Side Quests at the Quest Board.": "Examina las Misiones secundarias del tablón.",
+    "Open your map and find Old Orchard Cellars.": "Abre el mapa y busca las Antiguas bodegas del huerto.",
+    "Select a destination on the map and choose Navigate.": "Elige un destino en el mapa y pulsa Navegar.",
+    "Explore Old Orchard Cellars and study The Art of Misdirection (+1 critical chance point).": "Explora las Antiguas bodegas del huerto y estudia El arte del engaño (+1 punto de probabilidad crítica).",
+    "Barracks → Operations → Gather resources: dispatch idle companions.": "Cuartel → Operaciones → Recoger recursos: envía a tus compañeros disponibles.",
+    "Escort your workers and recover their cargo as crowns at Town Supplies.": "Escolta a tus compañeros y recoge su carga como coronas en Suministros del pueblo.",
+    "Meet the Captain: Rogues Charm monsters rather than hire Soldiers and Rangers.": "Habla con el capitán: las Pícaras encantan monstruos en vez de contratar Soldados y Rangers.",
+    "Charm an eligible monster with Rogue automatic attacks; you begin alone.": "Encanta un monstruo elegible con los ataques automáticos de la Pícara; empiezas sin compañeros.",
+    "Construction in progress · keep an eligible companion assigned until complete": "Construcción en curso · mantén asignado a un compañero elegible hasta finalizar",
+    "You begin alone. Your automatic bell strikes can Charm eligible surviving monsters. A lawful Charmed companion can fight, gather and build your first Barracks. After a Charm, return to practice Recall.": "Empiezas sola. Los golpes automáticos de tu cascabel pueden encantar monstruos elegibles que sobrevivan. Un compañero encantado legítimamente puede combatir, recolectar y construir tu primer cuartel. Después de encantar a uno, vuelve para practicar Reagrupar.",
+    "Find your first Charmed companion": "Encuentra tu primer compañero encantado",
+    "Recover a companion first": "Recupera antes un compañero",
+    "Charm an eligible surviving monster with your automatic bell strikes.": "Encanta un monstruo elegible que sobreviva a los golpes automáticos de tu cascabel.",
+    "Recall needs a living active companion.": "Reagrupar necesita un compañero vivo y activo.",
+    "Leave town. Find open ground off the road.\\nOpen Menu → Establish Basic Barracks (FREE).\\nAn idle eligible Charmed companion builds it.\\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.": "Sal del pueblo. Busca terreno abierto fuera del camino.\\nAbre Menú → Establecer cuartel básico (GRATIS).\\nLo construye un compañero encantado disponible.\\nAl terminar: Curar heridas restaura toda la salud del grupo por 30 coronas cuando sea seguro.",
+    "An idle active Charmed companion is needed": "Hace falta un compañero encantado activo y disponible",
+    "Gathering basics": "Lo básico de la recolección",
+    "Choose a tribute source": "Elegir una fuente de tributo",
+    "Dark Lord Tribute is finite. Choose a source, send your idle companions, and escort them along the waypoint. They fight or withdraw when threatened, then resume work. Recovered cargo becomes crowns when delivered to Town Supplies or another valid deposit.": "El tributo del Señor Oscuro es limitado. Elige una fuente, envía a tus compañeros disponibles y escóltalos siguiendo la ruta. Combatirán o se retirarán ante el peligro y luego reanudarán su trabajo. La carga recuperada se convierte en coronas al entregarla en Suministros del pueblo u otro depósito válido.",
+    "Choose one eligible, living, idle companion (active or reserve). The companion is unavailable for ": "Elige un compañero elegible, vivo y disponible (activo o en reserva). Estará ausente durante ",
+    "Full Barracks: recover finite leftover tribute from a previously visited region once all its captive specialists are rescued. Choose one eligible companion; the mission runs during active play, and recovered crowns arrive automatically on return.": "Cuartel completo: recupera el tributo restante de una región visitada anteriormente cuando se hayan rescatado todos sus especialistas cautivos. Elige un compañero elegible; la misión avanza mientras juegas y las coronas llegan automáticamente a su regreso.",
+    "TUTORIAL · ": "TUTORIAL · ",
+    "COMPANIONS · Charm an eligible monster with Rogue automatic attacks; you begin alone.": "COMPAÑEROS · Encanta un monstruo elegible con ataques automáticos de la Pícara; empiezas sola.",
+  });
   // #684: Match the authored timed-Recall feedback and bilingual tutorial.
   Object.assign(spanishText, {
     'Squad Recall cancelled.': 'Reagrupación cancelada.',
@@ -6841,7 +6871,9 @@
         !canBuild
           ? game.isDungeon()
             ? 'Build in the field, outside dungeons'
-            : 'An idle active Soldier or Ranger is needed'
+            : game.hero.class === 'rogue'
+              ? 'An idle active Charmed companion is needed'
+              : 'An idle active Soldier or Ranger is needed'
           : 'Open ground off the road. One companion builds it. Once built: Treat wounds heals the party for 30 crowns.',
         !canBuild || game.hero.gold < cost,
         !!game.s.quests['quest-barracks']?.barracksBriefed &&
@@ -7259,6 +7291,7 @@
         game.s.discovered['vale:quest-board-intro'] = true;
         save();
       }
+      game.recordBoardTutorialStep('boardOpened');
       quests(true);
     }
     else if (n.kind === 'transport') {
@@ -7373,6 +7406,7 @@
   }
   function startNavigation(destination, label, choice) {
     if (game.hero.order?.type !== 'move') return;
+    game.recordBoardTutorialStep('navigationUsed');
     // Only this explicitly selected map journey has automatic-travel priority.
     // A targeted but out-of-range skill must not replace it with a chase order.
     game.hero.order.navigation = true;
@@ -7572,6 +7606,7 @@
   function showMap(back = closeMenu) {
     startupEvent('map-opened', {zone:game.zoneId});
     if (game.s.mode === 'arena') return arenaDestinations();
+    game.recordBoardTutorialStep('mapOpened');
     const zone = game.zone();
     const room = game.supplyRoom();
     const side = game.sideDungeon();
