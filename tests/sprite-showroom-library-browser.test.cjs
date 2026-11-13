@@ -54,6 +54,11 @@ async function main() {
       assert.equal(await page.locator('#asset-grid .asset-card').count(), 24);
       const index = JSON.parse(fs.readFileSync(path.join(root, 'tools/sprites/library-index.json')));
       assert.equal(await page.evaluate(() => window.SpriteShowroom.entries), index.entries.length);
+      assert.equal(await page.locator('.library-collection [data-collection="current"]')
+        .getAttribute('aria-pressed'), 'true',
+        'current artwork should be the default collection');
+      assert((await page.locator('#asset-group option').count()) < 12,
+        'first-level categories should remain compact');
       await page.locator('#asset-query').fill('hero:paladin');
       await page.locator('#asset-grid .asset-card').first().click();
       await page.waitForFunction(() => new URL(location.href).searchParams.get('asset') === 'hero:paladin');
@@ -91,6 +96,19 @@ async function main() {
         return pixels;
       });
       assert(roguePixels > 150, 'Rogue must display a real current painter, not a blank tile');
+      await page.locator('#asset-source-details summary').click();
+      assert.match(await page.locator('#asset-definition').textContent(),
+        /"class": "rogue"/, 'source inspector must show the real renderer input');
+      assert((await page.locator('#asset-source-file option').count()) > 0);
+      await page.locator('#asset-read-code').click();
+      await page.waitForFunction(() =>
+        !document.querySelector('#asset-source-excerpt').hidden);
+      assert.match(await page.locator('#asset-source-excerpt').textContent(),
+        /\d+\s*│\s*/, 'live source lines must show exact line numbers');
+      const fullSource = await page.locator('#asset-source-full').getAttribute('href');
+      assert(fullSource.includes('src/prototype/') && fullSource.includes('?v='),
+        'source link must be versioned to match this build');
+      await page.locator('#asset-source-details summary').click();
       // The gallery alone is bilingual; language selection neither boots
       // gameplay nor changes the player's existing save preferences.
       await page.locator('#asset-language').selectOption('es');
@@ -109,6 +127,7 @@ async function main() {
       const historical = index.entries.find((entry) =>
         entry.sourceKind === 'dated-reference' && entry.states?.length > 0);
       assert(historical, 'at least one dated-only historical reference must be browsable');
+      await page.locator('.library-collection [data-collection="dated"]').click();
       await page.locator('#asset-query').fill(historical.id);
       await page.locator('#asset-grid .asset-card').first().click();
       assert.equal(new URL(page.url()).searchParams.get('asset'), historical.id);
@@ -123,13 +142,21 @@ async function main() {
       assert.equal(new URL(page.url()).searchParams.get('asset'), overlapping.id);
       assert((await page.locator('#asset-state option').count()) > 1,
         'overlapping dated reference states should not be silently discarded');
-      await page.locator('#asset-kind').selectOption('dated');
+      assert.equal(await page.locator('.library-collection [data-collection="dated"]')
+        .getAttribute('aria-pressed'), 'true');
       assert((await page.locator('#asset-grid .asset-card').count()) > 0,
-        'dated references filter must include preserved states on modern cards');
-      await page.locator('#asset-kind').selectOption('');
+        'dated collection must retain historical states on current cards');
+      await page.locator('.library-collection [data-collection="current"]').click();
       await page.locator('#asset-query').fill('');
       await page.locator('#asset-group').selectOption('World & scenery');
       assert.equal((await page.locator('#asset-grid .asset-card').count()) > 0, true);
+      assert.equal(await page.locator('#asset-subcategory-wrap').isVisible(), true,
+        'large categories must offer progressively disclosed subcategories');
+      assert((await page.locator('#asset-subcategory option').count()) > 2);
+      const chosen = await page.locator('#asset-subcategory option').nth(1).getAttribute('value');
+      await page.locator('#asset-subcategory').selectOption(chosen);
+      assert((await page.locator('#asset-grid .asset-card').count()) > 0);
+      await page.locator('#asset-subcategory').selectOption('');
       const firstFiltered = await page.locator('#asset-grid .asset-card').first()
         .locator('canvas').getAttribute('data-asset-id');
       assert.equal(new URL(page.url()).searchParams.get('asset'), firstFiltered,
