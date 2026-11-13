@@ -153,4 +153,27 @@ for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
     assert(g.castMovementBasic(), cls + ' passive attacks resume after skill engagement');
   }
 }
+{
+  // Building independently must never leave the tutorial stranded at the
+  // Captain after construction is visibly underway.
+  const g = fresh('mage');
+  const q = g.s.quests['quest-barracks'];
+  assert(!q.captainBriefed);
+  g.distanceToRoad = () => 400;
+  g.blocked = () => false;
+  assert(g.build(), 'unbriefed but legal first Barracks can be placed');
+  const b = g.zone().buildings.find((x) => x.kind === 'barracks');
+  assert(b);
+  assert.equal(g.tutorialStage(), 'construction');
+  assert.equal(g.questDestination('quest-barracks')?.id, b.id,
+    'active Barracks overrides the earlier Captain waypoint');
+  const u = g.s.party.find((x) => x.order?.id === b.id);
+  assert(u);
+  Object.assign(u, { x: b.x, y: b.y });
+  g.zone().enemies = [];
+  g.updateParty(4.1);
+  assert(q.paid, 'no mandatory Captain/Recall gate blocks a legitimate build');
+  assert(C.restore(g.snapshot()).s.quests['quest-barracks'].paid);
+}
+
 console.log('PASS v0.9.2 company/rogue/Board/Codex/gather and boss/captain auto-attack native regressions');
