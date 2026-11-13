@@ -269,3 +269,26 @@ canvas {
   .library-context { font-size: .8rem; }
   .library-source-details pre { font-size: 11px; }
 }
+
+
+/* Compact, balanced browse controls; an optional subcategory never leaves a
+   lone awkward field on a second row merely because the grid has four slots. */
+.library-controls {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.library-controls label {
+  flex: 1 1 155px;
+  min-width: 155px;
+}
+.library-controls .library-search {
+  flex: 1.7 1 255px;
+}
+.library-controls label[hidden] { display: none; }
+@media (max-width: 780px) {
+  .library-controls { gap: 9px; }
+  .library-controls .library-search { flex: 1 1 100%; }
+  .library-controls label { flex: 1 1 calc(50% - 8px); min-width: 0; }
+}
