@@ -3296,8 +3296,11 @@
         )
         .map((q) => {
           const freed = !!game.s.rescued[q.target];
+          const captiveName = game.boss(q.target).captive.split(' the ')[0];
           const briefing = freed
-            ? 'The specialist is free.'
+            ? getLanguage() === 'es'
+              ? captiveName + ' ya está libre.'
+              : captiveName + ' is free.'
             : rescueBriefings[q.target][getLanguage() === 'es' ? 1 : 0];
           const progress = game.questProgress(q);
           return action(
