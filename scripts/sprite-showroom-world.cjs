@@ -43,6 +43,23 @@ function labelFor(entity, kind) {
     entity.kind || entity.type || kind;
 }
 function trackIdentity(entity, region, zone, kind, protectedKeys) {
+  // Gameplay sceneRole/presentation can intentionally suppress sprite lookup.
+  // They do not make a visually identical generic crate, rack or table into
+  // another artwork. Normalize unregistered shared props BEFORE candidateKeys
+  // so both scene-role and ordinary instances resolve to the same art card.
+  // Exact registered/contracted identities remain protected from folding.
+  const genericProp = entity.renderKind === 'prop' && entity.structure &&
+    !entity.greenwoodNature && !entity.highlandsNature &&
+    !entity.greenwoodFacility && !entity.greenwoodInteriorAsset &&
+    !entity.greenwoodWall && !entity.miningFacility;
+  if (genericProp) {
+    const structure = clean(entity.structure);
+    const isProtectedArtwork = [...protectedKeys].some((key) =>
+      key.startsWith('prop:' + structure + ':'));
+    if (!isProtectedArtwork)
+      return 'shared:prop:' + structure +
+        (entity.form ? ':' + clean(entity.form) : '');
+  }
   const candidate = Sprites.candidateKeys(entity, region)[0];
   if (candidate && !candidate.startsWith('landmark:')) {
     // Retain exact keys if sprite-registered or explicitly prepared in
