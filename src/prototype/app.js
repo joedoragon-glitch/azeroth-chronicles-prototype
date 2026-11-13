@@ -829,7 +829,7 @@
     'Dispatch companions to gather tribute and recover crowns from their cargo.':
       'Envía compañeros a recoger tributo y recupera las coronas de la carga que transporten.',
     'Critical executions': 'Ejecuciones críticas',
-    'A critical execution strengthens a real attack or supported effect; it does not make a missed attack hit. The Art of Misdirection permanently increases your hero critical chance by one percentage point. The Keeper Archive explains detailed critical rules.': 'Una ejecución crítica refuerza un ataque real o un efecto compatible, pero no convierte un fallo en un acierto. El arte del engaño aumenta permanentemente la probabilidad crítica de tu héroe en un punto porcentual. El Archivo del Guardián explica las reglas detalladas.',
+    'A critical execution strengthens a real attack or supported effect; it does not make a missed attack hit. The Art of Misdirection permanently increases your hero critical chance by one percentage point. The Keeper Archive explains detailed critical rules.': 'Una ejecución crítica refuerza un ataque real o un efecto compatible, pero no convierte un fallo en un acierto. El arte del engaño aumenta permanentemente la probabilidad crítica de tu personaje en un punto porcentual. El Archivo del Guardián explica las reglas detalladas.',
   });
   Object.assign(spanishText, {
     'Uses one idle active Charmed companion': 'Se necesita un compañero encantado activo y disponible',
