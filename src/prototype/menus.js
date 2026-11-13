@@ -3102,6 +3102,7 @@
       const g = getGame(),
         tutorial = g.s.quests['quest-barracks'];
       if (tutorial && !tutorial.paid &&
+          (g.s.expeditionRank || 1) === 1 &&
           ['captain', 'charm', 'recall', 'brief-barracks'].includes(g.tutorialStage()))
         companionBasics(back);
       else {
