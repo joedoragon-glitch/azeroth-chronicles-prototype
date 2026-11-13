@@ -164,7 +164,7 @@
     'Reproduce the problem, return to Playtest tools, and export. A report is useful with every optional profiler off.':
       'Reproduce el problema, vuelve a Herramientas de prueba y exporta. El informe sirve aunque todas las mediciones opcionales estén desactivadas.',
     'Build and game settings, renderer and recovery state, recent timings and startup history, browser and device details, audio and asset diagnostics, and in-game context such as hero, party, statistics and sampled locations. Available optional captures are included in the same file.':
-      'Versión y ajustes, motor gráfico y recuperación, tiempos recientes e historial de inicio, datos del navegador y dispositivo, diagnósticos de audio y recursos, y contexto de juego como héroe, grupo, estadísticas y ubicaciones muestreadas. Las grabaciones disponibles se incluyen en el mismo archivo.',
+      'Versión y ajustes, motor gráfico y recuperación, tiempos recientes e historial de inicio, datos del navegador y dispositivo, diagnósticos de audio y recursos, y contexto de juego como personaje, grupo, estadísticas y ubicaciones muestreadas. Las grabaciones disponibles se incluyen en el mismo archivo.',
     'Renderer records frame spikes and graphics activity. Navigation samples terrain checks, routes and companion movement. Developer Effects records painter calls. Each adds measurement work. Start the relevant profiler, play, then stop and export.':
       'Motor gráfico registra fotogramas lentos y actividad gráfica. Navegación mide comprobaciones del terreno, rutas y movimiento de compañeros. Efectos, en modo desarrollador, registra llamadas de dibujo. Cada medición añade trabajo. Inicia la que necesites, juega, detenla y exporta.',
     'Diagnostics stay on this device. Export downloads a JSON file and does not upload it. Some bounded history can survive a reload. Review browser and in-game details before sharing. Reset clears the current performance sample and slow-frame events. It does not delete downloads or all diagnostic history.':
@@ -666,7 +666,7 @@
     'Quest board': 'Tablón de misiones',
     'Main Story': 'Historia principal',
     'Track quest': 'Seguir misión',
-    'The specialist is free.': 'El especialista está libre.',
+    'The specialist is free.': 'El rescate se ha completado.',
     'The Dark Lord’s forces are holding the people who teach adventurers and forge their equipment. Start by rescuing Greenwood’s two specialists. Mira can teach you a second skill, and Borin can improve your weapons.':
       'Las fuerzas del Dark Lord retienen a quienes entrenan a los aventureros y forjan su equipo. Empieza por rescatar a los dos especialistas de Greenwood. Mira puede enseñarte una segunda habilidad y Borin puede mejorar tus armas.',
     'Side Quests': 'Misiones secundarias',
@@ -807,7 +807,7 @@
     "Meet the Captain: Rogues Charm monsters rather than hire Soldiers and Rangers.": "Habla con el capitán: las Pícaras encantan monstruos en vez de contratar Soldados y Rangers.",
     "Charm an eligible monster with Rogue automatic attacks; you begin alone.": "Encanta un monstruo elegible con los ataques automáticos de la Pícara; empiezas sin compañeros.",
     "Construction in progress · keep an eligible companion assigned until complete": "Construcción en curso · mantén asignado a un compañero elegible hasta finalizar",
-    "You begin alone. Your automatic bell strikes can Charm eligible surviving monsters. A lawful Charmed companion can fight, gather and build your first Barracks. After a Charm, return to practice Recall.": "Empiezas sola. Los golpes automáticos de tu cascabel pueden encantar monstruos elegibles que sobrevivan. Un compañero encantado legítimamente puede combatir, recolectar y construir tu primer cuartel. Después de encantar a uno, vuelve para practicar Reagrupar.",
+    "You begin alone. Your automatic bell strikes can Charm eligible surviving monsters. A lawful Charmed companion can fight, gather and build your first Barracks. After a Charm, return to practice Recall.": "La pícara comienza sin compañía. Los golpes automáticos de su cascabel pueden encantar monstruos aptos que sobrevivan. Un aliado encantado puede combatir, recolectar y construir el primer cuartel. Después del primer encantamiento, vuelve para practicar Reagrupar.",
     "Find your first Charmed companion": "Encuentra tu primer compañero encantado",
     "Recover a companion first": "Recupera antes un compañero",
     "Charm an eligible surviving monster with your automatic bell strikes.": "Encanta un monstruo elegible que sobreviva a los golpes automáticos de tu cascabel.",
@@ -820,7 +820,7 @@
     "Choose one eligible, living, idle companion (active or reserve). The companion is unavailable for ": "Elige un compañero elegible, vivo y disponible (activo o en reserva). Estará ausente durante ",
     "Full Barracks: recover finite leftover tribute from a previously visited region once all its captive specialists are rescued. Choose one eligible companion; the mission runs during active play, and recovered crowns arrive automatically on return.": "Cuartel completo: recupera el tributo restante de una región visitada anteriormente cuando se hayan rescatado todos sus especialistas cautivos. Elige un compañero elegible; la misión avanza mientras juegas y las coronas llegan automáticamente a su regreso.",
     "TUTORIAL · ": "TUTORIAL · ",
-    "COMPANIONS · Charm an eligible monster with Rogue automatic attacks; you begin alone.": "COMPAÑEROS · Encanta un monstruo elegible con ataques automáticos de la Pícara; empiezas sola.",
+    "COMPANIONS · Charm an eligible monster with Rogue automatic attacks; you begin alone.": "COMPAÑEROS · Encanta un monstruo apto con los ataques automáticos de la Pícara; esta heroína comienza sin compañía.",
   });
   Object.assign(spanishText, {
     'Complete · lesson learned': 'Completa · lección aprendida',
@@ -973,7 +973,7 @@
     'Choose a name once. You can skip and return later.':
       'Elige un nombre una vez. Puedes omitirlo y volver después.',
     'Choose a rescued specialist for training or equipment.':
-      'Elige un especialista rescatado para entrenar o equiparte.',
+      'Elige entre los especialistas que has rescatado para entrenar o mejorar tu equipo.',
     'All local specialists rescued.': 'Todos los especialistas locales rescatados.',
     'Rescue specialists to unlock skills and larger groups.':
       'Rescata especialistas para desbloquear habilidades y grupos mayores.',
