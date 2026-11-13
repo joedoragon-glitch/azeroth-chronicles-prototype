@@ -62,7 +62,7 @@ async function main() {
       await page.locator('#asset-query').fill('hero:paladin');
       await page.locator('#asset-grid .asset-card').first().click();
       await page.waitForFunction(() => new URL(location.href).searchParams.get('asset') === 'hero:paladin');
-      assert.match(await page.locator('#asset-selection').textContent(), /Procedural selected/);
+      assert.match(await page.locator('#asset-selection').textContent(), /Procedural drawing in game/);
       assert.equal(await page.locator('#asset-revision option').count() > 0, true);
       await page.locator('button[data-view="compare"]').click();
       assert.equal(await page.locator('#asset-secondary-frame').isVisible(), true);
