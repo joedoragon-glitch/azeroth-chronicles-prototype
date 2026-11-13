@@ -344,6 +344,15 @@ async function startBrowsableShowroom() {
       ...s, label: s.label + ' · Oct 2026 fixture',
     }))];
   }
+  function displayState(label) {
+    if (language !== 'es') return label;
+    return String(label || '')
+      .replace(/^Current fixture$/, 'Estado actual')
+      .replace(/^Current playable hero$/, 'Personaje jugable actual')
+      .replace(/^Current body$/, 'Aspecto actual')
+      .replace(/^Observed world fixture · /, 'Estado observado · ')
+      .replace(/ · Oct 2026 fixture$/, ' · referencia de octubre de 2026');
+  }
   function linkedImage(src) {
     if (!/^\.\/assets\/(?:sprites|materials)\/[a-zA-Z0-9_/-]+\.(?:png|webp)$/.test(src || '') ||
         src.includes('..'))
@@ -606,7 +615,7 @@ async function startBrowsableShowroom() {
     select.replaceChildren();
     const states = statesFor(entry);
     for (let i = 0; i < states.length; i++)
-      select.add(new Option(states[i].label, String(i)));
+      select.add(new Option(displayState(states[i].label), String(i)));
     select.disabled = states.length < 2;
     select.parentElement.hidden = states.length < 2;
     select.value = String(Math.max(0, Math.min(state.variant, states.length - 1)));
