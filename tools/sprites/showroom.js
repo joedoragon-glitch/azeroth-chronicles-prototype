@@ -353,7 +353,10 @@ async function startBrowsableShowroom() {
     const use = selected === 'raster' ? 'Raster selected by this fixture'
       : selected === 'procedural' ? 'Procedural selected by this fixture'
         : 'Reference unavailable';
-    return (entry.sourceKind === 'dated-reference' ? 'Dated review fixture · ' : '') + use;
+    const prefix = entry.sourceKind === 'dated-reference' ? 'Dated review fixture · '
+      : entry.sourceKind === 'current-world-fixture' ? 'Current world-source fixture · '
+        : entry.sourceKind === 'current-hero-fixture' ? 'Playable hero · ' : '';
+    return prefix + use;
   }
   function filterResults() {
     const query = $('asset-query').value.trim().toLowerCase();
@@ -646,10 +649,10 @@ async function startBrowsableShowroom() {
   const selectedId = params.get('asset');
   selectAsset(state.entries.some((e) => e.id === selectedId)
     ? selectedId : state.entries[0]?.id, Number(params.get('state') || 0));
-  $('library-count').textContent = index.counts.exactContracts +
-    ' current sprite fixtures · ' + index.counts.liveRegistrations +
-    ' registered sprites · ' + index.counts.datedReviewCases +
-    ' dated visual review cases · ' + index.counts.currentMaterials + ' road materials';
+  $('library-count').textContent = state.entries.length + ' browsable visual entries · ' +
+    index.counts.currentWorldIdentities + ' current-source identities · ' +
+    index.counts.liveRegistrations + ' registered sprites · ' +
+    index.counts.datedReviewCases + ' dated reference cases';
   window.SpriteShowroom = {
     ready: true, mode: 'library', entries: state.entries.length,
     select: (id) => selectAsset(id),
