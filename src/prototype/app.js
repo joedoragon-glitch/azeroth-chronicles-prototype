@@ -3755,7 +3755,7 @@
     ctx.save();
     ctx.scale(2.4, 2.4);
     try {
-      PrototypeVisuals.draw(ctx, actor, { x: 31.7, y: 63 }, 0, false);
+      PrototypeVisuals.draw(ctx, actor, { x: 31.7, y: 56 }, 0, false);
       canvas.dataset.previewSource = 'game-procedural';
     } finally {
       ctx.restore();
