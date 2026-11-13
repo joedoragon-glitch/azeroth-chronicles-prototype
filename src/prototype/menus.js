@@ -1436,6 +1436,10 @@
     }
     function regionalSpecialistObjective() {
       const game = getGame(), tutorial = game.s.quests['quest-barracks'];
+      // A placed, unfinished Barracks is the real next milestone regardless
+      // of whether the Captain/Recall briefing has been completed.
+      if (tutorial && !tutorial.paid && game.tutorialStage() === 'construction')
+        return 'FIELD BASE · Construction in progress. Keep your builder assigned.';
       if (tutorial && !tutorial.paid && game.hero.class === 'rogue')
         return 'COMPANIONS · ' + game.questProgress(game.questDefs().find((q) => q.id === 'quest-barracks'));
       if (tutorial && !tutorial.paid && !tutorial.captainBriefed)
@@ -2591,9 +2595,13 @@
         workers = game.s.party.filter((u) => game.canGatherTribute(u));
       openMenu(
         'Choose expedition companion',
-        'Choose one eligible, living, idle companion (active or reserve). The companion is unavailable for ' +
-          Math.round(game.resourceExpeditionDuration() / 60) +
-          ' minutes of active play; there is no dispatch fee or escort. Recovered crowns arrive automatically when the companion returns.',
+        getLanguage() === 'es'
+          ? 'Elige un compañero elegible, vivo y disponible (activo o en reserva). Estará ausente durante ' +
+            Math.round(game.resourceExpeditionDuration() / 60) +
+            ' minutos de juego activo. No cuesta coronas ni requiere escolta. Las coronas recuperadas llegan automáticamente cuando regrese.'
+          : 'Choose one eligible, living, idle companion (active or reserve). The companion is unavailable for ' +
+            Math.round(game.resourceExpeditionDuration() / 60) +
+            ' minutes of active play; there is no dispatch fee or escort. Recovered crowns arrive automatically when the companion returns.',
         workers.length
           ? workers.map((u) => {
               const reason = game.resourceExpeditionWorkerReason(u);
@@ -2792,7 +2800,9 @@
                     () => {
                       if (getGame().assignBuilder(b.id)) closeMenu();
                     },
-                    'Uses one idle active Soldier or Ranger',
+                    getGame().hero.class === 'rogue'
+                      ? 'Uses one idle active Charmed companion'
+                      : 'Uses one idle active Soldier or Ranger',
                   ),
                 ]
               : [
