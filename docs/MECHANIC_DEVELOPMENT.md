@@ -1,6 +1,6 @@
 # Developing and verifying a game change
 
-**So I Became the Dark Lord's Problem** · Maintained engineering workflow · Reviewed 28 October 2026
+**So I Became the Dark Lord's Problem** · Maintained engineering workflow · Workflow coordination updated 12 November 2026
 
 **What this page is for:** A practical workflow for changing mechanics, AI, companions, menus, navigation, saves, graphics, audio and other game systems **without repeating old work or creating unverified releases**. It guides implementation and evidence, but **is not permission to start a historical task**.
 
@@ -17,6 +17,20 @@
 | **Where is historic rationale?** | Dated audits and archived contracts, interpreted as evidence **at their stated date**, not new assignments. |
 
 When records disagree, **investigate the exact conflict**. Do not automatically trust the newest date, a proposed feature, a convenient test expectation or an unmerged branch over approved design and live behavior. Preserve the official game name; historic repository paths and save keys retain compatibility names under [brand identity](BRAND_IDENTITY.md).
+
+### Cross-chat workstreams in a ChatGPT Project
+
+The owner works in a ChatGPT Project with **multiple separate conversations dividing labor**. An ordinary chat may handle exploration, planning, auditing, owner feedback, documentation or a small authorized change; **Work mode** is suited to substantial multi-step implementation and verification when available. These are practical assignments, **not fixed permission classes**: either conversation must check its actual tools, current instructions and scope. A chat's memory, transcript or proposed plan is not a live repository status register. **GitHub is the durable coordination surface.**
+
+**At the start of each new or resumed conversation:**
+1. Read the Project objective and current [agent policy](../AGENTS.md), then inspect the actual `main` SHA/build, [development state](DEVELOPMENT_STATE.md), [roadmap #192](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/192), [recovery routing #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297), and applicable current issue, PR and design/source documents. **Check open branches/PRs and existing evidence before accepting a task as unstarted.** The documentation-only [v0.9.2 draft #863](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/863) may contain newer guidance than `main` while it is unmerged; check its current head and scope rather than assuming its text is published.
+2. **Take one bounded, owner-authorized outcome** (a defect, region/route investigation, save review, focused validation, or clearly related set of changes). Identify its existing owning GitHub issue/PR, intended behavior, relevant dependencies and excluded work. Put a brief *current scope / in progress / next action* note in that existing record only when it helps avoid collisions; it is a coordination pointer, **not an exclusive lock or evidence that an ended chat is still running**.
+3. **Coordinate before overlapping edits.** Distinct independent workstreams use their own branches and coherent PRs. Sequential chats may continue the *same* issue, branch and PR after verifying its head. If another branch/PR touches the same file, gameplay owner, save path, or dependent test, compare actual diffs and dependencies before changing it. Agree on non-overlapping ownership through the existing GitHub records, or pause the conflicting edit; never silently race, force-push, overwrite a newer head, or merge parallel candidates speculatively. Keep save integrity and progression dependencies ahead of downstream release planning.
+4. **Work autonomously within the assigned scope.** Read the actual source, reproduce, make narrow corrections, run relevant allowed checks and maintain affected docs. Record factual status with exact SHA and run links; a separate chat's claim of `PASS` is not proof for a changed head. Do not start a broad suite, make a release, or contact testers without the required authorization.
+
+**Before leaving the conversation or handing work to another chat**, update the **existing owning issue/PR**, not a second shadow checklist: the scoped outcome and disposition (**completed / confirmed defective / unverified / awaiting acceptance / deferred**); branch and tested head/base; changed areas and dependencies; exact checks passed/failed/not run; blockers, remaining acceptance/owner decisions and the next actionable step. Link a feature document only when one is genuinely needed. A concise checkpoint is enough; no transcript export, mandatory new file, approval ceremony or manual owner status management is required.
+
+**Across sessions and before integration:** A new chat must recheck changed source, head SHA, CI and conflicting PRs, including uncertain previous writes, before trusting an old handoff or rerunning work. Work and chat conversations do not automatically keep working after they end, and neither has permanent integration authority merely because it served as a lead. [#192](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/192) and [#297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) provide overarching routing, while specific issues/PRs own implementation evidence and [#213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) owns earned campaign/device acceptance. Reconcile independently validated work into a fresh candidate only when dependencies are satisfied and the owner approves the applicable merge/publication gates.
 
 ## 2. Start with one well-defined outcome
 

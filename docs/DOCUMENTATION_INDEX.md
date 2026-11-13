@@ -38,7 +38,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Decisions](DECISIONS.md)** — **Maintained guide.** Gameplay and world rules, with dated revisions reorganized into nine subjects.
 - **[Development State](DEVELOPMENT_STATE.md)** — **Maintained guide.** Verified published-build checkpoint, implemented features, pending work and acceptance limits.
 - **[Documentation Index](DOCUMENTATION_INDEX.md)** — **Maintained guide.** This annotated directory, explaining the purpose of every tracked Markdown document.
-- **[Mechanic Development](MECHANIC_DEVELOPMENT.md)** — **Maintained guide.** Engineering workflow for authorized changes, regression checks, documentation and integration.
+- **[Mechanic Development](MECHANIC_DEVELOPMENT.md)** — **Maintained guide.** Engineering workflow for authorized changes, regression checks, multi-chat/Work-mode workstream handoffs, documentation and integration.
 - **[Guia En Espanol](../GUIA_EN_ESPANOL.md)** — **Maintained guide.** Full Spanish player guide: controls, game progression, saving, language choice and repository help.
 - **[Game README](../README.md)** — **Maintained guide.** Player introduction, links to the playable game, controls, saves, graphics and development information.
 

@@ -105,6 +105,7 @@ Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml);
 | Source modules and system ownership | [Architecture](docs/ARCHITECTURE.md) |
 | Design decisions and approved behavior | [Gameplay decisions](docs/DECISIONS.md) |
 | Development rules and release authorization | [Agent operating policy](AGENTS.md) |
+| Divide work across ChatGPT Project chats and Work sessions | [Engineering workflow — cross-chat workstreams](docs/MECHANIC_DEVELOPMENT.md#cross-chat-workstreams-in-a-chatgpt-project) |
 | Find the right guide or historical record, with a one-line explanation of each | [Annotated documentation directory](docs/DOCUMENTATION_INDEX.md) |
 | Official game identity and legacy-name rules | [Brand identity](docs/BRAND_IDENTITY.md) |
 | Spanish player guide | [Guía del juego (Español)](GUIA_EN_ESPANOL.md) |
