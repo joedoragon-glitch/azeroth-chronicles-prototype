@@ -35,7 +35,7 @@ for (const language of ['en', 'es'])
 assert(intros.en.mage.detail.startsWith('She ') && intros.en.rogue.detail.startsWith('She '));
 assert(intros.en.paladin.detail.startsWith('He ') && intros.en.ranger.detail.startsWith('He '));
 assert(intros.es.mage.detail.includes('La maga') && intros.es.rogue.detail.includes('La pícara'));
-assert(intros.es.rogue.detail.includes('Empieza sola'), 'the Rogue starts without company');
+assert(intros.es.rogue.detail.includes('empieza sola'), 'the Rogue starts without company');
 assert(intros.en.rogue.detail.includes('Charm'), 'actual Charm-first play is explained');
 assert(!/Mago/.test(intros.es.mage.label), 'Mage is not presented as male');
 
