@@ -1820,6 +1820,8 @@
     // whole so its bilingual instructions do not fragment around separators.
     if (value.startsWith('COMPANIONS · '))
       return 'COMPAÑEROS · ' + tr(value.slice('COMPANIONS · '.length));
+    if (value.startsWith('FIELD BASE · '))
+      return 'BASE DE CAMPO · ' + tr(value.slice('FIELD BASE · '.length));
     if (value.startsWith('TUTORIAL · '))
       return 'TUTORIAL · ' + tr(value.slice('TUTORIAL · '.length));
     if (chronicleTranslations.has(value)) return chronicleTranslations.get(value);
