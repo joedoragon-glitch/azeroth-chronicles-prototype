@@ -134,12 +134,13 @@ function enhance(entry, decisions) {
   entry.areas = [...new Set((entry.areas || []).filter(Boolean))];
   entry.subcategory = subtypeOf(entry, entity);
   const visualTags = [
-    entry.subcategory, entity.renderKind, entity.class, entity.species,
-    entity.structure, entity.kind, entity.type, entity.family, entity.form,
+    entry.subcategory, ...entry.regions,
+    entity.renderKind, entity.class, entity.species, entity.structure,
+    entity.kind, entity.type, entity.family, entity.form,
     entity.captainProfile, entity.crownRole, entity.crownRank,
     entity.ranged ? 'ranged' : null, entity.guard ? 'guard' : null,
     entity.crowned ? 'crowned' : null, entity.ringleader ? 'ringleader' : null,
-    ...entry.areas, ...entry.regions, ...(entry.aliases || []),
+    ...entry.areas, ...(entry.aliases || []),
   ];
   entry.tags = [...new Set(visualTags.filter((x) =>
     typeof x === 'string' && x.length <= 90))].slice(0, 18);
