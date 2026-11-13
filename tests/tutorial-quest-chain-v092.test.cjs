@@ -31,6 +31,9 @@ for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
   const g = fresh(cls);
   assert.equal(g.questDefs().length, 31, 'thirty original regional quests and tutorial intact');
   assert.equal(g.tutorialStage(), 'captain');
+  const firstObjective = g.questDefs().find((q) => q.id === 'quest-barracks').objective;
+  assert.equal(firstObjective.includes('Charm an eligible monster'), cls === 'rogue',
+    'tutorial objective uses the actual starting company of ' + cls);
   assert(!g.s.quests['quest-tutorial-board'].active);
   g.briefCompanions();
   if (cls === 'rogue') {
@@ -49,6 +52,15 @@ for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
     assert(g.isCharmedCompanion(g.s.party[0]), 'ledger-validated captured worker');
   }
   assert.equal(g.tutorialStage(), 'recall');
+  if (cls === 'rogue') {
+    const owned = g.s.party[0];
+    owned.hp = 0;
+    assert.equal(g.tutorialStage(), 'charm', 'a fallen Charm cannot practice Recall');
+    assert(g.questProgress(g.questDefs()[0]).includes('Recover a fallen Charmed companion'),
+      'previous lawful capture is not misrepresented as a first Charm');
+    owned.hp = owned.maxHp;
+    assert.equal(g.tutorialStage(), 'recall');
+  }
   assert(g.recallParty());
   assert(g.s.quests['quest-barracks'].recallPracticed);
   assert.equal(g.tutorialStage(), 'brief-barracks');
@@ -169,6 +181,11 @@ for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
     'active Barracks overrides the earlier Captain waypoint');
   const u = g.s.party.find((x) => x.order?.id === b.id);
   assert(u);
+  u.order = null;
+  assert(g.questProgress(g.questDefs()[0]).startsWith('Construction paused'),
+    'no active builder must not be described as building');
+  assert(g.assignBuilder(b.id), 'native worker reassignment');
+  assert(g.questProgress(g.questDefs()[0]).startsWith('Construction in progress'));
   Object.assign(u, { x: b.x, y: b.y });
   g.zone().enemies = [];
   g.updateParty(4.1);
