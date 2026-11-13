@@ -123,6 +123,37 @@ if (site) {
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(path.join(root, file), dest);
   }
+  // The existing Sprite Showroom is an optional standalone review page.
+  // Its source-driven index contains no embedded image bytes. It is NOT part of
+  // the game's PWA precache, and archived sprite revisions stay lazy/on-demand.
+  // Minimal synthetic packaging fixtures intentionally lack the review source
+  // catalog; only a full repository build can package the independent showroom.
+  const showroomSpec = path.join(root, 'tools/sprites/specifications.json');
+  if (fs.existsSync(showroomSpec)) {
+    const showroom = require('./sprite-showroom-index.cjs').build();
+    const pages = [
+      'tools/sprites/showroom.html',
+      'tools/sprites/showroom.css',
+      'tools/sprites/showroom.js',
+    ];
+    for (const asset of showroom.packagedResources) {
+      const name = asset.replace(/^\.\//, '');
+      if (!/^assets\/(?:sprites|materials)\/[a-zA-Z0-9_/-]+\.(?:png|webp)$/.test(name) ||
+          name.includes('..') || !fs.existsSync(path.join(root, name)))
+        throw Error('Invalid preserved showroom raster: ' + asset);
+      pages.push(name);
+    }
+    for (const file of new Set(pages)) {
+      const source = path.join(root, file);
+      const destination = path.join(target, file);
+      fs.mkdirSync(path.dirname(destination), { recursive: true });
+      fs.copyFileSync(source, destination);
+    }
+    const dest = path.join(target, 'tools/sprites/library-index.json');
+    // History/archive paths do not need to be duplicated in the client payload.
+    const { packagedResources, ...index } = showroom;
+    fs.writeFileSync(dest, JSON.stringify(index));
+  }
   // GitHub Actions provides GITHUB_SHA; local site builds resolve HEAD.
   // Every deployable site must have one valid commit ID: never silently ship
   // a source-version-only worker that cannot signal an installed PWA update.
