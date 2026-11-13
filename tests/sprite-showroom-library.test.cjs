@@ -29,6 +29,10 @@ for (const spec of specs.assets) {
 }
 for (const key of Object.keys(manifest.sprites))
   assert(byId.has(key), 'registered artwork omitted: ' + key);
+assert(byId.has('hero:rogue'), 'fourth playable hero must not be absent from showroom');
+assert.equal(byId.get('hero:rogue').representation, 'procedural');
+assert(index.counts.currentWorldIdentities >= 4, 'current world census not attached');
+assert(index.counts.currentSourceAreas >= 19, 'authored areas not enumerated');
 assert.equal(byId.get('hero:paladin').representation, 'procedural');
 assert.equal(byId.get('hero:ranger').representation, 'raster');
 assert(byId.get('hero:paladin').registeredRaster,
