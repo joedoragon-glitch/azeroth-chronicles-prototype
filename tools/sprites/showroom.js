@@ -370,7 +370,8 @@ async function startBrowsableShowroom() {
       if (kind === 'raster' && entry.representation !== 'raster') return false;
       if (kind === 'procedural' && entry.representation !== 'procedural') return false;
       if (kind === 'retained' && !rasterAvailable(entry)) return false;
-      if (kind === 'dated' && entry.sourceKind !== 'dated-reference') return false;
+      if (kind === 'dated' && entry.sourceKind !== 'dated-reference' &&
+        !entry.datedStates?.length) return false;
       if (kind === 'material' && !isMaterial(entry)) return false;
       return true;
     });
