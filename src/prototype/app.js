@@ -5389,26 +5389,26 @@
     paladin: {
       en: 'Paladin',
       es: 'Paladín',
-      detail: 'He stands between danger and his companions, sword ready and radiant magic at hand. The Paladin fights up close, mends wounds, and can withstand a devastating blow for a moment.',
-      detailEs: 'Se interpone entre el peligro y sus compañeros, espada en mano y magia sagrada a su alcance. El paladín combate de cerca, cura heridas y puede resistir por un instante un golpe devastador.',
+      detail: 'He meets danger sword-first, shielding his companions with holy magic. The Paladin fights up close, heals wounds, and can briefly withstand an otherwise devastating strike.',
+      detailEs: 'Con espada y magia sagrada, el paladín se interpone entre el peligro y sus compañeros. Combate cuerpo a cuerpo, cura heridas y resiste durante unos instantes los golpes más terribles.',
     },
     mage: {
       en: 'Mage',
       es: 'Maga',
-      detail: 'She shapes the battlefield from a distance with arcane beams and freezing spells. The Mage relies on precise timing, interruptions, and protective barriers rather than brute force.',
-      detailEs: 'Domina el combate a distancia con rayos arcanos y hechizos de hielo. La maga prefiere la precisión, la interrupción de ataques y las barreras protectoras antes que la fuerza bruta.',
+      detail: 'She commands the fight from a distance with arcane beams, frost and protective barriers. The Mage wins by choosing when to strike, interrupt and defend.',
+      detailEs: 'La maga domina el combate a distancia con rayos arcanos, hielo y barreras protectoras. Prefiere decidir cuándo atacar, interrumpir al enemigo y defender a su compañía.',
     },
     ranger: {
       en: 'Ranger',
       es: 'Explorador',
-      detail: 'He stays mobile, choosing his distance before letting arrows fly. The Ranger can send his hawk to interrupt a retreat, then heal and rally his companions when the fight turns.',
-      detailEs: 'Busca siempre la distancia adecuada antes de disparar. El explorador se mueve con soltura, envía a su halcón a interrumpir retiradas y puede curar y alentar a su compañía cuando cambia el combate.',
+      detail: 'He reads the battlefield from behind his bow, moving before enemies can close in. The Ranger sends his hawk to disrupt retreats, then heals and rallies his companions.',
+      detailEs: 'El explorador se mueve antes de que el enemigo acorte distancias. Su arco y su halcón frenan retiradas, mientras sus curaciones y arengas mantienen en pie a la compañía.',
     },
     rogue: {
       en: 'Rogue',
       es: 'Pícara',
-      detail: 'She begins alone, carrying a jingling bell instead of a company of soldiers. The Rogue can Charm monsters that survive her strikes, turning enemies into allies while her unruly music throws opponents off balance.',
-      detailEs: 'Empieza sola, con un cascabel en lugar de una escolta de soldados. La pícara puede encantar monstruos que sobreviven a sus golpes y convertirlos en aliados, mientras su música alborotada desconcierta al enemigo.',
+      detail: 'She begins alone, a jingling bell in hand instead of a squad. The Rogue disrupts opponents with unruly music, and monsters that survive her strikes may become Charmed allies.',
+      detailEs: 'La pícara empieza sola, con un cascabel en vez de escolta. Su música desconcierta al enemigo y los monstruos que sobreviven a sus golpes pueden convertirse en aliados encantados.',
     },
   });
   function heroClassLabel(id, localized = language === 'es') {
@@ -5445,8 +5445,8 @@
       mode === 'arena'
         ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
         : language === 'es'
-          ? 'Elige a tu personaje. Rescata especialistas para aprender más habilidades y conseguir equipo.'
-          : 'Choose your hero. Rescue specialists to learn more skills and gain equipment.',
+          ? 'Elige a tu protagonista y comienza la aventura.'
+          : 'Choose the hero whose adventure you want to play.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
           (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id),
