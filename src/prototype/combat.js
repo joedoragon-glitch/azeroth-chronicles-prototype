@@ -756,6 +756,7 @@
           !e ||
           e.hp <= 0 ||
           e.neutral ||
+          (options?.automaticBasic && !this.autoAttackCanTarget(e)) ||
           (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
           this.attackResetProtected(e) ||

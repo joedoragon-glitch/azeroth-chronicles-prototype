@@ -632,7 +632,7 @@
           .enemies.filter(
             (e) =>
               e !== target &&
-              (!automatic || !this.awaitsHeroAttack(e)) &&
+              (!automatic || (!this.awaitsHeroAttack(e) && this.autoAttackCanTarget(e))) &&
               e.hp > 0 &&
               !e.neutral &&
               dist(e, from) <= def.range &&
@@ -1714,7 +1714,8 @@
           preferred = targetId ?? selected?.id ?? this.basicComboTargetId ?? this.s.heroTarget,
           eligible = this.zone().enemies.filter((e) =>
             e.hp > 0 && !e.neutral && !e.returning &&
-            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            !this.awaitsHeroAttack(e) && this.autoAttackCanTarget(e) &&
+            !this.attackResetProtected(e) &&
             this.tacticalDirectTargetable(e) &&
             dist(e, this.hero) <= cfg.range && this.line(this.hero, e),
           ),
@@ -1775,6 +1776,13 @@
           radius: combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius,
         });
         return true;
+      }
+      autoAttackCanTarget(e) {
+        // Passive attacks can defend once an elite encounter is active,
+        // but must never start a boss/captain fight on the player's behalf.
+        // The ordinary enemy path remains unchanged, including Rogue Charm.
+        return !!e && (!(e.type === 'boss' || e.captain || e.roomCaptain ||
+          e.fieldCaptain) || !!e.aggro);
       }
       castMovementBasic() {
         // A released skill owns its approach. Passive covering fire must not

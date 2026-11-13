@@ -216,3 +216,10 @@ See [companion audit](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md) for the ex
 - [`src/prototype/engine.js`](../src/prototype/engine.js), [`progression.js`](../src/prototype/progression.js), [`save.js`](../src/prototype/save.js): initial rank, upgrades and legacy save contract.
 - [`src/prototype/skill-reference.js`](../src/prototype/skill-reference.js), [`archive.js`](../src/prototype/archive.js): class-specific skill descriptions and Keeper's live figures.
 - [`src/prototype/party.js`](../src/prototype/party.js), [`party-pets.js`](../src/prototype/party-pets.js), [`combat.js`](../src/prototype/combat.js): companion timers, party spell effects and protected engagements.
+
+
+## v0.9.2 candidate — deliberate boss/captain initiation (12 November 2026)
+
+Owner-approved tutorial safety refinement: **passive movement basics may not initiate a boss or captain encounter** solely because the elite is within range, including Rogue's automatically executed bell basic and its splash/finisher secondaries. Once an encounter is already hostile/engaged, automatic basics remain legal defensive attacks. A deliberate manual skill retains the existing range, cooldown, target, terrain, encounter and protection checks and may initiate combat normally. Ordinary monsters remain eligible for automatic basics and lawful Rogue Charm; hostile captains alerted by existing guard behavior and natural boss aggro are not made immune. The guard belongs to the automatic selection and damage paths, not to boss AI, encounter balance or save data.
+
+This is a **branch candidate**, not a published or merged change. The relevant native auto/manual/secondary and existing targeting/field-onboarding regressions must pass at the candidate SHA; real player and phone checks remain separate acceptance evidence.
