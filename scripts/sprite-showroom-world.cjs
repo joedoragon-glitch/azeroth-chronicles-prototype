@@ -42,9 +42,28 @@ function labelFor(entity, kind) {
   return entity.name || entity.structure || entity.species || entity.family ||
     entity.kind || entity.type || kind;
 }
-function trackIdentity(entity, region, zone, kind) {
+function trackIdentity(entity, region, zone, kind, protectedKeys) {
   const candidate = Sprites.candidateKeys(entity, region)[0];
-  if (candidate && !candidate.startsWith('landmark:')) return candidate;
+  if (candidate && !candidate.startsWith('landmark:')) {
+    // Retain exact keys if sprite-registered or explicitly prepared in
+    // production. They may have independently approved regional identities.
+    if (protectedKeys.has(candidate)) return candidate;
+    // Unregistered generic props previously became separate cards solely
+    // because sprite lookup constructs a different region-key per region.
+    // The procedural painter may still use the region as a selectable state.
+    if (entity.renderKind === 'prop' &&
+        !entity.greenwoodNature && !entity.highlandsNature &&
+        !entity.greenwoodFacility && !entity.greenwoodInteriorAsset &&
+        !entity.greenwoodWall && !entity.miningFacility) {
+      return 'shared:prop:' + clean(entity.structure || entity.name ||
+        entity.icon || 'wild') + (entity.form ? ':' + clean(entity.form) : '');
+    }
+    if (entity.renderKind === 'npc' && candidate.startsWith('npc:')) {
+      return 'shared:npc:' + clean(entity.name || entity.id || entity.kind || 'resident') +
+        ':' + clean(entity.kind || 'resident');
+    }
+    return candidate;
+  }
   // A shared drawing is one asset with selectable regional states, not five
   // copies of "Barrel" or "Crate" solely because it spawns in five regions.
   // Named people retain their own identity even if they offer the same service.
@@ -68,7 +87,8 @@ function trackIdentity(entity, region, zone, kind) {
   ].filter(Boolean).map(clean);
   return 'world:' + semantic.join(':');
 }
-function census() {
+function census(options = {}) {
+  const protectedKeys = new Set(options.protectedKeys || []);
   const areas = [...new Set([
     ...Campaign.data.regions.map((r) => r.id),
     ...Object.keys(Campaign.rules.dungeonArchitecture),
@@ -90,7 +110,7 @@ function census() {
         for (const entity of zone[collection] || []) {
           if (!entity || typeof entity !== 'object') continue;
           const visual = snapshot(entity, inferred);
-          const id = trackIdentity(visual, region, area, inferred);
+          const id = trackIdentity(visual, region, area, inferred, protectedKeys);
           const selected = Sprites.definitionFor(visual, region);
           observedInstances++;
           const existing = rows.get(id);
