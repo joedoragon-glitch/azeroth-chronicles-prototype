@@ -1082,12 +1082,12 @@
     Arrows: 'Flechas',
     Cooldown: 'Recuperación',
     'Codices of the Unforeseen': 'Códices de lo Imprevisto',
-    'Hero critical chance: ': 'Probabilidad crítica del héroe: ',
+    'Hero critical chance: ': 'Probabilidad crítica de tu personaje: ',
     '. Codices studied: ': '. Códices estudiados: ',
     ' Base Party and World chances: 10% each, independently sampled.':
       ' Las probabilidades básicas del grupo y del mundo son del 10 % cada una y se calculan independientemente.',
     ' Each volume adds ': ' Cada volumen aporta ',
-    ' to the hero, up to ': ' al héroe, hasta ',
+    ' to the hero, up to ': ' a tu personaje, hasta ',
     ' total. Companions inherit a fraction through Shared Training.':
       ' en total. Los compañeros heredan una parte mediante Entrenamiento compartido.',
     '\nLearned volumes: ': '\nVolúmenes aprendidos: ',
@@ -1114,7 +1114,7 @@
       'Elige un efecto y solicita las cifras cuando quieras consultar la regla completa.',
     'Level gains and training.': 'Subidas de nivel y entrenamiento.',
     'Quick effects here; select a skill, then ask for figures. Hero Skills is also in the Adventure menu.':
-      'Aquí encontrarás los efectos resumidos. Elige una habilidad y solicita sus cifras. Las habilidades del héroe también están en el menú de aventura.',
+      'Aquí encontrarás los efectos resumidos. Elige una habilidad y solicita sus cifras. Las habilidades de tu personaje también están en el menú de aventura.',
     'Shared bonuses, Ranger care and TRUE boss pets.':
       'Bonificaciones compartidas, cuidados de los exploradores y mascotas de jefes TRUE.',
     'My records of the ministries, my former companions and the people living under Crown Peace.':
@@ -1167,7 +1167,7 @@
     'The last mark — remembered at the throne': 'La última marca — recordada ante el trono',
     'Companions from the Barracks': 'Compañeros del cuartel',
     'The Lantern Wraiths’ migration': 'La migración de los espectros de Lantern',
-    'A prisoner for the Archive': 'Un prisionero para el Archivo',
+    'A prisoner for the Archive': 'Una prisionera para el Archivo',
     'The TRUE adversaries': 'Los adversarios TRUE',
     'Normal daytime': 'Normal de día',
     'No visited encounter yet. These base figures change with night and TRUE form.':
@@ -1176,7 +1176,7 @@
     'A miniature companion inspired by ': 'Un compañero en miniatura inspirado en ',
     'Steel, wounds and armor': 'Acero, heridas y armadura',
     'The Ash Sentinel takes 65% damage while its armor is closed; the Stone Colossus takes 125% while its core is exposed. Some captains gain protection from their followers. Clear the warning, then strike during the opening.':
-      'El Centinela de Ceniza recibe el 65 % del daño con su armadura cerrada; el Coloso de Piedra recibe el 125 % con el núcleo expuesto. Algunos capitanes reciben protección de sus seguidores. Esquiva la advertencia y golpea cuando se abra una oportunidad.',
+      'La centinela de ceniza recibe el 65 % del daño con su armadura cerrada; el Coloso de Piedra recibe el 125 % con el núcleo expuesto. Algunos capitanes reciben protección de sus seguidores. Esquiva la advertencia y golpea cuando se abra una oportunidad.',
     'Fighting beneath your level brings less experience and fewer crowns. Ordinary creatures also give less experience than their listed value. If you want to grow, seek a stronger opponent.':
       'Enfrentarte a enemigos de nivel inferior concede menos experiencia y coronas. Las criaturas comunes también otorgan menos experiencia que su valor indicado. Para progresar, busca rivales más fuertes.',
     'Each level gives you a discipline point and more health. Strength, vitality and movement training improve different parts of your fighting ability.':
@@ -1192,7 +1192,7 @@
     'Move and recover skill cooldowns more slowly, including skills used while already slowed.':
       'El movimiento y la recuperación de las habilidades se ralentizan, incluso si la habilidad se utiliza bajo ese efecto.',
     'Blocks special skills for enemies, you and companions inside the field; movement and ordinary attacks still work.':
-      'Bloquea las habilidades especiales de enemigos, héroe y compañeros dentro del campo; el movimiento y los ataques normales siguen funcionando.',
+      'Bloquea las habilidades especiales de enemigos, tu personaje y tus compañeros dentro del campo; el movimiento y los ataques normales siguen funcionando.',
     'HP damage can cancel an unfinished charged skill; brief retry recovery replaces its full cooldown.':
       'El daño a la salud puede interrumpir una habilidad cargada antes de completarse; una breve recuperación sustituye al tiempo completo de reutilización.',
     'Weaken lowers an enemy’s damage; Fracture increases the damage it takes.':
@@ -1293,17 +1293,17 @@
     ['Hostile enemies block ordinary eligible skills: ', 'Los enemigos bloquean habilidades válidas ordinarias con una probabilidad de '],
     ['% against one target, or ', '% contra un objetivo, o '],
     ['% per target in an area attack.\n', '% por objetivo en un ataque de área.\n'],
-    ['Against Ranger hero skills, enemy Skill Block is ', 'Contra las habilidades del héroe explorador, la probabilidad de bloqueo del enemigo es del '],
+    ['Against Ranger hero skills, enemy Skill Block is ', 'Contra las habilidades del explorador, la probabilidad de bloqueo del enemigo es del '],
     ['% for one target and ', '% contra un objetivo y del '],
     ['% per area target. Rogue Bard performances cannot be blocked (0%).\n', '% por objetivo de área. Las interpretaciones de la pícara bardo no se pueden bloquear (0%).\n'],
     ['At night, hostile enemies gain +', 'De noche, los enemigos obtienen +'],
     [' percentage points: ordinary skills become ', ' puntos porcentuales: contra habilidades ordinarias pasan a '],
-    ['%; Ranger hero skills become ', '%; contra las habilidades del héroe explorador pasan a '],
+    ['%; Ranger hero skills become ', '%; contra las habilidades del explorador pasan a '],
     ['%. Lawfully Charmed monsters and boss pets gain that same night bonus (to ', '%. Los monstruos encantados legítimamente y las mascotas de jefes reciben esa misma bonificación nocturna (hasta '],
     ['%). Soldiers and Archers do not.\n', '%). Los soldados y arqueros no la reciben.\n'],
     ['Active lawful Soldiers, Archers, pets and Charmed companions block eligible hostile skills at ', 'Los soldados, arqueros, mascotas y compañeros encantados legítimos que estén activos bloquean habilidades enemigas válidas con una probabilidad del '],
     ['% single-target and ', '% contra un solo objetivo y del '],
-    ['% area per defender, including enemy Rogue maneuvers. The hero has no general Skill Block.\n', '% por defensor en ataques de área, incluidas las maniobras rebeldes enemigas. El héroe no tiene bloqueo general de habilidades.\n'],
+    ['% area per defender, including enemy Rogue maneuvers. The hero has no general Skill Block.\n', '% por defensor en ataques de área, incluidas las maniobras rebeldes enemigas. Tu personaje no tiene bloqueo general de habilidades.\n'],
     ['Basic automatic attacks and combo finishers cannot be blocked; actual critical skill impacts bypass Skill Block. Each legal area target checks separately; a block cancels only that impact’s damage and linked effects. Casting still spends its cooldown even if all targets block.\n', 'Los ataques básicos automáticos y remates de combos no se pueden bloquear; los impactos críticos reales de habilidades eluden el bloqueo. Cada objetivo válido de un ataque de área realiza su propia comprobación; un bloqueo anula solo el daño y los efectos ligados a ese impacto. La habilidad consume su recuperación habitual aunque todos los objetivos la bloqueen.\n'],
     ['Obstructed aim, misses, physical dodges, armor, wards and immunity are different from Skill Block.', 'La puntería obstruida, los fallos, las esquivas físicas, la armadura, las protecciones y la inmunidad son distintos del bloqueo de habilidades.'],
 
@@ -1341,7 +1341,7 @@
     ],
     [
       'Hero and companion shots still use their normal obstruction rules.',
-      'Los disparos del héroe y de sus compañeros siguen sus reglas normales de obstrucción.',
+      'Los disparos de tu personaje y de sus compañeros siguen sus reglas normales de obstrucción.',
     ],
     [
       'Heroes and companions recover cooldowns at ',
@@ -1428,7 +1428,7 @@
     ],
     [
       'the strongest active vulnerability applies once, helping hero and companion hits.',
-      'la vulnerabilidad activa más fuerte se aplica una sola vez y mejora los golpes del héroe y sus compañeros.',
+      'la vulnerabilidad activa más fuerte se aplica una sola vez y mejora los golpes de tu personaje y sus compañeros.',
     ],
     [
       'Fracture never adds multiple percentages together.',
@@ -1507,7 +1507,7 @@
     ],
     [
       'Hero skill healing is separate from Ranger support over time.',
-      'La curación por habilidades del héroe es independiente del apoyo gradual de exploradores.',
+      'La curación por habilidades de tu personaje es independiente del apoyo gradual de exploradores.',
     ],
     [
       'Eligible ranged enemies and selected captains/bosses treat injured living allies in an area, with eligible leaders included.',
@@ -1986,7 +1986,7 @@
     ['; draws back ', '; recupera un '],
     ['% of HP actually taken', '% de los PV realmente arrebatados'],
     ['; drains ', '; drena un '],
-    ['% of the hero’s maximum mana', '% del maná máximo del héroe'],
+    ['% of the hero’s maximum mana', '% del maná máximo de tu personaje'],
     ['s; restores ', ' s; restaura un '],
     [
       '% of maximum HP, up to missing health; recovery ',
