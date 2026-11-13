@@ -63,7 +63,11 @@ function build() {
     const existing = archives(approved, spec.key);
     const current = entry?.src || null;
     const history = existing.filter((a) => a.src !== current);
-    const rawName = human(spec.key.split(':').slice(1).join(' '));
+    // Region already has a dedicated card line and filter; repeating it in
+    // titles makes the visual gallery read like raw asset filenames.
+    const nameParts = spec.key.split(':').slice(1)
+      .filter((part) => part !== regionIds[spec.region]);
+    const rawName = human(nameParts.join(' '));
     result.set(spec.key, {
       id: spec.key,
       name: rawName,
