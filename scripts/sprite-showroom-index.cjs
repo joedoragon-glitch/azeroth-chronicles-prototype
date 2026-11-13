@@ -163,7 +163,8 @@ function enhance(entry, decisions) {
         : 'procedural-only';
 }
 function fingerprints() {
-  const list = [...painterPaths, 'src/prototype/sprite-format.js',
+  const list = [...painterPaths, 'src/prototype/data.js',
+    'src/prototype/rules.js', 'src/prototype/sprite-format.js',
     'assets/sprites/manifest.json', 'assets/materials/manifest.json',
     'tools/sprites/specifications.json', 'tools/sprites/current-design-decisions.json'];
   const out = {};
