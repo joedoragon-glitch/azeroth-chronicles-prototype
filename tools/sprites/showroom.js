@@ -882,11 +882,27 @@ async function startBrowsableShowroom() {
         : 'No asset-specific art direction is recorded for this identity in the indexed records. The actual render input is shown below.';
       source.append(p);
     }
+    const selectedRaster = fixture?.entity
+      ? PrototypeSprites.definitionFor(fixture.entity, fixture.region) : null;
     const current = fixture?.entity
-      ? { assetId: entry.id, region: fixture.region, area: fixture.area || null,
-          renderInput: fixture.entity }
-      : { assetId: entry.id, materialOrArchive: entry.registeredRaster || null,
-          registryRevision: entry.revision || null };
+      ? {
+          assetId: entry.id,
+          region: index.regionNames?.[fixture.region] || fixture.region,
+          sourceArea: fixture.area || null,
+          entityPassedToPainter: fixture.entity,
+          currentChoice: selectedRaster?.key ? 'sprite' : 'procedural',
+          currentSpriteIdentity: selectedRaster?.key || null,
+          registeredOrRetainedSpriteFile: entry.registeredRaster || null,
+          retainedSpriteIsPlayerSelected: !!selectedRaster?.key &&
+            selectedRaster.key === entry.activeSpriteKey,
+          spriteDefinition: entry.spriteEntry || null,
+        }
+      : {
+          assetId: entry.id,
+          materialOrArchive: entry.registeredRaster || null,
+          registryDefinition: entry.materialDefinition || null,
+          registryRevision: entry.revision || null,
+        };
     $('asset-definition').textContent = JSON.stringify(current, null, 2);
     const selector = $('asset-source-file'), previous = selector.value;
     selector.replaceChildren();
