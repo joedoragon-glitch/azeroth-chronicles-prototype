@@ -102,7 +102,7 @@ function census() {
           rows.set(id, {
             id,
             name: human(labelFor(visual, inferred)),
-            group: ['hero','ally','enemy'].includes(visual.renderKind) ? 'Characters'
+            group: ['hero','ally','enemy','npc','pet','boss'].includes(visual.renderKind) ? 'Characters'
               : visual.renderKind === 'building' ? 'Buildings & services'
               : visual.renderKind === 'npc' && ['rest','shop','smith','teacher','transport'].includes(visual.kind)
                 ? 'Buildings & services' : 'World & scenery',
