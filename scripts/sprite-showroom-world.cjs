@@ -77,7 +77,8 @@ function trackIdentity(entity, region, zone, kind, protectedKeys) {
   const semantic = [
     entity.renderKind || kind,
     visualName,
-    entity.sceneRole || entity.captainProfile || entity.masterId || '',
+    (entity.renderKind === 'prop' ? ''
+      : entity.sceneRole || entity.captainProfile || entity.masterId || ''),
     entity.form || '',
     entity.crowned ? 'crowned' : '',
     entity.ranged ? 'ranged' : '',
