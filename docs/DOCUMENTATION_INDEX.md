@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory reviewed 8 November 2026 · **460 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory reviewed 8 November 2026 · **461 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -16,7 +16,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (24)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (131)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (132)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (22)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (52)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
@@ -71,6 +71,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Hero abilities, combat, enemies and bosses
 
+- [**Monster Skill Lore Identity (v0.9.2 draft)**](MONSTER_SKILL_LORE_IDENTITY_V092_20261113.md) — **Active design proposal.** Exact 12-species enemy-tactic and Ringleader name inventory; boss/captain/post provenance, Greenwood Lifebinder naming review, authorial acceptance and no-code safety gates. Tracks #870; not implemented or accepted.
 - **[Target Centered Boss Ground AoE](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md)** — **Design reference.** Committed boss damage footprints, warning parity and terrain/line-of-sight boundaries.
 - [Monster Night Passive](MONSTER_NIGHT_PASSIVE_20261101.md) — *Dated implementation record.* Shared nighttime power for hostile and legally owned monsters, subsequently merged via #761.
 - **[Skill Block Owner Contract](SKILL_EVASION_OWNER_CONTRACT_20261101.md)** — **Design reference.** Approved per-target Block odds and exclusions, implemented by #760; initial draft status is historical.
