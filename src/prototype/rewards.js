@@ -51,14 +51,27 @@
       }
       awardEnemyReward(e) {
         const r = this.enemyReward(e);
-        if (r.gold > 0)
-          this.s.loot.push({
-            id: 'loot-' + this.s.nextId++,
-            zone: this.s.zone,
-            x: e.x,
-            y: e.y,
-            gold: r.gold,
-          });
+        if (r.gold > 0) {
+          // The unchanged v4 writer permits at most 5,000 outstanding drops.
+          // Preserve every earned crown rather than letting a 5,001st drop
+          // turn the current run (and an external export) unsaveable. Only this
+          // extreme overflow is credited immediately; existing drops retain
+          // their locations, pickup rules and amounts.
+          if (this.s.loot.length >= 5000) {
+            this.grant(r.gold, 0);
+            if (!this._lootCapacityNoticeShown) {
+              this._lootCapacityNoticeShown = true;
+              this.say('Uncollected loot is at capacity. New crowns are credited directly to your purse.');
+            }
+          } else
+            this.s.loot.push({
+              id: 'loot-' + this.s.nextId++,
+              zone: this.s.zone,
+              x: e.x,
+              y: e.y,
+              gold: r.gold,
+            });
+        }
         this.xp(r.xp);
       }
       guardianRewards(z) {
