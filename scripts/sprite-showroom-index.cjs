@@ -187,7 +187,7 @@ function build() {
       datedReviewCases: cases.entries.length,
       currentMaterials: Object.keys(materials.materials).length,
     },
-    entries, packagedResources: [...allResources].filter((r) => r.startsWith('./assets/sprites/')),
+    entries, packagedResources: [...allResources],
   };
 }
 module.exports = { build };
