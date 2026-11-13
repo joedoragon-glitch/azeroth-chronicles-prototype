@@ -632,7 +632,7 @@
           .enemies.filter(
             (e) =>
               e !== target &&
-              (!automatic || !this.awaitsHeroAttack(e)) &&
+              (!automatic || this.automaticHeroTargetAllowed(e)) &&
               e.hp > 0 &&
               !e.neutral &&
               dist(e, from) <= def.range &&
@@ -1714,7 +1714,7 @@
           preferred = targetId ?? selected?.id ?? this.basicComboTargetId ?? this.s.heroTarget,
           eligible = this.zone().enemies.filter((e) =>
             e.hp > 0 && !e.neutral && !e.returning &&
-            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.automaticHeroTargetAllowed(e) && !this.attackResetProtected(e) &&
             this.tacticalDirectTargetable(e) &&
             dist(e, this.hero) <= cfg.range && this.line(this.hero, e),
           ),
@@ -1743,7 +1743,7 @@
             radius = combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius;
           const secondary = this.zone().enemies.filter((e) =>
             e !== primary && e.hp > 0 && !e.neutral && !e.returning &&
-            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.automaticHeroTargetAllowed(e) && !this.attackResetProtected(e) &&
             this.tacticalDirectTargetable(e) &&
             dist(e, this.hero) <= radius && this.line(this.hero, e),
           ).sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
@@ -1854,7 +1854,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
-              (!automatic || !this.awaitsHeroAttack(e)) &&
+              (!automatic || this.automaticHeroTargetAllowed(e)) &&
               !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= range &&

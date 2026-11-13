@@ -578,6 +578,16 @@
         7: 'Tap Piercing Arrow: one guard-piercing strike. Charge: stronger piercing strike plus slow.',
         8: 'Tap Hunter’s Salvo: arrows at up to 3 foes. Charge Grand Hunt: two arrows each at up to 5. Extra arrow against a lone foe; no piercing.',
       },
+      rogue: {
+        1: "The Rogue's automatic bell strikes can Charm eligible monsters that survive. Tap Ding and Sting to harm nearby foes and strengthen allied basics; charge Raise a Racket for a wider performance.",
+        2: "Lead Feet slows nearby foes while quickening the Rogue and her companions. Can't Dance reaches farther and strengthens the movement and recovery benefit.",
+        3: "Beat Breaker interrupts enemy attacks and protects allied charged preparations. Shut the Band Up expands the interruption and briefly hushes eligible non-boss foes.",
+        4: "Sour Note withers enemies while mending the Rogue and nearby allies. Rotten Chorus increases the withering and healing effects; it does not revive fallen companions.",
+        5: "Sticky Shuffle places a music station that slows foes and protects allies standing inside. Briar Boogie creates a wider station with damaging pulses.",
+        6: "Stolen Beat delays hostile skills and accelerates recovery of allied specials. Time Out spreads a stronger delay and recharge effect.",
+        7: "Wrong Foot pushes and weakens enemies while improving nearby allied attacks. Panic Party spreads a wider push, Weaken and allied damage benefit.",
+        8: "Bad Bell Day damages enemies and boosts allied critical and special attacks. Last Laugh makes the blast stronger and briefly hushes eligible non-boss foes.",
+      },
     };
     shelves.push({
       title: 'Your skills',
@@ -589,7 +599,7 @@
             game.skillCooldown
               ? game.skillCooldown(slot, charged)
               : R.balance.skills.cooldowns[slot],
-          shape = R.chargedSkills.second[game.hero.class],
+          shape = R.chargedSkills.second[game.hero.class] || null,
           milestones = Math.floor(rank / 2),
           labels = {
             paladin: {
@@ -622,13 +632,24 @@
               7: 'Piercing Arrow',
               8: 'Hunter’s Salvo / Grand Hunt',
             },
+            rogue: {
+              1: "Ding and Sting / Raise a Racket",
+              2: "Lead Feet / Can't Dance",
+              3: "Beat Breaker / Shut the Band Up",
+              4: "Sour Note / Rotten Chorus",
+              5: "Sticky Shuffle / Briar Boogie",
+              6: "Stolen Beat / Time Out",
+              7: "Wrong Foot / Panic Party",
+              8: "Bad Bell Day / Last Laugh",
+            },
           },
           effects = {
             1: 'Automatic attacks build a same-target three-hit combo and finishing splash. Tap is an immediate focused attack. Charging uses the longer class technique, but Tap returns after its shorter cooldown; using Tap never extends Charged.',
-            2:
-              'Charge this attack to spread it through a ' +
-              shape.shape +
-              (shape.slow ? ' and slow the foes it hits.' : '.'),
+            2: shape
+              ? 'Charge this attack to spread it through a ' +
+                shape.shape +
+                (shape.slow ? ' and slow the foes it hits.' : '.')
+              : '',
             ...skills[game.hero.class],
           };
         return [
@@ -666,7 +687,7 @@
                   );
                 })()
               : '') +
-            (slot === 2
+            (slot === 2 && shape
               ? '\nCharged ' +
                 shape.shape +
                 ': ' +
@@ -1049,6 +1070,22 @@
       'Estas cifras corresponden a criaturas de lugares que ya has visitado. Compara su nivel, salud máxima y daño: los guardianes, cabecillas y combatientes a distancia pueden diferir.\n\n',
 
     'The Keeper’s shelves': 'Los estantes del Guardián',
+    "The Rogue's automatic bell strikes can Charm eligible monsters that survive. Tap Ding and Sting to harm nearby foes and strengthen allied basics; charge Raise a Racket for a wider performance.": "Los golpes automáticos del cascabel de la pícara pueden encantar monstruos aptos que sobrevivan. Ding and Sting daña a enemigos cercanos y fortalece los ataques básicos aliados; Raise a Racket amplía el efecto.",
+    "Lead Feet slows nearby foes while quickening the Rogue and her companions. Can't Dance reaches farther and strengthens the movement and recovery benefit.": "Lead Feet ralentiza a enemigos cercanos y acelera a la pícara y a sus compañeros. Can't Dance amplía el alcance y mejora el movimiento y la recuperación.",
+    "Beat Breaker interrupts enemy attacks and protects allied charged preparations. Shut the Band Up expands the interruption and briefly hushes eligible non-boss foes.": "Beat Breaker interrumpe ataques enemigos y protege las habilidades cargadas del grupo. Shut the Band Up amplía la interrupción y silencia brevemente a enemigos aptos que no sean jefes.",
+    "Sour Note withers enemies while mending the Rogue and nearby allies. Rotten Chorus increases the withering and healing effects; it does not revive fallen companions.": "Sour Note debilita a los enemigos mientras cura a la pícara y a sus aliados cercanos. Rotten Chorus aumenta esos efectos, pero no revive a los compañeros caídos.",
+    "Sticky Shuffle places a music station that slows foes and protects allies standing inside. Briar Boogie creates a wider station with damaging pulses.": "Sticky Shuffle crea una zona musical que ralentiza a los enemigos y protege a los aliados que permanecen dentro. Briar Boogie amplía la zona y añade pulsos dañinos.",
+    "Stolen Beat delays hostile skills and accelerates recovery of allied specials. Time Out spreads a stronger delay and recharge effect.": "Stolen Beat retrasa las habilidades enemigas y acelera la recuperación de las habilidades especiales aliadas. Time Out amplía y refuerza ambos efectos.",
+    "Wrong Foot pushes and weakens enemies while improving nearby allied attacks. Panic Party spreads a wider push, Weaken and allied damage benefit.": "Wrong Foot empuja y debilita a los enemigos, a la vez que mejora los ataques de los aliados cercanos. Panic Party amplía el empujón, el debilitamiento y el refuerzo aliado.",
+    "Bad Bell Day damages enemies and boosts allied critical and special attacks. Last Laugh makes the blast stronger and briefly hushes eligible non-boss foes.": "Bad Bell Day daña a los enemigos y refuerza los ataques críticos y especiales aliados. Last Laugh intensifica la explosión y silencia brevemente a enemigos aptos que no sean jefes.",
+    "Ding and Sting / Raise a Racket": "Ding and Sting / Raise a Racket",
+    "Lead Feet / Can't Dance": "Lead Feet / Can't Dance",
+    "Beat Breaker / Shut the Band Up": "Beat Breaker / Shut the Band Up",
+    "Sour Note / Rotten Chorus": "Sour Note / Rotten Chorus",
+    "Sticky Shuffle / Briar Boogie": "Sticky Shuffle / Briar Boogie",
+    "Stolen Beat / Time Out": "Stolen Beat / Time Out",
+    "Wrong Foot / Panic Party": "Wrong Foot / Panic Party",
+    "Bad Bell Day / Last Laugh": "Bad Bell Day / Last Laugh",
     'Radiant Strike / Radiant Cross': 'Golpe radiante / Cruz radiante',
     'Arcane Beam / Wide Arcane Beam': 'Rayo arcano / Rayo arcano amplio',
     'Rapid Arrows / Hawk Interception': 'Flechas rápidas / Intercepción del halcón',
@@ -1066,6 +1103,16 @@
     'Combo resets after ': 'El combo se reinicia tras ',
     ' seconds without a compatible target.': ' segundos sin un objetivo compatible.',
     'Basic attack interval': 'Intervalo del ataque básico',
+    "Primary combo damage": "Daño del combo principal",
+    "Secondary damage": "Daño secundario",
+    "Reach / normal pulse radius": "Alcance / radio del pulso normal",
+    "Third-hit pulse radius": "Radio del pulso del tercer golpe",
+    "Critical-only self / ally basic-damage bonus": "Bonificación al daño básico propio y aliado tras un crítico",
+    "Critical-only boon duration": "Duración del refuerzo crítico",
+    "Area radius": "Radio del área",
+    "Maximum enemy hits": "Máximo de impactos enemigos",
+    "Your / companion basic-hit bonus": "Bonificación a los golpes básicos del personaje y los compañeros",
+    "Your / companion boon duration": "Duración del refuerzo propio y de los compañeros",
     'Combo damage': 'Daño del combo',
     'Third-hit splash': 'Daño de área del tercer golpe',
     'Base damage': 'Daño base',
@@ -1082,12 +1129,12 @@
     Arrows: 'Flechas',
     Cooldown: 'Recuperación',
     'Codices of the Unforeseen': 'Códices de lo Imprevisto',
-    'Hero critical chance: ': 'Probabilidad crítica del héroe: ',
+    'Hero critical chance: ': 'Probabilidad crítica de tu personaje: ',
     '. Codices studied: ': '. Códices estudiados: ',
     ' Base Party and World chances: 10% each, independently sampled.':
       ' Las probabilidades básicas del grupo y del mundo son del 10 % cada una y se calculan independientemente.',
     ' Each volume adds ': ' Cada volumen aporta ',
-    ' to the hero, up to ': ' al héroe, hasta ',
+    ' to the hero, up to ': ' a tu personaje, hasta ',
     ' total. Companions inherit a fraction through Shared Training.':
       ' en total. Los compañeros heredan una parte mediante Entrenamiento compartido.',
     '\nLearned volumes: ': '\nVolúmenes aprendidos: ',
@@ -1114,7 +1161,7 @@
       'Elige un efecto y solicita las cifras cuando quieras consultar la regla completa.',
     'Level gains and training.': 'Subidas de nivel y entrenamiento.',
     'Quick effects here; select a skill, then ask for figures. Hero Skills is also in the Adventure menu.':
-      'Aquí encontrarás los efectos resumidos. Elige una habilidad y solicita sus cifras. Las habilidades del héroe también están en el menú de aventura.',
+      'Aquí encontrarás los efectos resumidos. Elige una habilidad y solicita sus cifras. Las habilidades de tu personaje también están en el menú de aventura.',
     'Shared bonuses, Ranger care and TRUE boss pets.':
       'Bonificaciones compartidas, cuidados de los exploradores y mascotas de jefes TRUE.',
     'My records of the ministries, my former companions and the people living under Crown Peace.':
@@ -1167,7 +1214,7 @@
     'The last mark — remembered at the throne': 'La última marca — recordada ante el trono',
     'Companions from the Barracks': 'Compañeros del cuartel',
     'The Lantern Wraiths’ migration': 'La migración de los espectros de Lantern',
-    'A prisoner for the Archive': 'Un prisionero para el Archivo',
+    'A prisoner for the Archive': 'Una prisionera para el Archivo',
     'The TRUE adversaries': 'Los adversarios TRUE',
     'Normal daytime': 'Normal de día',
     'No visited encounter yet. These base figures change with night and TRUE form.':
@@ -1176,7 +1223,7 @@
     'A miniature companion inspired by ': 'Un compañero en miniatura inspirado en ',
     'Steel, wounds and armor': 'Acero, heridas y armadura',
     'The Ash Sentinel takes 65% damage while its armor is closed; the Stone Colossus takes 125% while its core is exposed. Some captains gain protection from their followers. Clear the warning, then strike during the opening.':
-      'El Centinela de Ceniza recibe el 65 % del daño con su armadura cerrada; el Coloso de Piedra recibe el 125 % con el núcleo expuesto. Algunos capitanes reciben protección de sus seguidores. Esquiva la advertencia y golpea cuando se abra una oportunidad.',
+      'La centinela de ceniza recibe el 65 % del daño con su armadura cerrada; el Coloso de Piedra recibe el 125 % con el núcleo expuesto. Algunos capitanes reciben protección de sus seguidores. Esquiva la advertencia y golpea cuando se abra una oportunidad.',
     'Fighting beneath your level brings less experience and fewer crowns. Ordinary creatures also give less experience than their listed value. If you want to grow, seek a stronger opponent.':
       'Enfrentarte a enemigos de nivel inferior concede menos experiencia y coronas. Las criaturas comunes también otorgan menos experiencia que su valor indicado. Para progresar, busca rivales más fuertes.',
     'Each level gives you a discipline point and more health. Strength, vitality and movement training improve different parts of your fighting ability.':
@@ -1192,7 +1239,7 @@
     'Move and recover skill cooldowns more slowly, including skills used while already slowed.':
       'El movimiento y la recuperación de las habilidades se ralentizan, incluso si la habilidad se utiliza bajo ese efecto.',
     'Blocks special skills for enemies, you and companions inside the field; movement and ordinary attacks still work.':
-      'Bloquea las habilidades especiales de enemigos, héroe y compañeros dentro del campo; el movimiento y los ataques normales siguen funcionando.',
+      'Bloquea las habilidades especiales de enemigos, tu personaje y tus compañeros dentro del campo; el movimiento y los ataques normales siguen funcionando.',
     'HP damage can cancel an unfinished charged skill; brief retry recovery replaces its full cooldown.':
       'El daño a la salud puede interrumpir una habilidad cargada antes de completarse; una breve recuperación sustituye al tiempo completo de reutilización.',
     'Weaken lowers an enemy’s damage; Fracture increases the damage it takes.':
@@ -1293,17 +1340,17 @@
     ['Hostile enemies block ordinary eligible skills: ', 'Los enemigos bloquean habilidades válidas ordinarias con una probabilidad de '],
     ['% against one target, or ', '% contra un objetivo, o '],
     ['% per target in an area attack.\n', '% por objetivo en un ataque de área.\n'],
-    ['Against Ranger hero skills, enemy Skill Block is ', 'Contra las habilidades del héroe explorador, la probabilidad de bloqueo del enemigo es del '],
+    ['Against Ranger hero skills, enemy Skill Block is ', 'Contra las habilidades del explorador, la probabilidad de bloqueo del enemigo es del '],
     ['% for one target and ', '% contra un objetivo y del '],
-    ['% per area target. Rogue Bard performances cannot be blocked (0%).\n', '% por objetivo de área. Las interpretaciones de la pícara bardo no se pueden bloquear (0%).\n'],
+    ['% per area target. Rogue Bard performances cannot be blocked (0%).\n', '% por objetivo de área. Las interpretaciones musicales de la pícara no se pueden bloquear (0%).\n'],
     ['At night, hostile enemies gain +', 'De noche, los enemigos obtienen +'],
     [' percentage points: ordinary skills become ', ' puntos porcentuales: contra habilidades ordinarias pasan a '],
-    ['%; Ranger hero skills become ', '%; contra las habilidades del héroe explorador pasan a '],
+    ['%; Ranger hero skills become ', '%; contra las habilidades del explorador pasan a '],
     ['%. Lawfully Charmed monsters and boss pets gain that same night bonus (to ', '%. Los monstruos encantados legítimamente y las mascotas de jefes reciben esa misma bonificación nocturna (hasta '],
     ['%). Soldiers and Archers do not.\n', '%). Los soldados y arqueros no la reciben.\n'],
     ['Active lawful Soldiers, Archers, pets and Charmed companions block eligible hostile skills at ', 'Los soldados, arqueros, mascotas y compañeros encantados legítimos que estén activos bloquean habilidades enemigas válidas con una probabilidad del '],
     ['% single-target and ', '% contra un solo objetivo y del '],
-    ['% area per defender, including enemy Rogue maneuvers. The hero has no general Skill Block.\n', '% por defensor en ataques de área, incluidas las maniobras rebeldes enemigas. El héroe no tiene bloqueo general de habilidades.\n'],
+    ['% area per defender, including enemy Rogue maneuvers. The hero has no general Skill Block.\n', '% por defensor en ataques de área, incluidas las maniobras rebeldes enemigas. Tu personaje no tiene bloqueo general de habilidades.\n'],
     ['Basic automatic attacks and combo finishers cannot be blocked; actual critical skill impacts bypass Skill Block. Each legal area target checks separately; a block cancels only that impact’s damage and linked effects. Casting still spends its cooldown even if all targets block.\n', 'Los ataques básicos automáticos y remates de combos no se pueden bloquear; los impactos críticos reales de habilidades eluden el bloqueo. Cada objetivo válido de un ataque de área realiza su propia comprobación; un bloqueo anula solo el daño y los efectos ligados a ese impacto. La habilidad consume su recuperación habitual aunque todos los objetivos la bloqueen.\n'],
     ['Obstructed aim, misses, physical dodges, armor, wards and immunity are different from Skill Block.', 'La puntería obstruida, los fallos, las esquivas físicas, la armadura, las protecciones y la inmunidad son distintos del bloqueo de habilidades.'],
 
@@ -1341,7 +1388,7 @@
     ],
     [
       'Hero and companion shots still use their normal obstruction rules.',
-      'Los disparos del héroe y de sus compañeros siguen sus reglas normales de obstrucción.',
+      'Los disparos de tu personaje y de sus compañeros siguen sus reglas normales de obstrucción.',
     ],
     [
       'Heroes and companions recover cooldowns at ',
@@ -1370,7 +1417,7 @@
     ],
     [
       'The Mage’s Silence Field stays where cast for ',
-      'El Campo de Silencio del mago permanece donde se lanzó durante ',
+      'El Campo de Silencio de la maga permanece donde se lanzó durante ',
     ],
     [
       ' seconds by rank. It suppresses new specials, support-heal activation and unfinished companion charged releases.',
@@ -1416,7 +1463,7 @@
     ],
     [
       'The Mage’s Spell Interrupt instead cancels one current enemy warned or aimed attack, leaving later queued attacks intact.',
-      'Interrupción de Hechizo del mago cancela, en cambio, un ataque enemigo advertido o apuntado, sin afectar a los posteriores en cola.',
+      'Interrupción de Hechizo de la maga cancela, en cambio, un ataque enemigo advertido o apuntado, sin afectar a los posteriores en cola.',
     ],
     [
       'Paladin weakening reduces the affected enemy’s outgoing damage for its actual duration.',
@@ -1424,11 +1471,11 @@
     ],
     [
       'Mage Fracture is vulnerability, not Slow or Silence:',
-      'Fractura del mago es vulnerabilidad, no Ralentización ni Silencio:',
+      'Fractura de la maga es vulnerabilidad, no Ralentización ni Silencio:',
     ],
     [
       'the strongest active vulnerability applies once, helping hero and companion hits.',
-      'la vulnerabilidad activa más fuerte se aplica una sola vez y mejora los golpes del héroe y sus compañeros.',
+      'la vulnerabilidad activa más fuerte se aplica una sola vez y mejora los golpes de tu personaje y sus compañeros.',
     ],
     [
       'Fracture never adds multiple percentages together.',
@@ -1448,7 +1495,7 @@
     ],
     [
       'Ranger Skill 4 tap gives 25% hero movement haste.',
-      'El toque de la habilidad 4 del explorador concede un 25 % de celeridad de movimiento al héroe.',
+      'El toque de la habilidad 4 del explorador concede un 25 % de celeridad al movimiento del personaje.',
     ],
     [
       'Its charged Companion Rally needs living nearby allies with line of sight; with none it spends no cooldown.',
@@ -1507,7 +1554,7 @@
     ],
     [
       'Hero skill healing is separate from Ranger support over time.',
-      'La curación por habilidades del héroe es independiente del apoyo gradual de exploradores.',
+      'La curación por habilidades de tu personaje es independiente del apoyo gradual de exploradores.',
     ],
     [
       'Eligible ranged enemies and selected captains/bosses treat injured living allies in an area, with eligible leaders included.',
@@ -1865,7 +1912,7 @@
     ],
     [
       'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; recruiting the same pet again cannot replace treatment. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Ranged pets keep their distance when space permits and can attack while repositioning. Attacks need a clear line. Their first skill needs no further lessons. Learning your second hero skill from Mira in Millhaven also unlocks their charged second skill. Charge preparation, interruption, Slow and Silence affect them as they affect other companions. Pets share your company’s field limit.',
-      'El reclutamiento es gratuito, con un individuo por jefe. Las mascotas en descanso o caídas siguen en tu compañía y conservan su salud. Trátalas o recupéralas mediante los servicios normales del cuartel; volver a reclutar la misma mascota no sustituye el tratamiento. Heredan salud según el nivel del héroe, Vitalidad de Compañeros y bonificaciones de Expedición, como las tropas. Las mascotas a distancia se separan del enemigo cuando hay espacio y pueden atacar mientras se recolocan. Sus ataques requieren una línea despejada. La primera habilidad no necesita más lecciones. Aprender tu segunda habilidad con Mira en Millhaven también desbloquea su segunda habilidad cargada. Preparación, interrupción, Ralentización y Silencio les afectan como a los demás compañeros. Comparten el límite de integrantes en el campo de tu compañía.',
+      'El reclutamiento es gratuito, con un individuo por jefe. Las mascotas en descanso o caídas siguen en tu compañía y conservan su salud. Trátalas o recupéralas mediante los servicios normales del cuartel; volver a reclutar la misma mascota no sustituye el tratamiento. Heredan salud según el nivel de tu personaje, Vitalidad de Compañeros y bonificaciones de Expedición, como las tropas. Las mascotas a distancia se separan del enemigo cuando hay espacio y pueden atacar mientras se recolocan. Sus ataques requieren una línea despejada. La primera habilidad no necesita más lecciones. Aprender tu segunda habilidad con Mira en Millhaven también desbloquea su segunda habilidad cargada. Preparación, interrupción, Ralentización y Silencio les afectan como a los demás compañeros. Comparten el límite de integrantes en el campo de tu compañía.',
     ],
     ['A miniature companion inspired by ', 'Un compañero en miniatura inspirado en '],
     ['Shared Training', 'Entrenamiento compartido'],
@@ -1986,7 +2033,7 @@
     ['; draws back ', '; recupera un '],
     ['% of HP actually taken', '% de los PV realmente arrebatados'],
     ['; drains ', '; drena un '],
-    ['% of the hero’s maximum mana', '% del maná máximo del héroe'],
+    ['% of the hero’s maximum mana', '% del maná máximo de tu personaje'],
     ['s; restores ', ' s; restaura un '],
     [
       '% of maximum HP, up to missing health; recovery ',
@@ -1995,7 +2042,8 @@
     ['TRUE', 'TRUE'],
     ['normal', 'normal'],
     ['paladin', 'paladín'],
-    ['mage', 'mago'],
+    ['mage', 'maga'],
+    ['rogue', 'pícara'],
     ['ranger', 'explorador'],
     ['Recruitable', 'Disponible para reclutar'],
     ['With you', 'Contigo'],

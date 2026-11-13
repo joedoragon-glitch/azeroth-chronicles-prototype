@@ -172,13 +172,48 @@ function contrast(item) {
         await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
         const newGameFit = await assertDialogGeometry(frame, 'New Adventure', { noScroll: true });
         await frame
-          .getByRole('button', { name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/ })
+          .getByRole('button', { name: language === 'es' ? /^Elegir personaje/ : /^Choose Hero/ })
           .tap();
         const cards = await measure(frame, '#modal-actions button', { targets: true, minFont: 13 });
         assert.equal(cards.length, 4);
         cards.forEach(contrast);
+        const portraits = frame.locator('#modal-actions canvas.class-sprite-preview');
+        assert.equal(await portraits.count(), 4, 'all four protagonists have actual game-art previews');
+        await frame.waitForFunction(() =>
+          document.querySelector('.class-sprite-preview[data-hero-class="ranger"]')
+            ?.dataset.previewSource === 'game-sprite', null, { timeout: 20000 });
+        const portraitPixels = await portraits.evaluateAll((canvases) => canvases.map((canvas) => {
+          const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+          let opaque = 0;
+          for (let i = 3; i < data.length; i += 4) if (data[i] > 20) opaque++;
+          return {
+            hero: canvas.dataset.heroClass,
+            source: canvas.dataset.previewSource,
+            pixels: opaque,
+            hiddenFromSpeech: canvas.getAttribute('aria-hidden') === 'true',
+          };
+        }));
+        assert.deepEqual(portraitPixels.map((p) => p.hero),
+          ['paladin', 'mage', 'ranger', 'rogue'], 'portraits follow the live four-class roster');
+        assert(portraitPixels.every((p) => p.pixels > 120 && p.hiddenFromSpeech),
+          'every playable protagonist has a genuinely painted, non-decorative preview');
+        assert.equal(portraitPixels.find((p) => p.hero === 'ranger').source,
+          'game-sprite', 'Ranger matches the actual registered image, not substitute art');
+        assert(portraitPixels.filter((p) => p.source === 'game-procedural').length === 3,
+          'Paladin, Mage, and Rogue use the actual procedural renderer');
         await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
-        const heroFit = await assertDialogGeometry(frame, 'Choose Hero', { noScroll: true });
+        // A two-sentence protagonist introduction is intentional reading
+        // content, not a truncated skill tag. On a 375px-tall landscape
+        // phone, keep complete copy scrollable and ensure the fourth hero and
+        // optional name remain reachable without moving the Back control.
+        const heroFit = await assertDialogGeometry(frame, 'Choose Hero');
+        const lastHero = frame.locator('#modal-actions button').last();
+        await lastHero.scrollIntoViewIfNeeded();
+        const lastHeroBox = await lastHero.boundingBox();
+        assert(lastHeroBox.y >= heroFit.content.top - 2 &&
+          lastHeroBox.y + lastHeroBox.height <= heroFit.content.bottom + 2,
+          'last playable hero is fully reachable in short landscape');
+        await frame.locator('#character-name').scrollIntoViewIfNeeded();
         const back = await frame.locator('#close-button').boundingBox();
         assert(back.height >= 44 && back.y + back.height <= 365);
         assert.equal(
@@ -261,7 +296,7 @@ function contrast(item) {
         await frame.locator('#close-button').tap();
         await frame.locator('#title-new').tap();
         await frame.getByRole('button', {
-          name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/,
+          name: language === 'es' ? /^Elegir personaje/ : /^Choose Hero/,
         }).tap();
         await frame.getByRole('button', { name: /Palad/i }).tap();
         await frame.waitForFunction(
