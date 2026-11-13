@@ -3725,6 +3725,56 @@
   // The browser must receive a trusted click on the actual file input.
   // Preserve its stable DOM node and onchange handler between dialog rebuilds.
   const importFileInput = $('import-file');
+  // The character picker uses precisely the appearances players see in-game:
+  // authored procedural Paladin/Mage/Rogue; the registered Ranger sprite once
+  // it is loaded, with the real procedural Ranger as an offline fallback.
+  // No portrait asset, gameplay state, or title-time GPU warmup is invented.
+  let rangerPickerLoadRequested = false;
+  function paintClassSpritePreview(canvas, heroClass) {
+    const ctx = canvas?.getContext?.('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const actor = {
+      renderKind: 'hero', class: heroClass, crowned: false,
+      x: 0, y: 0, hp: 100, maxHp: 100,
+    };
+    if (heroClass === 'ranger' && typeof PrototypeSprites !== 'undefined') {
+      ctx.save();
+      ctx.scale(0.74, 0.74);
+      let painted = false;
+      try {
+        painted = !!PrototypeSprites.draw?.(ctx, actor, { x: 103, y: 189 }, 0, false);
+      } finally {
+        ctx.restore();
+      }
+      if (painted) {
+        canvas.dataset.previewSource = 'game-sprite';
+        return;
+      }
+    }
+    ctx.save();
+    ctx.scale(2.4, 2.4);
+    try {
+      PrototypeVisuals.draw(ctx, actor, { x: 31.7, y: 63 }, 0, false);
+      canvas.dataset.previewSource = 'game-procedural';
+    } finally {
+      ctx.restore();
+    }
+  }
+  function warmRangerPickerPreview() {
+    if (rangerPickerLoadRequested || typeof PrototypeSprites === 'undefined' ||
+        typeof PrototypeSprites.preload !== 'function' || typeof fetch !== 'function')
+      return;
+    rangerPickerLoadRequested = true;
+    // A player has explicitly opened the class picker. Load only the real
+    // Ranger body, not every animation, scene sprite or GPU texture.
+    PrototypeSprites.preload(undefined, ['hero:ranger']).then(() => {
+      const previews = $('modal-actions').querySelectorAll?.(
+        '.class-sprite-preview[data-hero-class="ranger"]',
+      ) || [];
+      for (const canvas of previews) paintClassSpritePreview(canvas, 'ranger');
+    }).catch(() => {}); // Offline class choice remains fully functional.
+  }
   function renderActions() {
     const host = $('modal-actions');
     if (!importFileInput.hidden) {
@@ -3876,16 +3926,39 @@
           b.setAttribute('aria-pressed', String(a.uiChosen));
         }
         if (a.uiWide) b.classList.add('menu-wide');
-        if (a.classId === 'rogue') {
-          const symbol = document.createElement('span');
-          symbol.setAttribute('aria-hidden', 'true');
-          symbol.style.cssText = 'display:inline-flex;vertical-align:middle;margin-right:0.4em';
-          symbol.innerHTML = rogueJingleIconSvg;
-          b.prepend(symbol);
+        const isClassChoice = menu.view === 'class-select' &&
+          ['paladin', 'mage', 'ranger', 'rogue'].includes(a.classId);
+        if (isClassChoice) {
+          b.classList.add('class-character-choice');
+          b.replaceChildren();
+          const preview = document.createElement('canvas');
+          preview.className = 'class-sprite-preview';
+          preview.width = 152;
+          preview.height = 176;
+          preview.dataset.heroClass = a.classId;
+          preview.setAttribute('aria-hidden', 'true');
+          const copy = document.createElement('span');
+          copy.className = 'class-choice-copy';
+          const name = document.createElement('span');
+          name.className = 'class-choice-name';
+          name.textContent = translateMenu(a.label);
+          copy.append(name);
+          details(copy, a);
+          b.append(preview, copy);
+          paintClassSpritePreview(preview, a.classId);
+          if (a.classId === 'ranger') warmRangerPickerPreview();
+        } else {
+          if (a.classId === 'rogue') {
+            const symbol = document.createElement('span');
+            symbol.setAttribute('aria-hidden', 'true');
+            symbol.style.cssText = 'display:inline-flex;vertical-align:middle;margin-right:0.4em';
+            symbol.innerHTML = rogueJingleIconSvg;
+            b.prepend(symbol);
+          }
+          details(b, a);
         }
         b.disabled = a.disabled === true;
         b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
-        details(b, a);
         b.onclick = () => {
           audio.unlock().then(() => audio.interfaceSound('confirm'));
           a.action();
