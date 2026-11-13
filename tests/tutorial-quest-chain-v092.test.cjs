@@ -193,4 +193,12 @@ for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
   assert(C.restore(g.snapshot()).s.quests['quest-barracks'].paid);
 }
 
+for (const cls of ['paladin', 'mage', 'ranger']) {
+  const g = fresh(cls);
+  g.briefCompanions();
+  for (const ally of g.s.party) ally.hp = 0;
+  assert.equal(g.tutorialStage(), 'recall', cls + ' still needs real Recall practice');
+  assert(g.questProgress(g.questDefs()[0]).includes('Recover a fallen companion'),
+    cls + ' cannot Recall without a living ally');
+}
 console.log('PASS v0.9.2 company/rogue/Board/Codex/gather and boss/captain auto-attack native regressions');
