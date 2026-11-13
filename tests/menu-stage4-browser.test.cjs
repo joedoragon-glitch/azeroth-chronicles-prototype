@@ -178,7 +178,18 @@ function contrast(item) {
         assert.equal(cards.length, 4);
         cards.forEach(contrast);
         await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
-        const heroFit = await assertDialogGeometry(frame, 'Choose Hero', { noScroll: true });
+        // A two-sentence protagonist introduction is intentional reading
+        // content, not a truncated skill tag. On a 375px-tall landscape
+        // phone, keep complete copy scrollable and ensure the fourth hero and
+        // optional name remain reachable without moving the Back control.
+        const heroFit = await assertDialogGeometry(frame, 'Choose Hero');
+        const lastHero = frame.locator('#modal-actions button').last();
+        await lastHero.scrollIntoViewIfNeeded();
+        const lastHeroBox = await lastHero.boundingBox();
+        assert(lastHeroBox.y >= heroFit.content.top - 2 &&
+          lastHeroBox.y + lastHeroBox.height <= heroFit.content.bottom + 2,
+          'last playable hero is fully reachable in short landscape');
+        await frame.locator('#character-name').scrollIntoViewIfNeeded();
         const back = await frame.locator('#close-button').boundingBox();
         assert(back.height >= 44 && back.y + back.height <= 365);
         assert.equal(
