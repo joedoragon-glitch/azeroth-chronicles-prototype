@@ -59,6 +59,15 @@ async function main() {
         'current artwork should be the default collection');
       assert((await page.locator('#asset-group option').count()) < 12,
         'first-level categories should remain compact');
+      // Regression from owner screenshots: identical Crate/Drying Rack/Feed
+      // Crate/Game Table thumbnails were assigned two IDs solely because
+      // sceneRole suppressed the otherwise normal prop candidate key.
+      for (const name of ['Crate', 'Drying Rack', 'Feed Crate', 'Game Table']) {
+        await page.locator('#asset-query').fill(name);
+        const names = await page.locator('#asset-grid .library-card-title').allTextContents();
+        assert.equal(names.filter((title) => title === name).length, 1,
+          name + ' must appear exactly once in the real browse interface');
+      }
       await page.locator('#asset-query').fill('hero:paladin');
       await page.locator('#asset-grid .asset-card').first().click();
       await page.waitForFunction(() => new URL(location.href).searchParams.get('asset') === 'hero:paladin');
