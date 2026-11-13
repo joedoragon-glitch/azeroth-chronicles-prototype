@@ -450,7 +450,8 @@ async function startBrowsableShowroom() {
     for (let i = 0; i < states.length; i++)
       select.add(new Option(states[i].label, String(i)));
     select.disabled = states.length < 2;
-    select.value = String(Math.min(state.variant, states.length - 1));
+    select.parentElement.hidden = states.length < 2;
+    select.value = String(Math.max(0, Math.min(state.variant, states.length - 1)));
     const versions = $('asset-revision');
     versions.replaceChildren();
     if (entry.registeredRaster)
@@ -468,6 +469,7 @@ async function startBrowsableShowroom() {
       }
     }
     versions.disabled = versions.options.length < 2;
+    versions.parentElement.hidden = versions.options.length < 2;
   }
   function updateViewButtons(entry) {
     const hasState = !!activeState(entry)?.entity;
