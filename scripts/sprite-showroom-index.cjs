@@ -349,6 +349,7 @@ function build() {
   return {
     schemaVersion: 1,
     title: 'Sprite Showroom',
+    regionNames,
     provenance: 'Current checked-in renderer and dated review fixtures; not full-scene player acceptance',
     sourceFingerprints: fingerprints(),
     counts: {
