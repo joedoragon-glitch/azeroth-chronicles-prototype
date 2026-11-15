@@ -3820,6 +3820,17 @@
     if (desktopMouse && event.button === 0 && event.target === canvas)
       useRangerSupport('health');
   }, true);
+  // Safari can dispatch touch events without a usable pointer sequence.
+  // Block direct touches on menus and title choices; preserve the joystick,
+  // the dedicated Confirm control, native text entry and file dialogs.
+  document.addEventListener('touchstart', (event) => {
+    const target = event.target;
+    if (target.closest?.('#order-button, #joystick, #stick')) return;
+    if (target.matches?.('input[type="text"], textarea, input[type="file"]')) return;
+    if (!blockMenuPointer(event)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }, { capture: true, passive: false });
   document.addEventListener('click', (event) => {
     if (!event.isTrusted || event.target.matches?.('input[type="text"], textarea')) return;
     const desktop = platform.mode === 'desktop';
@@ -3844,7 +3855,7 @@
       outsidePointerId = event.pointerId;
       event.preventDefault();
       event.stopImmediatePropagation();
-      dismissOutside();
+      // Do not dismiss the menu: use Esc or the fixed Confirm/Back controls.
     },
     true,
   );
