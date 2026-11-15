@@ -227,9 +227,10 @@
             { key: 'radius', label: 'Area radius', value: x.radius, unit: '' },
             { key: 'targets', label: 'Maximum hostile targets', value: x.cap, unit: '' },
             { key: 'duration', label: slot === 5 ? 'Station lifetime' : 'Your / companion boon', value: x.seconds, unit: 's' },
-            { key: 'cooldown', label: 'Cooldown',
-              value: game.skillCooldown(slot, charged), unit: 's' },
           ];
+        if (slot <= 4) metrics.push({
+          key: 'cooldown', label: 'Cooldown', value: game.skillCooldown(slot, charged), unit: 's',
+        });
         if (slot === 2) metrics.push(
           { key: 'slow', label: 'Enemy Slow',
             value: x.slow + R.cooldownBalance.slowDurationBonusSeconds, unit: 's' },
@@ -319,11 +320,10 @@
         's',
       );
     }
-    for (const [f, charged] of [
-      [tap, false],
-      [charge, true],
-    ])
-      add(f, 'cooldown', 'Cooldown', game.skillCooldown(slot, charged), 's');
+    if (slot <= 4) {
+      add(tap, 'cooldown', 'Cooldown', game.skillCooldown(slot, false), 's');
+      add(charge, 'cooldown', 'Cooldown', game.skillCooldown(slot, true), 's');
+    }
     let auto = null;
     if (slot === 1 && cls === 'rogue') {
       const cfg = R.rogueHeroFoundation.basic,
@@ -359,7 +359,7 @@
       auto = {
         title: 'Automatic basics',
         effect:
-          'Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.',
+          'Attacks automatically while moving. Three same-target hits build a finishing splash. Skill 1 Tap and Charged do not reset the combo.',
         metrics: [],
       };
       add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');

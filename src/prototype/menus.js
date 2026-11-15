@@ -662,6 +662,7 @@
               s[0] +
               ' · ' +
               card.role +
+              ' · ' + pairedSkillHint(s[0]) +
               ' · ' +
               (capped
                 ? 'Instructor limit: Rank ' + cap
@@ -743,6 +744,9 @@
     function professionSkillCard(slot) {
       return SkillReference.card(getGame(), slot);
     }
+    function pairedSkillHint(slot) {
+      return slot > 4 ? 'Paired with skill ' + (slot - 4) : 'Activates learned skill ' + (slot + 4);
+    }
     function skillSections(info) {
       return (info.auto ? [info.auto, info.tap, info.charge] : [info.tap, info.charge]).map(
         (form) => ({
@@ -762,9 +766,9 @@
           summary:
             'Rank ' +
             info.rank +
-            (info.rank === 8
-              ? ' · Maximum rank'
-              : ' · Automatic basics, Tap and Charged use this rank.') +
+            (info.rank === 8 ? ' · Maximum rank' : '') +
+            ' · ' + pairedSkillHint(slot) +
+            (slot > 4 ? ' · Paired effects use their own rank.' : '') +
             (slot === 1 ? ' · Self-taught from Rank 1; rescued specialists refine it.' : ''),
           sections: skillSections(info),
           note: info.note,
@@ -793,7 +797,7 @@
         'Using skills',
         {
           summary:
-            'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.',
+            'Movement-only automatic basics. Tap or charge keys 1–4. Learned skills 5–8 are paired with 1–4.',
           sections: [
             {
               title: 'Controls',
@@ -909,12 +913,12 @@
             return action(
               'Skill ' + slot + ' · ' + card.name + ' · ' + (rank ? 'Rank ' + rank : 'Unlearned'),
               () => skillDetail(slot, () => skillBook(back)),
-              card.role,
+              card.role + ' · ' + pairedSkillHint(slot),
             );
           });
       openMenu(
         'Skill journal',
-        'Choose a skill. View automatic Skill 1 basics, Tap and Charged effects with independent recovery.',
+        'Choose a skill to see its normal and charged effects.',
         [
           ...choices,
           action(

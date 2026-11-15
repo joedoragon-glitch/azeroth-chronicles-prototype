@@ -7,12 +7,14 @@ const SpriteFormat = require('../src/prototype/sprite-format.js');
 const root = path.resolve(__dirname, '..'),
   { scripts, core, legacy } = require('./site-assets.cjs'),
   pkg = require('../package.json');
+const packageOnly = process.argv.includes('--package-only');
 // Locally bundle the pinned PixiJS dependency before generating the PWA.
 // Clean checkouts, including CI --check runs, prepare this build-only dependency.
 // The running PWA loads ONLY its same-origin copy.
-cp.execFileSync(process.execPath, [path.join(__dirname, 'vendor-pixi.cjs'), '--ensure'], {
-  stdio: 'inherit',
-});
+if (!packageOnly)
+  cp.execFileSync(process.execPath, [path.join(__dirname, 'vendor-pixi.cjs'), '--ensure'], {
+    stdio: 'inherit',
+  });
 const check = process.argv.includes('--check'),
   site = process.argv.includes('--site'),
   read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
@@ -56,7 +58,7 @@ generated.set(
   'sw.js',
   read('templates/service-worker.js')
     .replace('{{SPRITE_FORMAT}}', read('src/prototype/sprite-format.js'))
-    .replace('{{CACHE_VERSION}}', JSON.stringify('azeroth-app-v' + pkg.version))
+    .replace('{{CACHE_VERSION}}', JSON.stringify('gta-cuba-app-v' + pkg.version))
     .replace('{{APP_FILES}}', JSON.stringify(['./', ...core.map((p) => './' + p)]))
     .replace('{{APP_FINGERPRINTS}}', JSON.stringify(appFingerprints))
     .replace('{{LEGACY_FILES}}', JSON.stringify(legacy.map((p) => './' + p))),
@@ -88,8 +90,9 @@ for (const entry of spriteResources)
       throw Error('Missing or invalid sprite: ' + file);
   }
 // Reject invalid assets before starting a syntax-check process for every script.
-for (const file of [...core, ...legacy])
-  if (file.endsWith('.js')) cp.execFileSync(process.execPath, ['--check', path.join(root, file)]);
+if (!packageOnly)
+  for (const file of [...core, ...legacy])
+    if (file.endsWith('.js')) cp.execFileSync(process.execPath, ['--check', path.join(root, file)]);
 if (site) {
   const target = path.join(root, '_site');
   fs.rmSync(target, { recursive: true, force: true });
