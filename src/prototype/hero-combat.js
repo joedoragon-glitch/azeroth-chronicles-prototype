@@ -1427,7 +1427,7 @@
       // Phase 5: mirrored combat-only area songs. A single legal primary
       // anchors the performance; enemies and living allies are resolved in
       // the identical circle without coupling the two outcomes. No Charm.
-      castRoguePerformance(slot, targetId = null, charged = false) {
+      castRoguePerformance(slot, targetId = null, charged = false, paired = false) {
         const h = this.hero, rank = h.skills[slot - 1],
           form = this.roguePerformanceAtRank(slot, charged, rank),
           selected = this.selectedHeroTarget(),
@@ -1436,7 +1436,7 @@
           this.s.challenge.pending || this.s.challenge.gameOver ||
           this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld ||
           (charged && this.partyChargeRecovery(h) > 0) ||
-          this.mageSilenceActive(h) || !this.skillReady(slot, charged))
+          this.mageSilenceActive(h) || (!paired && !this.skillReady(slot, charged)))
           return false;
         const candidates = this.zone().enemies.filter((e) =>
           e.hp > 0 && !e.neutral && !e.returning &&
@@ -1460,8 +1460,10 @@
           dist(u, h) <= form.radius && this.line(h, u));
         // Recall remains under player/timer control during all offense.
         this.engage(primary);
-        h.cd[slot - 1] = this.skillCooldown(slot, false);
-        if (charged) h.chargedCd[slot - 1] = this.skillCooldown(slot, true);
+        if (!paired) {
+          h.cd[slot - 1] = this.skillCooldown(slot, false);
+          if (charged) h.chargedCd[slot - 1] = this.skillCooldown(slot, true);
+        }
         this.s.heroTarget = primary.id;
         // Exactly one frozen Party-stream receipt for this legal manual cast.
         // Only the authored lever changes; allied and hostile sides never
@@ -1783,6 +1785,23 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
+        if (automatic) return this.resolveHeroSkill(slot, targetId, charged, encountersAtStart, true);
+        if (slot < 1 || slot > 4) return false;
+        const previousOrder = this.hero.order;
+        const released = this.resolveHeroSkill(slot, targetId, charged, encountersAtStart);
+        // Approach requests are successful commands, but have yet to release.
+        // The engine calls cast again when the primary actually reaches its target.
+        if (released && this.hero.skills[slot + 3] &&
+            !(this.hero.order !== previousOrder && this.hero.order?.type === 'skill-approach')) {
+          const survivingTarget = targetId != null &&
+            this.zone().enemies.some((enemy) => enemy.id === targetId && enemy.hp > 0);
+          this.resolveHeroSkill(
+            slot + 4, survivingTarget ? targetId : undefined, charged, encountersAtStart, false, true,
+          );
+        }
+        return released;
+      }
+      resolveHeroSkill(slot, targetId, charged, encountersAtStart, automatic = false, paired = false) {
         // The unlocked Rogue songs are staged under the same unregistered
         // class gate. Later performance families remain unavailable.
         if (this.hero.class === 'rogue') {
@@ -1790,7 +1809,7 @@
             return automatic && !charged ? this.castRogueBasic(targetId)
               : !automatic ? this.castRogueSkill1(targetId, !!charged, encountersAtStart)
               : false;
-          return !automatic ? this.castRoguePerformance(slot, targetId, !!charged) : false;
+          return !automatic ? this.castRoguePerformance(slot, targetId, !!charged, paired) : false;
         }
         if (!implementedHeroCombatClasses.has(this.hero.class)) return false;
         if (this.s.mode === 'developer' && slot === 1 && automatic) return false;
@@ -1830,7 +1849,7 @@
           !rank ||
           (automatic && slot === 1
             ? (this.hero.basicCd || 0) > 0
-            : !this.skillReady(slot, isCharged)) ||
+            : !paired && !this.skillReady(slot, isCharged)) ||
           this.peace
         ) {
           if (!rank) this.say('This skill must be learned from a rescued instructor.');
@@ -1891,7 +1910,7 @@
         if (requiresTarget && !target) {
           // Covering fire during movement never authorizes pursuit, even when
           // an old selected/combo target remains valid beyond attack range.
-          if (automatic) return false;
+          if (automatic || paired) return false;
           // A manually targeted out-of-range skill cannot hijack an explicitly
           // selected map journey. No chase, mana use or cooldown; keep walking.
           // Outside navigation the original deliberate skill approach applies.
@@ -1965,7 +1984,7 @@
           )
             return false;
         }
-        const cost = this.skillManaCost(slot, rank, isCharged);
+        const cost = paired ? 0 : this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
         // Manual skills and automatic basics have no authority to toggle
@@ -1974,7 +1993,7 @@
           this.hero.basicCd = this.basicSkillCooldown();
         } else if (slot === 3 && this.hero.class === 'paladin' && !isCharged) {
           this.hero.cd[i] = 0; // Shield Stance begins recovery when lowered.
-        } else {
+        } else if (!paired) {
           // Charged starts both recoveries. Tap changes only normal readiness.
           this.hero.cd[i] = this.skillCooldown(slot, false);
           if (isCharged) this.hero.chargedCd[i] = this.skillCooldown(slot, true);

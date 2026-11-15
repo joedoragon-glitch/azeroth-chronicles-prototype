@@ -56,10 +56,16 @@
       return false;
     }
   }
-  applyPerformanceBaseline(localStorage);
+  // The edition uses its own keys even if a local operator serves both games on one origin.
+  const editionStorage = {
+    getItem: (key) => localStorage.getItem('gta-cuba:' + key),
+    setItem: (key, value) => localStorage.setItem('gta-cuba:' + key, value),
+    removeItem: (key) => localStorage.removeItem('gta-cuba:' + key),
+  };
+  applyPerformanceBaseline(editionStorage);
   let optimizationPreference = 'auto';
   try {
-    const saved = localStorage.getItem(optimizationKey);
+    const saved = editionStorage.getItem(optimizationKey);
     if (['off', 'auto', 'on'].includes(saved)) optimizationPreference = saved;
   } catch (_) {}
   // Runtime state is distinct from the stored preference and never a save field.
@@ -70,7 +76,7 @@
   let language = 'en';
   let firstLanguageChoice = true;
   try {
-    const savedLanguage = localStorage.getItem(languageKey);
+    const savedLanguage = editionStorage.getItem(languageKey);
     firstLanguageChoice = savedLanguage !== 'en' && savedLanguage !== 'es';
     language = savedLanguage === 'es' ? 'es' : 'en';
   } catch (_) {}
@@ -1229,6 +1235,13 @@
     'Off ✓': 'Desactivado ✓',
     'Keyboard presets': 'Distribuciones de teclado',
     'Key bindings': 'Teclas asignadas',
+    'Movement-only automatic basics. Tap or charge keys 1–4. Learned skills 5–8 are paired with 1–4.':
+      'Los ataques automáticos solo se hacen en movimiento. Pulsa o carga las teclas 1–4. Las habilidades aprendidas 5–8 van unidas a 1–4.',
+    'Paired with skill': 'Unida a la habilidad',
+    'Activates learned skill': 'Activa la habilidad aprendida',
+    'Paired effects use their own rank.': 'El efecto de cada habilidad unida usa su propio rango.',
+    'Choose a skill to see its normal and charged effects.':
+      'Elige una habilidad para ver sus efectos normal y cargado.',
     'Movement and menu keys': 'Teclas de movimiento y menú',
     'Skills and combat keys': 'Teclas de habilidades y combate',
     'Companion and utility keys': 'Teclas de compañeros y utilidades',
@@ -1479,8 +1492,9 @@
     'Fire three rapid arrows at one foe': 'Dispara tres flechas rápidas a un enemigo',
     'Hawk Interception: pursue one foe and stop an active retreat':
       'Intercepción del halcón: persigue a un enemigo e interrumpe una retirada activa',
-    'Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.':
-      'Ataca independientemente en movimiento o en reposo. Tres golpes al mismo enemigo culminan en daño de área; las formas normal y cargada no reinician el combo.',
+    'Attacks automatically while moving. Three same-target hits build a finishing splash. Skill 1 Tap and Charged do not reset the combo.':
+      'Ataca automáticamente en movimiento. Tres golpes al mismo enemigo culminan en daño de área. Las formas normal y cargada no reinician el combo.',
+    'Automatic basics require movement.': 'Los ataques automáticos requieren movimiento.',
     'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.':
       'Los ataques básicos automáticos de la habilidad 1 funcionan aparte. Toca para la técnica normal; mantén para preparar la cargada.',
     'Charged starts both recovery timers: short Tap and longer Charged. Tap returns after its own cooldown, even while Charged is still recovering. Tapping does not restart the charged lock. Charged needs both timers ready. On cooldown, tap to queue normal or briefly hold to queue charged. A strong hit can interrupt preparation.':
@@ -1581,6 +1595,8 @@
         .replace('Expedition Skill', 'Expedición');
     if (/^Expedition Skill/.test(piece)) return piece.replace('Expedition Skill', 'Expedición');
     if (/^Rank /.test(piece)) return piece.replace('Rank ', 'Rango ');
+    if (/^(Paired with skill|Activates learned skill) [1-8]$/.test(piece))
+      return tr(piece.slice(0, -2)) + piece.slice(-2);
     if (/^Instructor limit: Rank /.test(piece))
       return piece.replace('Instructor limit: Rank ', 'Límite del instructor: rango ');
     if (/^Skill \d+$/.test(piece)) return piece.replace('Skill ', 'Habilidad ');
@@ -1764,7 +1780,7 @@
     if (persist) {
       firstLanguageChoice = false;
       try {
-        localStorage.setItem(languageKey, language);
+        editionStorage.setItem(languageKey, language);
       } catch (_) {}
     }
     $('menu-button').firstChild.textContent = language === 'es' ? '☰ Menú ' : '☰ Menu ';
@@ -1780,16 +1796,17 @@
 
   const writerGuard = PrototypePersistence.createWriterGuard({
     locks: navigator.locks,
+    lockName: 'gta-cuba-campaign-writer-v1',
     required: location.protocol === 'https:',
   });
   const persistence = PrototypePersistence.create({
-    storage: localStorage,
+    storage: editionStorage,
     Campaign,
     status,
     canWrite: writerGuard.canWrite,
   });
   const restartGuard = PrototypePersistence.createRestartGuard({
-    storage: localStorage,
+    storage: editionStorage,
     Campaign,
     canWrite: writerGuard.canWrite,
   });
@@ -1834,7 +1851,6 @@
     },
     statusUntil = 0,
     statusContext = null,
-    worldPointer = null,
     pointer = null,
     joystickTouchId = null,
     joystickStart = null;
@@ -1889,8 +1905,7 @@
     PrototypeMaterials.setOptimizationMode(optimizationMode);
   const platform = PrototypePlatform.init(window);
   audio.setMixProfile(platform.mode === 'phone' ? 'phone' : 'reference');
-  const input = PrototypeInput.create(localStorage, status);
-  let bindingCapture = null;
+  const input = PrototypeInput.create();
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
   document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
   document.body.setAttribute('data-hud-style', input.preferences.hudStyle);
@@ -2408,18 +2423,18 @@
   const frameProfile = PrototypeRuntime.createFrameProfile();
   // #783: disabled outside explicit renderer capture; ordinary draws remain untimed.
   let rendererDiagnosticActive = false;
-  const fps = PrototypeRuntime.createFrameRate(localStorage);
-  const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
-  const renderResolution = PrototypeRuntime.createResolution(localStorage);
+  const fps = PrototypeRuntime.createFrameRate(editionStorage);
+  const frameSkip = PrototypeRuntime.createFrameSkip(editionStorage);
+  const renderResolution = PrototypeRuntime.createResolution(editionStorage);
   const pixiResolution = PrototypeRuntime.createResolution(
-    localStorage,
+    editionStorage,
     'azeroth-pixi-resolution-v1',
     renderResolution.preference,
   );
   const pixiQualityKey = 'azeroth-pixi-quality-v1';
   const pixiQuality = { preset: false, particles: true };
   try {
-    const saved = JSON.parse(localStorage.getItem(pixiQualityKey));
+    const saved = JSON.parse(editionStorage.getItem(pixiQualityKey));
     if (typeof saved?.preset === 'boolean') pixiQuality.preset = saved.preset;
     if (typeof saved?.particles === 'boolean') pixiQuality.particles = saved.particles;
   } catch (_) {}
@@ -2430,7 +2445,7 @@
   }
   function applyPixiQuality() {
     try {
-      localStorage.setItem(pixiQualityKey, JSON.stringify(pixiQuality));
+      editionStorage.setItem(pixiQualityKey, JSON.stringify(pixiQuality));
     } catch (_) {}
     if (!canvasQualityBeforePixi) return;
     resize('pixi-quality');
@@ -2674,11 +2689,11 @@
     visibilityChanged() {},
   };
   const previousRendererChoice = graphicsGuard
-    ? graphicsGuard.startupChoice(localStorage)
+    ? graphicsGuard.startupChoice(editionStorage)
     : { renderer: 'canvas2d' };
   graphicsController = graphicsGuard
     ? graphicsGuard.create({
-        storage: localStorage,
+        storage: editionStorage,
         startupDecision: previousRendererChoice,
         prepareWebGL: () => {
           canvasQualityBeforePixi = {
@@ -3069,27 +3084,13 @@
       !game.s.challenge.gameOver
     );
   }
-  // Settings owns remapping. How-to-play guidance lives under title Help & Credits.
   function help(back = closeMenu) {
     openMenu(
       'Controls',
-      '',
-      [
-        action(
-          'Customize keyboard',
-          () => keyboardMenu(back),
-          language === 'es'
-            ? 'Movimiento, interacción, menú, habilidades y otras teclas.'
-            : 'Movement, interaction, menu, skills and other keys.',
-        ),
-        action(
-          'Touch and mouse options',
-          () => pointerMenu(back),
-          language === 'es'
-            ? 'Ajusta la palanca, el diseño táctil y el ratón.'
-            : 'Adjust joystick, touch layout and mouse input.',
-        ),
-      ],
+      language === 'es'
+        ? 'WASD para moverte y recorrer menús, F para confirmar y Esc para volver. En el teléfono, usa la palanca izquierda y el botón Confirmar. Pulsa 1–4 para usar habilidades o mantenlas pulsadas para cargarlas. Las habilidades aprendidas 5–8 se activan junto con 1–4. Haz clic izquierdo en el campo para pedir curación a un compañero.'
+        : 'Use WASD to move and navigate menus, F to confirm, and Esc to go back. On a phone, use the left joystick and the Confirm button. Tap 1–4 for skills or hold to charge. Learned skills 5–8 activate with 1–4. Left-click in the field to request a companion heal.',
+      [],
       back,
     );
   }
@@ -3105,8 +3106,8 @@
           'Using skills',
           explain(
             'Using skills',
-            'Tap for normal, hold until CHARGED and release. Charged starts the short Tap cooldown and its own longer one; Tap returns earlier without extending Charged. Automatic Skill 1 basics continue separately. See the Skill journal.',
-            'Toca para normal o mantén hasta CARGADA y suelta. La cargada inicia ambas recuperaciones; normal vuelve antes y no prolonga cargada. Los ataques básicos de la habilidad 1 siguen aparte. Consulta el Diario.',
+            'Tap for normal, hold until CHARGED and release. Charged starts the short Tap cooldown and its own longer one; Tap returns earlier without extending Charged. Automatic Skill 1 basics fire only while moving. Learned skills 5–8 follow 1–4 in the same form. See the Skill journal.',
+            'Toca para normal o mantén hasta CARGADA y suelta. La cargada inicia ambas recuperaciones; normal vuelve antes y no prolonga cargada. Los ataques automáticos de la habilidad 1 solo se hacen en movimiento. Las habilidades aprendidas 5–8 siguen a 1–4 en la misma forma. Consulta el Diario.',
           ),
         ),
         action(
@@ -3134,186 +3135,7 @@
       back,
     );
   }
-  function chooseKeyboardPreset(name, back) {
-    openMenu(
-      'Apply keyboard preset',
-      language === 'es'
-        ? 'Esto reemplaza las teclas actuales. La partida y los controles táctiles no cambian.'
-        : 'This replaces current key bindings. Your campaign and touch controls are unchanged.',
-      [
-        action('Apply preset', () => {
-          input.applyPreset(name);
-          clearInput();
-          updateHUD();
-          keyboardMenu(back);
-        }),
-        action('Keep current keys', () => keyboardMenu(back)),
-      ],
-      () => keyboardMenu(back),
-    );
-  }
-  // Keep the parent Back route stable across previews and key binding edits,
-  // so the shared menu foundation can restore the highlighted category.
-  const keyboardBackRoutes = new WeakMap();
-  const keyboardGroups = [
-    {
-      id: 'movement',
-      title: 'Movement and menu keys',
-      ids: ['up', 'down', 'left', 'right', 'confirm', 'menu'],
-    },
-    {
-      id: 'combat',
-      title: 'Skills and combat keys',
-      ids: [
-        'skill1',
-        'skill2',
-        'skill3',
-        'skill4',
-        'skill5',
-        'skill6',
-        'skill7',
-        'skill8',
-        'target',
-        'heal',
-        'mana',
-      ],
-    },
-    {
-      id: 'commands',
-      title: 'Companion and utility keys',
-      ids: ['doctrine', 'recall', 'map', 'training', 'skills', 'pause', 'help'],
-    },
-  ];
-  function keyboardBindingsMenu(group, back, returnToKeyboard = () => keyboardMenu(back)) {
-    const returnHere = () => keyboardBindingsMenu(group, back, returnToKeyboard);
-    const entries = input.actions
-      .filter(([id]) => group.ids.includes(id))
-      .map(([id, name]) => {
-        const item = action(name + ' · ' + input.key(id), () => {
-          openMenu(
-            'Bind ' + name,
-            'Press a new key for ' + name + '. Esc cancels.',
-            [],
-            returnHere,
-          );
-          bindingCapture = id;
-        });
-        // Labels change after binding, but this stable identity preserves
-        // the selected action when the player returns from key capture.
-        item.key = 'binding:' + id;
-        return item;
-      });
-    openMenu(
-      group.title,
-      'Choose an action to change its key. Esc cancels.',
-      entries,
-      returnToKeyboard,
-    );
-  }
-  function keyboardMenu(back = systemMenu) {
-    bindingCapture = null;
-    const presetNames = {
-      right: language === 'es' ? 'Mano derecha + WASD' : 'Right-hand skills + WASD',
-      classic: language === 'es' ? 'Clásico (números)' : 'Classic (numbers)',
-      left: language === 'es' ? 'Mano izquierda + IJKL' : 'Left-hand skills + IJKL',
-      custom: language === 'es' ? 'Personalizado' : 'Custom',
-    };
-    if (!keyboardBackRoutes.has(back)) keyboardBackRoutes.set(back, () => help(back));
-    const returnToHelp = keyboardBackRoutes.get(back);
-    openMenu(
-      'Customize keyboard',
-      language === 'es'
-        ? 'Distribución: ' + presetNames[input.preferences.preset] + '. Elige una o cambia teclas.'
-        : 'Layout: ' + presetNames[input.preferences.preset] + '. Choose a preset or rebind keys.',
-      [
-        menuControls.section('Keyboard presets'),
-        action('Right-hand skills (WASD) · Default', () => chooseKeyboardPreset('right', back)),
-        action('Classic · number keys', () => chooseKeyboardPreset('classic', back)),
-        action('Left-hand skills (IJKL)', () => chooseKeyboardPreset('left', back)),
-        menuControls.section('Key bindings'),
-        ...keyboardGroups.map((group) =>
-          action(
-            group.title,
-            () => keyboardBindingsMenu(group, back),
-            group.ids.filter((id) => input.actions.some(([candidate]) => candidate === id)).length +
-              ' actions',
-          ),
-        ),
-        action('Restore default keys', () => chooseKeyboardPreset('right', back)),
-      ],
-      returnToHelp,
-    );
-  }
-  function pointerMenu(back = systemMenu) {
-    const p = input.preferences;
-    const select = (name, value) => {
-      input.select(name, value);
-      document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
-      document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
-      document.body.setAttribute('data-hud-style', input.preferences.hudStyle);
-      adaptiveHudState = null;
-      clearInput();
-      syncJoystickPresentation();
-      runtime.reset();
-      frameProfile.reset();
-      updateHUD();
-    };
-    openMenu(
-      'Touch and mouse options',
-      'Choose your layout and movement controls.',
-      [
-        menuControls.section('Touch controls'),
-        menuControls.select(
-          'Phone layout',
-          p.phoneLayout,
-          [
-            { value: 'two-thumb', label: 'Two thumbs' },
-            { value: 'left-hand', label: 'Left hand' },
-          ],
-          (value) => select('phoneLayout', value),
-          'Two thumbs: movement left, skills right. Left hand: skills above the joystick.',
-        ),
-        menuControls.select(
-          'HUD style',
-          p.hudStyle,
-          [
-            { value: 'classic', label: 'Classic' },
-            { value: 'adaptive', label: 'Adaptive' },
-          ],
-          (value) => select('hudStyle', value),
-          'Adaptive quietly reduces idle control backgrounds; all learned actions stay available.',
-        ),
-        menuControls.select(
-          'Movement joystick',
-          p.joystickMode,
-          [
-            { value: 'fixed', label: 'Fixed' },
-            { value: 'floating', label: 'Floating' },
-          ],
-          (value) => select('joystickMode', value),
-          'Floating: touch the lower-left movement area; menus keep the fixed stick.',
-        ),
-        menuControls.toggle(
-          'Touch tap-to-move',
-          p.touchMove,
-          (enabled) => select('touchMove', enabled),
-          'Tap reachable ground to move.',
-        ),
-        menuControls.section('Mouse controls'),
-        menuControls.toggle(
-          'Mouse click-to-move',
-          p.mouseMove,
-          (enabled) => select('mouseMove', enabled),
-          manaEnabled
-            ? 'When off, left click in the world commands companion Heal. Right click commands Ranger Mana Recovery.'
-            : 'When off, left click in the world commands companion Heal.',
-        ),
-      ],
-      () => help(back),
-    );
-  }
   function cancelTravel() {
-    worldPointer = null;
     if (game) {
       if (navigationGuide?.autopilot && game.hero.order === navigationGuide.order) {
         navigationGuide.autopilot = false;
@@ -3330,14 +3152,6 @@
     joystickStart = null;
     joy = { x: 0, y: 0 };
     $('stick').style.transform = '';
-    document.body.classList.remove('floating-joystick-active');
-  }
-  function syncJoystickPresentation() {
-    const invisible =
-      platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
-    const control = $('joystick');
-    control.tabIndex = invisible ? -1 : 0;
-    control.setAttribute('aria-hidden', invisible ? 'true' : 'false');
   }
   function clearInput(preserveNavigation = true) {
     syncPartyChargeClock();
@@ -3351,13 +3165,8 @@
     keys = {};
     releaseJoystick();
     // Modal input cleanup must not cancel a still-owned walking order.
-    if (
-      preserveNavigation &&
-      navigationGuide?.autopilot &&
-      game?.hero.order === navigationGuide.order
-    )
-      worldPointer = null;
-    else cancelTravel();
+    if (!(preserveNavigation && navigationGuide?.autopilot &&
+      game?.hero.order === navigationGuide.order)) cancelTravel();
     $('desktop-interaction').hidden = true;
   }
   // Shared presentation controls. Gameplay menus still use action() unchanged.
@@ -3485,7 +3294,6 @@
   }
   function openMenu(title, description = '', actions = [], back = closeMenu, options = {}) {
     const restored = menuPosition(title, back);
-    bindingCapture = null;
     clearInput(true);
     gateDismissed = false;
     menu = { title, description, actions, back, view: options.view || 'default' };
@@ -3560,7 +3368,6 @@
     audio.interfaceSound('open');
     menuIndex = 0;
     document.body.classList.add('menu-open');
-    syncJoystickPresentation();
     $('modal').hidden = false;
     $('modal-title').textContent = translateMenu(title);
     const descriptionHost = $('modal-description');
@@ -3849,7 +3656,9 @@
     buttons.forEach((b, i) => b.classList.toggle('selected', i === menuIndex));
     const selected = buttons[menuIndex];
     if (moveFocus && selected)
-      (selected.disabled ? $('modal') : selected).focus?.({ preventScroll: true });
+      (selected.disabled || selected.type === 'text' ? $('modal') : selected).focus?.({
+        preventScroll: true,
+      });
     // Never jump an answer down to the first action as its text opens.
     // Explicit keyboard/joystick navigation still scrolls a chosen action into view.
     if (moveFocus) selected?.scrollIntoView({ block: 'nearest' });
@@ -3860,7 +3669,6 @@
       return;
     }
     audio.interfaceSound('close');
-    bindingCapture = null;
     if (game.s.challenge.pending || game.s.challenge.gameOver) gateDismissed = true;
     menu = null;
     menuHistory.length = 0;
@@ -3868,7 +3676,6 @@
     $('modal').hidden = true;
     document.body.classList.remove('menu-open');
     clearInput(true);
-    syncJoystickPresentation();
     if (menuReturnFocus?.focus) menuReturnFocus.focus({ preventScroll: true });
     menuReturnFocus = null;
   }
@@ -3890,6 +3697,14 @@
     label.append(field);
     if (menu?.view === 'class-select') $('modal-actions').append(label);
     else $('modal-actions').prepend(label);
+    buttons.splice(buttons.length - 1, 0, field);
+    menuKeys.splice(menuKeys.length - 1, 0, '__character_name__');
+    field.onkeydown = (event) => {
+      if (event.code !== 'Enter' && event.code !== 'Tab') return;
+      event.preventDefault();
+      event.stopPropagation();
+      moveMenuChoice(1);
+    };
     return field;
   }
   function requestName({
@@ -3988,11 +3803,36 @@
     }
     closeMenu();
   }
+  function blockMenuPointer(event) {
+    const target = event.target;
+    // The OS text editor is needed for optional names and text exports.
+    if (target.matches?.('input[type="text"], textarea')) return false;
+    if (target.closest?.('#order-button, #joystick, #stick')) return false;
+    return !!target.closest?.('#modal, #title-screen, #language-welcome, #scene-loading, #gpu-renderer-trial');
+  }
+  document.addEventListener('pointerdown', (event) => {
+    const desktopMouse = platform.mode === 'desktop' && event.pointerType === 'mouse';
+    if (event.target.matches?.('input[type="text"], textarea')) return;
+    if (!desktopMouse && !blockMenuPointer(event)) return;
+    if (!desktopMouse && !event.target.closest?.('button, label, summary, input, select')) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (desktopMouse && event.button === 0 && event.target === canvas)
+      useRangerSupport('health');
+  }, true);
+  document.addEventListener('click', (event) => {
+    if (!event.isTrusted || event.target.matches?.('input[type="text"], textarea')) return;
+    const desktop = platform.mode === 'desktop';
+    if (!desktop && !blockMenuPointer(event)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }, true);
   document.addEventListener(
     'pointerdown',
     (event) => {
       if (
         !menu ||
+        platform.mode !== 'phone' ||
         $('modal').contains(event.target) ||
         event.target.closest?.('#order-button, #joystick, #stick')
       ) {
@@ -4040,7 +3880,7 @@
         outsidePointerId = null;
         return;
       }
-      if (outsidePointerId === null && !menu) return;
+      if (platform.mode !== 'phone' || (outsidePointerId === null && !menu)) return;
       event.preventDefault();
       event.stopImmediatePropagation();
       outsidePointerId = null;
@@ -4056,7 +3896,7 @@
     }
     menu?.back();
   };
-  const backupAdvisor = PrototypePersistence.createBackupAdvisor({ storage: localStorage });
+  const backupAdvisor = PrototypePersistence.createBackupAdvisor({ storage: editionStorage });
   let titleBackupNotice = null;
   let storageProtectionState = 'unknown';
   const storageApi = navigator.storage;
@@ -5036,7 +4876,7 @@
             read(
               'Quick Start',
               'Primeros pasos',
-              'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\n\nOn a phone, move with the joystick or tap reachable ground. Visit the Adventure menu for the map and quests. You can change touch and keyboard controls in Settings.',
+              'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\n\nOn a phone, move with the left joystick. Use the joystick and Confirm to navigate menus. Visit the Adventure menu for the map and quests.',
               'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un héroe y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca o toca terreno accesible. El menú Aventura ofrece el mapa y las misiones. Puedes ajustar los controles táctiles y las teclas en Ajustes.',
             ),
           'Your goal and first steps.',
@@ -5539,7 +5379,7 @@
   }
   function readPlaytestJournal() {
     try {
-      const bytes = localStorage.getItem(playtestJournalKey);
+      const bytes = editionStorage.getItem(playtestJournalKey);
       if (!bytes || bytes.length > 180000) return blankPlaytestJournal();
       const data = JSON.parse(bytes);
       if (data?.version !== 1 || !Number.isFinite(data.updatedAt) ||
@@ -5614,7 +5454,7 @@
         playtestJournal.frameHistory.shift();
         bytes = JSON.stringify(playtestJournal);
       }
-      if (bytes.length <= 130000) localStorage.setItem(playtestJournalKey, bytes);
+      if (bytes.length <= 130000) editionStorage.setItem(playtestJournalKey, bytes);
     } catch (_) {
       // Diagnostic storage is best effort; never interrupt gameplay or saves.
     }
@@ -6447,7 +6287,7 @@
                 if (!['off', 'auto', 'on'].includes(value)) return;
                 optimizationPreference = value;
                 try {
-                  localStorage.setItem(optimizationKey, value);
+                  editionStorage.setItem(optimizationKey, value);
                 } catch (_) {}
                 autoOptimization.reset();
                 // Critical recovery remains mandatory even with preference Off.
@@ -7895,9 +7735,61 @@
     if (targetPress?.source === 'pointer' && targetPress.pointerId === e.pointerId)
       cancelTargetPress();
   };
-  $('order-button').onclick = (e) => {
+  function shellChoices() {
+    if (sceneTransition)
+      return $('scene-loading-retry').hidden ? [] : [$('scene-loading-retry')];
+    if (!gpuTrialPanel.hidden) return [gpuKeep, gpuRevert].filter((b) => !b.hidden && !b.disabled);
+    if (started) return [];
+    const scope = languageWelcome && !languageWelcome.hidden ? languageWelcome : titleScreen;
+    return scope && !scope.hidden
+      ? Array.from(scope.querySelectorAll('button')).filter((b) => !b.hidden && !b.disabled)
+      : [];
+  }
+  function moveMenuChoice(direction) {
+    if (menu && !sceneTransition && gpuTrialPanel.hidden) {
+      if (!buttons.length) return;
+      menuIndex = (menuIndex + direction + buttons.length) % buttons.length;
+      highlight(true);
+      return;
+    }
+    const choices = shellChoices();
+    if (!choices.length) return;
+    const selected = choices.indexOf(document.activeElement);
+    const from = selected < 0 ? (direction > 0 ? -1 : 0) : selected;
+    choices[(from + direction + choices.length) % choices.length].focus({ preventScroll: true });
+  }
+  function confirmMenuChoice() {
+    const hasModal = menu && !sceneTransition && gpuTrialPanel.hidden;
+    const choices = hasModal ? buttons : shellChoices();
+    const choice = hasModal
+      ? choices[menuIndex]
+      : choices.find((b) => b === document.activeElement) || choices[0];
+    if (!choice || choice.disabled) {
+      if (choice) audio.interfaceSound('denied');
+      return;
+    }
+    if (choice.type === 'text') {
+      choice.focus();
+    } else if (choice.tagName === 'SELECT') {
+      choice.selectedIndex = (choice.selectedIndex + 1) % choice.options.length;
+      choice.dispatchEvent(new Event('change'));
+    } else if (choice.type === 'range') {
+      if (choice.valueAsNumber >= Number(choice.max)) choice.value = choice.min;
+      else choice.stepUp();
+      choice.dispatchEvent(new Event('input'));
+    } else {
+      choice.click();
+    }
+  }
+  function navigateChoice(actionId, event) {
+    if (event.repeat) return;
+    if (actionId === 'down' || actionId === 'right') moveMenuChoice(1);
+    else if (actionId === 'up' || actionId === 'left') moveMenuChoice(-1);
+    else if (actionId === 'confirm') confirmMenuChoice();
+  }
+  $('order-button').onclick = () => {
     audio.unlock();
-    if (menu) buttons[menuIndex]?.click();
+    confirmMenuChoice();
   };
   const skillNames = [
       'Basic attack',
@@ -7910,8 +7802,8 @@
       'Final special',
     ],
     icons = ['ATK', 'HIT', 'HEAL', 'GUARD', 'AREA', 'CAST', 'BURST', 'FINAL'],
-    skillKeys = () => Array.from({ length: 8 }, (_, i) => input.key('skill' + (i + 1))),
-    chargeableSlots = new Set([1, 2, 3, 4, 5, 6, 7, 8]);
+    skillKeys = () => Array.from({ length: 4 }, (_, i) => input.key('skill' + (i + 1))),
+    chargeableSlots = new Set([1, 2, 3, 4]);
   const canChargeSlot = (slot) => chargeableSlots.has(slot);
   // Ranger Skill 4 charges a companion rally: no enemy aim/lock required.
   const chargeNeedsTarget = (slot) =>
@@ -8643,7 +8535,7 @@
     charge = null;
     if (started) updateHUD();
   }
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 4; i++) {
     const slot = i + 1,
       b = document.createElement('button');
     b.id = 'skill-' + slot;
@@ -8692,10 +8584,10 @@
   quickItems.id = 'quick-items';
   for (const [type, label, key] of manaEnabled
     ? [
-        ['health', 'Heal', 'H'],
+        ['health', 'Heal', 'R'],
         ['mana', 'Mana Regen', 'M'],
       ]
-    : [['health', 'Heal', 'H']]) {
+    : [['health', 'Heal', 'R']]) {
     const b = document.createElement('button');
     b.id = type + '-potion';
     b.className = 'potion-button';
@@ -8712,63 +8604,22 @@
       e.metaKey ||
       e.altKey ||
       (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '') &&
-        !(menu && ['Tab', 'Escape'].includes(e.code)))
+        !(menu && (['range', 'file'].includes(e.target.type) || e.target.tagName === 'SELECT' ||
+          e.code === 'Escape')))
     )
       return;
     // A loading interlude owns keyboard focus; hidden menus cannot commit a
     // second travel or close the overlay while arrival is being prepared.
     if (sceneTransition) {
       e.preventDefault?.();
+      if (e.code === 'KeyF' && !e.repeat && !$('scene-loading-retry').hidden)
+        $('scene-loading-retry').click();
       return;
     }
     audio.unlock();
     const code = e.code;
-    if (bindingCapture) {
-      e.preventDefault();
-      if (e.repeat) return;
-      if (code === 'Escape') {
-        bindingCapture = null;
-        menu.back();
-        return;
-      }
-      const error = input.rebind(bindingCapture, code);
-      if (error) {
-        $('modal-description').textContent = error;
-        return;
-      }
-      bindingCapture = null;
-      clearInput();
-      updateHUD();
-      menu.back();
-      return;
-    }
-    if (
-      menu?.view === 'archive-reading' &&
-      document.activeElement?.tagName === 'SUMMARY' &&
-      ['Enter', 'Space'].includes(code)
-    )
-      return;
-    // Reading text owns its native scrolling keys. Tab/Escape still use the
-    // dialog route; Enter must never activate an action behind focused prose.
-    if (
-      menu?.view === 'archive-reading' &&
-      document.activeElement === $('modal-description') &&
-      [
-        'ArrowUp',
-        'ArrowDown',
-        'ArrowLeft',
-        'ArrowRight',
-        'PageUp',
-        'PageDown',
-        'Home',
-        'End',
-        'Space',
-        'Enter',
-      ].includes(code)
-    )
-      return;
     const actionId = input.actionFor(code);
-    if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
+    if (actionId || code === 'Escape' || ((menu || !started) && ['Tab', 'Enter', 'Space'].includes(code)))
       e.preventDefault();
     if (code === 'Escape' || actionId === 'menu') {
       if (menu) {
@@ -8780,52 +8631,14 @@
       else openMain();
       return;
     }
-    if (menu) {
-      // Reserve ordinary Tab navigation inside dialogs, but honor a player's
-      // explicit Tab remap to a menu direction or confirmation action.
-      if (code === 'Tab' && !['up', 'down', 'left', 'right', 'confirm'].includes(actionId)) {
-        e.preventDefault();
-        if (e.repeat) return;
-        // Include temporary name fields and native settings controls. Do not
-        // let keyboard focus escape to the game underneath the open dialog.
-        const descendants = Array.from(
-          $('modal').querySelectorAll?.(
-            menu.view === 'archive-reading'
-              ? 'button, input, select, textarea, summary, [role="document"][tabindex="0"]'
-              : 'button, input, select, textarea',
-          ) || [],
-        ).filter((element) => !element.disabled && !element.hidden);
-        const available = descendants.length
-          ? descendants
-          : buttons.filter((button) => !button.disabled);
-        if (!available.length) return;
-        const focusedIndex = available.indexOf(document.activeElement);
-        const from = focusedIndex < 0 ? (e.shiftKey ? 0 : -1) : focusedIndex;
-        const next =
-          available[(from + (e.shiftKey ? -1 : 1) + available.length) % available.length];
-        const nextIndex = buttons.indexOf(next);
-        if (nextIndex >= 0) {
-          menuIndex = nextIndex;
-          highlight(true);
-        } else {
-          next.focus?.({ preventScroll: true });
-          if (next.tagName === 'SUMMARY') next.scrollIntoView?.({ block: 'nearest' });
-        }
-        return;
-      }
-      if (e.repeat) return;
-      if (['down', 'right'].includes(actionId)) {
-        menuIndex = (menuIndex + 1) % Math.max(1, buttons.length);
-        highlight(true);
-      } else if (['up', 'left'].includes(actionId)) {
-        menuIndex = (menuIndex - 1 + buttons.length) % Math.max(1, buttons.length);
-        highlight(true);
-      } else if (actionId === 'confirm' || ['Enter', 'Space'].includes(code))
-        if (buttons[menuIndex]?.disabled) audio.interfaceSound('denied');
-        else buttons[menuIndex]?.click();
+    if (menu || !gpuTrialPanel.hidden) {
+      navigateChoice(actionId, e);
       return;
     }
-    if (!started) return;
+    if (!started) {
+      navigateChoice(actionId, e);
+      return;
+    }
     if ((paused || !focused || document.hidden) && !['pause', 'help'].includes(actionId)) return;
     if (!actionId) return;
     if (['up', 'down', 'left', 'right'].includes(actionId)) cancelTravel();
@@ -8861,95 +8674,16 @@
     if (actionId?.startsWith('skill')) releaseCharge(Number(actionId.slice(5)), 'keyboard');
   });
   const joystick = $('joystick');
-  syncJoystickPresentation();
   let menuJoyTime = 0;
-  const floatingGameplay = () =>
-    platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
   function joyUpdate(e) {
-    if (floatingGameplay() && joystickStart) {
-      const r = joystick.getBoundingClientRect();
-      const wasStill = joy.x === 0 && joy.y === 0;
-      joy = PrototypeInput.floatingJoystickVector(
-        joystickStart,
-        { x: e.clientX, y: e.clientY },
-        r.width * 0.4,
-      );
-      // Merely placing a stationary thumb does not cancel a guided journey.
-      if (wasStill && (joy.x || joy.y)) cancelTravel();
-    } else {
-      const r = joystick.getBoundingClientRect(),
-        dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
-        dy = (e.clientY - r.top - r.height / 2) / (r.height * 0.4),
-        n = Math.max(1, Math.hypot(dx, dy));
-      joy = { x: dx / n, y: dy / n };
-    }
+    const r = joystick.getBoundingClientRect(),
+      dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
+      dy = (e.clientY - r.top - r.height / 2) / (r.width * 0.4),
+      n = Math.max(1, Math.hypot(dx, dy));
+    joy = Math.hypot(dx, dy) < 0.16 ? { x: 0, y: 0 } : { x: dx / n, y: dy / n };
     $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
   }
-  function beginFloatingJoystick(e) {
-    if (
-      !floatingGameplay() ||
-      !activePlay() ||
-      e.pointerType !== 'touch' ||
-      pointer !== null ||
-      worldPointer !== null
-    )
-      return false;
-    const obstacles = [
-      '#touch-interact-button',
-      '#recall-button',
-      '#target-button',
-      '#squad-button',
-      '#skills',
-      '#quick-items',
-      '#developer-summon',
-      '#developer-finisher',
-      '#cancel-navigation-button',
-      '#sprint-button',
-      '#update-button',
-      '#menu-button',
-      '#order-button',
-      '#modal',
-    ].flatMap((selector) => {
-      const el = document.querySelector(selector);
-      if (
-        !el ||
-        el.hidden ||
-        getComputedStyle(el).display === 'none' ||
-        getComputedStyle(el).visibility === 'hidden'
-      )
-        return [];
-      const rect = el.getBoundingClientRect();
-      return [{ x: rect.left, y: rect.top, width: rect.width, height: rect.height }];
-    });
-    if (
-      !PrototypeInput.floatingJoystickZone(
-        { x: e.clientX, y: e.clientY },
-        { width: window.innerWidth, height: window.innerHeight },
-        obstacles,
-      )
-    )
-      return false;
-    e.preventDefault();
-    audio.unlock();
-    pointer = e.pointerId;
-    joystickTouchId = null;
-    joystickStart = { x: e.clientX, y: e.clientY };
-    joy = { x: 0, y: 0 };
-    $('stick').style.transform = '';
-    const rect = joystick.getBoundingClientRect();
-    const left = Math.max(0, Math.min(window.innerWidth - rect.width, e.clientX - rect.width / 2));
-    const top = Math.max(
-      0,
-      Math.min(window.innerHeight - rect.height, e.clientY - rect.height / 2),
-    );
-    joystick.style.setProperty('--floating-joystick-left', Math.round(left) + 'px');
-    joystick.style.setProperty('--floating-joystick-top', Math.round(top) + 'px');
-    document.body.classList.add('floating-joystick-active');
-    canvas.setPointerCapture?.(pointer);
-    return true;
-  }
   joystick.onpointerdown = (e) => {
-    if (floatingGameplay()) return;
     if (e.pointerType === 'mouse') return;
     if (pointer !== null) {
       // A new primary contact or missing old capture proves the old touch ended.
@@ -8959,7 +8693,7 @@
     }
     e.preventDefault();
     audio.unlock();
-    cancelTravel();
+    if (activePlay()) cancelTravel();
     pointer = e.pointerId;
     joystickStart = { x: e.clientX, y: e.clientY };
     joystick.setPointerCapture(pointer);
@@ -9003,67 +8737,6 @@
       },
       true,
     );
-  canvas.onpointerdown = (e) => {
-    if (!activePlay() || e.button > 0) {
-      if (manaEnabled && activePlay() && e.pointerType === 'mouse' && e.button === 2) {
-        e.preventDefault();
-        useRangerSupport('mana');
-      }
-      return;
-    }
-    if (beginFloatingJoystick(e)) return;
-    audio.unlock();
-    if (e.pointerType === 'mouse' && !input.preferences.mouseMove) {
-      e.preventDefault();
-      useRangerSupport('health');
-      return;
-    }
-    if (e.pointerType !== 'mouse' && !input.preferences.touchMove) return;
-    if (worldPointer || pointer !== null) return;
-    e.preventDefault();
-    worldPointer = {
-      id: e.pointerId,
-      x: e.clientX,
-      y: e.clientY,
-      target: world(e.clientX, e.clientY),
-      moved: false,
-    };
-    canvas.setPointerCapture?.(e.pointerId);
-  };
-  canvas.onpointermove = (e) => {
-    if (floatingGameplay() && e.pointerId === pointer) {
-      joyUpdate(e);
-      return;
-    }
-    if (
-      worldPointer?.id === e.pointerId &&
-      Math.hypot(e.clientX - worldPointer.x, e.clientY - worldPointer.y) > 12
-    )
-      worldPointer.moved = true;
-  };
-  canvas.onpointerup = (e) => {
-    if (worldPointer?.id !== e.pointerId) return;
-    const tap = worldPointer;
-    worldPointer = null;
-    if (
-      !activePlay() ||
-      tap.moved ||
-      pointer !== null ||
-      keys.up ||
-      keys.down ||
-      keys.left ||
-      keys.right ||
-      Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 12
-    )
-      return;
-    // Intentional world movement takes over even when the tapped spot is blocked.
-    cancelTravel();
-    if (!PrototypeInput.requestMove(game, tap.target)) status('Path blocked.');
-  };
-  canvas.onpointercancel = canvas.onlostpointercapture = (e) => {
-    if (floatingGameplay() && e.pointerId === pointer) releaseJoystick();
-    if (worldPointer?.id === e.pointerId) worldPointer = null;
-  };
   addEventListener('contextmenu', (e) => {
     if (e.target.closest?.('input, textarea, [contenteditable="true"]')) return;
     if (e.target === canvas || e.target.closest?.('#hud, #skills, #movement, #modal, #message'))
@@ -9881,7 +9554,7 @@
       : doctrine.mode === 'focus'
         ? 'Squad concentrates on the hero’s current target'
         : 'Squad spreads across nearby threats';
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 4; i++) {
       const slot = i + 1,
         b = $('skill-' + slot),
         rank = h.skills[i],
@@ -9937,13 +9610,16 @@
         (b.disabled ? ' · Disabled in Developer Mode' : '') +
         (rank ? ' · Rank ' + rank : ' · Not learned') +
         chargeTip +
+        (h.skills[i + 4]
+          ? ' · ' + tr('Activates learned skill') + ' ' + (slot + 4) + ': ' + skillLabel(slot + 4)
+          : '') +
         (slot === 1
           ? ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
           : '') +
         (i === 0 && PrototypeRules.movementBasicClasses[h.class]
           ? language === 'es'
-            ? ' · Los ataques automáticos continúan durante la carga si el combate lo permite'
-            : ' · Automatic basics continue during charge when combat allows'
+            ? ' · Los ataques automáticos requieren movimiento, incluso durante la carga'
+            : ' · Automatic basics require movement, including while charging'
           : '') +
         (slot === 2 ? ' · Charged target locks when charging begins' : '') +
         (backlogLabel ? ' · ' + backlogLabel : '') +
@@ -10093,7 +9769,7 @@
         ? 'ON · ' + recallRemaining + 's'
         : (practicingRecall ? tr('Try it now') + ' · ' : '') +
           input.key('recall') +
-          (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
+          '';
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);
@@ -10382,11 +10058,11 @@
     syncPartyChargeClock();
     if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !simulating);
     if (simulating) progressTargetPress();
-    if (menu) {
+    if (menu || !started || sceneTransition || !gpuTrialPanel.hidden) {
       menuJoyTime -= dt;
-      if (Math.abs(joy.y) > 0.4 && menuJoyTime <= 0 && buttons.length) {
-        menuIndex = (menuIndex + (joy.y > 0 ? 1 : -1) + buttons.length) % buttons.length;
-        highlight(true);
+      const axis = Math.abs(joy.y) >= Math.abs(joy.x) ? joy.y : joy.x;
+      if (Math.abs(axis) > 0.4 && menuJoyTime <= 0) {
+        moveMenuChoice(axis > 0 ? 1 : -1);
         menuJoyTime = 0.3;
       }
     }
@@ -10439,7 +10115,7 @@
           y: movingHero.y,
           zone: game.zoneId,
           deaths: game.s.statistics.deaths,
-          order: !!movingHero.order,
+          order: movingHero.order?.type,
         };
       const simulationAt = performance.now(),
         marks = {};
@@ -10486,13 +10162,15 @@
       // Preserve the existing crowd recorder contract: only *completed*
       // native simulation ticks become retained navigation samples.
       game.crowdDiagnosticsEndFrame();
+      const movedThisTick = (x || y || was.order === 'move' ||
+        was.order === 'skill-approach') &&
+        Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.1;
       if (
         startup?.needsMovement() &&
         game.hero === movingHero &&
         game.zoneId === was.zone &&
         game.s.statistics.deaths === was.deaths &&
-        (x || y || was.order) &&
-        Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.1
+        movedThisTick
       )
         startupEvent('first-movement-observed', startupGraphics());
       game.partyDiagnosticsObserveTick();
@@ -10533,7 +10211,7 @@
       releaseQueuedCharge();
       if (
         game.s.mode !== 'developer' &&
-        true &&
+        movedThisTick &&
         game.hero === movingHero &&
         PrototypeRules.movementBasicClasses[movingHero.class] &&
         game.zoneId === was.zone &&

@@ -340,7 +340,11 @@
   // One modern browser/PWA window owns campaign writes for the whole origin.
   // An unfulfilled request is non-writing; closing/crashing releases the lock.
   // File-based test/development adapters retain optimistic byte checks above.
-  function createWriterGuard({ locks, required = false } = {}) {
+  function createWriterGuard({
+    locks,
+    required = false,
+    lockName = 'azeroth-campaign-writer-v1',
+  } = {}) {
     let state = locks?.request ? 'pending' : required ? 'unsupported' : 'owner';
     let releaseLock = null,
       released = false;
@@ -352,7 +356,7 @@
     else {
       try {
         Promise.resolve(
-          locks.request('azeroth-campaign-writer-v1', { ifAvailable: true }, (lock) => {
+          locks.request(lockName, { ifAvailable: true }, (lock) => {
             if (released || !lock) {
               state = released ? 'closed' : 'blocked';
               resolveReady(state);

@@ -1675,3 +1675,27 @@ body[data-experience='phone'] #modal-actions output {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+
+/* Fixed left-side combat row and menu controls, including the title flow. */
+body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
+  width: min(224px, calc(100vw - 16px));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  bottom: calc(122px + var(--phone-safe-bottom, env(safe-area-inset-bottom)));
+}
+body[data-experience='phone'].title-active #movement,
+body[data-experience='phone']:has(#scene-loading-retry:not([hidden])) #movement,
+body[data-experience='phone']:has(#gpu-renderer-trial:not([hidden])) #movement {
+  visibility: visible !important;
+  z-index: 60;
+}
+body[data-experience='phone'].title-active #order-button,
+body[data-experience='phone']:has(#scene-loading-retry:not([hidden])) #order-button,
+body[data-experience='phone']:has(#gpu-renderer-trial:not([hidden])) #order-button {
+  display: block;
+}
+body[data-experience='phone'] #title-screen button:focus,
+body[data-experience='phone'] #language-welcome button:focus {
+  outline: 2px solid #f8d892;
+  outline-offset: 2px;
+}
