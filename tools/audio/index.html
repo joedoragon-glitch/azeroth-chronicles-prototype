@@ -29,6 +29,7 @@
         </div>
         <nav class="room-nav" aria-label="Listening room sections">
           <a href="#library-section">Browse sounds</a>
+          <a href="#library-section" id="nav-effects">30 new effects</a>
           <a href="#scene-section">Scene mixer</a>
           <a href="#creative-section">Creative notes</a>
         </nav>
@@ -85,14 +86,14 @@
 
       <section id="library-section" aria-labelledby="recordings">
         <div class="section-title"><div><span class="step">01 · EXPLORE</span><h2 id="recordings">Find your next sound</h2></div></div>
-        <p>Browse the newly registered game environmental recordings alongside music and effects. Choose Type → Environment to hear the actual new ambience alone, or Preview a game scene to hear the registered atmosphere with the soundtrack. Original tracks remain listenable for comparison. Tap Play on any card to hear it immediately; select a title for source notes, layer comparison and technical details. Generated cues are available in their own category.</p>
+        <p>Browse the game’s music, environmental recordings and sound effects. Use <strong>30 new effects</strong> above to jump straight to the re-authored game effects, then choose <strong>Release</strong>, <strong>Impact</strong> or <strong>Specials</strong> to focus on one kind of action. Tap Play to hear a recording; selecting its name shows the creative notes. Generated sounds from the game engine have their own category.</p>
         <div class="controls library-filters">
           <label for="kind">Type
             <select id="kind">
               <option value="all">All recordings</option>
               <option value="music">Music</option>
               <option value="ambience">Environment</option>
-              <option value="effect">Recorded effects</option>
+              <option value="effect">New recorded effects (30)</option>
               <option value="generated">Generated game cues</option>
             </select>
           </label>
@@ -101,6 +102,7 @@
               <option value="all">Every collection</option>
               <option value="new-score">New authored soundtrack</option>
               <option value="dark-crown">Preserved Dark Crown</option>
+              <option value="approved-derived">Owner-approved theme arrangements</option>
               <option value="environment">Environmental recordings</option>
               <option value="effects">Recorded sound effects</option>
             </select>
@@ -115,6 +117,17 @@
           <label for="search">Search by name, place or use
             <input id="search" type="search" placeholder="Greenwood, boss, wet, holy…" autocomplete="off" />
           </label>
+        </div>
+        <div id="effect-filters" class="effect-filter-bar" hidden>
+          <label for="effect-stage">New game effects · action
+            <select id="effect-stage">
+              <option value="all">All 30 effects</option>
+              <option value="release">Creature attack release · 12</option>
+              <option value="impact">Creature attack impact · 12</option>
+              <option value="special">Hero, companion & warning · 6</option>
+            </select>
+          </label>
+          <span class="hint">Short individual cues, not a complete battle mix. The game also generates other effects live.</span>
         </div>
         <div class="result-header"><p id="result-count" role="status" aria-live="polite">Loading the audio library…</p><button id="reset-library" class="quiet" type="button">Clear filters</button></div>
         <div id="library-grid" class="recording-grid" role="list" aria-label="Game audio recordings"></div>
@@ -131,7 +144,7 @@
             <button type="button" id="copy-recording-link">Copy listening-room link</button>
             <button type="button" id="stem-play" disabled>Play with paired layer</button>
           </div>
-          <div class="paired-control">
+          <div id="paired-controls" class="paired-control">
             <label for="intensity">Paired-layer volume <output id="intensity-value" for="intensity">35%</output>
               <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.35" disabled />
             </label>
@@ -143,7 +156,7 @@
           <p>These previews use the game's real audio engine for narrative, interface, footsteps and representative combat actions. They are not extra MP3 files. Combat events use example actor/material settings: the exact sound can vary during play. Listening does not open saves.</p>
           <div id="generated-grid" class="recording-grid" role="list" aria-label="Generated game cues"></div>
         </div>
-        <p class="hint collection-note">Environmental soundscapes from the separate <a href="https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727">ongoing environment audio rework</a> will show up here only after they are integrated into the registered game catalog. Unmerged studio previews are not playable in this room yet.</p>
+        <p class="hint collection-note">The new recorded effects replace the previous 30 game audio files; additional procedural cues remain available under Generated game cues. The recordings are short isolated examples: actual gameplay determines event timing, the effects mix and enemy accents. The previously published masters are preserved in the source archive for selective rollback.</p>
       </section>
 
       <section id="creative-section" aria-labelledby="creative-guide">

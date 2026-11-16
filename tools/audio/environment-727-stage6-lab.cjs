@@ -52,11 +52,11 @@ for(const [stage,file,key] of ledgers){
  }
 }
 assert.equal(studies.length,16);
-assert.equal(Object.keys(live.assets).length,147);
+assert.equal(Object.keys(live.assets).length,148);
 assert.equal(live.director.environment.rules.length,22);
 assert.equal(Object.keys(live.director.places).length,19);
 assert.equal(Object.values(live.assets).filter(x=>x.kind==='ambience').length,34);
-assert.equal(Object.values(live.assets).filter(x=>x.kind==='music').length,83);
+assert.equal(Object.values(live.assets).filter(x=>x.kind==='music').length,84);
 assert.equal(Object.values(live.assets).filter(x=>x.kind==='effect').length,30);
 assert.equal(live.director.environment.combatGain,.45);
 assert.equal(live.director.environment.bossGain,.25);
@@ -104,7 +104,7 @@ const report={project:'SIBDLP #727 REGISTERED Stage 6/7 game+Sound Library build
  reusedTreasuries:map.treasuryReuse,unselectedAlternative:[map.crownAlt],
  originalRouting,originalManifestSha256:sha(Buffer.from(JSON.stringify(previous))),
  gameRegistered:true,merged:false,deployed:false,humanHeard:false,deviceVerified:false,
- publishedMusicPreserved:true,originalAssetCount:131,registeredAssetCount:147,
+ publishedMusicPreserved:true,originalAssetCount:131,registeredAssetCount:148,
  registeredEnvironmentRules:22,registeredPlayablePlaces:19,
  browserCacheBudgetBytes:128*1024*1024,browserCacheRetentionBudgetBytes:96*1024*1024,
  browserCacheMaximumOverrideBytes:192*1024*1024,
@@ -112,4 +112,4 @@ const report={project:'SIBDLP #727 REGISTERED Stage 6/7 game+Sound Library build
 const output=path.join(ROOT,'test-results/environment-727-stage6-trial.json');
 fs.mkdirSync(path.dirname(output),{recursive:true});
 fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');
-console.log('PASS #727 Stage 6/7 production registry 147 assets / 22 rules, exact pinned MP3 + published-score hashes, 19 location identities and no old assigned Treasury beds; report only, no mutation/deploy.');
+console.log('PASS #727 Stage 6/7 production registry 148 assets / 22 rules, exact pinned MP3 + published-score hashes, 19 location identities and no old assigned Treasury beds; report only, no mutation/deploy.');

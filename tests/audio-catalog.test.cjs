@@ -14,6 +14,8 @@ const copy = (v) => structuredClone(v),
 (async () => {
   validateCatalog(production);
   assert(!runtimeCatalog(production).director.eventGuides);
+  // The 30 sound-effect masters are now re-authored under the phase-one source
+  // manager; their exact previous assets are hash-frozen in the rollback ledger.
   // Four existing source-recorded Stage1 beds and sixteen #727 frozen masters
   // are deliberately not owned by the old procedural environment renderer.
   // Derive the promoted IDs from the versioned source ledger, then require
@@ -45,10 +47,10 @@ const copy = (v) => structuredClone(v),
               (a.kind === 'ambience'
                 ? 'environment-book'
                 : a.kind === 'effect'
-                  ? 'sfx-book'
+                  ? 'sfx-phase1-original-hybrid'
                   : 'score-book')),
     ),
-    'Preserve provenance for original generated sounds and all 20 source-authored environmental recordings',
+    'Preserve provenance for 30 phase-one effects, original score and all 20 source-authored environmental recordings',
   );
   assert(
     Object.keys(production.director.events).every((key) => production.director.eventGuides[key]),

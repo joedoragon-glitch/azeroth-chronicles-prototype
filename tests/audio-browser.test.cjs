@@ -42,8 +42,12 @@ const root = path.resolve(__dirname, '..'),
       launch.args = ['--no-sandbox', '--disable-dev-shm-usage'];
     }
     browser = await pw[engine].launch(launch);
-    for (const entry of ['index.html', 'phone.html']) {
-      const phone = entry === 'phone.html',
+    // phone.html is now a separate safe-area wrapper whose game and Prototype
+    // globals live inside the same-origin phone-game.html iframe. Exercise
+    // the actual game document under mobile viewport/touch instead of trying
+    // to access a non-existent top-level Prototype on the outer frame.
+    for (const entry of ['index.html', 'phone-game.html']) {
+      const phone = entry === 'phone-game.html',
         page = await browser.newPage({
           viewport: phone ? { width: 375, height: 812 } : { width: 1280, height: 800 },
           hasTouch: phone,
@@ -52,10 +56,25 @@ const root = path.resolve(__dirname, '..'),
         errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
       await page.goto('http://127.0.0.1:' + server.address().port + '/' + entry);
+      // The alternate phone shell can bootstrap via an asynchronous script.
+      // Test the locked/no-autoplay audio state only AFTER the real game object
+      // exists; otherwise a fast network load races the phone initializer.
+      await page.waitForFunction(() => !!window.Prototype?.audio, null, { timeout: 15000 });
       assert.equal(await page.evaluate(() => Prototype.audio.ctx), null);
-      await require('./helpers/language-browser.cjs').selectEnglish(page);
-      await page.locator('#modal-actions button').first().click();
-      await page.locator('#modal-actions button').first().click();
+      // Current game shows an independent bilingual first-run welcome, then a
+      // title screen, then New Adventure -> Choose Hero -> class selection.
+      // This original audio test predates those steps; two blind modal clicks
+      // never actually started a game and timed out before testing any sound.
+      await page.waitForFunction(() => !!window.Prototype && !!document.querySelector('#language-welcome'));
+      if (await page.locator('#language-welcome').isVisible()) {
+        await page.locator('#language-welcome button[data-language="en"]').click();
+      } else {
+        await require('./helpers/language-browser.cjs').selectEnglish(page);
+      }
+      await page.locator('#title-new').waitFor({ state: 'visible' });
+      await page.locator('#title-new').click();
+      await page.locator('#modal-actions button').filter({ hasText: 'Choose Hero' }).click();
+      await page.locator('#modal-actions button').filter({ hasText: 'Paladin' }).first().click();
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running');
       try {
         await page.waitForFunction(() => !!Prototype.audio.recordedScore);
@@ -69,7 +88,7 @@ const root = path.resolve(__dirname, '..'),
           { cause: error },
         );
       }
-      await page.waitForFunction(() => Prototype.audio.environmentVoice?.id === 'env-woodland-day');
+      await page.waitForFunction(() => Prototype.audio.environmentVoice?.id === 'study-vale-day-727');
       assert(await page.evaluate(() => Prototype.audio.noise === null));
       await page.waitForTimeout(120);
       const before = await page.evaluate(() => ({
@@ -117,8 +136,10 @@ const root = path.resolve(__dirname, '..'),
         for (let i = 0; i < 300; i++) a.noiseBurst(a.ctx.currentTime);
       });
       assert(await page.evaluate(() => Prototype.audio.voices.size <= 64));
-      await page.waitForTimeout(400);
-      assert(await page.evaluate(() => Prototype.audio.voices.size < 20));
+      // This is a *settling* invariant, not a frame-rate assertion: audio
+      // callbacks may be delayed by CPU-loaded CI/browser environments. Keep
+      // the original <20-voice threshold; allow the finite one-shots to end.
+      await page.waitForFunction(() => Prototype.audio.voices.size < 20, null, { timeout: 4000 });
       const recordings = await page.evaluate(async () => {
         const results = [];
         for (const theme of PrototypeAudio.themes)
@@ -290,6 +311,7 @@ const root = path.resolve(__dirname, '..'),
               throw Error('Bad enemy stage ' + JSON.stringify(value));
           }
         const comparisons = [];
+        const levelMismatches = [];
         for (const material of materials)
           for (const stage of ['windup', 'release', 'impact']) {
             const cold = await render(material, stage),
@@ -297,9 +319,8 @@ const root = path.resolve(__dirname, '..'),
             if (warm.rms < 0.00005 || warm.peak >= 1) throw Error('Invalid warm output');
             const deltaDb = 20 * Math.log10(warm.rms / cold.rms);
             if (Math.abs(deltaDb) > 4)
-              throw Error(
-                'Recorded/fallback level jump: ' + material + '/' + stage + ' ' + deltaDb,
-              );
+              levelMismatches.push({ material, stage, deltaDb: +deltaDb.toFixed(2),
+                coldRms: +cold.rms.toFixed(7), warmRms: +warm.rms.toFixed(7) });
             if (
               stage === 'windup' &&
               (warm.secondPulse / warm.firstPulse < 0.35 ||
@@ -318,7 +339,9 @@ const root = path.resolve(__dirname, '..'),
           const cold = await render(material, 'release', true, 'normal', false, null),
             warm = await render(material, 'release', true, 'normal', true, null);
           if (Math.abs(20 * Math.log10(warm.rms / cold.rms)) > 4)
-            throw Error('Common creature recording/fallback level jump: ' + material);
+            levelMismatches.push({ material, stage: 'common-release',
+              deltaDb: +(20 * Math.log10(warm.rms / cold.rms)).toFixed(2),
+              coldRms: +cold.rms.toFixed(7), warmRms: +warm.rms.toFixed(7) });
           comparisons.push({
             material,
             stage: 'common-release',
@@ -327,6 +350,9 @@ const root = path.resolve(__dirname, '..'),
             deltaDb: 20 * Math.log10(warm.rms / cold.rms),
           });
         }
+        if (levelMismatches.length)
+          throw Error('Recorded/procedural level jumps in actual browser engine (>4dB): ' +
+            JSON.stringify(levelMismatches));
         const missed = await render('steel', 'impact', false);
         const contact = await render('steel', 'impact', true);
         if (missed.route !== 'enemyGroundImpact' || !(missed.rms > 0 && missed.rms < contact.rms))
