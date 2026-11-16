@@ -134,3 +134,16 @@ button.quiet { color: #d8eae7; background: transparent; border-color: #688386; m
   .player-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .player-actions button { min-width: 0; padding: 9px 7px; }
 }
+
+/* Phase 1: one compact, contextual effect navigator; not a second sound browser. */
+.effect-filter-bar { display: flex; align-items: end; flex-wrap: wrap; gap: 10px 18px;
+  margin: 6px 0 12px; padding: 11px 14px; background: #182d32;
+  border: 1px solid #4a6869; border-radius: 9px; }
+.effect-filter-bar label { display: block; flex: 0 1 355px; min-width: min(100%, 260px);
+  color: #f1dfb7; font-size: .88rem; font-weight: 600; }
+.effect-filter-bar label select { margin-top: 4px; }
+.effect-filter-bar .hint { flex: 1 1 245px; margin: 0; font-size: .83rem; }
+@media (max-width: 580px) {
+  .effect-filter-bar { padding: 10px 12px; align-items: stretch; }
+  .effect-filter-bar label { flex: 1 1 100%; }
+}
