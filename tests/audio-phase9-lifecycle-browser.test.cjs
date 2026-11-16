@@ -83,6 +83,19 @@ const server = http.createServer((req, res) => {
       // first graphics frame commits. It must settle into running playback,
       // without requiring an extra movement or skill gesture.
       await page.waitForTimeout(300);
+      // Chromium automation can briefly drop page focus after the first
+      // playable scene. The game deliberately pauses audio on window blur;
+      // foreground the same tab before asserting PLAYING, rather than
+      // treating an unfocused page as a player-facing audio failure.
+      const foreground = await page.evaluate(() => ({
+        focused: document.hasFocus(), hidden: document.hidden,
+      }));
+      assert.equal(foreground.hidden, false, 'foreground entry cannot hide its document');
+      if (!foreground.focused) {
+        await page.bringToFront();
+        await page.waitForFunction(() => document.hasFocus(),
+          null, { timeout: 5000 });
+      }
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running' && !Prototype.audio.paused,
         null, { timeout: 8000 });
       const loaded = await page.evaluate(() => ({
@@ -258,6 +271,9 @@ const server = http.createServer((req, res) => {
         started: window.Prototype?.started,
         audio: window.Prototype?.audio?.status?.(),
         modal: document.querySelector('#modal-title')?.textContent,
+        modalHidden: document.querySelector('#modal')?.hidden,
+        focus: document.hasFocus(),
+        visibility: document.visibilityState,
         title: !document.querySelector('#title-screen')?.hidden,
         loading: document.querySelector('#title-loading')?.textContent,
       })).catch(() => ({}))));
