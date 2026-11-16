@@ -69,9 +69,15 @@ const server = http.createServer((req, res) => {
       );
       await page.waitForFunction(() => !!window.Prototype);
       await require('./helpers/language-browser.cjs').selectEnglish(page);
-      await page.keyboard.press('f');
-      await page.keyboard.press('f');
-      await page.waitForFunction(() => document.querySelector('#modal').hidden);
+      // This browser exercise must enter a real playable campaign. Prior
+      // double-F presses merely dismissed the title dialogs while "started"
+      // remained false; gameplay-only F/G input then silently did nothing.
+      await page.locator('#title-new').click();
+      await page.getByRole('button', { name: /^Choose Hero/ }).click();
+      await page.locator('#modal-actions button.class-character-choice').first().click();
+      await page.waitForFunction(() => window.Prototype.started && document.querySelector('#modal').hidden, null, {
+        timeout: 20000,
+      });
       await require('./helpers/notice-browser.cjs').verifyNoticeStrip(
         page,
         out,
