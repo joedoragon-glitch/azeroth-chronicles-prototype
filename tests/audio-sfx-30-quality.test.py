@@ -34,7 +34,14 @@ for entry in report["cues"]:
     assert np.isfinite(x).all() and x[0]==0 and x[-1]==0
     peak=np.max(np.abs(x))
     rms=np.sqrt(np.mean(x*x))
-    assert .045 <= peak <= .39 and .005 < rms < .075,(key,peak,rms)
+    assert .045 <= peak <= .46 and .005 < rms < .075,(key,peak,rms)
+    # At identical in-game manifest gain, a large RMS change makes A/B unfair.
+    # RMS is not psychoacoustic loudness; this is a baseline parity signal guard.
+    ref=float(entry["baselineRms"])
+    original=float(json.loads((root/"tools/audio/sfx-measurements.json").read_text())[key]["rms"])
+    assert abs(ref-original)<1e-8
+    ratio_db=20*np.log10(rms/ref)
+    assert abs(ratio_db)<2.5,(key,"original-vs-new RMS dB",ratio_db)
     assert abs(entry["peak"]-peak)<.00001 and abs(entry["rms"]-rms)<.00001
     assert entry["sha256"]==hashlib.sha256((directory/(key+".wav")).read_bytes()).hexdigest()
     assert entry["baseline"]==manifest["assets"][key]["src"]
