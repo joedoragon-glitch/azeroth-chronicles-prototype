@@ -23,7 +23,7 @@ for (const language of ['en', 'es']) {
   const choice = game.navigationTarget(lead);
   assert(choice?.path.length);
   const native = game.navigationTarget.bind(game);
-  let synchronous = 0, budgeted = 0, blocked = 0;
+  let synchronous = 0, budgeted = 0, blocked = 0, generatorCompleted = 0;
   game.navigationTarget = (...args) => {
     synchronous++;
     return native(...args);
@@ -32,6 +32,7 @@ for (const language of ['en', 'es']) {
     budgeted++;
     for (let i = 0; i < 300; i++)
       yield { kind: 'blocked', args: [origin.x, origin.y, game.zoneId, 15] };
+    generatorCompleted++;
     return choice; // Native, authored Greenwood path; delayed across frames.
   };
   const nativeBlocked = game.blocked;
@@ -55,6 +56,12 @@ for (const language of ['en', 'es']) {
       'no optional route work while squad combat is active');
   }
   game.s.squadEngagement = false;
+  // Reposition to a known walkable downstream point WHILE the earlier-origin
+  // search is unfinished. The result must reconnect from here, not its start.
+  const rejoin = choice.path.slice(0, -1).filter((point) =>
+    Math.hypot(point.x - choice.point.x, point.y - choice.point.y) > 25).at(-1);
+  assert(rejoin, 'real obstructed Greenwood guide has a safe downstream rejoin');
+  Object.assign(game.hero, { x: rejoin.x, y: rejoin.y });
   let completed = false;
   for (let i = 0; i < 80; i++) {
     before = blocked;
@@ -62,14 +69,16 @@ for (const language of ['en', 'es']) {
     assert(blocked - before <= 128,
       'each resumed callback respects the route probe quota');
     const active = scope.Prototype.trackedWaypoint;
-    if (active?.points.at(-1)?.x === choice.path.at(-1).x &&
-        active?.points.at(-1)?.y === choice.path.at(-1).y &&
-        active.points.length <= choice.path.length) {
+    if (generatorCompleted && active?.points.length === 1 &&
+        active.points[0].x === choice.point.x &&
+        active.points[0].y === choice.point.y) {
       completed = true;
       break;
     }
   }
-  assert(completed, 'resumable guide produces a live, valid path');
+  assert(completed, 'completed guide reconnects to the moved hero with a short current tail');
+  assert(game.clearSegment(game.hero, scope.Prototype.trackedWaypoint.points[0], 15, false),
+    'the newly published first leg is collision safe from the current hero');
   assert.equal(budgeted, 1, 'single search survives interruption without restarts');
   assert.equal(synchronous, 0, 'passive route never falls back to synchronous BFS');
   // A second pending guide is abandoned by explicit Clear and never resumes.
