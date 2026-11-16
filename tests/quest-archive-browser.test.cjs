@@ -297,7 +297,10 @@ async function resumeLoadedCampaign(page) {
       assert.equal(await page.locator('#modal-title').textContent(), 'The Keeper’s ledger');
       assert(await page.evaluate(() => Prototype.game.s.keeperEvidence));
       await page.keyboard.press('Escape');
-      assert(await page.evaluate(() => Prototype.save()), 'Keeper evidence saves during active play');
+      assert(
+        await page.evaluate(() => Prototype.save()),
+        'Keeper evidence saves during active play',
+      );
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.keeperPact);
       assert(
@@ -394,7 +397,11 @@ async function resumeLoadedCampaign(page) {
         Prototype.updateHUD();
       });
       await page.keyboard.press('f');
-      await page.getByRole('button', { name: 'Rescued specialists', exact: false }).click();
+      assert.equal(await page.locator('#modal-title').textContent(), 'Basic Barracks');
+      await page.getByRole('button', { name: /^Training/ }).click();
+      assert.equal(await page.locator('#modal-title').textContent(), 'Training');
+      await page.getByRole('button', { name: /^Rescued specialists/ }).click();
+      assert.equal(await page.locator('#modal-title').textContent(), 'Rescued specialists');
       const remoteKeeper = await page.evaluate(() => {
         const c = Prototype.game;
         return {
