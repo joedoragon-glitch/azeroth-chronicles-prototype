@@ -84,6 +84,7 @@ for (const language of ['en', 'es']) {
   assert.equal(blocked - before, 0, 'Clear cancels pending optional search');
   assert.equal(scope.Prototype.trackedWaypoint, null);
   assert.equal(game.snapshot().version, 4, 'no save-schema migration or new serialized frontier');
-  assert.equal('pending' in game.snapshot(), false, 'guide planner is not persisted');
+  assert(!JSON.stringify(game.snapshot()).includes('"generator"'),
+    'live generator is never serialized into the v4 campaign');
 }
 console.log('PASS #886 bilingual shell: no synchronous guide search, combat deferral, quotas and cancel');
