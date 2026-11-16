@@ -6,6 +6,9 @@
     // Enemy-only charged hush is transient; never saved or inherited.
     const rogueEnemySilences = new WeakMap();
     const rogueEnemyWithers = new WeakMap();
+    // Wither spends its full native HP budget each simulation update. Only its
+    // damage *presentation* is sampled; no new saved timers or combat rolls.
+    const rogueWitherVisualDue = new WeakMap();
     const rogueEnemyWeakens = new WeakMap();
     // At most two finite stationary performance circles per campaign.
     // Weakly owned, unsaved and automatically scoped to the active region.
@@ -1281,9 +1284,16 @@
           const live = Math.max(0.01, effect.until - (this.s.time - dt)),
             amount = Math.min(effect.remaining,
               effect.remaining * Math.min(dt, live) / live);
-          if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true })) continue;
+          if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true, periodicDamage: true })) continue;
           effect.remaining -= amount;
           landed = true;
+        }
+        // One visible contact about every half-second instead of 20–60 tiny
+        // flashes per second. Multiple legitimate Withers share this actor cue;
+        // every underlying damage budget step remains separately authoritative.
+        if (landed && this.s.time >= (rogueWitherVisualDue.get(e) ?? -Infinity)) {
+          rogueWitherVisualDue.set(e, this.s.time + 0.5);
+          this.effects.push({ type: 'hit', x: e.x, y: e.y });
         }
         return landed;
       }
