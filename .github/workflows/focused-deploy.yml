@@ -41,6 +41,8 @@ jobs:
             git cat-file -e "${CI_BASE_SHA}^{commit}" 2>/dev/null ||
               git fetch --no-tags --depth=1 origin "$CI_BASE_SHA"
           fi
+      - name: Verify code-only merge publish suppression contract
+        run: node tests/pages-publication-guard.test.cjs
       - name: Validate game version and current documentation before publishing
         env:
           CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -113,8 +115,10 @@ jobs:
           else
             node scripts/build.cjs --check
           fi
+      # A reviewed code-only merge may carry [no-pages] in its HEAD commit.
+      # Still run focused CI; skip both artifact upload and Pages deployment.
       - name: Upload validated Pages package
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[no-pages]')
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
@@ -122,7 +126,7 @@ jobs:
   deploy:
     name: Publish focused update
     needs: focused
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[no-pages]')
     runs-on: ubuntu-latest
     timeout-minutes: 8
     permissions:
