@@ -80,6 +80,9 @@ The **published soundtrack now includes 65 newly authored songs** (regional/area
 
 ## Development
 
+**Experimental player-feedback variant (development only):** GTA Cuba Edition is maintained on [`mod/gta-cuba-edition`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/tree/mod/gta-cuba-edition) with a [separate handoff](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/mod/gta-cuba-edition/docs/GTA_CUBA_EDITION_HANDOFF.md). It is not part of the official game or the public design baseline. Its specialized controls, phone layout, and combat behavior must never be imported into `main` without explicit owner authorization. Compatible official updates may be adapted into that experiment; conflicts require the owner's decision. See `AGENTS.md` for the one-way boundary. The experimental edition has not received game/device testing.
+
+
 This is a **creator-led, AI-assisted project**; multiple AI development chats are not additional human team members. The owner is the confirmed source of hands-on player feedback, and no active independent external campaign testers are currently confirmed. Occasional community access does not establish independently verified playthroughs. The repository currently uses its historical slug, with a **controlled rename to `SIBDLP` planned before v0.9.2**. Continue using the working play links above until actual replacement URLs are validated; the owner will update previously shared community links after that cutover. See [brand and migration policy](docs/BRAND_IDENTITY.md#planned-repository-rename-before-v092-release--not-yet-authorized-for-execution).
 
 This is the **multi-file JavaScript / Canvas / Web Audio / PWA** game, not a single-file prototype or a backend service. Use **Node.js 22** to match CI (minimum supported version: 20.9).
