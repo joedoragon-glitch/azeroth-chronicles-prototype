@@ -178,7 +178,10 @@
       if (study.original.asset) {
         if (!audio.recordingManifest?.assets?.[study.original.asset])
           throw Error('The original recording is absent from the actual game catalog.');
-        const played = await audio.playRecording(study.original.asset, { bus: 'effects', gain: 0.58 });
+        // Gameplay event recordings use a 5ms fade. The A/B should not
+        // remove the attack in one version and preserve it in the other.
+        const played = await audio.playRecording(study.original.asset,
+          { bus: 'effects', gain: 0.58, fade: 0.005 });
         if (ctx !== audio.ctx || token !== action) return;
         if (!played) throw Error(audio.recordingError || 'Could not play the reference recording.');
       } else {
@@ -206,7 +209,9 @@
       if (!audio.reserveVoice(1)) throw Error('Audio voice limit reached; stop other audio.');
       const node = ctx.createBufferSource(), gain = ctx.createGain();
       node.buffer = buffer;
-      gain.gain.value = 0.58;
+      const start = ctx.currentTime + 0.008;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.58, start + 0.005);
       node.connect(gain);
       gain.connect(audio.buses.effects); // Same effects bus/master/profile as reference.
       const voice = { osc: node, gain, bus: 'effects', priority: 1 };
@@ -218,7 +223,7 @@
         audio.voices.delete(voice);
         if (sfxStudyVoice === voice) sfxStudyVoice = null;
       };
-      node.start(ctx.currentTime + 0.008);
+      node.start(start);
     }
     if (token !== action) return;
     const label = which === 'original' ? 'current in-game reference' : 'unapproved revised concept';
