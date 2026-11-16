@@ -269,6 +269,8 @@ The director requires roaming bosses to react to valid attacks even when the hit
 
 Skill 1 fired automatically while moving is covering fire only: it may hit an eligible in-range target, but cannot create a skill-approach order, replace the player's retreat destination or cancel the companions' Recall posture. Keeping a selected target does not authorize pursuit. Deliberate skill presses retain the existing approach-and-release behavior and deliberate offensive attacks may resume companion engagement. No damage, range, cooldown or targeting-selection tuning changes.
 
+**Owner revision, 16 November 2026 — draft candidate, not released:** A manually selected or held enemy that has moved beyond the hero's *basic-attack* range must no longer suppress eligible nearby passive covering fire. Automatic fire may use a different nearby enemy only for that circumstance; it must preserve the selected enemy, target-lock status, and the unchanged target/pursuit contract of all deliberate skill activations. An in-range selection remains prioritized. Separate Slow stacking review found up to ~5.37 seconds between basics under four rapid Slow applications at maximal cooldown training; the proposed basic-only debt reduction remains a **review recommendation, not an approved or implemented balance change**. See [the scoped implementation and evidence](HERO_AUTO_BASIC_FALLBACK_AND_SLOW_REVIEW_V092_20261116.md).
+
 #### TRUE night victories, ringleader protection and repeatable Rogue responses · 20 October 2026
 
 **Later ruling for the shared combat chapter:** Use this later decision for TRUE night victories, ringleader protection and Rogue response/reuse behavior, subject to current source verification.
