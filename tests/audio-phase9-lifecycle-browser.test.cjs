@@ -52,9 +52,15 @@ const server = http.createServer((req, res) => {
         titlePlayback.master > 0 && titlePlayback.started && !titlePlayback.paused,
         'title must have an active nonzero recorded output, not just a selected ID');
       await page.locator('#title-new').click();
-      await page.getByRole('button', { name: 'New Normal game' }).click();
-      await page.getByRole('button', { name: /^English(?: ✓)?$/ }).click();
-      await page.getByRole('button', { name: 'Standard death and refuge recovery' }).click();
+      // New Adventure now exposes Normal · Recommended / Nightmare and the
+      // optional Succession switch before Choose Hero. The first-visit language
+      // choice was already committed above, so never reopen the retired wizard.
+      await page.waitForFunction(() =>
+        document.querySelector('#modal-title')?.textContent === 'New Adventure');
+      await page.getByRole('button', { name: /Normal · Recommended/ }).click();
+      await page.getByRole('button', { name: 'Choose Hero' }).click();
+      await page.waitForFunction(() =>
+        document.querySelector('#modal-title')?.textContent === 'Choose Hero');
       await page.getByRole('button', { name: /Paladin/ }).click();
       await page.waitForFunction(() => window.Prototype?.started && !document.querySelector('#title-screen:not([hidden])'), null, { timeout: 60000 });
       await page.waitForFunction(() => {
