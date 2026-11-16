@@ -6990,8 +6990,10 @@
     // Slinger stones should launch decisively without changing attack cadence
     // or the maximum distance a missed hostile shot can travel.
     goblinSlingerProjectileSpeedMultiplier: 2,
-    // Hostile ground baseline also bounds Charmed melee cadence/pursuit parity.
-    enemyOrdinaryMeleeBasicInterval: 1.4,
+    // Melee-only enemy fundamentals: faster hostile pressure without altering
+    // ranged aim, hero/party tempo, named skills, or physical pursuit.
+    enemyOrdinaryMeleeBasicInterval: 0.8,
+    enemyCaptainMeleeBasicInterval: 0.75,
     enemyOrdinaryMeleePursuitSpeed: 175,
     // Melee/ordinary enemy awareness keeps its separate historical tuning.
     enemyAcquisitionRangeMultiplier: 1.1,
@@ -7242,6 +7244,9 @@
       petFirstCooldown: 8,
       petSecondCooldown: 12,
       petBasicInterval: 0.85,
+      // Preserve pre-existing Charmed native timing when hostile melee speeds up.
+      // This ceiling no longer inherits the wild-monster basic cadence.
+      charmedBasicIntervalCeiling: 1.4,
       // Basic attacks only; melee pets and Soldier can be overridden separately.
       soldierMeleeBasicRange: meleeReach.soldier,
       petMeleeBasicRange: meleeReach.pet,
