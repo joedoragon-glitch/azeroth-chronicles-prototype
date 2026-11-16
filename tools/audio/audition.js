@@ -849,7 +849,11 @@
       peace: !boss && mode === 'peace',
       settlement: !boss && mode === 'settlement' ? 'audition-refuge' : null,
       boss: boss ? { family: boss.id, form: $('form').value, name: boss.name } : null,
+      // The preview supplies synthetic combatants, so the nearby count must
+      // agree with engaged. Production routing gives nearbyEngaged precedence.
+      // An inherited real-campaign 0 would falsely keep Millhaven peaceful.
       engaged: boss ? 1 : mode === 'combat' ? 4 : 0,
+      nearbyEngaged: boss ? 1 : mode === 'combat' ? 4 : 0,
       situation: boss ? 'boss' : mode === 'combat' ? 'combat' : mode === 'peace' ? 'peace' : mode,
       started: true,
       gameOver: false,
