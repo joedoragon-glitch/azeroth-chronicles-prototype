@@ -107,35 +107,41 @@ for (const language of ['en', 'es']) {
   // the expensive path simply because a 100-unit threshold was crossed.
   game.hero.order = null;
   game.hero.path = [];
-  let routeRefreshes = 0;
+  let synchronousRefreshes = 0, budgetedRefreshes = 0;
   const nativeTarget = game.navigationTarget;
+  const nativeBudgeted = game.budgetedNavigationTarget;
   game.navigationTarget = function (...args) {
-    routeRefreshes++;
+    synchronousRefreshes++;
     return nativeTarget.apply(this, args);
+  };
+  game.budgetedNavigationTarget = function* (...args) {
+    budgetedRefreshes++;
+    return yield* nativeBudgeted.apply(this, args);
   };
   const startX = game.hero.x;
   const startTime = game.s.time;
   game.hero.x += 120;
   frame(0);
-  assert.equal(routeRefreshes, 0, 'manual 120-unit step does not request a new full route');
+  assert.equal(synchronousRefreshes, 0, 'manual 120-unit step never runs synchronous pathfinding');
   assert.equal(scope.Prototype.navigationState.active, true,
     'unrelated short walk must not hide the existing waypoint');
 
   // A meaningful movement is eligible only after the slower timeout.
   game.s.time = startTime + 3;
   frame(100);
-  assert.equal(routeRefreshes, 1, 'two-second refresh after manual displacement');
+  assert.equal(budgetedRefreshes, 1, 'two-second refresh begins one bounded native search');
+  assert.equal(synchronousRefreshes, 0, 'background guide cannot call synchronous route');
   // Standing thereafter does not repeat the same static route, even over time.
   game.s.time += 3;
   frame(200);
-  assert.equal(routeRefreshes, 1, 'standing without new displacement does not replan');
+  assert.equal(budgetedRefreshes, 1, 'ongoing bounded search is resumed, not restarted');
   game.hero.x = startX + 340;
   game.s.time += 3;
   frame(300);
-  assert.equal(routeRefreshes, 2, 'two-second refresh after another meaningful walk');
+  assert.equal(budgetedRefreshes, 1, 'movement while search is pending does not restart an expensive search');
   game.hero.x = startX + 800;
   frame(400);
-  assert.equal(routeRefreshes, 3, 'substantial new movement refreshes without waiting');
+  assert.equal(budgetedRefreshes, 1, 'substantial movement does not spawn parallel route searches');
 
   // Finding the actual patrolling monster, rather than reaching the old
   // snapshot waypoint, immediately fulfills this one informant guide.
@@ -145,7 +151,8 @@ for (const language of ['en', 'es']) {
   frame(500);
   assert.equal(scope.Prototype.trackedWaypoint, null, 'Thornfang found clears the guide');
   assert.equal(scope.Prototype.navigationState.active, false);
-  assert.equal(routeRefreshes, 3, 'the encounter check prevents another route search');
+  assert.equal(budgetedRefreshes, 1, 'the encounter cancels the pending search');
+  assert.equal(synchronousRefreshes, 0);
   assert.equal(game.hero.order, null, 'manual hero control is preserved');
 
 }

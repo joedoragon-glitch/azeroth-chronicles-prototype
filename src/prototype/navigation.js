@@ -988,6 +988,46 @@
         }
         return null;
       }
+      // Optional, visual-only guidance uses the same candidates, collision
+      // checks, BFS and smoothing as navigationTarget(), but yields before each
+      // terrain probe or graph expansion. Explicit player movement continues
+      // to use the synchronous navigationTarget() contract unchanged.
+      *budgetedNavigationTarget(place, origin = this.hero) {
+        if (!place || !Number.isFinite(place.x) || !Number.isFinite(place.y)) return null;
+        const from = { x: origin.x, y: origin.y },
+          size = this.zoneSize(),
+          anchor = place.servicePoint || place,
+          harbor = place.kind === 'transport' && place.harbor ? R.harbors?.[this.zoneId] : null;
+        if (harbor?.dock && dist(place, harbor.boat) < 1) {
+          const dock = harbor.dock,
+            clearance = 16,
+            point = {
+              x: Math.max(dock.x1 + clearance, Math.min(place.x, dock.x2 - clearance)),
+              y: Math.max(dock.y1 + clearance, Math.min(place.y, dock.y2 - clearance)),
+            };
+          if (
+            point.x >= 0 && point.y >= 0 && point.x <= size && point.y <= size &&
+            dist(point, place) + 20 < 115 &&
+            !(yield { kind: 'blocked', args: [point.x, point.y, this.zoneId, 15] })
+          ) {
+            const path = yield* this.budgetedTacticalRoute(from, point);
+            if (path.length) return { point, path };
+          }
+        }
+        for (const [dx, dy] of [
+          [0, 0], [0, 65], [65, 0], [-65, 0], [0, -65],
+          [65, 65], [-65, 65], [65, -65], [-65, -65],
+        ]) {
+          const point = { x: anchor.x + dx, y: anchor.y + dy };
+          if (
+            point.x < 0 || point.y < 0 || point.x > size || point.y > size ||
+            (yield { kind: 'blocked', args: [point.x, point.y, this.zoneId, 15] })
+          ) continue;
+          const path = yield* this.budgetedTacticalRoute(from, point);
+          if (path.length) return { point, path };
+        }
+        return null;
+      }
       // Attack contact and terrain clearance still need actor dimensions.
       // This helper no longer participates in actor-to-actor movement blocking.
       actorRadius(unit) {

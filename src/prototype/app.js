@@ -2339,8 +2339,12 @@
   // Bounded, in-session route-refresh costs. These only time actual guide
   // path calculations; no new per-frame profiler and no saved-campaign fields.
   const waypointPathDiagnostics = {
-    map: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null },
-    quest: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null },
+    map: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null,
+      budgetedStarted: 0, budgetedCompleted: 0, budgetedSlices: 0,
+      maxSliceMs: 0, combatDeferrals: 0, staleRetries: 0, budgetedFailures: 0 },
+    quest: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null,
+      budgetedStarted: 0, budgetedCompleted: 0, budgetedSlices: 0,
+      maxSliceMs: 0, combatDeferrals: 0, staleRetries: 0, budgetedFailures: 0 },
     thornAutoCleared: 0,
   };
   const cancelNavigationButton = document.createElement('button');
@@ -7385,6 +7389,144 @@
       }
     }
   }
+  // Optional visual-guide refreshes have their own small CPU/probe budget.
+  // They never borrow enemy, companion, pet, charmed-unit or boss planner pools.
+  // Initial explicit Navigate orders continue to use the immediate native path.
+  function optionalGuideFightActive() {
+    return !!game.s.squadEngagement || game.manaCombatActive() ||
+      game.s.projectiles.some((p) => p.source === 'enemy');
+  }
+  function* resumableWaypointPath(destination, origin) {
+    const choice = yield* game.budgetedNavigationTarget(destination, origin);
+    if (!choice) return { choice: null, origin };
+    const path = choice.path;
+    // Validate the static tail FIRST. Validating a long tail after checking
+    // the hero's first leg would make that first check stale mid-walk.
+    const tailSafe = Array(path.length);
+    let valid = !(yield { kind: 'blocked',
+      args: [path.at(-1).x, path.at(-1).y, game.zoneId, 15] });
+    tailSafe[path.length - 1] = valid;
+    for (let i = path.length - 2; i >= 0; i--) {
+      if (valid) valid = yield* game.budgetedRouteSegment(path[i], path[i + 1]);
+      tailSafe[i] = valid;
+    }
+    if (!valid && !tailSafe.some(Boolean)) return { retry: true };
+    // Validate the connection from the LIVE hero position only at the very
+    // end; a moving player cannot be represented by the original BFS origin.
+    // Prefer close safe waypoint tails, and discard a candidate if the hero
+    // moved too much while that particular connection was being checked.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const near = { x: game.hero.x, y: game.hero.y };
+      const candidates = path.map((point, i) => ({
+        i, distance: Math.hypot(point.x - near.x, point.y - near.y),
+      })).filter(({ i }) => tailSafe[i])
+        .sort((a, b) => a.distance - b.distance);
+      let moved = false;
+      for (const { i } of candidates) {
+        const at = { x: game.hero.x, y: game.hero.y };
+        if (yield* game.budgetedRouteSegment(at, path[i])) {
+          if (Math.hypot(game.hero.x - at.x, game.hero.y - at.y) <= 20)
+            return { choice: { point: choice.point, path: path.slice(i) }, origin: at };
+          moved = true;
+          break;
+        }
+      }
+      if (!moved) break; // All available tails are blocked, not just stale.
+    }
+    return { retry: true };
+  }
+  function beginOptionalGuidePath(guide, kind, destination) {
+    const origin = { x: game.hero.x, y: game.hero.y };
+    guide.pending = {
+      generator: resumableWaypointPath(destination, origin),
+      request: null, reply: undefined, frames: 0, cpuMs: 0,
+      kind, zone: game.zoneId,
+      destination: { id: destination.id, x: destination.x, y: destination.y },
+    };
+    waypointPathDiagnostics[kind].budgetedStarted++;
+  }
+  function advanceOptionalGuidePath(guide) {
+    const plan = guide.pending;
+    if (!plan) return;
+    const metric = waypointPathDiagnostics[plan.kind];
+    if (optionalGuideFightActive()) {
+      metric.combatDeferrals++;
+      return;
+    }
+    // Both a wall-time ceiling and hard work quotas are enforced. A clock
+    // that does not advance (e.g. deterministic test fixtures) cannot remove
+    // the explicit 128-probe / 24-node upper bounds.
+    const began = performance.now();
+    let probes = 0, nodes = 0, completed = false, result = null, failed = false;
+    try {
+      while (true) {
+        if (!plan.request) {
+          const step = plan.generator.next(plan.reply);
+          plan.reply = undefined;
+          if (step.done) {
+            completed = true;
+            result = step.value;
+            break;
+          }
+          plan.request = step.value;
+        }
+        const request = plan.request;
+        if (request.kind === 'blocked') {
+          if (probes >= 128) break;
+          probes++;
+          plan.reply = game.blocked(...request.args);
+        } else if (request.kind === 'node') {
+          if (nodes >= 24) break;
+          nodes++;
+          plan.reply = undefined;
+        } else {
+          throw Error('Unexpected optional waypoint planner request');
+        }
+        plan.request = null;
+        if (performance.now() - began >= 3) break;
+      }
+    } catch (_) {
+      completed = true;
+      failed = true;
+      result = { retry: true };
+    }
+    const elapsed = Math.max(0, performance.now() - began);
+    plan.cpuMs += elapsed;
+    plan.frames++;
+    metric.budgetedSlices++;
+    metric.maxSliceMs = Math.max(metric.maxSliceMs, elapsed);
+    if (!completed) return;
+    guide.pending = null;
+    metric.calls++;
+    metric.totalMs += plan.cpuMs;
+    if (plan.cpuMs > metric.maxMs) {
+      metric.maxMs = plan.cpuMs;
+      metric.maxAtGameTime = Number(game.s.time.toFixed(2));
+    }
+    metric.budgetedCompleted++;
+    if (failed) metric.budgetedFailures++;
+    if (result?.retry) {
+      // A stale or obstructed tail must not replace the previous path. It
+      // also must not become a per-frame restart loop while the hero runs.
+      guide.route = [];
+      guide.retryRoute = true;
+      guide.next = game.s.time + 2;
+      metric.staleRetries++;
+      return;
+    }
+    guide.retryRoute = false;
+    guide.origin = result.origin;
+    guide.next = game.s.time + 2;
+    if (plan.kind === 'quest') {
+      guide.route = result.choice &&
+        Math.hypot(result.choice.point.x - game.hero.x,
+          result.choice.point.y - game.hero.y) > 75
+        ? result.choice.path : [];
+    } else {
+      guide.route = result.choice ? result.choice.path : [];
+      if (result.choice) guide.point = result.choice.point;
+    }
+  }
   function clearWaypoint() {
     if (navigationGuide?.autopilot && game.hero.order === navigationGuide.order) {
       game.hero.order = null;
@@ -7504,19 +7646,34 @@
       return;
     }
     if (guide.autopilot && game.hero.order !== guide.order) guide.autopilot = false;
-    if (guide.autopilot) return; // Follow the live hero route without new plans.
-    // The manual hero can move ~300 units/sec. A 100-unit replan threshold
-    // could request ~3 routes/sec. Allow one replan after substantial travel,
-    // or a slower refresh after 2 seconds of meaningful displacement.
+    if (guide.autopilot) {
+      guide.pending = null;
+      return; // Follow the live hero route without new plans.
+    }
+    if (guide.pending) {
+      const planned = guide.pending.destination, target = guide.destination;
+      if (guide.pending.zone !== game.zoneId ||
+          Math.hypot(target.x - planned.x, target.y - planned.y) > 60) {
+        guide.pending = null; // Destination changed during a suspended search.
+        guide.retryRoute = true;
+        guide.next = game.s.time;
+      } else {
+        advanceOptionalGuidePath(guide);
+        return;
+      }
+    }
+    // Manual movement can reach ~300 units/sec. Preserve the shipped 450-unit
+    // or 2-second/75-unit eligibility rule, but no full synchronous BFS here.
     const displaced = Math.hypot(
       game.hero.x - guide.origin.x, game.hero.y - guide.origin.y,
     );
-    if (!force && displaced < 450 &&
-        (game.s.time < guide.next || displaced < 75)) return;
+    if (!force && game.s.time < guide.next &&
+        (displaced < 450 || guide.retryRoute)) return;
+    if (!force && !guide.retryRoute && displaced < 450 && displaced < 75) return;
     guide.next = game.s.time + 2;
-    guide.origin = { x: game.hero.x, y: game.hero.y };
-    const choice = measuredWaypointPath('map', guide.destination);
-    guide.route = choice ? choice.path : [];
+    guide.retryRoute = false;
+    beginOptionalGuidePath(guide, 'map', guide.destination);
+    advanceOptionalGuidePath(guide);
   }
   function updateQuestGuide(force = false) {
     const gathering = game.s.gatheringTarget;
@@ -7555,8 +7712,6 @@
       Math.hypot(questGuide.route[0].x - game.hero.x, questGuide.route[0].y - game.hero.y) < 38
     )
       questGuide.route.shift();
-    if (!force && questGuide.zone === game.zoneId && game.s.time < questGuide.next) return;
-    questGuide.next = game.s.time + 2;
     const target =
       questGuide.kind === 'gathering'
         ? questGuide.sourceZone === game.zoneId &&
@@ -7565,9 +7720,28 @@
           ? game.questDestination(questGuide.id)
           : questGuide.destination;
     if (!target || target.hp <= 0) {
+      questGuide.pending = null;
       questGuide.route = [];
       return;
     }
+    if (questGuide.pending) {
+      const planned = questGuide.pending.destination;
+      if (questGuide.pending.zone !== game.zoneId ||
+          planned.id !== target.id ||
+          Math.hypot(target.x - planned.x, target.y - planned.y) > 60) {
+        questGuide.pending = null;
+        questGuide.retryRoute = true;
+        questGuide.next = game.s.time;
+      } else if (!force) {
+        advanceOptionalGuidePath(questGuide);
+        return;
+      } else {
+        questGuide.pending = null;
+      }
+    }
+    if (!force && questGuide.zone === game.zoneId &&
+        game.s.time < questGuide.next) return;
+    questGuide.next = game.s.time + 2;
     if (
       !questGuide.id &&
       questGuide.kind !== 'gathering' &&
@@ -7592,14 +7766,21 @@
       questGuide.target?.id === target.id
     )
       return;
-    const choice = measuredWaypointPath('quest', target);
     questGuide.zone = game.zoneId;
     questGuide.target = { id: target.id, x: target.x, y: target.y };
-    questGuide.origin = { x: game.hero.x, y: game.hero.y };
-    questGuide.route =
-      choice && Math.hypot(choice.point.x - game.hero.x, choice.point.y - game.hero.y) > 75
-        ? choice.path
-        : [];
+    if (force && !optionalGuideFightActive()) {
+      // A deliberate menu choice still supplies immediate visual feedback.
+      const choice = measuredWaypointPath('quest', target);
+      questGuide.origin = { x: game.hero.x, y: game.hero.y };
+      questGuide.route =
+        choice && Math.hypot(choice.point.x - game.hero.x, choice.point.y - game.hero.y) > 75
+          ? choice.path : [];
+      questGuide.retryRoute = false;
+    } else {
+      questGuide.retryRoute = false;
+      beginOptionalGuidePath(questGuide, 'quest', target);
+      advanceOptionalGuidePath(questGuide);
+    }
   }
   function storyNavigate(destination, label, questId = null, purpose = null) {
     if (questId) {
