@@ -169,15 +169,110 @@ function openForwardTravel(app) {
       'preparation does not move the saved hero to another location');
   }
 
-  // A slow or stalled resource must not be treated as an expired stopwatch.
-  // The player can explicitly select Canvas instead of waiting indefinitely.
+  // An unresponsive GPU preparation must return to Canvas automatically,
+  // but actual progress extends the inactivity window. This is a real title
+  // shell with the same async startup readiness path and a controlled clock.
+  {
+    let nowMs = 0, timerId = 0, textureProgress = 0, attempts = 0, released = 0;
+    const timers = new Map();
+    class TestDate extends Date {
+      static now() { return nowMs; }
+    }
+    const gpuState = {
+      mode: 'canvas2d', phase: 'canvas', preferredRenderer: 'webgl2',
+      recoveryPaused: false, recoveryPending: false,
+    };
+    const graphicsGuard = {
+      startupChoice: () => ({ renderer: 'webgl2', reason: 'confirmed-preference' }),
+      create: ({ prepareWebGL, showCanvas }) => ({
+        status: () => gpuState,
+        resumeConfirmedWebGL: async () => {
+          gpuState.phase = 'preparing';
+          const ready = await prepareWebGL();
+          if (!ready) {
+            gpuState.phase = 'canvas';
+            gpuState.mode = 'canvas2d';
+            showCanvas();
+          }
+          return ready;
+        },
+        requestWebGL: async () => false,
+        maybeRecover: async () => false,
+        confirm: () => false,
+        revert: () => false,
+        webglFailed: () => false,
+        visibilityChanged() {},
+      }),
+    };
+    const pixi = {
+      create: () => ({
+        prepare: () => {
+          attempts++;
+          return new Promise(() => {});
+        },
+        status: () => ({ active: false, loadedTextures: textureProgress }),
+        warmArrival: async () => false,
+        draw() {},
+        activate() {},
+        deactivate() {},
+        release() { released++; },
+        noteEvents() {},
+        failureDetails: () => null,
+      }),
+    };
+    const app = shell('en', 'ranger', {
+      stayOnTitle: true, graphicsGuard, pixi, Date: TestDate,
+      now: () => nowMs,
+      onTimeout: (fn, ms) => {
+        const id = ++timerId;
+        timers.set(id, { fn, ms });
+        return id;
+      },
+      onClearTimeout: (id) => timers.delete(id),
+    });
+    const zone = app.scope.Prototype.game.zoneId;
+    app.elements.get('title-continue').click();
+    await flush();
+    assert.equal(attempts, 1, 'the confirmed renderer enters its actual startup path');
+    assert.equal(app.scope.Prototype.started, false);
+    const tick = () => {
+      const found = [...timers].find(([, item]) => item.ms === 10000);
+      assert(found, 'a guarded GPU preparation is being observed');
+      timers.delete(found[0]);
+      found[1].fn();
+    };
+    nowMs = 121000;
+    textureProgress = 1;
+    tick();
+    await flush();
+    assert.equal(app.scope.Prototype.started, false,
+      'a new uploaded texture resets inactivity instead of forcing Canvas');
+    nowMs = 242000;
+    tick();
+    await flush();
+    app.frame(242100);
+    assert.equal(app.scope.Prototype.started, true,
+      'a genuinely stalled GPU preparation resumes the saved scene on Canvas');
+    assert.equal(app.scope.Prototype.game.zoneId, zone,
+      'automatic renderer recovery does not move the saved hero');
+    assert(released > 0, 'the failing GPU resources are released after Canvas takes over');
+    assert(!app.elements.get('title-screen').children.some(
+      (item) => /Continue with Canvas/.test(item.textContent)),
+    'renderer fallback is automatic, not a loading-screen choice');
+  }
+
+  // A slow resource stays covered until it settles; no manual Canvas choice
+  // may appear or silently mutate an uncommitted journey.
   {
     const app = shell('en');
     const game = app.scope.Prototype.game;
     const origin = game.zoneId;
+    let resolveWarm, warmCalls = 0;
     app.scope.PrototypeSprites = {
       definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero' } : null,
-      warm: () => new Promise(() => {}), // intentionally never resolves
+      warm: () => ++warmCalls === 1
+        ? new Promise((resolve) => { resolveWarm = resolve; })
+        : Promise.resolve(),
       advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
     };
     openForwardTravel(app).click();
@@ -185,20 +280,23 @@ function openForwardTravel(app) {
     app.frame(12000);
     assert.equal(game.zoneId, origin,
       'no wall-clock budget prematurely commits a still-preparing trip');
-    const canvas = app.elements.get('scene-loading-retry');
-    assert.equal(canvas.hidden, false, 'manual Canvas bypass is offered');
-    canvas.click();
+    assert.equal(app.elements.get('scene-loading-retry').hidden, true,
+      'no renderer-selection control appears for a merely slow preflight');
+    resolveWarm();
     await flush();
     assert.notEqual(game.zoneId, origin,
-      'Canvas bypass completes the authorized trip without waiting for stalled art');
+      'the real travel commits only after its preflight settles');
     app.frame(12100);
     assert.equal(app.scope.Prototype.sceneLoading, false);
   }
   {
     const app = shell('en', 'ranger', { stayOnTitle: true });
+    let resolveWarm, warmCalls = 0;
     app.scope.PrototypeSprites = {
       definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero' } : null,
-      warm: () => new Promise(() => {}), // intentionally never resolves
+      warm: () => ++warmCalls === 1
+        ? new Promise((resolve) => { resolveWarm = resolve; })
+        : Promise.resolve(),
       advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
     };
     app.elements.get('title-continue').click();
@@ -206,14 +304,14 @@ function openForwardTravel(app) {
     app.frame(12000);
     assert.equal(app.scope.Prototype.started, false,
       'Continue waits for readiness without a forced timeout');
-    const button = app.elements.get('title-screen').children.find(
-      (item) => item.textContent === 'Continue with Canvas');
-    assert(button && !button.hidden, 'Continue offers an optional Canvas bypass');
-    button.click();
+    assert(!app.elements.get('title-screen').children.some(
+      (item) => /Continue with Canvas/.test(item.textContent)),
+    'title loading has no manual renderer escape');
+    resolveWarm();
     await flush();
     app.frame(12100);
     assert.equal(app.scope.Prototype.started, true,
-      'explicit Canvas choice releases the pending first scene');
+      'the actual saved first scene starts when preflight settles');
   }
 
   // A page hidden during pending preflight cancels the COMMIT, even if images finish later.
@@ -338,8 +436,8 @@ function openForwardTravel(app) {
   }
 
   // A first-draw failure never exposes the previous scene or ticks combat.
-  // The dedicated retry becomes keyboard-accessible and reveals Canvas only
-  // after an actual successful paint of the already committed destination.
+  // Automatic fallback runs first; a neutral retry is available only when
+  // even the Canvas safety draw fails, without re-committing the destination.
   {
     const app = shell('en');
     const game = app.scope.Prototype.game;
@@ -354,6 +452,7 @@ function openForwardTravel(app) {
     app.frame(100);
     assert.equal(app.scope.Prototype.sceneLoading, true);
     assert.equal(app.elements.get('scene-loading-retry').hidden, false);
+    assert.equal(app.elements.get('scene-loading-retry').textContent, 'Retry loading');
     const saved = JSON.stringify(game.snapshot());
     broken = false;
     app.elements.get('scene-loading-retry').click();

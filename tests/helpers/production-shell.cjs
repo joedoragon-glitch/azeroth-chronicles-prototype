@@ -102,8 +102,8 @@ function shell(language, heroClass = 'paladin', options = {}) {
     requestAnimationFrame(fn) {
       nextFrame = fn;
     },
-    setTimeout() {},
-    clearTimeout() {},
+    setTimeout(fn, ms) { return options.onTimeout?.(fn, ms); },
+    clearTimeout(id) { options.onClearTimeout?.(id); },
     setInterval(fn, ms) { options.onInterval?.(fn, ms); },
     Blob,
     URL: { createObjectURL: () => '', revokeObjectURL() {} },
@@ -138,6 +138,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     const runtime = scope.PrototypeRuntime;
     scope.PrototypeRuntime = { ...runtime, create: () => runtime.create(options.now) };
   }
+  if (options.Date) scope.Date = options.Date;
   if (options.pixi) scope.PrototypePixiExperimental = options.pixi;
   if (options.graphicsGuard) scope.AzerothRendererSwitchGuard = options.graphicsGuard;
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };

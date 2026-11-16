@@ -5,7 +5,9 @@ const assert = require('node:assert/strict'),
   vm = require('node:vm');
 function fresh() {
   const pending = [],
-    requests = [];
+    requests = [],
+    timeouts = new Map();
+  let nextTimeout = 0;
   const scope = {
     Image: class {
       set src(src) {
@@ -15,6 +17,14 @@ function fresh() {
       }
     },
     matchMedia: () => ({ matches: false }),
+    setTimeout(fn, ms) {
+      const id = ++nextTimeout;
+      timeouts.set(id, { fn, ms });
+      return id;
+    },
+    clearTimeout(id) {
+      timeouts.delete(id);
+    },
   };
   vm.createContext(scope);
   for (const file of ['sprite-format', 'sprites'])
@@ -40,6 +50,7 @@ function fresh() {
     scope,
     pending,
     requests,
+    timeouts,
     settle,
     drain,
   };
@@ -74,6 +85,50 @@ function context() {
   };
 }
 (async () => {
+  // A silent image request/decode used to leave optional sprite warmup pending
+  // forever after the manual Canvas loading escape was removed. Only that
+  // resource may time out; healthy loads and memory reservations are retained.
+  {
+    const f = fresh();
+    assert(f.sprites.installManifest(manifest({
+      'hero:ranger': entry('silent-load'),
+      'boss:thorn': entry('healthy-load'),
+    })));
+    const warm = f.sprites.warm(['hero:ranger', 'boss:thorn']);
+    assert.equal(f.pending.length, 2);
+    const silent = f.pending.shift();
+    const healthy = f.pending.shift();
+    await f.settle(healthy);
+    assert.equal(f.sprites.status().loaded, 1);
+    assert.equal(f.timeouts.size, 1, 'successful decode cancels its watchdog');
+    const [{ fn, ms }] = [...f.timeouts.values()];
+    assert.equal(ms, 60000, 'one generous per-resource inactivity limit');
+    fn();
+    await warm;
+    const after = f.sprites.status();
+    assert.equal(after.failed, 1);
+    assert.equal(after.loading, 0);
+    assert.equal(after.queued, 0);
+    assert.equal(after.reservedBytes, 0);
+    assert.equal(after.loaded, 1, 'the healthy sprite remains cached');
+    assert.equal(f.timeouts.size, 0);
+    await f.settle(silent);
+    assert.equal(f.sprites.status().loaded, 1, 'late onload cannot undo fallback');
+
+    const d = fresh();
+    assert(d.sprites.installManifest(manifest({ 'hero:ranger': entry('silent-decode') })));
+    const decoding = d.sprites.warm(['hero:ranger']);
+    const image = d.pending.shift();
+    image.decode = () => new Promise(() => {});
+    image.onload();
+    const [watchdog] = [...d.timeouts.values()];
+    watchdog.fn();
+    await decoding;
+    assert.equal(d.sprites.status().loading, 0, 'unsettled decode() frees its slot');
+    assert.equal(d.sprites.status().failed, 1);
+    console.log('PASS silent sprite load/decode settle safely with fallback and no resource leak');
+  }
+
   {
     const f = fresh();
     assert.equal(f.sprites.status().maxDecodedBytes, 1024 * 1024 * 1024);
