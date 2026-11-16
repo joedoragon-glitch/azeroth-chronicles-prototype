@@ -10,14 +10,49 @@ Development record for the closed, unmerged [PR #872](https://github.com/joedora
 - Edition source: `0.9.1+snapshot.dev.288.controls.2` (branch source verified at `997dc571ee1bf48cc4c9fce19eb86fee3d977fe7` on 15 November 2026; recheck current HEAD before acting). The request explicitly waived automated, manual, regression and device tests and campaign playthroughs. The edition is untested. Packaging and deployment metadata are release operations.
 - The original distribution used its own host. The GitHub Pages release workflow stages the edition under `tools/webgl-pilot/play/`, a path the official worker passes through for navigation. The edition registers its own scoped worker and prefixes its storage keys. Existing saves from a different host can be exported there and imported on GitHub Pages.
 
-## Controls and combat
+## Exclusive input and UI behavior (source-level contract)
 
-- Desktop movement and menu navigation use WASD. F or Enter confirms and interacts. Esc opens or backs out of a menu. Skills 1–4 use number keys 1–4. E targets, Q recalls, Tab changes squad doctrine in the field, R commands Heal, Z opens the map, X opens the skill journal, C opens Talents, G shows controls and V pauses.
-- The phone uses the fixed left joystick with four skills in an arc, starting with Skill 1 at the lower right and ending with Skill 4 at the upper left. Heal sits farther right, outside the skill arc. Squad doctrine, recall and targeting are on the right. Use the joystick and the Confirm button beside it for menu choices. Use the Back row to dismiss menus. Joystick navigation runs on the title and New Game screens as well as during play. Name fields and system dialogs retain native text and file handling. New Game is available in Settings and uses in-game confirmation before replacing an existing save.
-- Desktop left-click in the world requests the existing healer companion action. Mouse or touch selection of game menu options and click-to-move are disabled. Guided travel still uses its existing menu routes. The published baseline's disabled mana mode is retained.
-- Slots 5–8 are available through the same instructors, learning requirements and rank upgrades. A successful activation of 1–4 resolves its learned pairing in the same form after the primary release. The pairings are 1→5, 2→6, 3→7 and 4→8.
-- The primary pays its existing costs and starts its existing recovery. Its paired effect uses its own rank, native targeting and protection rules, with no extra resource cost or independent cooldown. If the primary requests an approach, the pair waits for release. A failed or interrupted primary never releases its pair. With no legal secondary target the secondary produces no effect or pursuit. Basics never trigger pairs.
-- The existing automatic Skill 1 cadence runs only when the hero actually changes position during movement. Manual skills remain available while stationary.
+The edition uses a **fixed** layout rather than the standard game's editable keyboard presets, free-form mouse/touch menu selection, and optional tap-to-move. Preserve ordinary game behavior *outside* these exact overrides.
+
+| Situation | Edition behavior | Main-game boundary |
+| --- | --- | --- |
+| Desktop movement and menu navigation | WASD. **F or Enter** confirms a menu choice **and** interacts in the field; Esc opens/backs out of menus. | Standard Enter menu fallback must not be confused with the edition's extra Enter-as-F *field* binding. |
+| Desktop skills and utilities | Number keys **1–4** for the only four manually bound hero-skill slots. E target, Q recall, Tab doctrine, R request companion Heal, Z map, X skill journal, C Talents, G help, V pause. | The main game retains its separate eight skill keys, other defaults and customizable presets. |
+| Desktop pointer | Clicking the game world with the primary mouse button requests the existing companion Heal action **if an eligible companion can provide it**. No click-to-move and no direct mouse selection of game menu options. | The variant's left-click Heal exception is not a general menu-click permission. |
+| Phone field layout | Fixed **left joystick**; Skills **1–4** sit around its lower-left area in an arc: Skill 1 lower right, Skill 2 above it, Skill 3 farther up/left, Skill 4 upper left. Heal is to the right of the arc; target, recall and squad controls remain toward the right. | The standard phone game's normal two-thumb layout and adjustable controls remain unchanged. |
+| Phone navigation | Joystick selects and scrolls through menu choices on the title screen, language/New Game flows, in-game menus and confirmations; the left-side **Confirm** control activates the highlighted choice, and Back returns. | Tapping a menu item directly is not a shortcut for selecting it. |
+| Permitted native input and field buttons | Native text entry/name fields and file import/export pickers retain their browser behavior. Real field/HUD buttons (skills, joystick, Heal, targeting, etc.) remain usable by touch; the mouse Heal exception above remains. | Do not claim *all* touch or pointer interaction is disabled. It is **direct menu selection and click/tap-to-move** that are restricted. |
+| Menus, saves and travel | Established menu-based guided travel remains available; tapping the terrain to set a path does not. New Game is also exposed in Settings and asks for in-game confirmation before replacing an existing run. | Do not remove save review, import/export, v4 compatibility, or legitimate menu-based travel to enforce input restrictions. |
+
+The edition retains English and Spanish presentation (some inherited text remains only partially localized) and the published baseline's cooldown-only combat resource mode. All four existing playable classes and their own skill effects remain; the edition does **not** invent replacement classes or a different campaign.
+
+## Learning and combat: what “paired” actually means
+
+The original **eight hero-skill ranks, effects and training prerequisites still exist**. The edition removes independent player activation of slots 5–8, **not** their instructors or learned abilities:
+
+| Trainable secondary | Rescued instructor's family | How the player uses it |
+| --- | --- | --- |
+| Skill 5 | Orin / Ridge Tyrant | Skill **1** (normal or charged) attempts Skill **5** in the matching form |
+| Skill 6 | Orin / Ridge Tyrant | Skill **2** attempts Skill **6** |
+| Skill 7 | Lyss / Ashen Warlord | Skill **3** attempts Skill **7** |
+| Skill 8 | Tovan / Citadel | Skill **4** attempts Skill **8** |
+
+- The original instructor chain remains: Mira teaches Skill 2, Sela Skills 3–4, Orin 5–6, Lyss 7, and Tovan 8, subject to the game's original rescue, cost and rank requirements. Each secondary's rank is trained separately; learning Rank 1 enables it to follow its primary. Merely learning or upgrading the primary does not automatically grant the secondary.
+- **Primary release first.** `HeroCombat.cast(slot)` accepts manually activated slots **1–4**. If a primary successfully releases, and the matching secondary was learned, the secondary is attempted using that same *normal* or *charged* form. A primary that is blocked, invalid, interrupted or still approaching does not immediately generate a secondary release; after a legitimate approach, pairing is evaluated only when the primary truly releases.
+- **Own rules, not a free guaranteed hit.** The secondary uses its own trained rank, class-specific effects, legal targets, targeting/protection and situational constraints. A missing or invalid secondary target may mean no effect, without creating a fresh pursuit command. A secondary has **no separate resource payment or cooldown activation**, but the primary retains its normal cost and cooldown/recovery behavior.
+- **Automatic basics are a different action.** The existing basic Skill 1 cadence triggers only when the hero actually moves (rather than when stationary). Automatic basics never activate Skill 5. Manually pressing or charging Skill 1 remains available while standing still, subject to the existing combat rules; this deliberate manual release can pair with a learned Skill 5.
+- The edition preserves normal charged preparation, queueing, cancellation, party interruption, status, pet/companion actions and targeting rules unless the specified fixed-control/paired-release delta directly changes them. Do not present this variant as a wholesale combat redesign.
+
+## Player-facing explanations: in-game sources and writing guidance
+
+Documentation cannot substitute for what the player actually reads. Maintain **both English and natural Latin American Spanish** for the edition-specific screens, using brief, practical language and the game's existing menu tone rather than mentioning mods, private players or technical implementation. The existing [communication guide](COMMUNICATION_STYLE.md) describes public/forum writing; its own boundary explicitly says it is **not a narrative or gameplay-dialogue contract**.
+
+- `src/prototype/app.js` **Controls**, **Skills and targeting → Using skills / Paired skills**, and title **Help & Credits → Quick Start / Combat & companions** explain WASD/joystick/Confirm, legitimate field interaction versus blocked menu taps, movement-only automatic basics, 1–4 controls and 5–8 pairing. Check both explicit English and Spanish strings.
+- `src/prototype/menus.js` **Hero skills** trainer previews and **Skill journal → skill detail / Using skills** retain the individual names, ranks, normal and charged effects. Newly learning **Rank 1 of Skills 5–8** produces a brief bilingual explanation of the corresponding 1–4 button and conditional follow-up, with a clear return to training; **rank upgrades do not repeat** the lesson.
+- Other game menus offering quests, recruitment and recoveries must say **choose/select** instead of **tap** for menu-item selection. Keep *tap/hold* wording for genuinely touch-operated field controls; maintain matching Spanish via the existing translation mapping or explicit `getLanguage()` when dynamic wording is needed.
+- Avoid imprecise promises: learning 5–8 does **not** make the ability an extra selectable skill, guarantee a second hit, waive original training costs, or make all touch controls unusable. Likewise, **Enter-as-F in the field** is edition-only, while the standard game already supported Enter to confirm menus.
+
+**Verification boundary:** The original mod source at `997dc57` was published without the user's requested game tests. The explanatory UI/copy changes prepared on **PR #875** are **draft source changes only** until separately authorized, merged into the mod branch and released. Source inspection verifies intent, **not** browser/phone acceptance or a new published build. No new automated tests or full-site byte audits were authorized for this experimental edition.
 
 ## Separation policy for future chats
 
