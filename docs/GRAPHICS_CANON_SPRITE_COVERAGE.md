@@ -446,3 +446,7 @@ These four procedural families implement the approved 50-decision register in dr
 | `estate-scaffold` | PROCEDURAL | C04/C05 existing Crypt reclamation and unfinished estate works, using existing timber/stone materials |
 
 See `tools/sprites/design-handoffs/greenwood-flagship-working-scenes.json` for authorial basis, exact runtime identities, scope and unresolved review.
+
+### 16 November 2026 — source-only sprite loader watchdog review (PR #897)
+
+The source-only `src/prototype/sprites.js` change adds a 60-second watchdog for a silently pending image request or `decode()` promise, freeing the bounded decoded-memory reservation, resolving the pending optional warmup and preserving procedural fallback. The sprite catalog, canonical artwork, approved image variants and clips, placements, hero identities, renderer-specific visuals and world geometry were not edited. The **enumerated** sprite-canon evidence is unchanged; only the reviewed `sprites.js` source SHA-256 in `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` was refreshed. The reviewed source-only sprite fingerprint, original sprite-scope test and focused regression passed in PR #897 [run #43867847771](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43867847771); this is not owner device acceptance or a published build.
