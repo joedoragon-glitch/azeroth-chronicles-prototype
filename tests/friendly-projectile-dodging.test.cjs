@@ -33,7 +33,8 @@ for (const cls of ['mage', 'ranger'])
     [1, false],
     [2, false],
     [6, false],
-    [1, true],
+    // Charged Skill 1 is Mage's timed wide area beam or Ranger's Hawk:
+    // neither uses the physical projectile array (tested by hero-skill1).
     [6, true],
     ...(cls === 'ranger'
       ? [
@@ -101,7 +102,7 @@ for (const cls of ['mage', 'ranger'])
 {
   const { g, e } = arena('mage');
   const hp = e.hp;
-  assert(g.cast(1, e.id, true), 'charged Mage beam is legally released');
+  assert(g.cast(6, e.id, true), 'charged Mage focused projectile is legally released');
   fly(g);
   assert(e.hp < hp, 'unchallenged charged projectile reaches its target');
   assert(g.effects.some((effect) => effect.type === 'chargedImpact'),
