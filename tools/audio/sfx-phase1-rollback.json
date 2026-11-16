@@ -606,5 +606,492 @@
     "sfx-piercing-volley": "24793d40239f85a4102f8025250f5422811328a1c4185945aa9ab1e1d794fc8b"
   },
   "archiveFolder": "tools/audio/sfx-legacy/dev288",
-  "notPublished": true
+  "notPublished": true,
+  "originalEventBindings": {
+    "sfx-steel-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 0,
+        "binding": {
+          "asset": "sfx-steel-release",
+          "when": {
+            "material": "steel"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-steel-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 0,
+        "binding": {
+          "asset": "sfx-steel-impact",
+          "when": {
+            "material": "steel"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-claw-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 1,
+        "binding": {
+          "asset": "sfx-claw-release",
+          "when": {
+            "material": "claw"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-claw-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 1,
+        "binding": {
+          "asset": "sfx-claw-impact",
+          "when": {
+            "material": "claw"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-bone-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 2,
+        "binding": {
+          "asset": "sfx-bone-release",
+          "when": {
+            "material": "bone"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-bone-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 2,
+        "binding": {
+          "asset": "sfx-bone-impact",
+          "when": {
+            "material": "bone"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-stone-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 3,
+        "binding": {
+          "asset": "sfx-stone-release",
+          "when": {
+            "material": "stone"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-stone-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 3,
+        "binding": {
+          "asset": "sfx-stone-impact",
+          "when": {
+            "material": "stone"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-wet-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 4,
+        "binding": {
+          "asset": "sfx-wet-release",
+          "when": {
+            "material": "wet"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-wet-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 4,
+        "binding": {
+          "asset": "sfx-wet-impact",
+          "when": {
+            "material": "wet"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-arrow-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 5,
+        "binding": {
+          "asset": "sfx-arrow-release",
+          "when": {
+            "material": "arrow"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-arrow-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 5,
+        "binding": {
+          "asset": "sfx-arrow-impact",
+          "when": {
+            "material": "arrow"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-spectral-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 6,
+        "binding": {
+          "asset": "sfx-spectral-release",
+          "when": {
+            "material": "spectral"
+          },
+          "gain": 0.3,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-spectral-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 6,
+        "binding": {
+          "asset": "sfx-spectral-impact",
+          "when": {
+            "material": "spectral"
+          },
+          "gain": 0.36,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-ash-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 7,
+        "binding": {
+          "asset": "sfx-ash-release",
+          "when": {
+            "material": "ash"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-ash-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 7,
+        "binding": {
+          "asset": "sfx-ash-impact",
+          "when": {
+            "material": "ash"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-holy-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 8,
+        "binding": {
+          "asset": "sfx-holy-release",
+          "when": {
+            "material": "holy"
+          },
+          "gain": 0.3,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-holy-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 8,
+        "binding": {
+          "asset": "sfx-holy-impact",
+          "when": {
+            "material": "holy"
+          },
+          "gain": 0.36,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-arcane-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 9,
+        "binding": {
+          "asset": "sfx-arcane-release",
+          "when": {
+            "material": "arcane"
+          },
+          "gain": 0.3,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-arcane-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 9,
+        "binding": {
+          "asset": "sfx-arcane-impact",
+          "when": {
+            "material": "arcane"
+          },
+          "gain": 0.36,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-root-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 10,
+        "binding": {
+          "asset": "sfx-root-release",
+          "when": {
+            "material": "root"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-root-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 10,
+        "binding": {
+          "asset": "sfx-root-impact",
+          "when": {
+            "material": "root"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-dust-release": [
+      {
+        "event": "effect.enemyRelease",
+        "index": 11,
+        "binding": {
+          "asset": "sfx-dust-release",
+          "when": {
+            "material": "dust"
+          },
+          "gain": 0.18,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-dust-impact": [
+      {
+        "event": "effect.enemyImpact",
+        "index": 11,
+        "binding": {
+          "asset": "sfx-dust-impact",
+          "when": {
+            "material": "dust"
+          },
+          "gain": 0.22,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-critical-warning": [
+      {
+        "event": "effect.enemyWindup",
+        "index": 0,
+        "binding": {
+          "asset": "sfx-critical-warning",
+          "when": {
+            "dangerous": true
+          },
+          "gain": 0.47,
+          "priority": 3,
+          "minGap": 0.035,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-hero-steel-swing": [
+      {
+        "event": "effect.swordSwing",
+        "index": 0,
+        "binding": {
+          "asset": "sfx-hero-steel-swing",
+          "when": {
+            "combo": 3
+          },
+          "gain": 0.47,
+          "bus": "effects"
+        }
+      },
+      {
+        "event": "effect.swordSwing",
+        "index": 1,
+        "binding": {
+          "asset": "sfx-hero-steel-swing",
+          "when": {
+            "combo": 2
+          },
+          "gain": 0.4,
+          "bus": "effects"
+        }
+      },
+      {
+        "event": "effect.swordSwing",
+        "index": 2,
+        "binding": {
+          "asset": "sfx-hero-steel-swing",
+          "when": {},
+          "gain": 0.35,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-hero-steel-impact": [
+      {
+        "event": "effect.heroSteelImpact",
+        "index": 0,
+        "binding": {
+          "asset": "sfx-hero-steel-impact",
+          "when": {
+            "combo": 3
+          },
+          "gain": 0.47,
+          "bus": "effects"
+        }
+      },
+      {
+        "event": "effect.heroSteelImpact",
+        "index": 1,
+        "binding": {
+          "asset": "sfx-hero-steel-impact",
+          "when": {
+            "combo": 2
+          },
+          "gain": 0.4,
+          "bus": "effects"
+        }
+      },
+      {
+        "event": "effect.heroSteelImpact",
+        "index": 2,
+        "binding": {
+          "asset": "sfx-hero-steel-impact",
+          "when": {},
+          "gain": 0.35,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-power-strike": [
+      {
+        "event": "effect.powerStrike",
+        "index": 0,
+        "binding": {
+          "asset": "sfx-power-strike",
+          "when": {},
+          "gain": 0.42,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-holy-cleave": [
+      {
+        "event": "effect.companionHolyCleave",
+        "index": 0,
+        "binding": {
+          "asset": "sfx-holy-cleave",
+          "when": {},
+          "gain": 0.42,
+          "bus": "effects"
+        }
+      }
+    ],
+    "sfx-piercing-volley": [
+      {
+        "event": "effect.piercingVolley",
+        "index": 0,
+        "binding": {
+          "asset": "sfx-piercing-volley",
+          "when": {},
+          "gain": 0.42,
+          "bus": "effects"
+        }
+      }
+    ]
+  },
+  "rollbackIncludes": "original WAV/master metadata AND per-asset original event binding (including gain); selective rollback restores all three"
 }
