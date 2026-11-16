@@ -2,6 +2,7 @@
 
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 let count = 0;
 function test(name, callback) {
   callback();
@@ -281,6 +282,15 @@ test('Charmed Skeletons preserve their normal/earned repertoire without a new sa
     assert.equal(game.charmedSkeletonCraft(melee, enemy, false, false), false,
       'a missing capture receipt cannot unlock friendly estate craft');
     game.s.charmCaptures[melee.id] = receipt;
+    // Skill 2 must remain earned; the direct helper cannot bypass its
+    // same-character training gate even if called outside the squad scheduler.
+    game.s.companionCombatTraining = 1;
+    game.hero.skills[1] = 0;
+    assert(!game.charmedEliteTrained(melee));
+    assert.equal(game.charmedSkeletonCraft(melee, enemy, true, false), false,
+      'unearned elite craft cannot bypass Charmed Skill 2 admission');
+    game.s.companionCombatTraining = 2;
+    assert(game.charmedEliteTrained(melee));
     assert(game.charmedSkeletonCraft(melee, enemy, false, false),
       'genuinely Charmed Skeleton can perform Mortise contact');
     assert.equal(game.s.projectiles.length, 0);
@@ -302,6 +312,62 @@ test('Charmed Skeletons preserve their normal/earned repertoire without a new sa
     else Campaign.talentProfiles.rogue = oldTalents;
   }
 });
+test('Native enemy-loop admits and releases craft without direct test-only casting', () => {
+  for (const mode of ['normal', 'nightmare'])
+    for (const ranged of [false, true])
+      for (const elite of [false, true]) {
+        const { game, enemy } = encounter({ mode, ranged, elite });
+        // An earned first field kill, not a synthetic bypass of opening
+        // progression; the combat loop must run with the real map/LOS.
+        completeFieldOpening(game);
+        const separation = ranged ? 175 : 76;
+        let lane = null;
+        for (const [x, y] of [
+          [1700, 1800], [2200, 1700], [2100, 2300],
+          [1500, 2450], [2650, 2450], [1750, 2700],
+        ]) {
+          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const from = { x, y };
+            const to = { x: x + dx * separation, y: y + dy * separation };
+            if (game.blocked(from.x, from.y, 'vale', 15) ||
+                game.blocked(to.x, to.y, 'vale', 15) ||
+                !game.clearSegment(from, to, 15) || !game.line(from, to))
+              continue;
+            lane = { from, to };
+            break;
+          }
+          if (lane) break;
+        }
+        assert(lane, 'a real dry Greenwood combat lane must exist');
+        Object.assign(enemy, { ...lane.from, home: { ...lane.from },
+          aggro: true, fightStart: game.s.time, cd: 0, specialCd: 0 });
+        Object.assign(game.hero, { ...lane.to, hp: 100000, maxHp: 100000,
+          immune: 0, slow: 0, order: null });
+        game.s.party = [];
+        game.zone().enemies = [enemy];
+        const before = game.hero.hp;
+        let windup = null, released = false;
+        for (let i = 0; i < 180; i++) {
+          game.s.time += 0.1;
+          game.updateEnemies(0.1);
+          if (enemy.telegraph?.skeletonCraft) windup ||= enemy.telegraph.name;
+          if (windup && (ranged
+            ? game.s.projectiles.some((p) => p.sourceId === enemy.id)
+            : game.hero.hp < before)) {
+            released = true;
+            break;
+          }
+        }
+        const expected = ranged
+          ? (elite ? 'Resection' : 'Datum Line')
+          : (elite ? 'Double Shear' : 'Mortise Cut');
+        assert.equal(windup, expected,
+          mode + '/' + expected + ': original enemy scheduler committed the skill');
+        assert(released,
+          mode + '/' + expected + ': native timer completed physical contact or projectile launch');
+      }
+});
+
 test('Suppressed, summoned and out-of-range actors cannot start new craft actions', () => {
   for (const mode of ['normal', 'nightmare']) {
     const { game, enemy } = encounter({ mode });

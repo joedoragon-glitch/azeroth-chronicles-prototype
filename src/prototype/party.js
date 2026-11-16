@@ -2348,6 +2348,7 @@
         // Never let a forged/partially migrated origin bypass the same owned
         // capture receipt required by every other Charmed action.
         if (!this.isCharmedCompanion(u) || u.charmOrigin.species !== 'skeleton' ||
+            (elite && !this.charmedEliteTrained(u)) ||
             !target || target.hp <= 0 || !this.tacticalDirectTargetable(target) ||
             !this.line(u, target)) return false;
         const ranged = u.type === 'archer',
