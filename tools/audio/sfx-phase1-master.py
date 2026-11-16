@@ -74,9 +74,15 @@ def material(kind,stage):
         return swoop(600,7500,.091,.044,.064)+swoop(2300,11500,.139,.026,.018)
     if kind=="claw":
         if hit:
-            return (swoop(390,3400,.031,.016,.090)+swoop(1400,7900,.086,.037,.049)
-                    +puff(440,vol=.032,tail=.042))
-        return swoop(850,5300,.077,.052,.060)+swoop(2200,9700,.145,.023,.016)
+            # Sudden hooked tear and two close grit fractures, not the same
+            # airborne scratch contour used by the approaching claw.
+            return (burst(320,1550,.074,decay=.019)
+                    +burst(1800,7600,.082,at=.007,decay=.013)
+                    +swoop(950,4800,.051,.028,.036)
+                    +burst(2500,10500,.023,at=.070,decay=.017))
+        return (swoop(700,4100,.087,.055,.061)
+                +swoop(3000,10500,.148,.023,.021)
+                +burst(1500,5900,.022,at=.124,decay=.027))
     if kind=="bone":
         if hit:
             return (clang([(710,.024),(1197,.045),(1963,.030)],decay=.038)
@@ -85,10 +91,16 @@ def material(kind,stage):
                 +partial(967,.028,.029)+swoop(1700,7000,.074,.039,.031))
     if kind=="stone":
         if hit:
-            return (burst(210,1650,.102,decay=.062)+burst(1450,4100,.025,decay=.018)
-                    +partial(272,.030,.085)+partial(480,.019,.052))
-        return (swoop(180,1600,.108,.065,.049)+puff(410,vol=.025,tail=.076)
-                +burst(900,3900,.016,at=.10,decay=.029))
+            # Dense contact has a sharp midrange fracture above the low thud,
+            # so the collision remains recognizable on small loudspeakers.
+            return (burst(210,1650,.095,decay=.048)
+                    +burst(1200,6100,.047,decay=.017)
+                    +partial(375,.027,.072)+partial(715,.018,.044)
+                    +burst(2400,9300,.024,at=.026,decay=.014))
+        # Departure is gritty friction in motion, without an instant impact.
+        return (swoop(600,3500,.106,.063,.062)
+                +swoop(2100,7600,.144,.034,.024)
+                +burst(980,4500,.021,at=.065,decay=.043))
     if kind=="wet":
         if hit:
             return (burst(180,1400,.086,decay=.06)+burst(800,4800,.052,at=.027,decay=.026)
@@ -97,16 +109,28 @@ def material(kind,stage):
                 +partial(460,.011,.045))
     if kind=="arrow":
         if hit:
-            return (burst(640,2600,.071,decay=.020)+burst(1900,8100,.045,decay=.012)
-                    +clang([(780,.029),(1390,.019),(2320,.014)],decay=.047))
-        return (clang([(227,.036),(463,.027),(682,.013)],decay=.049)
-                +burst(950,4700,.046,decay=.013)+swoop(1500,8200,.065,.028,.035))
+            # An abrupt wooden target strike with short shaft vibration;
+            # do not repeat the pitched bowstring release on target contact.
+            return (burst(360,1650,.094,decay=.014)
+                    +burst(1350,7400,.072,at=.006,decay=.011)
+                    +partial(455,.027,.041)+partial(910,.018,.025)
+                    +burst(2800,10000,.022,at=.029,decay=.012))
+        # Small string snap followed by air-flight: string is not a hit.
+        return (clang([(220,.041),(448,.026),(674,.014)],at=.011,decay=.055)
+                +burst(1100,4400,.035,at=.011,decay=.014)
+                +swoop(1550,8700,.092,.042,.041))
     if kind=="spectral":
         if hit:
-            return (pitch(1680,740,.035,decay=.12)+clang([(1831,.029),(2939,.019)],decay=.091)
-                    +burst(2300,10500,.044,decay=.033))
-        return (pitch(610,1650,.040,at=.018,duration=.125,decay=.105)
-                +swoop(1250,8700,.11,.059,.029))
+            # Collision reverses the pitch direction and breaks into a hard,
+            # high, short spectral shard instead of gliding through the air.
+            return (pitch(2100,620,.046,decay=.082)
+                    +clang([(1653,.031),(3211,.021)],decay=.064)
+                    +burst(3200,12200,.049,decay=.023))
+        # Spectral departure gathers gradually: a rising airy figure with
+        # little energy at the moment the projectile starts traveling.
+        return (pitch(470,1610,.052,at=.033,duration=.17,decay=.125)
+                +swoop(1750,10200,.132,.058,.033)
+                +partial(2130,.012,.046,at=.113))
     if kind=="ash":
         if hit:
             return (burst(380,2600,.072,decay=.044)+burst(3100,12500,.041,at=.016,decay=.032)
@@ -115,11 +139,14 @@ def material(kind,stage):
                 +partial(547,.013,.061))
     if kind=="holy":
         if hit:
-            return (clang([(625,.021),(1248,.040),(1877,.026),(3110,.015)],decay=.088)
-                    +burst(2600,10900,.046,decay=.017))
-        return (pitch(520,1250,.042,at=.014,decay=.079)
-                +clang([(940,.017),(1871,.015)],at=.038,decay=.068)
-                +burst(2400,9100,.023,decay=.031))
+            # The hit is a short consecrated glass/metal fracture, not another
+            # slowly arriving harmonic ascent.
+            return (clang([(620,.019),(1280,.042),(2165,.030),(3420,.016)],decay=.068)
+                    +burst(1900,9000,.078,decay=.014)
+                    +burst(4000,13000,.027,at=.017,decay=.016))
+        return (pitch(430,1370,.048,at=.046,duration=.150,decay=.087)
+                +pitch(970,2150,.018,at=.088,decay=.060)
+                +swoop(2300,9700,.118,.043,.028))
     if kind=="arcane":
         if hit:
             return (clang([(803,.031),(1667,.037),(2827,.022),(4191,.012)],decay=.077)
