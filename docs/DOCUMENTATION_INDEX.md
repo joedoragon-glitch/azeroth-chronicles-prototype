@@ -44,6 +44,9 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Music, sound effects and audio production
 
+- **[SFX Phase 2 — Current Continuation and Evidence](AUDIO_SFX_PHASE2_CONTINUATION_20261116.md)** — **ACTIVE DRAFT WORKSTREAM HANDOFF (PR #898).** Exact main/PR/CI snapshots, eight physical WAV previews, four draft-installed sounds, unresolved mergeability, next P1→P2→P3 execution order, final owner listening and release gates.
+- **[SFX Phase 2 — Eight-cue Technical Production Pilot](AUDIO_SFX_PHASE2_PILOT_20261116.md)** — **ACTIVE DRAFT PRODUCTION RECORD.** Deterministic source and hashes, one-owner playback/fallback, original Phase 1 preservation and four still-unregistered previews.
+- **[SFX Phase 2 — Reviewed Three-priority Sound Design (draft PR #887)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/887)** — **SOURCE-GROUNDED DESIGN REFERENCE, UNMERGED.** All four classes, Soldier/Archer, TRUE pets, Charmed, eleven bosses, five captains, enemies and meaningful interactions; corrected F01–F09 design findings. The local files exist on that PR's branch, **not** this production PR or main.
 - **[Audio Authoring](AUDIO_AUTHORING.md)** — **Maintained guide.** Audio recipe rendering, manifest registration, attribution and production validation.
 - **[Audio Environment](AUDIO_ENVIRONMENT.md)** — **Reference.** Environmental sound beds, their synthesis source and location/scene playback rules.
 - **[Audio Foundation](AUDIO_FOUNDATION.md)** — **Reference.** Reference structure or catalog for audio, with its original assumptions and scope.
