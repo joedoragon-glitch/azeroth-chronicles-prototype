@@ -810,6 +810,14 @@
         })) return false;
         // Piercing bypasses defensive mitigation, not terrain, range or Ash misses.
         const piercing = source === 'hero' && options?.piercing === true;
+        // A post defender actively bracing for Mortise Cut gains a modest
+        // physical guard *only for that visible cast*. No permanent buff,
+        // invulnerability, extra saved field, or alteration of other species.
+        if (
+          e.guard && e.species === 'skeleton' &&
+          e.telegraph?.skeletonCraft && e.telegraph.role === 'melee' &&
+          !e.telegraph.elite && !piercing
+        ) amount *= 0.78;
         if (!piercing && this.enemyFort(e)) amount *= R.balance.fortifications.incomingMultiplier;
         if (!piercing && e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
         if (!piercing && e.roomCaptain) {
