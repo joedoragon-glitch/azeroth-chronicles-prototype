@@ -976,6 +976,22 @@
     Fallen: 'Caído',
     Resting: 'En descanso',
   });
+  // Edition-only menu wording: selections use keyboard/joystick, not
+  // direct pointer taps. Keep ordinary touch verbs for actual HUD controls.
+  Object.assign(spanishText, {
+    'Queued · choose again to cancel. No crowns spent.':
+      'En cola · vuelve a elegir para cancelar. No has gastado coronas.',
+    'choose again to cancel. No crowns spent.':
+      'Vuelve a elegir para cancelar. No has gastado coronas.',
+    'Short on crowns? Choose this option to queue.':
+      '¿Te faltan coronas? Elige esta opción para dejar la solicitud en cola.',
+    'Short on crowns? Choose an available service to queue it.':
+      '¿Te faltan coronas? Elige un servicio disponible para dejarlo en cola.',
+    'Choose a quest to track it. Rewards arrive automatically.':
+      'Elige una misión para seguirla. Las recompensas llegan automáticamente.',
+    'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.':
+      'Recluta compañeros, cura las heridas del grupo por 30 coronas o recupera a los caídos.',
+  });
   Object.assign(spanishText, {
     Character: 'Personaje',
     Equipment: 'Equipo',
