@@ -179,7 +179,7 @@ test('Resection changes from converging double shot to charged flank interdictio
   assert.equal(normal.name, 'Resection');
   assert.equal(normal.charged, false);
   assert.equal(game.s.projectiles.length, 2);
-  const first = game.s.projectiles.map((p) => p.dx);
+  const first = game.s.projectiles.map((p) => p.dy);
   assert.notEqual(first[0], first[1], 'tap is a pair of divergent launch bearings');
   game.s.projectiles = [];
   enemy.telegraph = null;
@@ -199,14 +199,16 @@ test('Charmed Skeletons preserve their normal/earned repertoire without a new sa
   game.hero.class = 'rogue';
   const u = game.unit('soldier', enemy.x + 35, enemy.y);
   u.charmOrigin = { species: 'skeleton', sourceZone: 'vale',
-    typeId: 'enemy:skeleton:melee', sourceEnemyId: 'old-skeleton' };
+    typeId: 'enemy:skeleton:melee', typeName: 'Skeleton', role: 'soldier',
+    sourceEnemyId: 'old-skeleton' };
   game.s.party = [u];
   assert(game.charmedSkeletonCraft(u, enemy, false, false),
     'same non-slow Mortise geometry is usable while friendly');
   assert.equal(game.s.projectiles.length, 0);
   const r = game.unit('archer', enemy.x + 50, enemy.y);
   r.charmOrigin = { species: 'skeleton', sourceZone: 'vale',
-    typeId: 'enemy:skeleton:ranged', sourceEnemyId: 'old-archer' };
+    typeId: 'enemy:skeleton:ranged', typeName: 'Skeleton Bow Guard', role: 'archer',
+    sourceEnemyId: 'old-archer' };
   game.s.party = [r];
   assert(game.charmedSkeletonCraft(r, enemy, false, false),
     'Charmed Datum Line creates actual arrows, not remote automatic damage');
