@@ -3096,8 +3096,8 @@
     openMenu(
       'Controls',
       language === 'es'
-        ? 'WASD para moverte y recorrer menús, F o Enter para confirmar y Esc para volver. En el teléfono, usa la palanca izquierda y el botón Confirmar. Pulsa 1–4 para usar habilidades o mantenlas pulsadas para cargarlas. Las habilidades aprendidas 5–8 se activan junto con 1–4. Haz clic izquierdo en el campo para pedir curación a un compañero.'
-        : 'Use WASD to move and navigate menus, F or Enter to confirm, and Esc to go back. On a phone, use the left joystick and the Confirm button. Tap 1–4 for skills or hold to charge. Learned skills 5–8 activate with 1–4. Left-click in the field to request a companion heal.',
+        ? 'Muévete con WASD y recorre los menús con esas mismas teclas. F o Enter confirma e interactúa; Esc vuelve atrás. En el teléfono, usa la palanca izquierda para moverte y elegir opciones, y Confirmar para aceptarlas. Las cuatro habilidades usan las teclas o botones 1–4; mantén pulsado para cargar. Cuando aprendes las habilidades 5–8, acompañan a 1–4. No se usan el ratón ni los toques directos para elegir opciones, y no puedes moverte tocando el terreno. En computadora, el clic izquierdo en el campo solicita curación a un compañero disponible.'
+        : 'Move and navigate menus with WASD. F or Enter confirms and interacts; Esc goes back. On a phone, use the left joystick to move and choose options, then Confirm to select. Use keys or buttons 1–4 for skills; hold to charge. Once learned, Skills 5–8 follow Skills 1–4. Menu options cannot be selected by clicking or tapping them, and tapping the ground does not move you. On desktop, left-clicking the field requests healing from an available companion.',
       [],
       back,
     );
@@ -3114,8 +3114,16 @@
           'Using skills',
           explain(
             'Using skills',
-            'Tap for normal, hold until CHARGED and release. Charged starts the short Tap cooldown and its own longer one; Tap returns earlier without extending Charged. Automatic Skill 1 basics fire only while moving. Learned skills 5–8 follow 1–4 in the same form. See the Skill journal.',
-            'Toca para normal o mantén hasta CARGADA y suelta. La cargada inicia ambas recuperaciones; normal vuelve antes y no prolonga cargada. Los ataques automáticos de la habilidad 1 solo se hacen en movimiento. Las habilidades aprendidas 5–8 siguen a 1–4 en la misma forma. Consulta el Diario.',
+            'Tap for normal, or hold until CHARGED and release. Charged starts the normal cooldown and its own longer recovery; a normal attack may be ready sooner. Automatic basic attacks only happen as you move. See Paired skills for what happens when you learn Skills 5–8.',
+            'Pulsa para usar la versión normal o mantén hasta CARGADA y suelta. La cargada inicia la recuperación normal y otra más larga; la normal puede estar lista antes. Los ataques básicos automáticos solo ocurren al moverte. Consulta Habilidades vinculadas para saber cómo funcionan las habilidades 5–8.',
+          ),
+        ),
+        action(
+          language === 'es' ? 'Habilidades vinculadas' : 'Paired skills',
+          explain(
+            language === 'es' ? 'Habilidades vinculadas' : 'Paired skills',
+            'Rescued instructors still teach Skills 5–8, but they have no separate keys. Skill 5 follows 1, 6 follows 2, 7 follows 3, and 8 follows 4. A normal or charged release tries the matching form of the learned partner. It uses its own rank, needs the first skill to succeed and its own conditions to be met, and starts no extra cooldown.',
+            'Los instructores rescatados siguen enseñando las habilidades 5–8, pero no tienen teclas propias. La 5 acompaña a la 1; la 6, a la 2; la 7, a la 3; y la 8, a la 4. Al usar una versión normal o cargada, se intenta activar la misma versión de la habilidad vinculada que hayas aprendido. Usa su propio rango, requiere que la primera se ejecute y que se cumplan sus condiciones; no inicia otra recuperación.',
           ),
         ),
         action(
@@ -4881,8 +4889,8 @@
             read(
               'Quick Start',
               'Primeros pasos',
-              'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\n\nOn a phone, move with the left joystick. Use the joystick and Confirm to navigate menus. Visit the Adventure menu for the map and quests.',
-              'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un héroe y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca o toca terreno accesible. El menú Aventura ofrece el mapa y las misiones. Puedes ajustar los controles táctiles y las teclas en Ajustes.',
+              'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\n\nOn a phone, use the left joystick to move and navigate menus, then Confirm to choose. Tapping the ground will not move you, and menus do not accept direct taps. Visit Adventure for your map and quests.',
+              'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un héroe y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca izquierda para moverte y recorrer los menús, y el botón Confirmar para elegir. No se puede caminar tocando el terreno ni elegir opciones tocándolas directamente. El menú Aventura ofrece el mapa y las misiones.',
             ),
           'Your goal and first steps.',
           'Tu objetivo y tus primeros pasos.',
@@ -4894,8 +4902,8 @@
             read(
               'Combat & companions',
               'Combate y compañeros',
-              'Tap a skill for its normal form; hold and release to use its charged form. Target changes or locks an enemy. Recall brings companions back. Basic attacks can happen automatically, separately from the other skill buttons.\n\nThe Skill journal explains learned abilities and the Adventure menu opens your quests, map and character.',
-              'Toca una habilidad para usarla normalmente; mantén y suelta para usar la versión cargada. Objetivo cambia o fija un enemigo. Reagrupar hace volver a los compañeros. Los ataques básicos pueden ejecutarse automáticamente, aparte de los otros botones.\n\nEl Diario de habilidades explica las técnicas aprendidas, y el menú Aventura permite abrir misiones, mapa y personaje.',
+              'Use one of the four skill buttons for a normal technique, or hold and release for its charged form. Basic attacks happen automatically only while you move. Target cycles or locks an enemy; Recall brings your companions back.\n\nRescue instructors to learn Skills 5–8. They have no extra buttons: 5 joins 1, 6 joins 2, 7 joins 3 and 8 joins 4. Each learned partner follows the same normal or charged form when the first skill succeeds and its own conditions allow it. The Skill journal shows their individual ranks and effects.',
+              'Usa uno de los cuatro botones de habilidad para una técnica normal, o mantén y suelta para la versión cargada. Los ataques básicos automáticos solo ocurren mientras te mueves. Objetivo cambia o fija un enemigo; Reagrupar hace volver a tus compañeros.\n\nRescata instructores para aprender las habilidades 5–8. No añaden botones: la 5 acompaña a la 1, la 6 a la 2, la 7 a la 3 y la 8 a la 4. Cada habilidad vinculada usa la misma versión normal o cargada cuando la primera se ejecuta y se cumplen sus condiciones. Consulta el Diario de habilidades para ver sus rangos y efectos.',
             ),
           'Movement, skills, targeting and party.',
           'Movimiento, habilidades, objetivo y grupo.',
