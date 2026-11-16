@@ -45,6 +45,14 @@ for entry in report["cues"]:
     assert abs(entry["peak"]-peak)<.00001 and abs(entry["rms"]-rms)<.00001
     assert entry["sha256"]==hashlib.sha256((directory/(key+".wav")).read_bytes()).hexdigest()
     assert entry["baseline"]==manifest["assets"][key]["src"]
+    baseline_path=root/entry["baseline"].removeprefix("./")
+    baseline_bytes=baseline_path.read_bytes()
+    assert hashlib.sha256(baseline_bytes).hexdigest()==manifest["assets"][key]["sha256"], key
+    with wave.open(str(baseline_path),"rb") as previous:
+        assert previous.getnchannels()==1 and previous.getsampwidth()==2
+        original_pcm=np.frombuffer(previous.readframes(previous.getnframes()),dtype="<i2")
+        original_rms=np.sqrt(np.mean((original_pcm.astype(float)/32768)**2))
+        assert abs(original_rms-entry["baselineRms"])<.0002, key
     power=abs(np.fft.rfft(x*np.hanning(len(x)),n=32768))**2
     hz=np.fft.rfftfreq(32768,d=1/48000)
     total=max(power.sum(),1e-12)
