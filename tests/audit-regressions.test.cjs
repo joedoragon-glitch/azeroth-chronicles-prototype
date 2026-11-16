@@ -5,7 +5,26 @@ const boss=c=>c.zone().enemies.find(e=>e.type==='boss');
 const kill=(c,e)=>{e.heroParticipated=true;e.hp=0;c.kill(e);};
 function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 test('F01 normal-normal-TRUE cycle uses the five-second remote transition and leaves one normal field boss',()=>{const c=fresh(),e=boss(c);c.zone().enemies=[e];kill(c,e);c.updateEnemies(121);kill(c,e);c.updateElites(4.9);assert(!c.zone().enemies.some(x=>x.form==='true'&&x.hp>0));c.updateElites(.2);const t=c.zone().enemies.find(x=>x.form==='true'&&x.hp>0);assert(t);kill(c,t);c.updateEnemies(121);assert.equal(c.zone().enemies.filter(x=>x.hp>0&&!x.summon).length,1);});
-test('F02 sealed boss resets and no attack shape damages through terrain',()=>{const c=fresh(),e=boss(c);c.s.party=[];c.zone().enemies=[e];Object.assign(e,{x:1100,y:1000,home:{x:1100,y:1000}});Object.assign(c.hero,{x:1300,y:1000});c.zone().props.push({x:1100,y:930,r:45},{x:1100,y:1070,r:45},{x:1030,y:1000,r:45});c.engage(e);const hp=c.hero.hp;for(const kind of ['circle','line','cone','sector'])c.resolveArea(e,{kind,x:1300,y:1000,fromX:1100,fromY:1000,angle:0,radius:400,coefficient:1});assert.equal(c.hero.hp,hp);const original=c.follow;c.follow=()=>false;for(let i=0;i<140;i++)c.updateEnemies(.1);c.follow=original;assert(c.s.statistics.events.some(x=>x.type==='reset'));assert(!e.aggro);});
+test('F02 obstructed boss ground circles land, directed shapes stay wall-blocked, and reset remains bounded',()=>{
+  const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1100,y:1000});c.s.party=[];c.zone().enemies=[e];
+  Object.assign(e,{x:1100,y:1000,home:{x:1100,y:1000}});
+  Object.assign(c.hero,{x:1300,y:1000});
+  c.zone().props.push({x:1100,y:930,r:45},{x:1100,y:1070,r:45},{x:1030,y:1000,r:45},{x:1190,y:1000,r:34});
+  assert(!c.line(e,c.hero),'terrain blocks physically directed casts');
+  c.engage(e);
+  const area={x:1300,y:1000,fromX:1100,fromY:1000,angle:0,radius:400,coefficient:1};
+  const hp=c.hero.hp;
+  c.resolveArea(e,{...area,kind:'circle'});
+  assert(c.hero.hp<hp,'PT-007 ground circle damages its warned mark even when caster sight is obstructed');
+  const afterGround=c.hero.hp;
+  for(const kind of ['line','cone','sector'])c.resolveArea(e,{...area,kind});
+  assert.equal(c.hero.hp,afterGround,'physically directed attacks still respect blocking terrain');
+  const original=c.follow;c.follow=()=>false;
+  for(let i=0;i<140;i++)c.updateEnemies(.1);
+  c.follow=original;
+  assert(c.s.statistics.events.some(x=>x.type==='reset'));
+  assert(!e.aggro);
+});
 test('F03 TRUE crypt volleys stagger and family follow-ups retain full warnings',()=>{for(const [id,index]of [['crypt',1],['archive',1],['mine',1],['abyss',0]]){const c=fresh();c.enter(id);const e=c.bossEnemy(c.boss(id),'true',c.zone().enemies.find(u=>u.type==='boss').home);c.zone().enemies=[e];Object.assign(c.hero,c.safe(e.x+150,e.y));e.attackIndex=0;assert(c.startAttack(e,c.hero,index));if(id==='crypt'){c.resolveAttack(e);assert.deepEqual(c.s.projectiles.map(x=>x.delay),[0,.28,.56]);assert.equal(c.s.hazards.length,0);}else{assert(e.sequence.length);assert(e.sequence.every(a=>a.timer>=1.5));if(id==='abyss')assert(e.sequence.some(a=>a.kind==='circle'&&a.persistent));}}});
 test('F04 rejects fractional equipment and missing pending records; historical victory maps reconstruct',()=>{const c=fresh('mage','nightmare');for(const mutate of [s=>s.hero.weapon=.5,s=>delete s.pending]){const s=c.snapshot();mutate(s);assert.throws(()=>C.restore(s));}const historical=c.snapshot();delete historical.victories;assert.deepEqual(C.restore(historical).s.victories,{});C.restore(c.snapshot());});
 test('F06 class skills retain frost, arrows, dedicated haste and class-specific ultimates',()=>{
@@ -27,7 +46,7 @@ test('F09 companion presence prevents patrol respawn',()=>{const c=fresh(),e=c.z
 test('F10 minor refuge survives death and reload',()=>{const c=fresh();Object.assign(c.hero,{x:900,y:700});c.rest();const r=C.restore(c.snapshot());r.die();assert.deepEqual([r.hero.x,r.hero.y],[900,700]);});
 test('F11 Succession preserves a recovery crossing after paid outward travel',()=>{const c=fresh('paladin','normal',{succession:true});c.hero.gold=25;assert(c.travel(1));c.die();c.successor('mage');assert(c.travel(1));assert.equal(c.hero.gold,0);});
 test('F12 ranged basics aim and fire faster while remaining dodgeable and terrain-blocked',()=>{const c=fresh();c.enter('frontier');const e=c.zone().enemies.find(e=>e.species==='archer');c.s.party=[];c.zone().enemies=[e];Object.assign(e,{x:1600,y:750,home:{x:1600,y:750}});Object.assign(c.hero,{x:1760,y:750});c.engage(e);const hp=c.hero.hp;c.updateEnemies(.1);assert(e.rangedAim);assert.equal(e.rangedAim.timer,C.rules.rangedEnemyCombat.aimTime);for(let i=0;i<4;i++)c.updateEnemies(.1);assert(c.s.projectiles.length);assert.equal(c.hero.hp,hp);const p=c.s.projectiles[0];assert.equal(p.speed,e.shotSpeed*C.rules.rangedEnemyCombat.projectileMultiplier);assert.equal(e.cd,C.rules.rangedEnemyCombat.cooldown);c.zone().props.push({x:p.x+p.dx*35,y:p.y+p.dy*35,r:24});c.updateProjectiles(.3);assert.equal(c.s.projectiles.length,0);assert.equal(c.hero.hp,hp);const b=c.bossEnemy(c.boss('crypt'),'normal',{x:1000,y:1000});b.attackIndex=0;c.zone().enemies=[b];Object.assign(c.hero,{x:1200,y:1000});c.startAttack(b,c.hero,1);c.resolveAttack(b);assert.equal(c.s.projectiles[0].speed,260*C.rules.enemyProjectileMultiplier);});
-test('F13 boss specials chain rapidly while warnings stay authored and every fourth special yields one fast basic',()=>{const c=fresh(),e=boss(c);c.s.party=[];c.zone().enemies=[e];Object.assign(c.hero,{x:e.x+60,y:e.y,maxHp:100000,hp:100000});c.engage(e);e.attackIndex=2;c.startAttack(e,c.hero,2);const warning=e.telegraph.total,hp=c.hero.hp;c.resolveAttack(e);assert(Math.abs(hp-c.hero.hp-7.2)<1e-8);assert.equal(warning,1.2);e.telegraph.timer=0;c.updateEnemies(.1);assert.equal(e.cd,.25);assert.equal(e.basicDue,false);e.cd=0;c.updateEnemies(.1);assert(e.telegraph,'boss immediately begins another warned special');e.telegraph=null;e.motion=null;e.sequence=[];e.attackIndex=3;e.cd=0;e.basicDue=false;c.startAttack(e,c.hero,3);e.telegraph.timer=0;c.updateEnemies(.1);assert(e.basicDue,'fourth special schedules one basic');e.cd=0;c.updateEnemies(.1);assert.equal(e.telegraph,null);assert.equal(e.basicDue,false);assert.equal(e.cd,.75);assert.equal(C.rules.bossCadence.specialRange,600);});
+test('F13 boss specials chain rapidly while warnings stay authored and every fourth special yields one fast basic',()=>{const c=fresh(),e=boss(c);c.s.party=[];c.zone().enemies=[e];Object.assign(c.hero,{x:e.x+60,y:e.y,maxHp:100000,hp:100000});c.engage(e);e.attackIndex=2;c.startAttack(e,c.hero,2);const warning=e.telegraph.total,hp=c.hero.hp;c.resolveAttack(e);assert(Math.abs(hp-c.hero.hp-7.2)<1e-8);assert.equal(warning,1.2);e.telegraph.timer=0;c.updateEnemies(.1);assert.equal(e.cd,.25);assert.equal(e.basicDue,false);e.cd=0;c.updateEnemies(.1);assert(e.telegraph,'boss immediately begins another warned special');e.telegraph=null;e.motion=null;e.sequence=[];e.attackIndex=3;e.cd=0;e.basicDue=false;c.startAttack(e,c.hero,3);e.telegraph.timer=0;c.updateEnemies(.1);assert(e.basicDue,'fourth special schedules one basic');e.cd=0;c.updateEnemies(.1);assert.equal(e.telegraph,null);assert.equal(e.basicDue,false);assert.equal(e.cd,.75);assert.equal(C.rules.bossCadence.specialRange,720);});
 test('F14 pounce moves to its mark, mine openings increase output, and Dark Lord Crown phase becomes weighted rather than scripted',()=>{const c=fresh(),e=boss(c);c.zone().props=[];c.s.party=[];c.zone().enemies=[e];Object.assign(c.hero,{x:e.x+150,y:e.y});e.attackIndex=0;c.startAttack(e,c.hero,1);const mark={x:e.telegraph.x,y:e.telegraph.y};c.resolveAttack(e);for(let i=0;i<10&&e.motion;i++)c.advanceMotion(e,.1);assert(Math.hypot(e.x-mark.x,e.y-mark.y)<20);c.enter('mine');const m=boss(c);Object.assign(c.hero,c.safe(m.x-60,m.y));m.open=0;const h=m.hp;c.damage(m,100);const closed=h-m.hp;m.open=3;const h2=m.hp;c.damage(m,100);assert(m.hp<h2-closed);c.enter('crown');const d=c.bossEnemy(c.boss('darklord'),'normal',{x:3250,y:3200});c.zone().enemies=[d];const crownRangeTarget={x:d.x+210,y:d.y};d.hp=d.maxHp*.8;assert.equal(c.bossAttackWeights(d,crownRangeTarget)[3],0);d.hp=d.maxHp*.4;const low=c.bossAttackWeights(d,crownRangeTarget);assert(low[3]>0);d.lastAttackIndex=3;assert.equal(c.bossAttackWeights(d,c.hero)[3],0,'Crown phase cannot immediately repeat itself');});
 test('F16 arrival failure rolls back fare, ticket and destination even after mutation',()=>{const c=fresh();c.hero.gold=25;const before=c.snapshot();c.enter=()=>{c.s.zone='march';c.hero.gold=0;throw Error('arrival');};assert(!c.travel(1));assert.deepEqual(c.snapshot(),before);});
 test('F17 idle night health preserves fraction',()=>{const c=fresh(),e=c.zone().enemies.find(x=>x.type==='mob');c.zone().enemies=[e];e.hp=e.baseHp/2;c.s.clock=500;c.updateEnemies(.1);assert(Math.abs(e.hp/e.maxHp-.5)<1e-9);assert(e.maxHp>e.baseHp);});
@@ -61,8 +80,8 @@ test('F35 rogue regroup travel halves incoming hero and companion damage only wh
 test('F36 rogue damage protection is never active for normal engaged enemies',()=>{const c=fresh(),e=c.makeEnemy({species:'wolf',name:'ordinary wolf',level:1,hp:1000,damage:1,gold:0,xp:0},{x:1400,y:1700});c.zone().enemies=[e];e.aggro=true;Object.assign(c.hero,{x:1400,y:1700,level:3});c.line=()=>true;const hp=e.hp;assert(c.damage(e,120));assert.equal(hp-e.hp,120,'normal combat damage remains unchanged');});
 
 test('F37 all normal and TRUE boss families preserve warnings while gaining modest reach',()=>{
-  const R=C.rules,scale=R.bossCadence.areaRangeMultiplier;
-  assert.equal(scale,1.15);assert.equal(R.bossCadence.specialRange,600);
+  const R=C.rules,shape=R.bossAreaGeometry;
+  assert.equal(shape.coneRadius,227.7);assert.equal(R.bossCadence.specialRange,720);
   for(const def of C.data.bosses)for(const form of ['normal','true']){
     const c=fresh();
     if(def.id==='cindermaw')c.enter('crown');
@@ -76,8 +95,8 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
       assert.equal(a.total,plan.warning,def.id+' '+form+' keeps warning time');
       assert.equal(a.recovery,plan.recovery,def.id+' '+form+' keeps recovery time');
       const kind=plan.kind==='sector'&&e.hp>e.maxHp*.5?'cone':plan.kind;
-      if(kind==='cone')assert.equal(a.radius,165*scale,def.id+' '+form+' cone');
-      if(kind==='sector')assert.equal(a.radius,280*scale,def.id+' '+form+' sector');
+      if(kind==='cone')assert.equal(a.radius,shape.coneRadius,def.id+' '+form+' cone');
+      if(kind==='sector')assert.equal(a.radius,shape.sectorRadius,def.id+' '+form+' sector');
       if(kind==='ring'){
         c.s.hazards=[];c.resolveAttack(e);
         if(def.id==='cindermaw'&&i===0){
@@ -85,16 +104,16 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
           assert.equal(e.cinderCordon.radius,plan.initialRadius);
           assert(Number.isFinite(e.cinderCordon.gapAngle)&&Number.isFinite(e.cinderCordon.nextGap));
           assert.notEqual(e.cinderCordon.gapAngle,e.cinderCordon.nextGap);
-        }else assert.equal(c.s.hazards.at(-1).life,plan.slowOnly?plan.waveLife:R.combatGeometry.ringLife*scale,def.id+' '+form+' actual expanding ring duration');
+        }else { assert(c.s.hazards.length,def.id+' '+form+' / index '+i+' ring must release a hazard'); assert.equal(c.s.hazards.at(-1).life,plan.slowOnly?plan.waveLife:shape.ringLife,def.id+' '+form+' actual expanding ring duration'); }
       }
-      if(a.count>1&&kind==='circle'){
-        assert.equal(c.attackPatches(a)[0].radius, (def.id==='crypt'&&i===3)||(def.id==='warlord'&&i===1)?72:75*scale,def.id+' '+form+' multi-target reach');
+      if(a.count>1&&kind==='circle'&&!a.cinderMechanic){
+        assert.equal(c.attackPatches(a)[0].radius, (def.id==='crypt'&&i===3)||(def.id==='warlord'&&i===1)?72*R.balance.enemySpecialReachMultiplier:shape.multiCircleRadius,def.id+' '+form+' multi-target reach');
       }
     }
   }
 });
 test('F38 all captains reject useless distant cones but can still threaten a ranged opponent',()=>{
-  const R=C.rules,scale=R.bossCadence.areaRangeMultiplier;
+  const R=C.rules;
   const older={'supply-vale':420,'supply-march':390,'supply-highlands':430,'supply-crown':440,'frontier-overseer':440};
   for(const [key,oldRange] of Object.entries(older)){
     const c=fresh(),zone=key==='frontier-overseer'?'frontier':key;
@@ -109,22 +128,22 @@ test('F38 all captains reject useless distant cones but can still threaten a ran
     const cone=cfg.attacks.find(p=>p.kind==='cone');
     if(cone){
       // Even a currently unused close cone gains a measurable but bounded reach.
-      assert((cone.radius||145)*scale<(cfg.specialRange-8),key+' melee cone remains distinct from acquisition range');
+      assert((cone.radius||R.bossAreaGeometry.captainDefaultConeRadius)<(cfg.specialRange-8),key+' melee cone remains distinct from acquisition range');
     }
   }
 });
 test('F39 boss selection respects actual ring reach, anti-repeat fallbacks and Dark Lord phases',()=>{
-  const c=fresh(),R=C.rules,ringReach=R.combatGeometry.ringSpeed*R.combatGeometry.ringLife*R.bossCadence.areaRangeMultiplier;
+  const c=fresh(),R=C.rules,ringReach=R.combatGeometry.ringSpeed*R.bossAreaGeometry.ringLife;
   const m=c.bossEnemy(c.boss('mine'),'normal',{x:1100,y:1200});
   c.zone().enemies=[m];c.s.party=[];c.line=()=>true;m.lastAttackIndex=-1;
   assert(ringReach>R.combatGeometry.ringSpeed*R.combatGeometry.ringLife);
   assert(c.bossAttackWeights(m,{x:m.x+320,y:m.y})[2]>0,'wave is available inside actual sweep');
-  assert.equal(c.bossAttackWeights(m,{x:m.x+380,y:m.y})[2],0,'wave not selected beyond actual sweep');
+  assert.equal(c.bossAttackWeights(m,{x:m.x+430,y:m.y})[2],0,'wave not selected beyond actual sweep');
   const thorn=c.bossEnemy(c.boss('thorn'),'normal',{x:1100,y:1200});
   c.zone().enemies=[thorn];thorn.summonCd=100;
   assert.equal(c.bossAttackWeights(thorn,{x:thorn.x+400,y:thorn.y})[0],0,'short bite excluded at range');
-  assert.equal(c.chooseBossAttack(thorn,{x:thorn.x+620,y:thorn.y}),-1,'no imaginary long-distance melee');
-  assert.equal(c.startAttack(thorn,{x:thorn.x+620,y:thorn.y}),false,'invalid selection does not start a telegraph');
+  assert.equal(c.chooseBossAttack(thorn,{x:thorn.x+740,y:thorn.y}),-1,'no imaginary long-distance melee');
+  assert.equal(c.startAttack(thorn,{x:thorn.x+740,y:thorn.y}),false,'invalid selection does not start a telegraph');
   const lord=c.bossEnemy(c.boss('darklord'),'normal',{x:1100,y:1200});
   c.zone().enemies=[lord];lord.summonCd=100;lord.lastAttackIndex=1;lord.hp=lord.maxHp*.8;
   assert.equal(c.chooseBossAttack(lord,{x:lord.x+440,y:lord.y}),5,'choose the usable levy instead of repeating gambit or wasting a cone');
@@ -160,7 +179,7 @@ test('F42 captain ground marks pressure backline only with a clear targeting lin
   assert(c.startCaptainAttack(e,frontline));
   assert.equal(e.telegraph.kind,'circle');
   assert.equal(e.telegraph.x,c.hero.x);
-  assert.equal(e.telegraph.radius,86*C.rules.bossCadence.areaRangeMultiplier);
+  assert.equal(e.telegraph.radius,C.rules.roomCaptains['supply-highlands'].attacks[1].radius);
   c.line=(a,b)=>b!==c.hero;e.lastCaptainAttack=0;
   assert(c.startCaptainAttack(e,frontline));
   assert.equal(e.telegraph.x,frontline.x,'blocked hero must not be targeted through cover');
