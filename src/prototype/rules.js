@@ -7244,9 +7244,9 @@
       petFirstCooldown: 8,
       petSecondCooldown: 12,
       petBasicInterval: 0.85,
-      // Preserve pre-existing Charmed native timing when hostile melee speeds up.
-      // This ceiling no longer inherits the wild-monster basic cadence.
-      charmedBasicIntervalCeiling: 1.4,
+      // Charmed melee gets the owner's 0.80s hostile baseline while retaining
+      // faster authored species basics; ranged variants keep their own clocks.
+      charmedMeleeBasicIntervalCeiling: 0.8,
       // Basic attacks only; melee pets and Soldier can be overridden separately.
       soldierMeleeBasicRange: meleeReach.soldier,
       petMeleeBasicRange: meleeReach.pet,
