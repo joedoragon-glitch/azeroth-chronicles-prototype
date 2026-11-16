@@ -91,16 +91,32 @@ console.log('PASS independent desktop/phone camera preferences, reload and inval
 // Settings persist independently of v4 campaign saves; effective Auto is cached.
 assert.equal(P.resolveMenuDensity({ mode: 'phone', width: 844, height: 390 }), 'compact');
 assert.equal(P.resolveMenuDensity({ mode: 'phone', width: 900, height: 600 }), 'standard');
-assert.equal(P.resolveMenuDensity({ mode: 'phone', width: 900, height: 505, top: 28, bottom: 28 }), 'compact');
+assert.equal(
+  P.resolveMenuDensity({ mode: 'phone', width: 900, height: 505, top: 28, bottom: 28 }),
+  'compact',
+);
 assert.equal(P.resolveMenuDensity({ mode: 'desktop', width: 1440, height: 900 }), 'standard');
 assert.equal(P.resolveMenuDensity({ mode: 'desktop', width: 720, height: 900 }), 'compact');
-assert.equal(P.resolveMenuDensity({ preference: 'standard', mode: 'phone', width: 600, height: 350 }), 'standard');
-assert.equal(P.resolveMenuDensity({ preference: 'compact', mode: 'desktop', width: 1920, height: 1080 }), 'compact');
+assert.equal(
+  P.resolveMenuDensity({ preference: 'standard', mode: 'phone', width: 600, height: 350 }),
+  'standard',
+);
+assert.equal(
+  P.resolveMenuDensity({ preference: 'compact', mode: 'desktop', width: 1920, height: 1080 }),
+  'compact',
+);
 const densitySettings = P.init(env);
 densitySettings.select('phone'); // Test safe-area decisions in the supported landscape presentation.
 assert.equal(densitySettings.menuDensity, 'auto');
 const initialAttr = attributes.get('data-menu-density-effective');
-densitySettings.updateMenuDensity({ width: 844, height: 390, top: 0, right: 0, bottom: 0, left: 0 });
+densitySettings.updateMenuDensity({
+  width: 844,
+  height: 390,
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+});
 assert.equal(densitySettings.effectiveMenuDensity, 'compact');
 assert.equal(attributes.get('data-menu-density-effective'), 'compact');
 densitySettings.selectMenuDensity('standard');
@@ -108,13 +124,39 @@ assert.equal(items.get(P.menuDensityPreferenceKey), 'standard');
 assert.equal(densitySettings.effectiveMenuDensity, 'standard');
 assert.equal(P.init(env).menuDensity, 'standard', 'Saved choice survives app reload');
 densitySettings.selectMenuDensity('invalid');
-assert.equal(densitySettings.menuDensity, 'standard', 'Invalid choices cannot overwrite the preference');
+assert.equal(
+  densitySettings.menuDensity,
+  'standard',
+  'Invalid choices cannot overwrite the preference',
+);
 densitySettings.selectMenuDensity('auto');
 assert.equal(items.get(P.menuDensityPreferenceKey), 'auto');
-assert.equal(densitySettings.updateMenuDensity({ width: 900, height: 505, top: 28, right: 0, bottom: 28, left: 0 }), 'compact');
-assert.equal(densitySettings.updateMenuDensity({ width: 900, height: 505, top: 0, right: 0, bottom: 0, left: 0 }), 'standard');
+assert.equal(
+  densitySettings.updateMenuDensity({
+    width: 900,
+    height: 505,
+    top: 28,
+    right: 0,
+    bottom: 28,
+    left: 0,
+  }),
+  'compact',
+);
+assert.equal(
+  densitySettings.updateMenuDensity({
+    width: 900,
+    height: 505,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  }),
+  'standard',
+);
 assert.notEqual(initialAttr, undefined, 'Density is resolved when the platform initializes');
-console.log('PASS saved menu density, adaptive CSS viewport/safe-inset decisions and invalid-choice safety');
+console.log(
+  'PASS saved menu density, adaptive CSS viewport/safe-inset decisions and invalid-choice safety',
+);
 
 const messages = [],
   storage = { getItem: (k) => items.get(k), setItem: (k, v) => items.set(k, v) },
@@ -129,10 +171,16 @@ assert.equal(restored.hero.gold, 317);
 // the restored campaign. Compare against the same production restore boundary,
 // rather than falsely requiring the pre-migration live instance to be identical.
 const expectedRestored = C.restore(game.snapshot(), () => 0.9);
-assert.equal(restored.s.zones.vale.greenwoodTrailTextVersion, 1,
-  'v4 restore applies the current authored Vale trail label migration');
-assert.deepEqual(restored.snapshot(), expectedRestored.snapshot(),
-  'v4 save reload remains equivalent after the current source-aware migrations');
+assert.equal(
+  restored.s.zones.vale.greenwoodTrailTextVersion,
+  1,
+  'v4 restore applies the current authored Vale trail label migration',
+);
+assert.deepEqual(
+  restored.snapshot(),
+  expectedRestored.snapshot(),
+  'v4 save reload remains equivalent after the current source-aware migrations',
+);
 assert(store.exists('normal'));
 assert(!store.exists('nightmare'));
 items.set(Store.saveKey('nightmare'), '{broken');

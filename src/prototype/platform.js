@@ -9,16 +9,28 @@
   // Menu density is independent from world zoom and rendering pixel density.
   const menuDensityPreferenceKey = 'azeroth-menu-density-v1';
   const menuDensityChoices = ['auto', 'compact', 'standard'];
-  function resolveMenuDensity({ preference = 'auto', mode = 'desktop', width = 800, height = 375,
-    top = 0, right = 0, bottom = 0, left = 0 } = {}) {
+  function resolveMenuDensity({
+    preference = 'auto',
+    mode = 'desktop',
+    width = 800,
+    height = 375,
+    top = 0,
+    right = 0,
+    bottom = 0,
+    left = 0,
+  } = {}) {
     if (preference === 'compact' || preference === 'standard') return preference;
     // Logical CSS pixels: physical Retina pixels are for clarity, not layout.
     // Keep this decision cheap and deterministic. Rich text can still scroll.
     const usableWidth = Math.max(0, width - left - right);
     const usableHeight = Math.max(0, height - top - bottom);
     return mode === 'phone'
-      ? usableHeight <= 470 || usableWidth < 760 ? 'compact' : 'standard'
-      : usableHeight < 650 || usableWidth < 760 ? 'compact' : 'standard';
+      ? usableHeight <= 470 || usableWidth < 760
+        ? 'compact'
+        : 'standard'
+      : usableHeight < 650 || usableWidth < 760
+        ? 'compact'
+        : 'standard';
   }
   function resolve({ requested = 'auto', fine = false, coarse = false }) {
     if (requested === 'desktop' || requested === 'phone') return requested;
@@ -49,21 +61,32 @@
     } catch (_) {}
     let menuDensityCache = null;
     function updateMenuDensity(bounds = {}) {
-      const width = Number.isFinite(bounds.width) ? bounds.width : (env.innerWidth || 800);
-      const height = Number.isFinite(bounds.height) ? bounds.height : (env.innerHeight || 375);
+      const width = Number.isFinite(bounds.width) ? bounds.width : env.innerWidth || 800;
+      const height = Number.isFinite(bounds.height) ? bounds.height : env.innerHeight || 375;
       const style = env.getComputedStyle?.(env.document.documentElement);
       const safe = (edge) => {
         const supplied = bounds[edge];
-        const raw = Number.isFinite(supplied) ? supplied
+        const raw = Number.isFinite(supplied)
+          ? supplied
           : Number.parseFloat(style?.getPropertyValue('--phone-safe-' + edge) || '0');
         return Number.isFinite(raw) ? Math.max(0, raw) : 0;
       };
-      const insets = { top: safe('top'), right: safe('right'),
-        bottom: safe('bottom'), left: safe('left') };
-      const signature = [mode, menuDensityPreference, width, height, ...Object.values(insets)].join('|');
+      const insets = {
+        top: safe('top'),
+        right: safe('right'),
+        bottom: safe('bottom'),
+        left: safe('left'),
+      };
+      const signature = [mode, menuDensityPreference, width, height, ...Object.values(insets)].join(
+        '|',
+      );
       if (menuDensityCache?.signature === signature) return menuDensityCache.effective;
       const effective = resolveMenuDensity({
-        preference: menuDensityPreference, mode, width, height, ...insets,
+        preference: menuDensityPreference,
+        mode,
+        width,
+        height,
+        ...insets,
       });
       menuDensityCache = { signature, effective };
       env.document.body.setAttribute('data-menu-density-preference', menuDensityPreference);
