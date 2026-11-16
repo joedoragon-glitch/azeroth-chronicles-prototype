@@ -78,7 +78,7 @@ const server = http.createServer((req, res) => {
           .frameLocator('#phone-game-frame')
           .locator('#title-screen')
           .waitFor({ state: 'attached' });
-      const gameFrame = phone ? shell.frame({ url: /phone-game\\.html/ }) : shell;
+      const gameFrame = phone ? shell.frame({ url: /phone-game\.html/ }) : shell;
       assert(gameFrame, 'the playable game frame is available');
       page = {
         locator: (...args) => gameFrame.locator(...args),
