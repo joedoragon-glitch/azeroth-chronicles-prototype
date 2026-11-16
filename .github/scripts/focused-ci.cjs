@@ -324,6 +324,13 @@ const groups = [
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'environment-audio-inventory.test.cjs'],
   },
   {
+    // Phase 1 builds a versioned, signed-off 30-master PWA candidate.
+    // Its version-staging source is owned by both version/docs and audio
+    // registry tests; a generic architecture fallback cannot certify it.
+    match: /^tools\/audio\/sfx-phase1-version\.cjs$/,
+    tests: [TEST + 'docs-release-consistency.test.cjs', TEST + 'audio-catalog.test.cjs'],
+  },
+  {
     // #727 Stage 2–6 source ledgers are the production truth for the isolated
     // preview importer; its own source preflight must not fall through to a
     // generic architecture test.
