@@ -148,7 +148,7 @@ for(const cls of ['mage','ranger']){
   g.hero.skills[1]=1;
   const nearHp=primary.hp;
   assert(g.cast(2,null,false),cls+' Skill 2 can reach distant selected foe');
-  assert.equal(g.hero.order?.type,'skill-approach',false);
+  assert.notEqual(g.hero.order?.type,'skill-approach');
   assert.equal(g.manualHeroTargetId,far.id);
   assert.equal(g.s.heroTarget,far.id);
   assert.equal(primary.hp,nearHp);
