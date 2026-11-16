@@ -1,6 +1,6 @@
 # v0.9.2 Projectile-flight reconciliation — issue #892
 
-Status: isolated engineering candidate; **not a published or player-accepted balancing release**. Owner-approved principle: physical projectile **weapon/ability identity** sets its authored baseline; global controls begin at a neutral 1.0 and never substitute for bad individual velocities.
+Status as of 16 November 2026: **source integrated and published through PR #908** (`main@985c3e80`, `0.9.1+snapshot.dev.291`); post-merge focused CI and Pages deployment passed. **Gameplay feel and physical-device acceptance remain unverified**, and this is not a v0.9.2 completion claim. The earlier PR #899 is a superseded, unmerged draft—not an independent patch to apply. Owner-approved principle: physical projectile **weapon/ability identity** sets its authored baseline; global controls begin at a neutral 1.0 and never substitute for bad individual velocities.
 
 ## Historical cause and reconciled choices
 
@@ -13,7 +13,7 @@ Status: isolated engineering candidate; **not a published or player-accepted bal
 
 ## Authored velocity register (world units/s, neutral tuning)
 
-| Producer | Projectile identity | Before | Candidate |
+| Producer | Projectile identity | Before | Published dev.291 |
 |---|---|---:|---:|
 | Goblin ordinary / Charmed | slung stone | 816 | 816 |
 | Skeleton ordinary / Charmed | arrow | 476 | 850 |
@@ -38,7 +38,7 @@ Status: isolated engineering candidate; **not a published or player-accepted bal
 | Mage hero | auto / ordinary homing Skill 1 | 550 / 492.8 | unchanged |
 | Paladin / magical skills | authored effects | distinct | unchanged unless explicitly listed |
 
-These are **game-balance candidates**, not literal physics. Medieval arrows and slingstones have overlapping historical speed distributions. Relative movement should be intuitively legible in a 2D RPG, with special warning/collision mechanics determining fair dodging. Do not conflate instant lines, telegraphed AoEs, traveling waves or charging enemies with physical projectile colliders.
+These are **implemented game-balance velocities**, not literal physics. Their usability and relative feel remain subject to owner gameplay acceptance. Medieval arrows and slingstones have overlapping historical speed distributions. Relative movement should be intuitively legible in a 2D RPG, with special warning/collision mechanics determining fair dodging. Do not conflate instant lines, telegraphed AoEs, traveling waves or charging enemies with physical projectile colliders.
 
 ## Control and range contracts
 
@@ -50,7 +50,7 @@ The physical collision loop scales both displacement and remaining flight lifeti
 
 Both old general multipliers, the old Goblin ad hoc 2×, and the old `R.enemyProjectileMultiplier` speed workaround are retired. Source configs now encode final baseline velocities. Long-standing hit/miss/tile/collision and VFX release/impact paths remain the same; new speed affects the time at which contact occurs.
 
-**v4 compatibility:** old enemies or Charmed individuals may still have prior `shotSpeed` fields embedded in a stored snapshot, particularly if forced roles, recovery or old companions were created before this candidate. These persisted fields are not destructively rewritten. New native releases derive effective velocity from the current species/weapon rule, while original independent distance budgets protect max travel. Previously launched missiles retain their saved speed unless and until they expire.
+**v4 compatibility:** old enemies or Charmed individuals may still have prior `shotSpeed` fields embedded in a stored snapshot, particularly if forced roles, recovery or old companions were created before this integration. These persisted fields are not destructively rewritten. New native releases derive effective velocity from the current species/weapon rule, while original independent distance budgets protect max travel. Previously launched missiles retain their saved speed unless and until they expire.
 
 ## Source and validation targets
 
