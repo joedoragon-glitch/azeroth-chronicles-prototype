@@ -150,7 +150,7 @@ for (const [structure, rx, ry] of [
 assert.deepEqual([ground('prop', { structure: 'rope-coil' }).rx,
   ground('prop', { structure: 'rope-coil' }).ry], [22, 6],
   'ordinary coil and structures retain their original grounding policy');
-const scaledPost = ground('prop', { structure: 'crown-banner', visualScale: 1.3 });
+const scaledPost = ground('prop', { structure: 'checkpoint-standard', visualScale: 1.3 });
 assert.equal(scaledPost.rx, 10.4, 'narrow post still respects original visualScale');
 assert.equal(ground('prop', { greenwoodWall: true }).shadowOpacity, 0);
 assert.equal(ground('prop', { greenwoodField: true }).shadowOpacity, 0);
