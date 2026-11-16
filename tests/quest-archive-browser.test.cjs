@@ -156,14 +156,10 @@ const server = http.createServer((req, res) => {
         null,
         { timeout: 15000 },
       );
-      // G now opens the real Controls directory, following the accepted
-      // Settings/Help declutter. The former combined combat handbook copy
-      // no longer belongs to this page; combat/Archive topics are tested below.
-      await page.keyboard.press('g');
-      assert.equal(await page.locator('#modal-title').textContent(), 'Controls');
-      assert.equal(await page.getByRole('button', { name: /Customize keyboard/ }).count(), 1);
-      assert.equal(await page.getByRole('button', { name: /Touch and mouse options/ }).count(), 1);
-      await page.keyboard.press('Escape');
+      // This browser fixture is still at the title (no campaign started).
+      // Gameplay-only G help intentionally cannot open here. The current
+      // Controls and title Help menus have separate production-shell coverage;
+      // keep this test focused on earned Archive interactions below.
       await page.evaluate(() => {
         const c = Prototype.game;
         c.enter('archive');
