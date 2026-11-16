@@ -5083,7 +5083,7 @@
             if (x.plan.kind === 'summon')
               return summonCfg && owned < (summonCfg.cap || 3) && (e.summonCd || 0) <= 0;
             if (x.plan.kind === 'cone')
-              return d <= (x.plan.radius || 145) * R.bossCadence.areaRangeMultiplier + 25;
+              return d <= (x.plan.radius || R.bossAreaGeometry.captainDefaultConeRadius) + 25;
             return true;
           }),
         available = eligible.filter((x) => x.index !== e.lastCaptainAttack),
@@ -5151,10 +5151,10 @@
           fromY: e.y,
           angle,
           ...center,
-          radius:
-            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) *
-            (plan.fixedRadius ? 1 : R.bossCadence.areaRangeMultiplier) *
-            (plan.captainRadiusMultiplier || 1),
+          radius: plan.radius ||
+            (plan.kind === 'cone'
+              ? R.bossAreaGeometry.captainDefaultConeRadius
+              : R.bossAreaGeometry.captainDefaultOtherRadius),
           sequence: [],
         };
       if (plan.tracking) {
