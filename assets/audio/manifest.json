@@ -3243,7 +3243,7 @@
           "when": {
             "material": "steel"
           },
-          "gain": 0.18,
+          "gain": 0.29,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -3297,7 +3297,7 @@
           "when": {
             "material": "spectral"
           },
-          "gain": 0.3,
+          "gain": 0.5,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -3324,7 +3324,7 @@
           "when": {
             "material": "arcane"
           },
-          "gain": 0.3,
+          "gain": 0.54,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -3342,7 +3342,7 @@
           "when": {
             "material": "dust"
           },
-          "gain": 0.18,
+          "gain": 0.36,
           "minGap": 0.035,
           "bus": "effects"
         }
