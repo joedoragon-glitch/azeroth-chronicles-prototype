@@ -2888,6 +2888,44 @@
         "id": "quest-complete",
         "renderer": "tools/audio/sfx-phase2-pilot.cjs"
       }
+    },
+    "sfx-phase2-charmed-wraith-heritage": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-charmed-wraith-heritage.wav",
+      "duration": 0.41,
+      "sha256": "8527d42c0ea36fd5260aef38e54a69ad826eaa16e9dbe09fbe097117f67d89ce",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Charmed Wraith — Heritage Pressure Seal",
+      "generationGuide": "Committed Charmed Wraith heritage cast, replacing the generic magicCast voice; paired charmHeritage metadata remains visual-only.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "charmed-wraith-heritage",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-barracks-complete": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-barracks-complete.wav",
+      "duration": 0.44,
+      "sha256": "fa3ee729819f8238a43817a210aa45de8451464a90f3f7cafb86e6eb7c177b5e",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Barracks Construction — Completed",
+      "generationGuide": "Final Barracks construction confirmation only after genuine progress completion; not clicks or progress ticks.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "barracks-complete",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
     }
   },
   "director": {
@@ -3267,7 +3305,15 @@
       "effect.peace": [],
       "effect.death": [],
       "effect.reset": [],
-      "effect.construction": [],
+      "effect.construction": [
+        {
+          "asset": "sfx-phase2-barracks-complete",
+          "when": {},
+          "gain": 0.47,
+          "minGap": 0.2,
+          "bus": "effects"
+        }
+      ],
       "effect.barracksUpgrade": [],
       "effect.questComplete": [
         {
@@ -3577,6 +3623,18 @@
           "minGap": 0.08,
           "priority": 2
         }
+      ],
+      "effect.charmedWraithHeritage": [
+        {
+          "asset": "sfx-phase2-charmed-wraith-heritage",
+          "when": {
+            "actor": "companion",
+            "species": "wraith"
+          },
+          "gain": 0.43,
+          "minGap": 0.08,
+          "bus": "effects"
+        }
       ]
     },
     "eventGuides": {
@@ -3677,7 +3735,8 @@
       "effect.enemyPhase": "Profile-specific procedural material and creature motif at actual spawn/phase stage. No false damage sound. Exact skillId/profile bindings may replace the shared texture later.",
       "effect.rogueBellBasic": "Original small spherical jingle-bell physical release, no generic musical handbell tone or enemy-by-enemy repetition.",
       "effect.rogueBellEmphatic": "Same single spherical jingle-bell with deliberate emphatic repeated clapper ticks for legal charged/third combo releases.",
-      "effect.lifebinderAlgorRelease": "Lifebinder Algor Mortis release is a cold Slow wave, not HP damage or contact. Warning remains authoritative."
+      "effect.lifebinderAlgorRelease": "Lifebinder Algor Mortis release is a cold Slow wave, not HP damage or contact. Warning remains authoritative.",
+      "effect.charmedWraithHeritage": "One genuine Charmed Wraith heritage spell cast; replaces generic magicCast, never an added voice to the visual-only charmHeritage receipt."
     },
     "environment": {
       "combatGain": 0.45,

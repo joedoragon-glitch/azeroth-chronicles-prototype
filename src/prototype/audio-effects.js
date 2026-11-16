@@ -335,6 +335,12 @@
           this.lastSfx ||= {};
           this.lastSfx['phase2:questComplete'] = now;
         }
+        // A legitimate Wraith heritage SPELL already owns one generic sound.
+        // Its authored recording replaces that voice only if warm. A cold
+        // decode keeps magicCast; charmHeritage stays visual metadata.
+        if (type === 'spell' && e.actor === 'companion' &&
+            e.kind === 'charmHeritage' && e.species === 'wraith' &&
+            this.playSoundEvent('effect.charmedWraithHeritage', e)) return;
         if (e.style === 'cargo' && type === 'projectileLaunch' && !e.stage) this.duck(0.4);
         const actorKey =
             e.actor === 'hero'
