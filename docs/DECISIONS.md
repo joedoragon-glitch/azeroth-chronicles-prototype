@@ -394,6 +394,13 @@ The Keeper collected and authored the Archive. Self-history, old-company memorie
 <a id="visuals"></a>
 ## Visuals, sprite authorship, camera, terrain and presentation
 
+### 16 November 2026 — adaptive menus and 125% camera (current owner direction)
+
+The owner authorizes a game-wide, player-adjustable **Auto / Compact / Standard** menu density setting: main title and setup screens, every in-game menu/submenu, Barracks roster/services, Keeper Archive books/readings, shops, settings, maps, inventory and recovery/backup dialogs. Persist the preference independently from campaign saves; choose and cache the automatic effective density from actual usable **CSS viewport dimensions and safe-area insets**, updating when presentation geometry changes, not on every game frame. Compact must intelligently redistribute space; it must **not** be a blunt 75% transform that makes type illegible or reduces main touch targets below 44 CSS pixels. Long reading/rosters may scroll. Preserve natural English/Spanish, keyboard, touch and joystick navigation. Improve actual hero class previews through source-bound artwork normalization and a desktop layout that uses its wider space.
+
+The owner also chooses **125% as the new world-camera default**, with 100%, 150% and 175% retained. The new default is only for unconfigured preferences; previously saved explicit per-device screen-mode zoom choices must remain. Camera framing, UI density, Pixi/Canvas pixel density, v4 saves and actual gameplay rules are independent concerns. Review projected warnings, map projection, camera anchors and performance before accepting. Earlier 150% camera decisions below remain dated history, not the new default. This is design approval for a draft, **not** authorization to merge or publish.
+
+
 Rendering-only boundaries, original sprite masters, camera framing, supported layout sizes and visual cues. Old sprite inventory numbers refer to their dated releases.
 
 
