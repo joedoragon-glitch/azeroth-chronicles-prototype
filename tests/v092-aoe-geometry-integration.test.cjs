@@ -231,6 +231,10 @@ for (const [key, oldRange] of Object.entries({
 
   a = game.buildBossAttack(e, 1, game.hero, true).first;
   e.telegraph = a;
+  const danger = game.companionDangerShapes();
+  assert(danger.some((shape) => shape.shape === 'cone' && shape.source === e &&
+    shape.radius === R.attacks.crypt[1].volleyReach),
+    'companion danger assessment must cover the entire warned missile flight');
   game.s.projectiles = [];
   game.resolveAttack(e);
   assert.equal(game.s.projectiles.length, 3, 'Crypt fires three physical projectiles');
