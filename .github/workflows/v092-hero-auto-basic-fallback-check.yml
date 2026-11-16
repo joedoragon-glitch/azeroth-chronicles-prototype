@@ -5,7 +5,7 @@ on:
     branches: [fix/v092-hero-auto-basic-nearby-fallback-20261116]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   combat:
@@ -53,8 +53,19 @@ jobs:
           node tests/rogue-hero-phase2.test.cjs
           node tests/slow-cooldown.test.cjs
           node tests/hero-skill1-integration.test.cjs
-      - name: Install locked tools and verify build
+      - name: Install locked tools, format candidate and verify build
         run: |
           npm ci --ignore-scripts
+          npx prettier --write src/prototype/hero-combat.js tests/v092-hero-auto-basic-target-fallback.test.cjs
           npx prettier --check src/prototype/hero-combat.js tests/v092-hero-auto-basic-target-fallback.test.cjs
+          git diff --check
           node scripts/build.cjs --check
+      - name: Commit formatting only to isolated review branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/prototype/hero-combat.js tests/v092-hero-auto-basic-target-fallback.test.cjs
+          if ! git diff --cached --quiet; then
+            git commit -m "style(combat): format hero fallback source and native test [skip ci]"
+            git push origin HEAD:refs/heads/fix/v092-hero-auto-basic-nearby-fallback-20261116
+          fi
