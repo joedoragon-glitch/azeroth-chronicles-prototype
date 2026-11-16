@@ -8,6 +8,7 @@ on:
       - 'src/prototype/input.js'
       - 'sw.js'
       - 'tests/alternate-layout-menu-joystick.test.cjs'
+      - 'tests/developer-alternate-layout-save.test.cjs'
       - '.github/workflows/alternate-layout-menu-joystick.yml'
   push:
     branches: [developer/alternate-control-layout]
@@ -29,9 +30,12 @@ jobs:
           node --check src/prototype/input.js
           node --check src/prototype/app.js
           node --check tests/alternate-layout-menu-joystick.test.cjs
+          node --check tests/developer-alternate-layout-save.test.cjs
           node --check sw.js
       - name: Menu input and unchanged field controls
         run: node tests/alternate-layout-menu-joystick.test.cjs
+      - name: New run/save/relaunch/continue is isolated from public storage
+        run: node tests/developer-alternate-layout-save.test.cjs
       - name: Offline worker fingerprints match committed controls
         run: |
           node <<'NODE'
@@ -45,5 +49,5 @@ jobs:
             const entry = JSON.stringify('./' + path) + ':' + JSON.stringify(hash);
             if (!worker.includes(entry)) throw Error('Stale offline worker fingerprint: ' + path);
           }
-          console.log('PASS edition worker fingerprints are source-exact');
+          console.log('PASS alternate-layout worker fingerprints are source-exact');
           NODE
