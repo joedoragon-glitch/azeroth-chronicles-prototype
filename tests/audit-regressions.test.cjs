@@ -1,4 +1,5 @@
 'use strict';
+// Test-only baseline reproduction for combined release #908; no gameplay changes.
 const assert=require('node:assert/strict'),C=require('../src/prototype/engine.js');let passed=0;
 const fresh=(cls='paladin',mode='normal',opts={})=>new C(mode,cls,()=>.9,opts);
 const boss=c=>c.zone().enemies.find(e=>e.type==='boss');
