@@ -5922,8 +5922,8 @@
           warning: 1,
           shotWarning: 0.45,
           shots: 4,
-          shotSpeed: 400,
-          shotLife: 2.1,
+          shotSpeed: 600,
+          shotLife: 1.4,
           recovery: 1.1,
           coefficient: 0.45,
         },
@@ -7026,8 +7026,6 @@
     // Approved hostile ranged BASIC reach is an absolute final distance, not
     // another 10% bonus on a legacy species-specific shotRange.
     enemyRangedBasicRange: 320,
-    // Slinger stones should launch decisively without changing attack cadence
-    // or the maximum distance a missed hostile shot can travel.
     // Hostile ground baseline also bounds Charmed melee cadence/pursuit parity.
     enemyOrdinaryMeleeBasicInterval: 1.4,
     enemyOrdinaryMeleePursuitSpeed: 175,
@@ -7268,7 +7266,7 @@
         // Night species join the friendly roster only through exact Rogue
         // Charm authorization; they are not added to the outdoor spawn pool.
         wraith: {
-          ranged: { hp: 108, damage: 13, armor: 4, speed: 1.05, interval: 1.1, reach: 225, retreat: 120, style: 'spectral', shotSpeed: 260 },
+          ranged: { hp: 108, damage: 13, armor: 4, speed: 1.05, interval: 1.1, reach: 225, retreat: 120, style: 'spectral', shotSpeed: 700 },
         },
         stalker: {
           melee: { hp: 125, damage: 16, armor: 5, speed: 1.14, interval: 0.84, reach: 74 },
