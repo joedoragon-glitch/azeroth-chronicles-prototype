@@ -47,8 +47,8 @@ game.budgetedCompanionRoute = function* () {
   for (let i=0;i<110;i++) { yielded++; yield { kind:'node' }; }
   return validPath;
 };
-const beforeQuest = JSON.stringify(game.snapshot());
 game.s.time += 3;
+const beforeQuest = JSON.stringify(game.snapshot());
 frame(100);
 assert.equal(generated,1,'one optional plan starts after meaningful displacement');
 assert(yielded <= 40, 'bounded update does not consume all 110 planner nodes at once');
