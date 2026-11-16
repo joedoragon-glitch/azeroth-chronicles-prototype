@@ -1994,7 +1994,9 @@
       if (e.forcedRole === 'ranged') {
         e.ranged = true;
         e.shotRange = 280;
-        e.shotSpeed = 260;
+        e.shotSpeed = e.species === 'wraith'
+          ? R.projectileFlight.ordinaryDefault.spectral
+          : R.projectileFlight.ordinaryDefault.arrow;
         e.projectileStyle = e.species === 'wraith' ? 'spectral' : 'arrow';
         return;
       }
@@ -2010,7 +2012,9 @@
       } else if (['archer', 'crownguard', 'wraith'].includes(e.species)) {
         e.ranged = true;
         e.shotRange = 280;
-        e.shotSpeed = 260;
+        e.shotSpeed = e.species === 'wraith'
+          ? R.projectileFlight.ordinaryDefault.spectral
+          : R.projectileFlight.ordinaryDefault.arrow;
         e.projectileStyle = e.species === 'wraith' ? 'spectral' : 'arrow';
       }
     }
@@ -7921,19 +7925,27 @@
               // ranged shot launches; collision, dodges and armor stay native.
               const criticalReceipt = this.worldCriticalRelease(e, 'ranged');
               const style = e.projectileStyle || 'arrow';
-              const stonePace =
-                e.species === 'goblin' && style === 'stone'
-                  ? R.balance.goblinSlingerProjectileSpeedMultiplier
-                  : 1;
+              // Re-read the authored launcher, rather than trusting a legacy
+              // v4 enemy.shotSpeed persisted before the velocity redesign.
+              const nativeSpeed = e.forcedRole === 'ranged'
+                ? (style === 'spectral'
+                    ? R.projectileFlight.ordinaryDefault.spectral
+                    : R.projectileFlight.ordinaryDefault.arrow)
+                : (R.rangedProfiles[e.species]?.shotSpeed ??
+                    (style === 'spectral'
+                      ? R.projectileFlight.ordinaryDefault.spectral
+                      : R.projectileFlight.ordinaryDefault.arrow));
+              const flightDistance = e.forcedRole === 'ranged'
+                ? 650 : (R.projectileFlight.ordinaryDistance[e.species] ?? 650);
               const shot = {
                 id: 'projectile-' + this.s.nextId++,
                 x: e.x,
                 y: e.y,
                 dx: Math.cos(angle),
                 dy: Math.sin(angle),
-                speed: (e.shotSpeed || 260) * pace.projectileMultiplier * stonePace,
-                // Keep the original travel budget: faster stones do not fly farther.
-                life: 2.5 / pace.projectileMultiplier / stonePace,
+                speed: nativeSpeed,
+                // Independent missed-shot travel budget (also for old v4 saves).
+                life: flightDistance / nativeSpeed,
                 damage: this.worldCriticalDamage(
                   criticalReceipt,
                   this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
