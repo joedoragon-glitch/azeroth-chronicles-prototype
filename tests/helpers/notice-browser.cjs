@@ -40,12 +40,18 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
     assert.equal(geometry.pointer, 'none', 'strip cannot capture joystick/attack input');
     assert(geometry.cardWidth <= geometry.clientWidth + 1, 'prose wraps without overflow');
     assert.equal(geometry.text, text, 'the full Chronicle text is visible');
-    assert(geometry.x >= 0 && geometry.x + geometry.width <= viewport.width,
-      'the strip fits the viewport');
+    assert(
+      geometry.x >= 0 && geometry.x + geometry.width <= viewport.width,
+      'the strip fits the viewport',
+    );
     for (const control of geometry.reserved)
-      assert(geometry.x + geometry.width <= control.left || geometry.x >= control.right ||
-        geometry.bottom <= control.top || geometry.top >= control.bottom,
-      'the strip avoids the HUD and Menu button');
+      assert(
+        geometry.x + geometry.width <= control.left ||
+          geometry.x >= control.right ||
+          geometry.bottom <= control.top ||
+          geometry.top >= control.bottom,
+        'the strip avoids the HUD and Menu button',
+      );
     if (phone) {
       assert(geometry.width >= Math.min(300, viewport.width - 24));
       assert(geometry.height <= 135, 'the Chronicle leaves room to play');
@@ -88,19 +94,27 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
     // remain on the title screen, where the normal active-play HUD pump is
     // suspended. Drive the actual public HUD update while waiting for its
     // real 2.5-second combat-quiet interval; never change game notice timing.
-    await page.waitForFunction(() => {
-      window.Prototype.updateHUD();
-      return !!document.querySelector('#message .notice-narration');
-    }, null, { timeout: 4500 });
+    await page.waitForFunction(
+      () => {
+        window.Prototype.updateHUD();
+        return !!document.querySelector('#message .notice-narration');
+      },
+      null,
+      { timeout: 4500 },
+    );
     assert.equal(
       await page.locator('#message .notice-narration').textContent(),
       text,
       'same story resumes once after disengagement',
     );
-    await page.waitForFunction(() => {
-      window.Prototype.updateHUD();
-      return !document.querySelector('#message .notice-card');
-    }, null, { timeout: 7000 });
+    await page.waitForFunction(
+      () => {
+        window.Prototype.updateHUD();
+        return !document.querySelector('#message .notice-card');
+      },
+      null,
+      { timeout: 7000 },
+    );
     await page.evaluate(() => {
       Prototype.game.notice(
         'Trail witness',

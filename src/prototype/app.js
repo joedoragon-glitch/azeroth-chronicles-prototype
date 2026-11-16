@@ -7525,9 +7525,19 @@
     }
     if (n.thornReport) {
       const lead = game.thornWitnessLead();
-      openMenu(n.name, game.thornReport(true, lead), lead
-        ? [action('Follow this lead', () => storyNavigate(lead, lead.name, null, 'thorn-witness'), lead.name)]
-        : []);
+      openMenu(
+        n.name,
+        game.thornReport(true, lead),
+        lead
+          ? [
+              action(
+                'Follow this lead',
+                () => storyNavigate(lead, lead.name, null, 'thorn-witness'),
+                lead.name,
+              ),
+            ]
+          : [],
+      );
       return;
     }
     if (game.s.mode === 'arena' && n.kind === 'arena-guide') {
@@ -7818,10 +7828,14 @@
       // Keep a runtime-only boss reference: no per-frame enemy enumeration,
       // new campaign flag or persistence schema change.
       purpose,
-      encounterActor: purpose === 'thorn-witness'
-        ? game.zone().enemies.find((enemy) =>
-            enemy.family === 'thorn' && enemy.type === 'boss' && !enemy.neutral) || null
-        : null,
+      encounterActor:
+        purpose === 'thorn-witness'
+          ? game
+              .zone()
+              .enemies.find(
+                (enemy) => enemy.family === 'thorn' && enemy.type === 'boss' && !enemy.neutral,
+              ) || null
+          : null,
       // Own a stable guidance copy; movement consumes/mutates hero.path.
       route: choice.path.map((point) => ({ x: point.x, y: point.y })),
       order: game.hero.order,
@@ -7854,8 +7868,10 @@
       if (
         game.s.keys.thorn ||
         game.s.rescued.thorn ||
-        (thorn && (thorn.hp <= 0 || thorn.aggro ||
-          Math.hypot(thorn.x - game.hero.x, thorn.y - game.hero.y) <= 220))
+        (thorn &&
+          (thorn.hp <= 0 ||
+            thorn.aggro ||
+            Math.hypot(thorn.x - game.hero.x, thorn.y - game.hero.y) <= 220))
       ) {
         // Cancel ONLY the outstanding route owned by this witness waypoint.
         // Skill orders, quest/gathering progress and the squad are unaffected.
@@ -7872,9 +7888,11 @@
           gatheringGuideRequest = null;
           updateQuestGuide(true);
         }
-        status(language === 'es'
-          ? 'Thornfang encontrado. Ruta del informante terminada.'
-          : 'Thornfang found. Informant waypoint cleared.');
+        status(
+          language === 'es'
+            ? 'Thornfang encontrado. Ruta del informante terminada.'
+            : 'Thornfang found. Informant waypoint cleared.',
+        );
         return;
       }
     }
@@ -7896,11 +7914,8 @@
     // The manual hero can move ~300 units/sec. A 100-unit replan threshold
     // could request ~3 routes/sec. Allow one replan after substantial travel,
     // or a slower refresh after 2 seconds of meaningful displacement.
-    const displaced = Math.hypot(
-      game.hero.x - guide.origin.x, game.hero.y - guide.origin.y,
-    );
-    if (!force && displaced < 450 &&
-        (game.s.time < guide.next || displaced < 75)) return;
+    const displaced = Math.hypot(game.hero.x - guide.origin.x, game.hero.y - guide.origin.y);
+    if (!force && displaced < 450 && (game.s.time < guide.next || displaced < 75)) return;
     guide.next = game.s.time + 2;
     guide.origin = { x: game.hero.x, y: game.hero.y };
     const choice = measuredWaypointPath('map', guide.destination);
