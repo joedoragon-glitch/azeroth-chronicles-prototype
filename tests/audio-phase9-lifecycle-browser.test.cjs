@@ -29,8 +29,19 @@ const server = http.createServer((req, res) => {
     page.on('pageerror', (e) => errors.push(e.message));
     try {
       await page.goto('http://127.0.0.1:' + server.address().port + prefix);
-      await page.waitForFunction(() => window.Prototype?.audio && !document.querySelector('#startup-update:not([hidden])'), null, { timeout: 30000 });
-      assert.equal(await page.evaluate(() => Prototype.audio.ctx), null, 'no forbidden silent autoplay override');
+      // A fresh player's first visit shows the language welcome before the
+      // title. Do not infer title visibility from the audio facade being
+      // initialized: that made this test click an invisible title heading.
+      await page.waitForFunction(() => window.Prototype?.audio &&
+        document.querySelector('#startup-update')?.hidden &&
+        (!document.querySelector('#language-welcome')?.hidden ||
+          !document.querySelector('#title-screen')?.hidden),
+        null, { timeout: 30000 });
+      assert.equal(await page.evaluate(() => Prototype.audio.ctx), null,
+        'language welcome/title must not bypass the user-gesture audio gate');
+      if (await page.locator('#language-welcome').isVisible())
+        await page.locator('#language-welcome [data-language="en"]').click();
+      await page.locator('#title-heading').waitFor({ state: 'visible' });
       await page.locator('#title-heading').click();
       await page.waitForFunction(() => Prototype.audio.recordedScore?.id === 'title' && Prototype.audio.ctx?.state === 'running', null, { timeout: 30000 });
       const titlePlayback = await page.evaluate(() => {
@@ -43,11 +54,16 @@ const server = http.createServer((req, res) => {
       assert(titlePlayback.gain > 0 && titlePlayback.music > 0 &&
         titlePlayback.master > 0 && titlePlayback.started && !titlePlayback.paused,
         'title must have an active nonzero recorded output, not just a selected ID');
+      // Current player flow: New Game -> Normal (Standard defaults) ->
+      // Choose Hero -> Paladin. The former four obsolete modal clicks never
+      // navigated this revised menu and could silently invalidate the journey.
       await page.locator('#title-new').click();
-      await page.getByRole('button', { name: 'New Normal game' }).click();
-      await page.getByRole('button', { name: /^English(?: ✓)?$/ }).click();
-      await page.getByRole('button', { name: 'Standard death and refuge recovery' }).click();
-      await page.getByRole('button', { name: /Paladin/ }).click();
+      await page.locator('#modal-actions').getByRole('button', { name: /Normal/i }).first().click();
+      const chooseHero = page.locator('#modal-actions button.menu-primary');
+      assert((await chooseHero.textContent()).includes('Choose Hero'),
+        'normal/standard setup exposes the real Choose Hero action');
+      await chooseHero.click();
+      await page.locator('#modal-actions').getByRole('button', { name: /Paladin/ }).first().click();
       await page.waitForFunction(() => window.Prototype?.started && !document.querySelector('#title-screen:not([hidden])'), null, { timeout: 60000 });
       await page.waitForFunction(() => {
         const a = Prototype.audio;
