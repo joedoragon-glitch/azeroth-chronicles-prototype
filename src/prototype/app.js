@@ -3096,8 +3096,8 @@
     openMenu(
       'Controls',
       language === 'es'
-        ? 'WASD para moverte y recorrer menús, F para confirmar y Esc para volver. En el teléfono, usa la palanca izquierda y el botón Confirmar. Pulsa 1–4 para usar habilidades o mantenlas pulsadas para cargarlas. Las habilidades aprendidas 5–8 se activan junto con 1–4. Haz clic izquierdo en el campo para pedir curación a un compañero.'
-        : 'Use WASD to move and navigate menus, F to confirm, and Esc to go back. On a phone, use the left joystick and the Confirm button. Tap 1–4 for skills or hold to charge. Learned skills 5–8 activate with 1–4. Left-click in the field to request a companion heal.',
+        ? 'WASD para moverte y recorrer menús, F o Enter para confirmar y Esc para volver. En el teléfono, usa la palanca izquierda y el botón Confirmar. Pulsa 1–4 para usar habilidades o mantenlas pulsadas para cargarlas. Las habilidades aprendidas 5–8 se activan junto con 1–4. Haz clic izquierdo en el campo para pedir curación a un compañero.'
+        : 'Use WASD to move and navigate menus, F or Enter to confirm, and Esc to go back. On a phone, use the left joystick and the Confirm button. Tap 1–4 for skills or hold to charge. Learned skills 5–8 activate with 1–4. Left-click in the field to request a companion heal.',
       [],
       back,
     );
@@ -8625,17 +8625,17 @@
           e.code === 'Escape')))
     )
       return;
+    const code = e.code;
+    const actionId = input.actionFor(code, platform.mode === 'desktop');
     // A loading interlude owns keyboard focus; hidden menus cannot commit a
     // second travel or close the overlay while arrival is being prepared.
     if (sceneTransition) {
       e.preventDefault?.();
-      if (e.code === 'KeyF' && !e.repeat && !$('scene-loading-retry').hidden)
+      if (actionId === 'confirm' && !e.repeat && !$('scene-loading-retry').hidden)
         $('scene-loading-retry').click();
       return;
     }
     audio.unlock();
-    const code = e.code;
-    const actionId = input.actionFor(code);
     if (actionId || code === 'Escape' || ((menu || !started) && ['Tab', 'Enter', 'Space'].includes(code)))
       e.preventDefault();
     if (code === 'Escape' || actionId === 'menu') {
@@ -8685,7 +8685,7 @@
     }
   });
   addEventListener('keyup', (e) => {
-    const actionId = input.actionFor(e.code);
+    const actionId = input.actionFor(e.code, platform.mode === 'desktop');
     delete keys[actionId];
     if (actionId === 'target') releaseTargetPress('keyboard');
     if (actionId?.startsWith('skill')) releaseCharge(Number(actionId.slice(5)), 'keyboard');
@@ -9120,7 +9120,8 @@
             card.className += ' notice-action';
             card.setAttribute('aria-label', tr('Open Talents') + ' · ' + n.text);
             card.onkeydown = card.onkeyup = (e) => {
-              if (['Enter', 'Space'].includes(e.code)) e.stopPropagation();
+              if (e.code === 'Space' || (e.code === 'Enter' && platform.mode !== 'desktop'))
+                e.stopPropagation();
             };
             card.onclick = (e) => {
               e.stopPropagation();

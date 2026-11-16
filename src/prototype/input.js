@@ -70,7 +70,8 @@
           ? label(bindings['skill' + (Number(id.slice(5)) - 4)])
           : label(bindings[id] || '');
       },
-      actionFor(code) {
+      actionFor(code, desktop = false) {
+        if (desktop && (code === 'Enter' || code === 'NumpadEnter')) return 'confirm';
         return actions.find(([, , bound]) => bound === code)?.[0] ?? null;
       },
     };
