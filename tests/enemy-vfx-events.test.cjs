@@ -20,7 +20,7 @@ for (const b of C.data.bosses)
           e = c.bossEnemy(c.boss(b.id), form, { x: 1400, y: 1700 });
         c.zone().enemies = [e];
         e.aggro = true;
-        c.startAttack(e, c.hero, index);
+        assert(c.startAttack(e, c.hero, index), b.id + '/' + form + '/' + index + ': eligible native cast begins');
         c.resolveAttack(e);
         if (e.motion) for (let j = 0; j < 30 && e.motion; j++) c.advanceMotion(e, 0.05);
         c.updateProjectiles(0.1);
@@ -40,7 +40,7 @@ for (const b of C.data.bosses)
       );
       assert(
         on.events.some((f) => f.stage === 'release'),
-        'release even without victim',
+        b.id + '/' + form + '/' + index + ': release even without victim',
       );
       for (const f of on.events) {
         assert(Object.isFrozen(f));
