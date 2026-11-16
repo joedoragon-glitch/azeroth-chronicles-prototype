@@ -52,11 +52,11 @@ for(const [stage,file,key] of ledgers){
  }
 }
 assert.equal(studies.length,16);
-assert.equal(Object.keys(live.assets).length,147);
+assert.equal(Object.keys(live.assets).length,148);
 assert.equal(live.director.environment.rules.length,22);
 assert.equal(Object.keys(live.director.places).length,19);
 assert.equal(Object.values(live.assets).filter(x=>x.kind==='ambience').length,34);
-assert.equal(Object.values(live.assets).filter(x=>x.kind==='music').length,83);
+assert.equal(Object.values(live.assets).filter(x=>x.kind==='music').length,84);
 assert.equal(Object.values(live.assets).filter(x=>x.kind==='effect').length,30);
 assert.equal(live.director.environment.combatGain,.45);
 assert.equal(live.director.environment.bossGain,.25);
