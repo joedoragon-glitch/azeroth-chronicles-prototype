@@ -146,6 +146,11 @@ try {
       }, { x: 550, y: 500 });
       Object.assign(ally, { x: 500, y: 500, cd: 0 });
       game.zone().enemies = [target];
+      // Authentic night-only Stalker capture keeps night active. Engage first:
+      // its enemy's night-scaled maximum HP is established before measuring
+      // damage, rather than mistaking the lawful HP increase for a missed hit.
+      game.engage(target);
+      assert(target.aggro, species + ': actual enemy encounter is active');
       const hp = target.hp;
       assert(game.companionCoverAttack(ally, target, true),
         species + ': authenticated melee emits an actual native basic strike');
