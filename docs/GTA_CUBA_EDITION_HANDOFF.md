@@ -1,5 +1,11 @@
 # GTA Cuba Edition
 
+## 16 November 2026 — compatible official PR #879 navigation inheritance
+
+After the owner's explicit authorization to merge and publish official [PR #879](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/879), this edition ports **exactly its 13 context-matched `src/prototype/app.js` navigation hunks**, not the standard app or its default control, combat or menu settings as a whole. The update applies the same Thornfang witness lead auto-clear on finding/engaging the moving boss before reaching the prior reported patrol-leg waypoint; decreases passive manual-map replan frequency (100→450 units, or ≥75 units after two seconds); reduces quest/gathering refresh cadence (one→two seconds, 100→250-unit displacement); and adds small session-only route-refresh timing/count fields to the existing playtest report. Preserve other map routes, companion/enemy planning, the boss's authored patrol and Mira, the v4 save structure, bilingual behavior, fixed GTA Cuba controls, the paired Skills 1–4 / 5–8 behavior, independent edition storage and PWA scope.
+
+This is a **narrow compatibility port**, not a general main-to-edition sync; the underlying edition still diverges intentionally from the standard game. Main's focused browser/native validation of PR #879 does not constitute new GTA Cuba edition physical-device acceptance. The owner previously waived game testing for this one-player experimental edition. Check actual official build publication before this branch is merged/deployed; edition Pages publishing repackages the exact published official SHA and overlays this edition source. No need to re-export old saves.
+
 > **Experimental feedback-driven variant, not the standard public game.** Created to accommodate an individual player's preferred controls without changing the owner's general game design. It is not a default mode, not a separate official design direction, and not a validated independent playtest. The standard game on `main` remains authoritative. This document is a developer handoff; the player-facing game retains the usual title.
 
 Development record for the closed, unmerged [PR #872](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/872). The edition is isolated in `mod/gta-cuba-edition`. Player-facing pages use the standard game title.
