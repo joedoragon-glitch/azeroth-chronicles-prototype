@@ -5809,6 +5809,14 @@
     frenzyCooldown: 0.6,
     frenzyAim: 0.75,
   };
+  // Explicit final Rogue reach. Attack radius and legal acquisition are different dimensions.
+  const enemyRogueGeometry = Object.freeze({
+    acquisition: Object.freeze({ boss: 600, captain: 528, other: 408 }),
+    fallbackRadius: Object.freeze({ boss: 126, captain: 114, other: 96 }),
+    mountedCrownRiderDashRadius: 198,
+    slabWarningFromOffset: 72,
+    slabWarningToOffset: 120,
+  });
   const nightEnemyCombat = {
     wraith: {
       hp: 2.4,
@@ -5829,6 +5837,8 @@
       radius: 93.6,
       coefficient: 1.6,
       pounceSpeed: 560,
+      // Night stalker acquisition is wider than its actual 93.6-unit strike area.
+      approachRange: 432,
       slow: 3,
     },
   };
@@ -7898,6 +7908,7 @@
     companionRecall,
     bossCadence,
     bossAreaGeometry,
+    enemyRogueGeometry,
     // Rematches change readiness and warning windows, not boss health or damage.
     // Floors keep already brief warnings readable at the game's ~20 FPS target.
     rematchAdaptation: Object.freeze({
