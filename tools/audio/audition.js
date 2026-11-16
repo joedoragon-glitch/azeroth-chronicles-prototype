@@ -569,7 +569,10 @@
               : 'Original Dark Crown recording — not rebuilt'
             : kindNames[entry.kind] || human(entry.kind),
         entry.bpm ? entry.bpm + ' BPM' : null,
-        entry.duration ? entry.duration.toFixed(1) + ' seconds' : null,
+        entry.duration ? entry.duration.toFixed(2) + ' seconds' : null,
+        entry.kind === 'effect' && /^[a-f0-9]{64}$/.test(entry.sha256 || '')
+          ? 'Audio SHA-256 ' + entry.sha256.slice(0, 12) + '…'
+          : null,
         id,
       ].filter(Boolean);
       for (const part of labels) {
