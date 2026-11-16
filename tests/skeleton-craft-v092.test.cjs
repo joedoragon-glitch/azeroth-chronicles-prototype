@@ -90,6 +90,15 @@ test('Actual context gates professional titles; wild independent actors retain o
 
 test('All 25 English aliases resolve in their scoped employment or habitat contexts', () => {
   const game = new Campaign('normal', 'paladin', () => 0.99);
+  // Use the real TRUE minister summon composition: this is a Crown field
+  // boss, not a made-up "cindermaw" zone or imaginary ministry pack.
+  game.enter('crown');
+  const boss = game.bossEnemy(game.boss('cindermaw'), 'true', { x: 2200, y: 1750 });
+  game.zone().enemies = [boss];
+  game.summonBossAdds(boss, game.trueSummonPlan(boss), game.bossSummonCap(boss));
+  const responder = game.bossOwnedSummons(boss).find((u) =>
+    u.species === 'ashbeast' && u.trueSummonRole === 'captain');
+  assert(responder, 'real Cindermaw TRUE spell generates a Ministry Ringleader');
   const map = Campaign.rules.tacticalFoundation.skillLoreTitles;
   const roles = {
     skeleton: ['vale', { species: 'skeleton' }],
@@ -98,7 +107,7 @@ test('All 25 English aliases resolve in their scoped employment or habitat conte
     'mine-warden': ['mine', { species: 'ogre', guard: true }],
     'frontier-soldier': ['warlord', { species: 'orc', guard: true }],
     'ridge-payroll': ['supply-highlands', { species: 'archer', roomGuard: true }],
-    'cindermaw-ministry': ['cindermaw', { species: 'ashbeast', guard: true }],
+    'cindermaw-ministry': ['crown', responder],
     'crown-drill': ['vale', { species: 'crownguard', crownTroop: true }],
   };
   for (const [source, [approved, scope]] of Object.entries(map)) {
@@ -116,6 +125,13 @@ test('All 25 English aliases resolve in their scoped employment or habitat conte
         source + ': unrelated wildlife or guards retain their established labels');
     }
   }
+  game.s.zone = 'crown';
+  assert.equal(game.monsterSkillTitle('Ashmane Backlash',
+    { ...responder, owner: 'not-the-minister' }), 'Ashmane Backlash',
+    'a forged employer id cannot confer a Ministry identity');
+  assert.equal(game.monsterSkillTitle('Cinder Spitter Smokecloud',
+    { ...responder, summon: false }), 'Cinder Spitter Smokecloud',
+    'an unrelated native Ash beast cannot impersonate a summoned responder');
 });
 
 test('Mortise Cut is a real L-shaped contact and leaves no additional Slow or shove', () => {

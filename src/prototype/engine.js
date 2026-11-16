@@ -6613,11 +6613,15 @@
           ((sourceZone === 'supply-highlands' && actor.roomGuard) ||
             pack.startsWith('ridge-payroll-'))
           ? title : sourceName;
-      if (scope === 'cindermaw-ministry')
-        return species === 'ashbeast' &&
-          ((sourceZone === 'cindermaw' && actor.guard) ||
-            pack.startsWith('cindermaw-ministry-'))
-          ? title : sourceName;
+      if (scope === 'cindermaw-ministry') {
+        // TRUE responders are explicitly summoned under the actual Minister:
+        // no "cindermaw" field zone or fabricated ministry pack is required.
+        // Check live owner identity, not the Ash-beast species in isolation.
+        const minister = actor.summon && actor.owner &&
+          this.zone().enemies.find((u) =>
+            u.id === actor.owner && u.type === 'boss' && u.family === 'cindermaw');
+        return species === 'ashbeast' && minister ? title : sourceName;
+      }
       if (scope === 'crown-drill')
         return species === 'crownguard' && (actor.crownTroop || sourceZone === 'crown' ||
           sourceZone === 'citadel') ? title : sourceName;

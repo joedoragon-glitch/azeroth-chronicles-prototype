@@ -8,6 +8,8 @@
 
 **Audit goals after integration:** detect genuine non-generic melee/projectile mechanic defects, recover original regression gaps, test normal/charged Ringleaders and Guardians across Vale/Crypt, actual allied Charmed scheduling and enemy-name provenance. Preserve approved 29 English labels (Fixation final), new Mira-training canon and all 27 owner directions. Verify both EN/ES modes retain English skill names for v0.9.2. Protect the #908 AoE/projectile/Wither/targeting/navigation/canvas/tutorial behavior from regressions. Original #889/#899/#902/#904/#905 branches still appear GitHub-open but their selected *source* was integrated by #908; do not remerge them. No separate PR #900 merge/deployment is authorized.
 
+**Post-release audit finding / narrowly scoped correction:** #900 originally recognized Cindermaw Ministry titles only for a nonexistent `cindermaw` zone or unused `cindermaw-ministry-*` pack. The actual owner-confirmed TRUE Ministry responder Ringleaders are `ashbeast` summons with `owner` referring to the `cindermaw` field boss in the **Crown**. The draft now verifies this actual boss identity and tests a real `summonBossAdds` composition, including negative provenance cases. This repairs player-facing **Compulsory Evacuation** and **Protective Separation** without globally labeling independent Ash beasts or changing the skills' effects. Pending exact-head focused CI; not yet a confirmed PASS.
+
 **Status:** unmerged draft, code rebase/merge staged; exact-head CI, player/renderer balance, earned campaign, long-session save and physical acceptance **unverified**. Later completed CI results must be appended with exact run SHA and outcomes.
 
 ## Current repository and release coordination — 16 November 2026
