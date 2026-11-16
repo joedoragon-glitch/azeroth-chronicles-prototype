@@ -77,6 +77,7 @@ jobs:
         run: |
           npm ci --ignore-scripts
           npx playwright install chromium --with-deps
+          node scripts/vendor-pixi.cjs --ensure
       - name: Capture fixed-scene original Campaign in Canvas and active Pixi
         env:
           PARITY_FIXTURES: ${{ matrix.fixtures }}
