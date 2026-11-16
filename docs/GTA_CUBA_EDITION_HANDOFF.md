@@ -6,7 +6,7 @@ Development record for the closed, unmerged [PR #872](https://github.com/joedora
 
 ## Source and status
 
-- Official release baseline: `e97dd771190ee83f37fc61d091671e4d110c3a36`, `0.9.1+snapshot.dev.288`. The [successful Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42541651863), [live build marker](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/build.txt), hosted version script and matching application bytes establish the base. The later documentation-only main commit and all unmerged PR work are excluded.
+- Official release baseline: `e97dd771190ee83f37fc61d091671e4d110c3a36`, `0.9.1+snapshot.dev.288`. The [official Pages deployment record](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42541651863) and release [build marker](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/build.txt) identify this historical base; verify the live published SHA afresh before any refresh. The later documentation-only main commit and all unmerged PR work are excluded.
 - Edition source: `0.9.1+snapshot.dev.288.controls.2` (branch source verified at `997dc571ee1bf48cc4c9fce19eb86fee3d977fe7` on 15 November 2026; recheck current HEAD before acting). The request explicitly waived automated, manual, regression and device tests and campaign playthroughs. The edition is untested. Packaging and deployment metadata are release operations.
 - The original distribution used its own host. The GitHub Pages release workflow stages the edition under `tools/webgl-pilot/play/`, a path the official worker passes through for navigation. The edition registers its own scoped worker and prefixes its storage keys. Existing saves from a different host can be exported there and imported on GitHub Pages.
 
@@ -28,7 +28,7 @@ The edition retains English and Spanish presentation (some inherited text remain
 
 ## Learning and combat: what “paired” actually means
 
-The original **eight hero-skill ranks, effects and training prerequisites still exist**. The edition removes independent player activation of slots 5–8, **not** their instructors or learned abilities:
+The game's **eight hero-skill slots**, their individual rank progressions, effects and instructor prerequisites still exist. The edition removes independent player activation of slots 5–8, **not** their instructors or learned abilities:
 
 | Trainable secondary | Rescued instructor's family | How the player uses it |
 | --- | --- | --- |
