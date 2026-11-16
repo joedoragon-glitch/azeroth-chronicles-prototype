@@ -145,8 +145,14 @@ const server = http.createServer((req, res) => {
       }
       await page.screenshot({ path: path.join(out, 'archive-milestones-' + tag + '.png') });
       await page.evaluate(() => (document.querySelector('#status').textContent = ''));
+      // The fixture intentionally suppresses the campaign tick while inspecting
+      // authored notices outside active play. Pump the actual HUD's expiry clock
+      // rather than assuming a live gameplay loop updates the paused title.
       await page.waitForFunction(
-        () => !document.querySelector('#message').classList.contains('visible'),
+        () => {
+          window.Prototype.updateHUD();
+          return !document.querySelector('#message').classList.contains('visible');
+        },
         null,
         { timeout: 15000 },
       );
