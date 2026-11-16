@@ -95,6 +95,8 @@ const known = [
         await page.waitForFunction(() =>
           document.querySelector('#sfx-study-status').textContent.includes('Played current'));
         assert.equal(await page.evaluate(() => window.__sfxRecorded.at(-1)?.id), 'sfx-steel-release');
+        assert.equal(await page.evaluate(() => window.__sfxRecorded.at(-1)?.opts.fade), 0.005,
+          'Recorded A/B must keep the same short in-game attack ramp as the new WAV');
         await press('#sfx-candidate');
         await page.waitForFunction(() =>
           document.querySelector('#sfx-study-status').textContent.includes('Played unapproved'));
