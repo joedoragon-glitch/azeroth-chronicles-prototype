@@ -2352,7 +2352,11 @@
           role = ranged ? 'ranged' : 'melee',
           craft = R.tacticalFoundation.skeletonCraftSkills[role][elite ? 'ringleader' : 'ordinary'],
           budget = R.balance.companions.charmedSkills,
-          receipt = this._criticalPartyNative?.enabled
+          distance = Math.max(1, dist(u, target));
+        // Admission must precede the critical release. A rejected cast cannot
+        // consume the ally's native critical-stream decision.
+        if (distance > this.companionCombatReach(u) + 20) return false;
+        const receipt = this._criticalPartyNative?.enabled
             ? this._criticalPartyNative.release(
                 this, elite ? 'charm/rogue/signature' : 'charm/rogue/basic', u.id)
             : null,
@@ -2361,11 +2365,7 @@
               (elite ? budget.signatureDamageMultiplier : budget.basicDamageMultiplier) *
               (1 + this.companionMasteryTier(u) *
                 R.balance.companions.mastery.nativeDamagePerTier))),
-          distance = Math.max(1, dist(u, target));
-        if (distance > this.companionCombatReach(u) + 20) return false;
-        const dx = (target.x - u.x) / distance,
-          dy = (target.y - u.y) / distance,
-          angle = Math.atan2(dy, dx),
+          angle = Math.atan2(target.y - u.y, target.x - u.x),
           side = u.id.endsWith('0') || u.id.endsWith('2') || u.id.endsWith('4') ||
             u.id.endsWith('6') || u.id.endsWith('8') ? 1 : -1;
         if (ranged) {
@@ -2397,7 +2397,6 @@
           : charged
             ? [angle - side * 0.2, angle + side * 1.1]
             : [angle - side * 0.32, angle + side * 0.34];
-        let contact = false;
         const previous = this.developerCompanionBeginDirect(u, craft.name);
         for (const [index, bearing] of strikes.entries()) {
           const length = elite ? (charged ? 150 : 124) : 90,
@@ -2417,14 +2416,17 @@
             const amount = baseline * (elite
               ? charged ? craft.chargedCoefficient : craft.coefficient
               : craft.coefficient);
-            if (this.damage(enemy, amount, u.id, {
+            this.damage(enemy, amount, u.id, {
               area: true, skillShape: 'area', criticalExecution: receipt,
-            })) contact = true;
+            });
           }
           if (!elite || index === strikes.length - 1) break;
         }
         this.developerCompanionEndDirect(previous);
-        return contact;
+        // A dodged/blocked committed swing still spends its skill activation.
+        // Returning false here would incorrectly fall through to another
+        // native attack and could double-consume critical decisions.
+        return true;
       }
       charmedCompanionSkill(u, target) {
         if (!this.isCharmedCompanion(u) ||
