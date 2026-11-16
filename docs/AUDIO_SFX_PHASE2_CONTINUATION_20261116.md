@@ -2,6 +2,8 @@
 
 **Dated checkpoint: 16 November 2026.** **Purpose:** transfer the *actual completed work, remaining development sequence, evidence and limitations* across ChatGPT/Work sessions without expecting the owner to audit GitHub or listen prematurely. **This is the current Phase 2 production handoff on draft [PR #898](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/898); it is not a release note and does not grant merge/publication permission.** Revalidate all named heads and CI when restarting. The full sound-design decisions are in separate documentation-only draft [PR #887](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/887).
 
+> **CURRENT STATUS OVERRIDE — 16 NOVEMBER, SIX-CUE DRAFT:** The production branch moved beyond this document's original four-cue checkpoint. Six of eight Phase 2 original pilot WAVs are now registered **only on draft #898** (Rogue ×2, Lifebinder, quest, Charmed Wraith heritage, Barracks completion), while Mage orb and Thornpup Tripwire remain preview-only. The live main has **no Phase 2 effect integration**, and old commit/CI snapshots below intentionally describe earlier four-cue states. **Six-cue current head requires its own final targeted CI; no audio listening, merge, publication or whole-Phase-2 completion is claimed.** The authoritative details are in [the pilot integration ledger](AUDIO_SFX_PHASE2_PILOT_20261116.md).
+
 ## Read in this order; keep a single owner per fact
 
 1. **This continuation record** — exact last-known work, CI, remaining sequence, open gates and next autonomous task.
