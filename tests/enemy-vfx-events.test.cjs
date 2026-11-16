@@ -94,7 +94,7 @@ for (const row of rows.filter((r) =>
         fromY: e.y,
         x: c.hero.x,
         y: c.hero.y,
-        radius: (plan.radius || 85) * C.rules.bossCadence.areaRangeMultiplier,
+        radius: (plan.radius || C.rules.bossAreaGeometry.captainDefaultOtherRadius),
         angle: 0,
         timer: plan.warning,
         total: plan.warning,
