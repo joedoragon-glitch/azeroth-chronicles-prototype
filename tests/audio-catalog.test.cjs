@@ -28,6 +28,11 @@ const copy = (v) => structuredClone(v),
   ]);
   assert.equal(promotion.recordings.length,16);
   assert.equal(importedEnvironment.size,20);
+  const phase2PilotEffects = new Set([
+    'sfx-phase2-rogue-bell-basic', 'sfx-phase2-rogue-bell-emphatic',
+    'sfx-phase2-lifebinder-cold-ring', 'sfx-phase2-quest-complete',
+  ]);
+  assert([...phase2PilotEffects].every(id => production.assets[id]?.managedBy === 'sfx-phase2-pilot-dsp'));
   assert(
     Object.entries(production.assets).every(
       ([id,a]) =>
@@ -47,7 +52,7 @@ const copy = (v) => structuredClone(v),
               (a.kind === 'ambience'
                 ? 'environment-book'
                 : a.kind === 'effect'
-                  ? 'sfx-phase1-original-hybrid'
+                  ? (phase2PilotEffects.has(id) ? 'sfx-phase2-pilot-dsp' : 'sfx-phase1-original-hybrid')
                   : 'score-book')),
     ),
     'Preserve provenance for 30 phase-one effects, original score and all 20 source-authored environmental recordings',

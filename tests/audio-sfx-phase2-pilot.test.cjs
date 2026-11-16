@@ -13,14 +13,23 @@ assert.equal(CUES.length,8);
 assert.deepEqual(CUES,book.cues);
 assert.equal(new Set(CUES.map(c=>c.id)).size,8);
 assert.deepEqual([...byId].sort(),CUES.map(c=>c.id).sort());
-assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,30,
-  'Phase 2 previews must not silently register new production effects');
+assert.equal(Object.keys(manifest.director.events).length,98);
+const integrated=new Set(['rogue-bell-basic','rogue-bell-emphatic','lifebinder-cold-ring','quest-complete']);
+assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,34,
+  'Original 30 Phase 1 and exactly four Phase 2 draft effects');
 const signalHashes=new Set(),rmsValues=new Set();
 for(const cue of CUES){
   const {bytes,metrics}=renderWav(cue);
   const filepath=path.join(root,'tools/audio/sfx-phase2-previews',cue.id+'.wav');
   const existing=fs.readFileSync(filepath);
   assert(existing.equals(Buffer.from(bytes)),cue.id+': not bit-for-bit reproducible');
+  const registered=manifest.assets['sfx-phase2-'+cue.id];
+  if(integrated.has(cue.id)){
+    assert(registered && registered.managedBy==='sfx-phase2-pilot-dsp');
+    const installed=fs.readFileSync(path.join(root,registered.src.replace(/^\.\//,'')));
+    assert(installed.equals(existing),cue.id+': draft installed sound differs from reproducible preview');
+    assert.equal(crypto.createHash('sha256').update(installed).digest('hex'),registered.sha256);
+  }else assert.equal(registered,undefined,cue.id+': preview mistakenly registered');
   assert(bytes instanceof Uint8Array,'PCM render must return bytes, not text');
   assert.equal(Buffer.from(bytes).toString('ascii',0,4),'RIFF');
   assert.equal(Buffer.from(bytes).toString('ascii',8,12),'WAVE');

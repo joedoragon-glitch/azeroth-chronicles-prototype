@@ -317,6 +317,12 @@ const groups = [
     ],
   },
   {
+    // The draft Phase 2 recorded routes must exercise source ownership,
+    // decoded-vs-cold fallback and no duplicate success sounds.
+    match: /^src\/prototype\/audio-(?:hero|enemy|effects)\.js$|^assets\/audio\/effects\/sfx-phase2-/,
+    tests: [TEST + 'audio-sfx-phase2-integration.test.cjs'],
+  },
+  {
     // Source-owned Phase 2 SFX preview recipe and real event observation mapping.
     match: /^tools\/audio\/sfx-phase2-pilot(?:-routes)?\.cjs$/,
     tests: [TEST + 'audio-sfx-phase2-pilot.test.cjs'],
