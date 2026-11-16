@@ -6322,12 +6322,21 @@
         const launch = (angle, coefficient, delay = 0, lateral = 0) => {
           const x = e.x - Math.sin(a.angle) * lateral,
             y = e.y + Math.cos(a.angle) * lateral,
+            // PR #899 owns the replacement physical-flight model. Work on
+            // either base: current live balance or the pending authored speed
+            // and missed-shot distance, including restored historical v4 mobs.
+            flight = R.projectileFlight,
+            speed = flight
+              ? (R.rangedProfiles.skeleton?.shotSpeed ?? flight.ordinaryDefault.arrow)
+              : (e.shotSpeed || 260) * R.rangedEnemyCombat.projectileMultiplier,
+            life = flight
+              ? (flight.ordinaryDistance.skeleton ?? 650) / speed
+              : 2.5 / R.rangedEnemyCombat.projectileMultiplier,
             shot = {
               id: 'projectile-' + this.s.nextId++,
               x, y,
               dx: Math.cos(angle), dy: Math.sin(angle),
-              speed: (e.shotSpeed || 260) * R.rangedEnemyCombat.projectileMultiplier,
-              life: 2.5 / R.rangedEnemyCombat.projectileMultiplier,
+              speed, life,
               damage: damage(coefficient),
               ...(receipt ? { criticalExecution: receipt } : {}),
               delay, source: 'enemy', sourceId: e.id,
