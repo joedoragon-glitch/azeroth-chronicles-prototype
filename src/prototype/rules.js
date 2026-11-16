@@ -7743,6 +7743,35 @@
       },
     },
   };
+  // Actor-specific *presentation* only. Never use titles as mechanic/save IDs.
+  // Unverified affiliations retain the original species-native display name.
+  const skillLoreTitles = Object.freeze({
+    'Bone Hook': ['Counterpressure', 'skeleton'],
+    'Bowguard Withdrawal': ['Protective Setback', 'skeleton'],
+    Bonebind: ['Binding Renewal', 'skeleton'],
+    'Ossuary Rattle': ['Lateral Buckling', 'skeleton'],
+    'Bone Archer Pinning Volley': ['Temporary Restraint', 'skeleton'],
+    'Graveveil Retreat': ['Afterimage', 'habitat'],
+    'Gang Boss Smoke Trick': ['Fugitive Dust', 'vale-salvage'],
+    'Slingmaster Split Screen': ['Fixation', 'vale-salvage'],
+    'Broodbank Coil': ['Backwater Effect', 'habitat'],
+    'Broodspit Barrage': ['Sediment Trap', 'habitat'],
+    'Reedbank Mudscreen': ['Liquefaction', 'habitat'],
+    'Rockside Slam': ['Pillar Punching', 'mine-warden'],
+    'Boulderhand Sweep': ['Rockburst', 'mine-warden'],
+    'Stone Thrower Denial': ['Ground Control', 'mine-warden'],
+    'Battle Shove': ['Right-of-Way', 'frontier-soldier'],
+    'Warband Shoulder Drive': ['Force Projection', 'frontier-soldier'],
+    'Axe Thrower Crossfire': ['Defile Control', 'frontier-soldier'],
+    'Disengaging Shot': ['Hedged Exit', 'ridge-payroll'],
+    'Bow Captain Shoulder Break': ['Setoff', 'ridge-payroll'],
+    'Veteran Archer Denial Shot': ['Stop-Loss Order', 'ridge-payroll'],
+    'Ashmane Backlash': ['Compulsory Evacuation', 'cindermaw-ministry'],
+    'Cinder Spitter Smokecloud': ['Protective Separation', 'cindermaw-ministry'],
+    'Shield Reposition': ['Subcision', 'crown-drill'],
+    'Shielded Backstep': ['Countermarch', 'crown-drill'],
+    'Crown Volley Screen': ['Precision Sectioning', 'crown-drill'],
+  });
   const tacticalFoundation = Object.freeze({
     enabled: true,
     // Boss records use their unique family ID as species, even where their
@@ -7785,6 +7814,7 @@
     thinkingSeconds: 0.3,
     initialAssessmentSeconds: 0.4,
     escapeSeconds: 5.5,
+    skillLoreTitles,
     rogueMoves,
     rogueRingleaderSignatures,
     rogueSignatures,
