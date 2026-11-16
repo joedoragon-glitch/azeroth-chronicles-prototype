@@ -1,0 +1,106 @@
+name: Publish the fixed-control edition
+
+on:
+  push:
+    branches: [mod/gta-cuba-edition]
+
+permissions:
+  contents: read
+
+# Share the official publish lock so an old root package cannot overwrite a
+# new official release. The edition never builds from the head of main.
+concurrency:
+  group: focused-refs/heads/main
+  cancel-in-progress: false
+
+env:
+  PAGES_URL: https://joedoragon-glitch.github.io/azeroth-chronicles-prototype
+  EDITION_PATH: tools/webgl-pilot/play
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    outputs:
+      official_sha: ${{ steps.official.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: edition
+      - name: Read the public release
+        id: official
+        shell: bash
+        run: |
+          sha="$(curl --fail --silent --show-error --location "$PAGES_URL/build.txt")"
+          [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.official.outputs.sha }}
+          path: official
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Package published game and edition
+        shell: bash
+        env:
+          OFFICIAL_SHA: ${{ steps.official.outputs.sha }}
+        run: |
+          vendor=assets/vendor/pixi-8.22.0.min.js
+          mkdir -p official/assets/vendor edition/assets/vendor
+          curl --fail --silent --show-error --location "$PAGES_URL/$vendor" -o "official/$vendor"
+          echo "06d9ef9823e743518793083c296d801e752db128cb1f519fbabe37e1259567ea  official/$vendor" | sha256sum --check
+          cp "official/$vendor" "edition/$vendor"
+
+          cd official
+          GITHUB_SHA="$OFFICIAL_SHA" node <<'NODE'
+          const childProcess = require('node:child_process');
+          const { resolve } = require('node:path');
+          const execFileSync = childProcess.execFileSync;
+          const vendor = resolve('scripts/vendor-pixi.cjs');
+          childProcess.execFileSync = (command, args, options) => {
+            // The published vendor file is already present. Run only the
+            // packaging phase, with the same official source and release ID.
+            if (command === process.execPath && (args[0] === vendor || args[0] === '--check'))
+              return;
+            return execFileSync(command, args, options);
+          };
+          process.argv.push('--site');
+          require('./scripts/build.cjs');
+          NODE
+
+          cd ../edition
+          node scripts/build.cjs --package-only --site
+          # The official worker already passes this navigation path to the
+          # network. The edition registers a worker scoped to its own folder.
+          mkdir -p "../official/_site/$EDITION_PATH"
+          cp -a _site/. "../official/_site/$EDITION_PATH/"
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: official/_site
+
+  publish:
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Confirm the public release is still current
+        shell: bash
+        env:
+          OFFICIAL_SHA: ${{ needs.package.outputs.official_sha }}
+        run: |
+          current="$(curl --fail --silent --show-error --location "$PAGES_URL/build.txt")"
+          if [[ "$current" != "$OFFICIAL_SHA" ]]; then
+            echo "::error::Official Pages changed while the package was prepared."
+            exit 1
+          fi
+      - uses: actions/deploy-pages@v4
+        id: deploy
+      - name: Record edition routes
+        run: |
+          echo "Phone: $PAGES_URL/$EDITION_PATH/phone.html?experience=phone" >> "$GITHUB_STEP_SUMMARY"
+          echo "Desktop: $PAGES_URL/$EDITION_PATH/?experience=desktop" >> "$GITHUB_STEP_SUMMARY"
