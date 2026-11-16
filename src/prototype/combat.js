@@ -1093,6 +1093,11 @@
             p.delay -= dt;
             continue;
           }
+          // Neutral global tuning controls act on physical flight only: the
+          // same scaled flight-clock shortens lifetime as speed increases.
+          // Delays, warnings and aim cadence continue in real seconds.
+          const flightScale = R.projectileFlight.globalSpeedScale *
+            (p.source === 'enemy' ? R.projectileFlight.hostileSpeedScale : 1);
           if (p.source === 'enemy') {
             if (!p.fortChecked) {
               p.fortChecked = true;
@@ -1103,7 +1108,7 @@
                 );
             }
             const fort = this.projectileFort(p);
-            const elapsed = p.rangedArc ? Math.min(dt, Math.max(0, p.life)) : dt;
+            const elapsed = Math.min(dt * flightScale, Math.max(0, p.life));
             p.life -= elapsed;
             const before = { x: p.x, y: p.y };
             p.x += p.dx * p.speed * elapsed;
@@ -1329,7 +1334,7 @@
           // Sweep the physical frame segment, including every curved-flight
           // step, so damage never precedes the actual visible front.
           const flight = R.balance.friendlyProjectiles,
-            elapsed = Math.min(dt, p.life ?? flight.lifeSeconds),
+            elapsed = Math.min(dt * flightScale, p.life ?? flight.lifeSeconds),
             before = { x: p.x, y: p.y },
             step = Math.min(
               p.speed * elapsed,
