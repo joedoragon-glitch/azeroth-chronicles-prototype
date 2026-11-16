@@ -57,7 +57,7 @@ function paintedGroundOvals(entity, region = 0) {
   assert.equal(ovals.length, 1, 'native ground-oval tracing is operational');
   ovals.length = 0;
   Visuals.draw(ctx, entity, { x: 240, y: 230 }, region, false);
-  return { ovals, pixels: canvas.getImageData(0, 0, 480, 340).data };
+  return { ovals, pixels: native.getImageData(0, 0, 480, 340).data };
 }
 
 for (const [name, entity, region] of [
