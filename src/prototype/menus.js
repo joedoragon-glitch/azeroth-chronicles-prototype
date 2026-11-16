@@ -2207,15 +2207,26 @@
           night = R.balance.companions.charmNightNative[species],
           nativeLock = allowed ? '' : 'Only Rogue companions or Orin-trained companions can execute Charmed skills',
           eliteLock = elite ? '' : combatGate +
-            (!allowed ? ' Orin training is required after non-Rogue Succession.' : '');
+            (!allowed ? ' Orin training is required after non-Rogue Succession.' : ''),
+          // These are alternatives within the original two lawful skill slots,
+          // never separately purchased skills or a bypass of elite training.
+          craft = species === 'skeleton'
+            ? foundation.skeletonCraftSkills[ranged ? 'ranged' : 'melee'] : null;
         if (native)
-          entry('Native · ' + native.name,
-            friendlyMove(native) + ' · ' + cfg.basicCooldown + 's recovery · ' +
+          entry('Native · ' + g.monsterSkillTitle(native.name, u),
+            friendlyMove(native) +
+              (craft ? ' · Alternates with ' + craft.ordinary.name +
+                (ranged ? ' (three fixed-bearing physical arrows)' :
+                  ' (L-shaped melee contact)') : '') +
+              ' · ' + cfg.basicCooldown + 's recovery · ' +
               potency(cfg.basicDamageMultiplier, mastery.nativeDamagePerTier),
             nativeLock);
         if (signature)
-          entry('Ringleader signature · ' + signature.name,
+          entry('Ringleader signature · ' + g.monsterSkillTitle(signature.name, u),
             friendlyMove(signature) +
+              (craft ? ' · Alternates with ' + craft.ringleader.name +
+                (ranged ? ' (converging arrows / charged flank lane)' :
+                  ' (two angled cuts / charged wider pivot)') : '') +
               ' · up to ' + (['scatter','sweep'].includes(signature.effect)
                 ? cfg.signatureTargetCap : 1) + ' targets' +
               (['scatter','sweep'].includes(signature.effect) && signature.radius
