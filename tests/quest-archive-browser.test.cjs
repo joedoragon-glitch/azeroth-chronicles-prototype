@@ -174,17 +174,13 @@ async function resumeLoadedCampaign(page) {
         c.notice('Sunken Archive · halls secured', duration, 'First clear reward delivered.');
         Prototype.updateHUD();
       }, phone);
-      await page.waitForFunction(
-        (isPhone) => {
-          Prototype.updateHUD();
-          const cards = document.querySelectorAll('#message .notice-card');
-          return (
-            cards.length === (isPhone ? 1 : 2) &&
-            cards[0].textContent.includes('BOSS VANQUISHED')
-          );
-        },
-        phone,
-      );
+      await page.waitForFunction((isPhone) => {
+        Prototype.updateHUD();
+        const cards = document.querySelectorAll('#message .notice-card');
+        return (
+          cards.length === (isPhone ? 1 : 2) && cards[0].textContent.includes('BOSS VANQUISHED')
+        );
+      }, phone);
       const firstCards = await page.locator('#message .notice-card').allTextContents();
       assert(firstCards[0].includes('BOSS VANQUISHED'));
       assert.equal(await page.locator('#message .notice-detail').count(), phone ? 1 : 2);
@@ -204,8 +200,7 @@ async function resumeLoadedCampaign(page) {
           const message = document.querySelector('#message').getBoundingClientRect();
           const important = status.getBoundingClientRect();
           const importantSeparated =
-            getComputedStyle(status).visibility !== 'hidden' &&
-            important.top >= message.bottom;
+            getComputedStyle(status).visibility !== 'hidden' && important.top >= message.bottom;
           delete status.dataset.noticeTier;
           Prototype.updateHUD();
           return routineDeferred && importantSeparated;
