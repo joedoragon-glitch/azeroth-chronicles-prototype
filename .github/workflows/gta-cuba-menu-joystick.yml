@@ -1,0 +1,32 @@
+name: GTA Cuba menu joystick regression (no deployment)
+
+on:
+  pull_request:
+    branches: [mod/gta-cuba-edition]
+    paths:
+      - 'src/prototype/app.js'
+      - 'src/prototype/input.js'
+      - 'tests/gta-cuba-menu-joystick.test.cjs'
+      - '.github/workflows/gta-cuba-menu-joystick.yml'
+  push:
+    branches: [fix/gta-cuba-precise-menu-joystick-20261116]
+
+permissions:
+  contents: read
+
+jobs:
+  precise-menu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax
+        run: |
+          node --check src/prototype/input.js
+          node --check src/prototype/app.js
+          node --check tests/gta-cuba-menu-joystick.test.cjs
+      - name: Menu input and unchanged field controls
+        run: node tests/gta-cuba-menu-joystick.test.cjs

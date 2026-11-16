@@ -76,6 +76,53 @@
       },
     };
   }
+  // An anchored menu drag starts neutral even when the thumb lands off-center.
+  // This is separate from the fixed, center-relative movement joystick.
+  function menuJoystickDragVector(start, point, width) {
+    const radius = Math.max(1, width * 0.35);
+    const dx = (point.x - start.x) / radius;
+    const dy = (point.y - start.y) / radius;
+    const magnitude = Math.max(1, Math.hypot(dx, dy));
+    return { x: dx / magnitude, y: dy / magnitude };
+  }
+  // Menu-only four-way intent. Walking keeps the original analog joystick vector.
+  // A tilt selects once; holding waits before controlled repeats. Returning to
+  // center is required before changing directions, so diagonals cannot wobble
+  // between previous and next choices as a thumb drifts.
+  function createMenuJoystickNavigator() {
+    const engage = 0.65, release = 0.32, axisRatio = 1.18;
+    const firstRepeatMs = 540, heldRepeatMs = 370;
+    let direction = 0, repeatAt = 0, waitForCenter = false;
+    const reset = (requireCenter = false) => {
+      direction = 0;
+      repeatAt = 0;
+      waitForCenter = requireCenter;
+    };
+    return {
+      reset,
+      step(vector, now) {
+        const x = Number.isFinite(vector?.x) ? vector.x : 0;
+        const y = Number.isFinite(vector?.y) ? vector.y : 0;
+        if (Math.hypot(x, y) <= release) {
+          reset();
+          return 0;
+        }
+        if (waitForCenter) return 0;
+        if (direction) {
+          if (now < repeatAt) return 0;
+          repeatAt = now + heldRepeatMs;
+          return direction;
+        }
+        const ax = Math.abs(x), ay = Math.abs(y);
+        const primary = Math.max(ax, ay), secondary = Math.min(ax, ay);
+        // An uncertain diagonal does not imply either menu direction.
+        if (primary < engage || primary < secondary * axisRatio) return 0;
+        direction = Math.sign(ax > ay ? x : y);
+        repeatAt = now + firstRepeatMs;
+        return direction;
+      },
+    };
+  }
   function requestMove(game, target) {
     if (
       !Number.isFinite(target.x) ||
@@ -197,7 +244,9 @@
     };
   }
   const api = { create, createSkillQueue, actions, requestMove,
-    floatingJoystickVector, floatingJoystickZone, adaptiveHudLowHealth, adaptiveHudPresentation };
+    floatingJoystickVector, floatingJoystickZone, menuJoystickDragVector,
+    createMenuJoystickNavigator,
+    adaptiveHudLowHealth, adaptiveHudPresentation };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeInput = api;
 })(typeof window !== 'undefined' ? window : globalThis);
