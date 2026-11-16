@@ -6249,6 +6249,169 @@
       }
       return false;
     }
+
+    // Greenwood craft pilot. These proactive actions are independent of the
+    // conditional Rogue repertoire, and borrow the existing specialCd,
+    // telegraph and sequence lifecycles rather than introducing saved counters.
+    startSkeletonCraft(e, target) {
+      if (
+        !e || e.type !== 'mob' || e.species !== 'skeleton' ||
+        !['vale', 'crypt'].includes(this.zoneId) ||
+        e.summon || e.developerSummon || e.captain || e.roomCaptain ||
+        e.fieldCaptain || e.neutral || e.returning || !e.aggro ||
+        e.hp <= 0 || e.telegraph || e.motion || e.rangedAim ||
+        e.sequence?.length || e.specialCd > 0 || e.cd > 0 ||
+        this.mageSilenceActive(e) || this.rogueEnemySilenced(e) ||
+        !target || target.hp <= 0 || !this.line(e, target)
+      ) return false;
+      const ranged = !!e.ranged,
+        elite = e.form === 'ringleader',
+        role = ranged ? 'ranged' : 'melee',
+        cfg = R.tacticalFoundation.skeletonCraftSkills[role][elite ? 'ringleader' : 'ordinary'],
+        gap = dist(e, target);
+      if (gap > cfg.reach || gap < (ranged ? 55 : 0)) return false;
+      // A Guardian protects its actual post. No teleport, extra aggro radius,
+      // arbitrary group courtesy timer or extra Guardian skill tree.
+      if (e.guard && (dist(e, e.home) > 120 || dist(target, e.home) > 165))
+        return false;
+      const turns = this._skeletonCraftTurns ||= new WeakMap(),
+        turn = turns.get(e) || 0,
+        charged = elite && (turn % 2 === 1 || (e.frenzy && turn > 0)),
+        cast = charged ? cfg.chargedCast : cfg.cast,
+        angle = Math.atan2(target.y - e.y, target.x - e.x);
+      turns.set(e, turn + 1);
+      e.telegraph = {
+        skeletonCraft: true,
+        role,
+        elite,
+        charged,
+        craftStep: 1,
+        mobileRogueCast: true,
+        kind: ranged ? 'line' : 'cone',
+        name: cfg.name,
+        angle,
+        turnSign: turn % 2 ? -1 : 1,
+        fromX: e.x, fromY: e.y,
+        x: target.x, y: target.y,
+        targetId: target === this.hero ? 'hero' : target.id,
+        radius: cfg.reach,
+        timer: cast,
+        total: cast,
+        recovery: elite ? 1.15 : 0.85,
+      };
+      e.specialCd =
+        (charged ? cfg.chargedCooldown : e.guard ? cfg.guardianCooldown : cfg.cooldown) *
+        (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1);
+      // Existing reusable actor cast bar, not yet another carpet telegraph.
+      this.event('warning', { family: 'skeleton', name: cfg.name, craft: true });
+      e.noProgress = 0;
+      return true;
+    }
+    resolveSkeletonCraft(e, a) {
+      if (!a?.skeletonCraft || !e || e.hp <= 0 || !e.aggro || e.returning || this.peace)
+        return;
+      const cfg = R.tacticalFoundation.skeletonCraftSkills[a.role][a.elite ? 'ringleader' : 'ordinary'],
+        receipt = a.craftStep === 2
+          ? a.criticalExecution || null
+          : this.worldCriticalRelease(e, a.role === 'ranged' ? 'ranged' : 'melee'),
+        damage = (coefficient) =>
+          this.worldCriticalDamage(receipt, this.weakenedEnemyDamage(e) * coefficient);
+      if (a.role === 'ranged') {
+        // These are *physical* arrows. Lock the surveyed orientation at cast
+        // admission; neither a delayed shot nor a changed target can home.
+        const launch = (angle, coefficient, delay = 0, lateral = 0) => {
+          const x = e.x - Math.sin(a.angle) * lateral,
+            y = e.y + Math.cos(a.angle) * lateral,
+            shot = {
+              id: 'projectile-' + this.s.nextId++,
+              x, y,
+              dx: Math.cos(angle), dy: Math.sin(angle),
+              speed: (e.shotSpeed || 260) * R.rangedEnemyCombat.projectileMultiplier,
+              life: 2.5 / R.rangedEnemyCombat.projectileMultiplier,
+              damage: damage(coefficient),
+              ...(receipt ? { criticalExecution: receipt } : {}),
+              delay, source: 'enemy', sourceId: e.id,
+              species: 'skeleton', style: 'arrow',
+              slow: 0, skillShape: 'single',
+            };
+          this.prepareFortProjectile(shot, e, a);
+          this.s.projectiles.push(shot);
+        };
+        if (!a.elite) {
+          // DATUM LINE: three low-damage pulses through one immutable surveyed
+          // bearing. The player can step off the line; no Slow, shove or root.
+          for (let i = 0; i < cfg.boltCount; i++)
+            launch(a.angle,
+              e.guard ? cfg.guardianBoltDamage : cfg.boltDamage,
+              cfg.interval * i);
+        } else if (!a.charged) {
+          // RESECTION tap: two real convergent shots from offset positions,
+          // distinct from Datum's serial same-line threat.
+          for (const side of [-1, 1])
+            launch(a.angle - side * 0.045, cfg.normalBoltDamage, 0, side * 11);
+        } else {
+          // RESECTION charged: change the *purpose* to cutting off one
+          // lateral escape lane. Two fixed bearings, not a larger fan/root.
+          launch(a.angle, cfg.chargedBoltDamage);
+          launch(a.angle + a.turnSign * 0.32,
+            cfg.chargedBoltDamage, cfg.flankDelay);
+        }
+        this.event('projectileLaunch', {
+          actor: 'enemy', source: e.id, species: 'skeleton',
+          style: 'arrow', x: e.x, y: e.y,
+        });
+        return;
+      }
+      const origin = { x: e.x, y: e.y },
+        angle = !a.elite
+          ? a.angle
+          : a.craftStep === 1
+            ? a.angle - a.turnSign * (a.charged ? 0.2 : 0.32)
+            : a.angle,
+        length = a.elite ? (a.charged ? 150 : 124) : 90,
+        forward = { x: e.x + Math.cos(angle) * length, y: e.y + Math.sin(angle) * length },
+        notch = {
+          x: forward.x - Math.sin(angle) * 65 * a.turnSign,
+          y: forward.y + Math.cos(angle) * 65 * a.turnSign,
+        },
+        width = a.elite ? 30 : 24,
+        victims = this.combatTargets().filter((u) => u.hp > 0 &&
+          this.line(e, u) &&
+          (this.distanceToSegment(u, origin, forward) <= width ||
+            (!a.elite && this.distanceToSegment(u, forward, notch) <= width)));
+      // MORTISE CUT: an L-shaped joined cut, not a conventional circular sweep.
+      // DOUBLE SHEAR: first measured diagonal, then a distinct pivoted second
+      // cut. Charged rotates farther to punish habitual lateral escapes.
+      if (a.elite && a.craftStep === 1) {
+        const second = a.angle + a.turnSign * (a.charged ? 1.1 : 0.34);
+        e.sequence ||= [];
+        e.sequence.push({
+          ...a, craftStep: 2, angle: second,
+          criticalExecution: receipt || null,
+          timer: a.charged ? cfg.chargedSecondBeat : cfg.secondBeat,
+          total: a.charged ? cfg.chargedSecondBeat : cfg.secondBeat,
+        });
+        const pivot = {
+          x: e.x - Math.sin(a.angle) * a.turnSign * 24,
+          y: e.y + Math.cos(a.angle) * a.turnSign * 24,
+        };
+        if (this.clearSegment(e, pivot, 12)) this.move(e, pivot, 210, 0.14);
+      }
+      const coefficient = a.elite
+        ? (a.charged ? cfg.chargedCoefficient : cfg.coefficient)
+        : (e.guard ? cfg.guardianCoefficient : cfg.coefficient),
+        hero = this.hero,
+        zone = this.zoneId,
+        deaths = this.s.statistics.deaths;
+      for (const victim of victims) {
+        this.hitParty(victim, damage(coefficient), 0, e.id, false,
+          { shape: 'area', criticalExecution: receipt });
+        if (this.hero !== hero || this.zoneId !== zone ||
+            this.s.statistics.deaths !== deaths ||
+            this.s.challenge.pending || this.s.challenge.gameOver)
+          return;
+      }
+    }
     // Player-facing skill titles preserve the mechanic's original source
     // profile and stable v4 actor identity. A zone alone does not establish
     // employment: only actual posts/units may inherit a commander's trade.
@@ -7886,6 +8049,12 @@
         ) {
           opportunity = true;
         } else if (
+          !this.mageSilenceActive(e) && !this.rogueEnemySilenced(e) &&
+          e.cd <= 0 && e.specialCd <= 0 &&
+          this.startSkeletonCraft(e, target)
+        ) {
+          opportunity = true;
+        } else if (
           e.nightOnly &&
           !this.mageSilenceActive(e) &&
           !this.rogueEnemySilenced(e) &&
@@ -8139,6 +8308,7 @@
       delete e.idleWanderTarget;
       e.idleWanderWait = 1.5;
       e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
+      this._skeletonCraftTurns?.delete(e);
       e.summonCd = 0;
       e.sabotageCd = 0;
       delete e.mireLowestHpRatio;
