@@ -200,7 +200,21 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(() => AudioAudition.audio.context?.zone === 'vale' && AudioAudition.audio.context?.millhavenTown && AudioAudition.audio.recordedScore?.id === 'millhaven-chamber');
         await page.locator('#scene-mode').selectOption('combat');
         await press('#scene-play');
-        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
+        try {
+          await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale', null, {timeout:6000});
+        } catch (error) {
+          console.log('Source-aligned combat playback mismatch:', await page.evaluate(() => ({
+            mode: document.querySelector('#scene-mode').value,
+            source: document.querySelector('#source').value,
+            newScore: document.querySelector('#new-score').checked,
+            active: AudioAudition.audio.recordedScore?.id,
+            intended: AudioAudition.audio.productionCue(AudioAudition.audio.context)?.id,
+            scene: AudioAudition.audio.context,
+            message: document.querySelector('#message').textContent,
+            status: document.querySelector('#sfx-study-status').textContent,
+          })));
+          throw error;
+        }
         assert.equal(await page.evaluate(() => AudioAudition.audio.recordedScore.voices.length), 2);
         assert((await page.locator('#scene-description').textContent()).includes('2 synchronized'));
         await page.locator('#scene-mode').selectOption('night');
