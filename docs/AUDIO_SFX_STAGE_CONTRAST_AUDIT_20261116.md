@@ -4,7 +4,7 @@
 
 - PR #880 merged into main on 16 November 2026 at 07:02 UTC as commit 409f0ed671b0ff2563f788bf45ab665e01c05ca6. It replaced 30 production WAV bytes, updated the manifest, and staged the dev.289 service-worker/audio package. All 30 originals remain SHA-frozen in tools/audio/sfx-legacy/dev288.
 - PR #881 is a separate, explicitly NONSHIPPING, older research/A-B branch; its 30 experimental previews and ten extra sketches are NOT the current registered effects. Do not merge it to solve this report.
-- The current source does **not** verify actual Pages publication or the owner's installed/PWA client. A dev.288 client could still present the old 30 and old catalog. Conversely, the current source uses SHA-256 verification when fetching a WAV, so an old asset mistakenly served with a new manifest hash should be rejected, not quietly played as new.
+- The source and [merged-main Pages CI #43820932176](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43820932176) verify **successful publication of dev.289**. They do **not** verify the owner's particular installed PWA refresh or browser audio cache. A dev.288 client could still present the old 30 and old catalog. Conversely, the current source uses SHA-256 verification when fetching a WAV, so an old asset mistakenly served with a new manifest hash should be rejected, not quietly played as new.
 - The source facts do not prove whether the owner's observed similarities originate from old bytes, new artistic timbre, speaker/level masking, or a combination.
 
 ## Source inventory
@@ -13,9 +13,9 @@ Exactly 30 **registered recorded effects**: 12 material families (steel, claw, b
 
 ## Independent PCM stage audit
 
-Measured directly from the archived old and currently registered WAVs: percentage of total normalized signal energy in the first 40 milliseconds. Earlier/stronger energy means an abrupt impact-like onset; later onset/center means a moving/launching cue. Values are descriptive, not loudness matching or a human hearing assessment.
+Measured directly from the archived dev.288 and **pre-correction dev.289** WAVs (the table is the audit baseline, not a measurement of the redesigned dev.290 candidates): percentage of total normalized signal energy in the first 40 milliseconds. Earlier/stronger energy means an abrupt impact-like onset; later onset/center means a moving/launching cue. Values are descriptive, not loudness matching or a human hearing assessment.
 
-| Material | Original dev.288 release / impact | Current dev.289 release / impact |
+| Material | Original dev.288 release / impact | Pre-correction dev.289 release / impact |
 | --- | ---: | ---: |
 | Steel | not measured in archive pass | 5% / 72% |
 | Claw | 94% / 97% | 14% / 47% |
@@ -30,19 +30,19 @@ Measured directly from the archived old and currently registered WAVs: percentag
 | Root | not measured in archive pass | 8% / 89% |
 | Dust | not measured in archive pass | 6% / 92% |
 
-The five audited old pairs also have amplitude-envelope cosine similarity between 0.998 and 1.000, consistent with a common transient template. The new waveform data establish distinct temporal stage structures; in particular, the user's arrow, stone and spectral examples are no longer nearly identical in envelope. **Claw and holy remain perceptual-watchlist cases** because their new 20-ms-binned envelope cosine similarities are still approximately 0.907 and 0.932. Distinct hashes/timing are necessary but not sufficient for satisfying sound design.
+The five audited old pairs also have amplitude-envelope cosine similarity between 0.998 and 1.000, consistent with a common transient template. The new waveform data establish distinct temporal stage structures; in particular, the user's arrow, stone and spectral examples are no longer nearly identical in envelope. The **pre-correction claw and holy** pairs had relatively similar 20-ms-binned energy envelopes (cosine 0.907 / 0.932). This triggered an actual claw/holy redesign in dev.290, not an assertion that the updated sound is now subjectively acceptable. Distinct hashes/timing are necessary but not sufficient for satisfying sound design.
 
 ## Narrow branch-only correction
 
 - The **same Game Sound Library** gains a contextual release-versus-impact comparison beneath the selected sound, using two existing game IDs and the existing SHA-checked, tap-initiated, one-shot playback path. It is never offered for a cue without a counterpart. Switching stage clears a restrictive filter rather than playing an invisible or wrong entry.
 - New desktop/phone browser assertions check selection, actual player result, source controls and proper hiding for unrelated sounds. The physical-WAV QA now rejects any of the twelve new pairs whose launch/contact onsets or energy centers collapse together; the test is explicitly **not** a psychoacoustic verdict.
-- No new recordings, altered gameplay events, mixing changes, published files, save access, or unapproved Phase 2 assets. The branch updates its own Sound Library PWA file fingerprints but is not a release. No merge or deployment without applicable owner permission.
+- The dev.290 candidate re-authors **exactly 10 existing WAVs**: release/impact for claw, stone, arrow, spectral and holy. It changes **only two existing release-event gains** after real browser-mix testing: stone 0.18 → 0.24 and holy 0.30 → 0.53. This leaves the other 20 WAV hashes, all existing effect IDs, 95 event-guide identities, 84 music, 34 environments, impacts, warning priority, game mechanics and v4 saves untouched. The original 30 dev.288 masters and complete per-ID event-level rollback archive remain protected. No Phase 2 recordings or new registrations; dev.290 is unmerged and unpublished.
 
 ## Verification and further decision
 
-1. Run the exact-source Python PCM, Node audio-library, browser, build/offline regression suites and record real CI results on the review PR. No success is assumed from writing tests.
-2. Independently identify what the actual player deployment serves (version, manifest hash/manager and physical WAV hash), especially with an installed PWA. A source merge is **not** a published-client verification.
-3. Listen to **the verified new files**, comparing release versus contact for all twelve families, beginning with the reported arrow/stone/spectral pair and claw/holy watchlist, using headphones and a phone speaker. Judge distinct *timbre* as well as temporal behavior; confirm meaning in actual game encounters.
-4. Only if the new pair's acoustic design remains insufficient, adjust the affected generator design, physically regenerate WAV assets and manifest hashes, maintain old backups and rollback, rerun regression and seek publication approval.
+1. **Done:** [dev.290 staged candidate run #43831827640](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43831827640) **PASS** — actual 30-WAV hashes and 12-pair onset/centroid contract, original 30 archive hashes, selective/full/corrupted-backup rollback, sound registry/runtime contracts, real Chromium desktop/phone Sound Library and gameplay recorded/procedural mixing, and generated PWA/build consistency. The isolated workflow committed the exact verified resulting source as `5412caf5054441867a5865367810db7561b1805c`. Additional focused PR checks on that exact generated code/document head remain separately tracked.
+2. **Partly done:** successful Pages deployment for the *old* dev.289 merge is independently verified (run #43820932176). The current dev.290 review candidate is **not published**. Installed PWA/device uptake of either build remains unverified. The Sound Library now shows the build version and selected effect SHA-256 fingerprint, allowing future actual-device evidence.
+3. **Still needed for aesthetic acceptance:** listen to verified dev.290 release/contact for all twelve families on actual headphones and phone speaker, especially the five redesigned ones; judge timbre and gameplay context rather than relying on PCM metrics. This cannot be certified by an automated browser or source-level review.
+4. **Conditional only:** if a redesigned pair still sounds insufficiently different on a verified build, revise that material specifically; do not expand the file count, dilute the event staging, or claim perceptual success merely from numeric gates. Before any merge or new Pages/PWA update, seek an applicable explicit release decision.
 
-Status: source and PCM comparison complete; library comparison feature and regression checks staged for verification; actual player delivery and human audible quality **UNVERIFIED**.
+**Independent post-task review:** physical manifest diff against current main confirms only 10 effect SHA changes and only the two expected event-gain updates (stone and holy release); catalog count remains 148, effect IDs remain 30, and event keys remain 95. The first two broader browser runs failed *legitimate* warm/cold gain checks rather than fixture defects; their narrowly targeted corrections now pass on both desktop and phone. Final independent listener assessment and installed-device verification remain **UNVERIFIED**, not silently marked passed. **Status: dev.290 source and browser technical quality passed; owner-device/artistic acceptance and publication remain open.**
