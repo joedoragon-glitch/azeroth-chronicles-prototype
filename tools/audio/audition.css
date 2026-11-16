@@ -134,3 +134,15 @@ button.quiet { color: #d8eae7; background: transparent; border-color: #688386; m
   .player-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .player-actions button { min-width: 0; padding: 9px 7px; }
 }
+
+/* Branch-only SFX A/B workshop; inherits the existing listening-room visual language. */
+.sfx-study-controls { display: flex; align-items: end; flex-wrap: wrap; gap: 10px 18px; }
+.sfx-study-controls > label { flex: 1 1 280px; min-width: 0; }
+.sfx-study-controls select { width: 100%; }
+.sfx-study-controls .action-line { flex: 2 1 350px; margin: 0; }
+#sfx-study-context, #sfx-study-status { max-width: 790px; }
+@media (max-width: 580px) {
+  .sfx-study-controls { display: block; }
+  .sfx-study-controls .action-line { margin-top: 12px; }
+  .sfx-study-controls .action-line button { flex: 1 1 145px; }
+}
