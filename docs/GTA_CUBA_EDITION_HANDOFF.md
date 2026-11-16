@@ -6,7 +6,7 @@ Development record for [PR #872](https://github.com/joedoragon-glitch/azeroth-ch
 
 - Official release baseline: `e97dd771190ee83f37fc61d091671e4d110c3a36`, `0.9.1+snapshot.dev.288`. The [successful Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42541651863), [live build marker](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/build.txt), hosted version script and matching application bytes establish the base. The later documentation-only main commit and all unmerged PR work are excluded.
 - Edition source: `0.9.1+snapshot.dev.288.controls.2`. The request explicitly waived automated, manual, regression and device tests and campaign playthroughs. The edition is untested. Packaging and deployment metadata are release operations.
-- Distribution uses a standalone origin. Its desktop and phone URLs share that origin, save namespace and service worker. The official Pages deployment, PWA, and on-device save keys are outside this release path.
+- The original distribution used its own host. The GitHub Pages release workflow stages the edition under `tools/webgl-pilot/play/`, a path the official worker passes through for navigation. The edition registers its own scoped worker and prefixes its storage keys. Existing saves from a different host can be exported there and imported on GitHub Pages.
 
 ## Controls and combat
 
@@ -19,6 +19,6 @@ Development record for [PR #872](https://github.com/joedoragon-glitch/azeroth-ch
 
 ## Updating and removing the edition
 
-For a refresh, read the official Pages build marker and confirm its successful deployment. Port only the existing edition changes onto that exact source. Preserve the edition origin, prefixed storage and cache keys, v4 save format, and fixed controls. Package with `node scripts/build.cjs --package-only --site` and the published release's pinned Pixi asset already present. Stamp the edition SHA using `GITHUB_SHA`. Deploy solely to the edition Site. Keep PR #872 away from main integration and keep the official Pages workflow untouched.
+For a refresh, read the official Pages build marker and confirm its successful deployment. Port only the existing edition changes onto that exact source. Preserve the edition origin, prefixed storage and cache keys, v4 save format, and fixed controls. Package with `node scripts/build.cjs --package-only --site` and the published release's pinned Pixi asset already present. Stamp the edition SHA using `GITHUB_SHA`. The branch-only `fixed-controls-pages.yml` workflow layers the edition over a package rebuilt from the currently published official SHA. The `github-pages` deployment environment must allow `mod/gta-cuba-edition`. Normal official deployments replace the Pages artifact, so re-run edition publication after refreshing it for each new official release. Keep PR #872 away from main integration and keep the official Pages workflow untouched.
 
 To retire both web links, stop the edition update automation and remove public access from the edition Site. The isolated source branch may then be deleted independently. A previously installed offline copy can remain on its device.
