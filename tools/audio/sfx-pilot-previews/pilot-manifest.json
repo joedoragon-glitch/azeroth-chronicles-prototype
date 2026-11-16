@@ -1,0 +1,117 @@
+{
+  "status": "V2 SOURCE-REVISED, UNHEARD CONCEPTS, NOT LIVE GAME AUDIO",
+  "method": "deterministic original spectral/physical-inspired synthesis",
+  "source": "sfx-pilot-studio.py",
+  "cues": [
+    {
+      "id": "paladin-sword-swing",
+      "title": "Paladin sword swing",
+      "brief": "Air displacement and a thin steel edge, distinct from impact.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.23,
+      "peak": 0.22822,
+      "rms": 0.03488,
+      "file": "paladin-sword-swing.wav"
+    },
+    {
+      "id": "paladin-sword-impact",
+      "title": "Paladin sword contact",
+      "brief": "Steel-on-armor contact with crisp inharmonic ring and brief body.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.3,
+      "peak": 0.31232,
+      "rms": 0.02608,
+      "file": "paladin-sword-impact.wav"
+    },
+    {
+      "id": "ranger-arrow-release",
+      "title": "Ranger bow release",
+      "brief": "Plucked bowstring and a separate arrow departure.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.26,
+      "peak": 0.12446,
+      "rms": 0.01822,
+      "file": "ranger-arrow-release.wav"
+    },
+    {
+      "id": "ranger-arrow-impact",
+      "title": "Ranger arrow impact",
+      "brief": "Contact, short crack and shaft vibration; no release repeated.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.235,
+      "peak": 0.19328,
+      "rms": 0.01824,
+      "file": "ranger-arrow-impact.wav"
+    },
+    {
+      "id": "mage-arcane-release",
+      "title": "Mage arcane release",
+      "brief": "Ascending, modulated arcane energy with controlled noise.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.32,
+      "peak": 0.11098,
+      "rms": 0.01738,
+      "file": "mage-arcane-release.wav"
+    },
+    {
+      "id": "mage-arcane-impact",
+      "title": "Mage arcane impact",
+      "brief": "Crystalline contact distinct from the rising release.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.26,
+      "peak": 0.15432,
+      "rms": 0.01913,
+      "file": "mage-arcane-impact.wav"
+    },
+    {
+      "id": "rogue-bell-basic",
+      "title": "Rogue staff bell: basic",
+      "brief": "One spherical loose-shell jingle, two short impacts; no handbell sustain.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.275,
+      "peak": 0.08361,
+      "rms": 0.01234,
+      "file": "rogue-bell-basic.wav"
+    },
+    {
+      "id": "rogue-bell-performance",
+      "title": "Rogue staff bell: performance",
+      "brief": "The same small loose-shell bell, three short rhythmic jingle clusters.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.515,
+      "peak": 0.09942,
+      "rms": 0.01077,
+      "file": "rogue-bell-performance.wav"
+    },
+    {
+      "id": "enemy-claw-contact",
+      "title": "Creature claw contact",
+      "brief": "Short organic tear, scratch and physical body instead of pitched chime.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.27,
+      "peak": 0.22159,
+      "rms": 0.03437,
+      "file": "enemy-claw-contact.wav"
+    },
+    {
+      "id": "critical-warning-study",
+      "title": "Danger warning study",
+      "brief": "Two short distinct pulses; experimental only, not a replacement for the live warning.",
+      "sample_rate": 48000,
+      "channels": 1,
+      "duration": 0.33,
+      "peak": 0.15215,
+      "rms": 0.03122,
+      "file": "critical-warning-study.wav"
+    }
+  ]
+}

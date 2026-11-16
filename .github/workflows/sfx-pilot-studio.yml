@@ -1,0 +1,124 @@
+# Isolated, branch-only SFX study renderer. No game audio registration or deploy.
+name: SIBDLP SFX studio candidate quality and branch preview (NO deploy)
+on:
+  push:
+    branches:
+      - audio/sfx-modernization-pilot-20261115
+    paths:
+      - .github/workflows/sfx-pilot-studio.yml
+      - tools/audio/sfx-pilot-studio.py
+      - tools/audio/sfx-30-studio.py
+      - tools/audio/sfx-event-inventory.cjs
+      - tests/audio-sfx-pilot-quality.test.py
+      - tests/audio-sfx-30-quality.test.py
+      - tests/audio-sfx-pilot-browser.test.cjs
+      - tests/audio-audition-browser.test.cjs
+      - tools/audio/audition.js
+      - tools/audio/index.html
+      - tools/audio/audition.css
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Only one render/push per source branch; never race stale generated WAVs.
+concurrency:
+  group: isolated-sfx-candidates-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  isolated-sfx-studies:
+    if: github.ref == 'refs/heads/audio/sfx-modernization-pilot-20261115'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - name: Checkout exact pilot branch (not main)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned offline renderer dependencies
+        run: python -m pip install --disable-pip-version-check --quiet numpy==2.3.5 scipy==1.17.0
+      - name: Produce candidate-only WAVs
+        run: python tools/audio/sfx-pilot-studio.py tools/audio/sfx-pilot-previews
+      - name: Render all 30 registered-effect identity studies (still unregistered)
+        run: python tools/audio/sfx-30-studio.py tools/audio/sfx-30-previews
+      - name: Verify all 30 physical candidate WAVs and source ID contract
+        run: |
+          python tests/audio-sfx-30-quality.test.py tools/audio/sfx-30-previews --verify-rebuild > "${RUNNER_TEMP}/sfx-30-quality.json"
+          node tools/audio/sfx-event-inventory.cjs > "${RUNNER_TEMP}/sfx-event-inventory.json"
+          cat "${RUNNER_TEMP}/sfx-30-quality.json"
+      - name: Critically check actual waveform and deterministic output
+        run: |
+          python tests/audio-sfx-pilot-quality.test.py tools/audio/sfx-pilot-previews --verify-rebuild > "${RUNNER_TEMP}/sfx-pilot-quality.json"
+          cat "${RUNNER_TEMP}/sfx-pilot-quality.json"
+      - name: Block accidental changes to live game audio/manifest
+        run: |
+          git fetch --no-tags --depth=1 origin main
+          if git diff --name-only origin/main HEAD -- assets/audio/ src/prototype/audio-\*.js |
+              grep -q .; then
+            echo 'This non-shipping pilot must not modify gameplay audio/manifest' >&2
+            exit 1
+          fi
+      - name: Validate actual authoring-room JavaScript syntax
+        run: |
+          node --check tools/audio/audition.js
+          node --check tests/audio-sfx-pilot-browser.test.cjs
+          node --check tests/audio-audition-browser.test.cjs
+      - name: Install browser test dependencies and pinned local PixiJS
+        run: |
+          npm ci --ignore-scripts
+          node scripts/vendor-pixi.cjs --ensure
+          npx playwright install --with-deps chromium
+      - name: Stage exact-source Sound Library offline fingerprints (branch ONLY)
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/build.cjs
+          node scripts/build.cjs --check
+          touched="$(git diff --name-only)"
+          if [ "$touched" != 'sw.js' ] && [ -n "$touched" ]; then
+            echo "Unexpected generated game/source files; reject automatic staging: $touched" >&2
+            exit 1
+          fi
+          echo 'Only the review-branch service-worker fingerprint may be regenerated.'
+      - name: Verify real Chromium SFX pilot A/B interactions (desktop and phone)
+        run: node tests/audio-sfx-pilot-browser.test.cjs
+      - name: Verify complete existing Sound Library and all registered audio (Chromium)
+        run: node tests/audio-audition-browser.test.cjs
+      - name: Preserve review WAVs and exact-source SW fingerprint on the dedicated branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = 'refs/heads/audio/sfx-modernization-pilot-20261115'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          remote_head="$(git ls-remote origin refs/heads/audio/sfx-modernization-pilot-20261115 | cut -f1)"
+          if [ "$remote_head" != "$GITHUB_SHA" ]; then
+            echo "Source branch advanced during this build; refusing to publish stale candidate WAVs."
+            exit 0
+          fi
+          git add -f tools/audio/sfx-pilot-previews/*.wav tools/audio/sfx-pilot-previews/pilot-manifest.json tools/audio/sfx-30-previews/*.wav tools/audio/sfx-30-previews/candidate-manifest.json sw.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'audio: preserve unshipped v2 SFX review WAVs [skip ci]'
+            git push origin HEAD:refs/heads/audio/sfx-modernization-pilot-20261115
+          else
+            echo 'Preview WAVs match checked-in copies.'
+          fi
+      - name: Preserve QA evidence as an isolated artifact, never Pages
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sibdlp-sfx-v2-quality-evidence
+          path: |
+            ${{ runner.temp }}/sfx-pilot-quality.json
+            ${{ runner.temp }}/sfx-30-quality.json
+            ${{ runner.temp }}/sfx-event-inventory.json
+          if-no-files-found: warn
+          retention-days: 30

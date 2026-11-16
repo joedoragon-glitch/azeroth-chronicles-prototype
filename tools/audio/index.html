@@ -101,6 +101,7 @@
               <option value="all">Every collection</option>
               <option value="new-score">New authored soundtrack</option>
               <option value="dark-crown">Preserved Dark Crown</option>
+              <option value="approved-derived">Owner-approved theme arrangements</option>
               <option value="environment">Environmental recordings</option>
               <option value="effects">Recorded sound effects</option>
             </select>
@@ -144,6 +145,26 @@
           <div id="generated-grid" class="recording-grid" role="list" aria-label="Generated game cues"></div>
         </div>
         <p class="hint collection-note">Environmental soundscapes from the separate <a href="https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727">ongoing environment audio rework</a> will show up here only after they are integrated into the registered game catalog. Unmerged studio previews are not playable in this room yet.</p>
+      </section>
+
+      <section id="sfx-pilot-section" aria-labelledby="sfx-pilot-title">
+        <div class="section-title"><div><span class="step">EXPERIMENTAL · NOT IN GAME</span><h2 id="sfx-pilot-title">Sound-effects workshop — original vs candidate</h2></div></div>
+        <p>These are isolated, unapproved SIBDLP sound-design studies. Play the existing game's reference, then the proposed version; the game's recorded library, normal combat rules and campaign saves are not modified. The current reference may be a registered WAV or the actual procedural effect engine, depending on the action. This is a comparison of individual cues, not a full battle or a level-matched mastering test.</p>
+        <div class="sfx-study-controls">
+          <label for="sfx-study">Choose an action
+            <select id="sfx-study"></select>
+          </label>
+          <div class="action-line">
+            <button id="sfx-original" type="button">Play current sound</button>
+            <button id="sfx-candidate" class="primary" type="button">Play revised study</button>
+          </div>
+        </div>
+        <p id="sfx-study-context" class="hint" aria-live="polite">Loading the SFX study list…</p>
+        <p id="sfx-study-status" class="hint" role="status" aria-live="polite">No sound starts automatically.</p>
+        <details class="small-details">
+          <summary>What am I comparing?</summary>
+          <p>Paladin, creature-claw and warning references are currently registered recordings. Ranger, Mage and Rogue references are representative, real in-engine procedural receipts, not invented stand-in WAVs. Stage and actual-hit behavior matter: a launch is not an impact, and an enemy warning is not a routine hit. The experimental study WAVs are kept outside the game's manifest on this development branch. Source checks are not proof of naturalness, phone-speaker quality, mixing in combat, or artistic approval.</p>
+        </details>
       </section>
 
       <section id="creative-section" aria-labelledby="creative-guide">

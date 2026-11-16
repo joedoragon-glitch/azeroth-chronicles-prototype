@@ -48,6 +48,193 @@
       event: { type: 'hurt', actor: 'hero' } },
   ];
 
+  // Non-shipping studies. Each comparison maps to a real baseline: registered
+  // source recording or representative hero procedural gameplay event receipt.
+  // These IDs are NOT manifest registrations and must not become combat events.
+  const sfxStudies = [
+    { id: 'paladin-sword-swing', title: 'Paladin · sword swing',
+      context: 'Automatic sword attack, movement stage (not target contact). Current reference: hero-steel recording.',
+      original: { asset: 'sfx-hero-steel-swing' } },
+    { id: 'paladin-sword-impact', title: 'Paladin · sword impact',
+      context: 'Successful contact on the automatic sword attack. Current reference: hero-steel recording.',
+      original: { asset: 'sfx-hero-steel-impact' } },
+    { id: 'ranger-arrow-release', title: 'Ranger · arrow release',
+      context: 'Automatic bow attack at actual projectile departure. Current reference: procedural hero-flight effect.',
+      original: { event: { type: 'heroProjectileFlight', actor: 'hero',
+        class: 'ranger', slot: 1, automaticBasic: true, combo: 1, style: 'arrow' } } },
+    { id: 'ranger-arrow-impact', title: 'Ranger · arrow contact',
+      context: 'Automatic arrow striking a target, not a miss. Current reference: procedural hero impact.',
+      original: { event: { type: 'projectileImpact', actor: 'hero',
+        class: 'ranger', slot: 1, automaticBasic: true, combo: 1, style: 'arrow', landed: true } } },
+    { id: 'mage-arcane-release', title: 'Mage · arcane release',
+      context: 'Automatic arcane projectile departure, not an area spell. Current reference: procedural hero flight.',
+      original: { event: { type: 'heroProjectileFlight', actor: 'hero',
+        class: 'mage', slot: 1, automaticBasic: true, combo: 1, style: 'magic' } } },
+    { id: 'mage-arcane-impact', title: 'Mage · arcane contact',
+      context: 'Automatic arcane orb contacting a target. Current reference: procedural hero contact.',
+      original: { event: { type: 'projectileImpact', actor: 'hero',
+        class: 'mage', slot: 1, automaticBasic: true, combo: 1, style: 'magic', landed: true } } },
+    { id: 'rogue-bell-basic', title: 'Rogue · basic staff jingle',
+      context: 'The approved single spherical staff bell on a basic attack. Reference: procedural Rogue release, not a guitar or pitched handbell.',
+      original: { event: { type: 'rogueBellBasic', actor: 'hero',
+        class: 'rogue', slot: 1, automaticBasic: true, combo: 1 } } },
+    { id: 'rogue-bell-performance', title: 'Rogue · charged staff performance',
+      context: 'One staff bell articulated for a special release. Reference: procedural Rogue charged-performance event.',
+      original: { event: { type: 'rogueBellPerformance', actor: 'hero',
+        class: 'rogue', slot: 1, form: 'charged', charged: true } } },
+    { id: 'enemy-claw-contact', title: 'Enemy · claw contact',
+      context: 'Creature claw contact from the current enemy-material recording. No contact audio belongs to a missed attack.',
+      original: { asset: 'sfx-claw-impact' } },
+    { id: 'critical-warning-study', title: 'Enemy · critical warning',
+      context: 'DANGEROUS enemy windup only. This is a protected gameplay safety/clarity cue; study is not approved for substitution.',
+      original: { asset: 'sfx-critical-warning' } },
+  ];
+  let sfxRegisteredReady = false;
+  // These 30 are the actual existing recorded identities: their IDs and
+  // original guides come from the game manifest. They add no in-game assets.
+  function registerCurrentEffectComparisons(manifest) {
+    if (sfxRegisteredReady || !manifest?.assets) return;
+    const registered = Object.entries(manifest.assets)
+      .filter(([, entry]) => entry.kind === 'effect')
+      .map(([id, entry]) => ({
+        id, registered: true,
+        title: (entry.title || human(id)) + ' · registered effect',
+        context: 'Currently registered effect: ' + id + '. ' +
+          (entry.generationGuide || 'Compare this isolated source against its current event role.'),
+        original: { asset: id },
+      }));
+    if (registered.length !== 30) throw Error('Phase 1 expects exactly 30 current recorded effects.');
+    const group = document.createElement('optgroup');
+    group.label = 'PHASE 1 · 30 CURRENT RECORDED EFFECTS';
+    for (const study of registered) group.append(option(study.title, study.id));
+    $('sfx-study').prepend(group);
+    sfxStudies.unshift(...registered);
+    sfxRegisteredReady = true;
+    const requested = requestedLink.get('study');
+    if (sfxStudies.some((item) => item.id === requested)) $('sfx-study').value = requested;
+    else $('sfx-study').value = registered[0].id;
+    showSfxStudy();
+  }
+  let sfxStudyContext = null;
+  let sfxStudyBuffers = new Map();
+  let sfxStudyVoice = null;
+
+  function selectedSfxStudy() {
+    return sfxStudies.find((item) => item.id === $('sfx-study').value);
+  }
+  function showSfxStudy() {
+    const study = selectedSfxStudy();
+    $('sfx-study-context').textContent = study
+      ? study.context + ' The new file is an isolated source-revised, unheard candidate.'
+      : 'No valid experimental study selected.';
+    $('sfx-study-status').textContent = study
+      ? 'Ready for a deliberate comparison; nothing plays automatically.'
+      : 'Study unavailable.';
+  }
+  function stopSfxStudyEffects() {
+    // The comparison uses the actual effects bus. Eliminate leftover one-shots
+    // from the preceding option so a fast switch cannot be mistaken for a layer.
+    for (const voice of [...audio.voices]) {
+      if (voice.bus !== 'effects') continue;
+      if (voice.recorded) {
+        audio.stopRecording(voice, 0);
+        continue;
+      }
+      try { voice.osc.stop(); } catch (_) {}
+      voice.osc.disconnect();
+      voice.gain.disconnect();
+      voice.pan?.disconnect();
+      voice.filter?.disconnect();
+      audio.voices.delete(voice);
+    }
+    sfxStudyVoice = null;
+  }
+  async function playSfxStudy(which) {
+    if (!['original', 'candidate'].includes(which)) throw Error('Invalid study option');
+    const study = selectedSfxStudy();
+    if (!study) throw Error('Select a known SFX study.');
+    let token = ++action;
+    audio.enableProduction(false);
+    await gesture(); // Explicit user click unlocks audio before any asynchronous file fetch.
+    if (token !== action) return;
+    if (source !== 'production') {
+      await selectSource('production');
+      token = action;
+      if (source !== 'production') throw Error('The actual game library is not available.');
+    }
+    if (audio.settings.muted) throw Error('Unmute the listening room before comparing effects.');
+    if ($('mix-scene').value !== 'world') {
+      $('mix-scene').value = 'world'; // Menu/title intentionally silence the effects bus.
+      audio.setSceneMix('world');
+    }
+    const ctx = audio.ctx;
+    if (!ctx || ctx.state !== 'running') throw Error('The sound engine is not ready.');
+    audio.stopEnvironment(0);
+    audio.stopRecordedScore(0);
+    stopIsolatedVoices();
+    stopSfxStudyEffects();
+    clearProcedural();
+    if (which === 'original') {
+      if (study.original.asset) {
+        if (!audio.recordingManifest?.assets?.[study.original.asset])
+          throw Error('The original recording is absent from the actual game catalog.');
+        // Gameplay event recordings use a 5ms fade. The A/B should not
+        // remove the attack in one version and preserve it in the other.
+        const played = await audio.playRecording(study.original.asset,
+          { bus: 'effects', gain: 0.58, fade: 0.005 });
+        if (ctx !== audio.ctx || token !== action) return;
+        if (!played) throw Error(audio.recordingError || 'Could not play the reference recording.');
+      } else {
+        // Same source-level event processing as a representative gameplay receipt.
+        // Not a claim of actual campaign, enemy, miss, or concurrent-scene acceptance.
+        audio.effect({ ...study.original.event });
+      }
+    } else {
+      if (sfxStudyContext !== ctx) {
+        sfxStudyContext = ctx;
+        sfxStudyBuffers = new Map();
+      }
+      let buffer = sfxStudyBuffers.get(study.id);
+      if (!buffer) {
+        const folder = study.registered ? 'sfx-30-previews' : 'sfx-pilot-previews';
+        const url = new URL('./' + folder + '/' + study.id + '.wav', location.href);
+        const response = await fetch(url);
+        if (!response.ok) throw Error('This isolated pilot WAV is missing (' + response.status + ').');
+        const bytes = await response.arrayBuffer();
+        if (ctx !== audio.ctx || token !== action) return;
+        buffer = await ctx.decodeAudioData(bytes);
+        if (ctx !== audio.ctx || token !== action) return;
+        sfxStudyBuffers.set(study.id, buffer);
+      }
+      if (!audio.reserveVoice(1)) throw Error('Audio voice limit reached; stop other audio.');
+      const node = ctx.createBufferSource(), gain = ctx.createGain();
+      node.buffer = buffer;
+      const start = ctx.currentTime + 0.008;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.58, start + 0.005);
+      node.connect(gain);
+      gain.connect(audio.buses.effects); // Same effects bus/master/profile as reference.
+      const voice = { osc: node, gain, bus: 'effects', priority: 1 };
+      sfxStudyVoice = voice;
+      audio.voices.add(voice);
+      node.onended = () => {
+        node.disconnect();
+        gain.disconnect();
+        audio.voices.delete(voice);
+        if (sfxStudyVoice === voice) sfxStudyVoice = null;
+      };
+      node.start(start);
+    }
+    if (token !== action) return;
+    const label = which === 'original' ? 'current in-game reference' : 'unapproved revised concept';
+    hasPlayback = false;
+    $('now-playing').textContent = 'Last heard: ' + study.title + ' · ' + label;
+    $('pause').disabled = true;
+    $('stop').disabled = false;
+    $('sfx-study-status').textContent = 'Played ' + label + '. Compare the other button; this is NOT a level-matched or in-battle test.';
+    message('Comparison: ' + study.title + ' · ' + label + '.');
+  }
+
   function message(value) {
     $('message').textContent = value;
   }
@@ -307,12 +494,16 @@
   function collectionFor(id, entry) {
     if (entry.kind === 'ambience') return 'environment';
     if (entry.kind === 'effect') return 'effects';
-    return entry.creationMethod === 'authored-recorded-source-score' ? 'new-score' : 'dark-crown';
+    if (entry.creationMethod === 'authored-recorded-source-score') return 'new-score';
+    if (entry.creationMethod === 'original-theme-source-derived-synthesized-recording')
+      return 'approved-derived';
+    return 'dark-crown';
   }
   function labelFor(id, entry) {
     if (entry.kind === 'ambience') return 'Environment';
     if (entry.kind === 'effect') return 'Recorded effect';
     if (collectionFor(id, entry) === 'dark-crown') return 'Preserved original';
+    if (collectionFor(id, entry) === 'approved-derived') return 'Owner-approved theme arrangement';
     if (id.endsWith('-true')) return 'TRUE boss layer';
     if (id.startsWith('boss-')) return 'Boss score';
     if (id.startsWith('action-')) return 'Action layer';
@@ -458,7 +649,7 @@
     const kind = $('kind').value, collection = $('collection').value;
     const query = $('search').value.trim().toLowerCase();
     const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [],
-      legacy: [], ambience: [], effect: [] };
+      legacy: [], approved: [], ambience: [], effect: [] };
     visibleRecordings = [];
     for (const [id, entry] of Object.entries(manifest.assets)) {
       if (kind !== 'all' && entry.kind !== kind) continue;
@@ -469,6 +660,7 @@
       const item = { id, name: soundTitle(id, entry) + ' · ' + id, entry, uses };
       visibleRecordings.push(item);
       if (entry.kind !== 'music') bucket[entry.kind].push(item);
+      else if (collectionFor(id, entry) === 'approved-derived') bucket.approved.push(item);
       else if (entry.creationMethod !== 'authored-recorded-source-score') bucket.legacy.push(item);
       else if (id.startsWith('boss-')) bucket.bosses.push(item);
       else if (id.startsWith('interior-') || id.startsWith('peace-interior-'))
@@ -490,6 +682,7 @@
       ['interiors', 'Treasuries and side interiors'],
       ['special', 'Title, defeat and finale'],
       ['legacy', 'Original Dark Crown — preserved'],
+      ['approved', 'Owner-approved re-arranged original themes'],
       ['ambience', 'Environmental sound beds'],
       ['effect', 'Recorded sound effects'],
     ]) group(label, bucket[key], target);
@@ -600,7 +793,10 @@
       baseUrl,
       ...(data.fetch ? { fetch: data.fetch } : {}),
     });
-    if (requested === 'production') registry = data.manifest;
+    if (requested === 'production') {
+      registry = data.manifest;
+      registerCurrentEffectComparisons(registry);
+    }
     if (source && source !== requested) stopped('Switched audio libraries. Choose a recording or scene to begin.');
     source = requested;
     $('source').value = requested;
@@ -658,7 +854,11 @@
       peace: !boss && mode === 'peace',
       settlement: !boss && mode === 'settlement' ? 'audition-refuge' : null,
       boss: boss ? { family: boss.id, form: $('form').value, name: boss.name } : null,
+      // The preview supplies synthetic combatants, so the nearby count must
+      // agree with engaged. Production routing gives nearbyEngaged precedence.
+      // An inherited real-campaign 0 would falsely keep Millhaven peaceful.
       engaged: boss ? 1 : mode === 'combat' ? 4 : 0,
+      nearbyEngaged: boss ? 1 : mode === 'combat' ? 4 : 0,
       situation: boss ? 'boss' : mode === 'combat' ? 'combat' : mode === 'peace' ? 'peace' : mode,
       started: true,
       gameOver: false,
@@ -859,6 +1059,21 @@
     }
   }
 
+  const contextualGroup = document.createElement('optgroup');
+  contextualGroup.label = 'EXTRA · ENGINE-GENERATED HERO/EVENT STUDIES (NOT NEW REGISTRATIONS)';
+  for (const study of sfxStudies) contextualGroup.append(option(study.title, study.id));
+  $('sfx-study').append(contextualGroup);
+  const requestedStudy = requestedLink.get('study');
+  if (sfxStudies.some((item) => item.id === requestedStudy))
+    $('sfx-study').value = requestedStudy;
+  $('sfx-study').addEventListener('change', () => {
+    action++; // Cancel any pending asynchronous preview for the previous selection.
+    stopSfxStudyEffects();
+    showSfxStudy();
+  });
+  $('sfx-original').addEventListener('click', run(() => playSfxStudy('original')));
+  $('sfx-candidate').addEventListener('click', run(() => playSfxStudy('candidate')));
+  showSfxStudy();
   populatePlaces();
   volumeControls();
   $('place').addEventListener('change', () => {
@@ -1001,5 +1216,5 @@
   // The audition page deliberately never opens or writes campaign saves.
   if ('serviceWorker' in navigator)
     navigator.serviceWorker.register(new URL('sw.js', baseUrl)).catch(() => {});
-  window.AudioAudition = { audio, ready: diagnostic, selectSource, pairFor, syncScene, usageFor, collectionFor, listeningUrl };
+  window.AudioAudition = { audio, ready: diagnostic, selectSource, pairFor, syncScene, usageFor, collectionFor, listeningUrl, sfxStudies, selectedSfxStudy, playSfxStudy };
 })();
