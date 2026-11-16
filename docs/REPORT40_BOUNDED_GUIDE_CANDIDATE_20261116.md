@@ -1,6 +1,6 @@
 # Report #40 — optional map guide bounded rerouting candidate (16 November 2026)
 
-**Status:** draft implementation in PR #889; linked defect #886 remains OPEN. No official or GTA Cuba deployment. Original Report #40 remains private.
+**Status:** draft implementation in PR #889; linked defect #886 remains OPEN. At this dated checkpoint, no official or separately hosted layout deployment had occurred. Original Report #40 remains private.
 
 ## Owner's clarified action-RPG acceptance standard
 
