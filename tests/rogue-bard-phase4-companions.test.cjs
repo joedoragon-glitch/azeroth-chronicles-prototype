@@ -136,8 +136,9 @@ try {
       'wolf', 'ogre', 'orc', 'archer', 'ashbeast', 'crownguard', 'stalker']) {
       const game = fresh();
       const ally = capture(game, species, false);
-      assert(game.companionBasicInterval(ally) <= R.balance.companions.charmedBasicIntervalCeiling,
-        species + ': recruited native cadence keeps its independent historical cap');
+      const native = R.balance.companions.charmed[species].melee.interval;
+      assert.equal(game.companionBasicInterval(ally), Math.min(native, 0.8),
+        species + ': authentic melee retains faster native basic or receives 0.80s cap');
       assert(game.companionRallyMoveSpeed(ally, 230) >=
         R.balance.enemyOrdinaryMeleePursuitSpeed,
         species + ': ordinary combat movement at least hostile ground pursuit');
@@ -410,7 +411,9 @@ try {
       assert.equal(creature.companionArmor(ally),
         spec.armor + creature.companionInheritedArmorBonus());
       assert.equal(creature.companionCombatReach(ally), spec.reach);
-      assert.equal(creature.companionBasicInterval(ally), spec.interval);
+      assert.equal(creature.companionBasicInterval(ally),
+        role === 'melee' ? Math.min(spec.interval, 0.8) : spec.interval,
+        species + '/' + role + ': accurate native basic vs melee-only cap');
       assert.equal(creature.canGatherTribute(ally), true);
       if (role === 'ranged') {
         const woundedHero = creature.hero;
