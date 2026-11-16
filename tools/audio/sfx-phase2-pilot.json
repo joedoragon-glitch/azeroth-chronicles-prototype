@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "rate": 48000,
+  "provenance": "Original deterministic in-project DSP from seeded noise, short resonators and physical transient gestures. No external sound recordings, dialogue, music or generated image/audio service.",
+  "scope": "Unregistered Phase 2 sound-production pilot; not audible from current game or Sound Library",
+  "cues": [
+    {
+      "id": "rogue-bell-basic",
+      "seed": 220601,
+      "seconds": 0.36,
+      "priority": "P1",
+      "actor": "Rogue",
+      "stage": "committed bell basic",
+      "intent": "Small slotted spherical jingle-bell shell and internal rattle, two close strikes"
+    },
+    {
+      "id": "rogue-bell-emphatic",
+      "seed": 220602,
+      "seconds": 0.43,
+      "priority": "P1",
+      "actor": "Rogue",
+      "stage": "emphatic/charged bell",
+      "intent": "Same physical bell with three stronger separated clapper movements; not a pitched choir"
+    },
+    {
+      "id": "mage-orb-release",
+      "seed": 220603,
+      "seconds": 0.39,
+      "priority": "P1",
+      "actor": "Mage",
+      "stage": "automatic orb release",
+      "intent": "Compact arcane orb departure: rising elastic resonator with short bright air shear"
+    },
+    {
+      "id": "thorn-tripwire",
+      "seed": 220604,
+      "seconds": 0.37,
+      "priority": "P1",
+      "actor": "Thornpup",
+      "stage": "committed Skill 2",
+      "intent": "Small tensioned fibrous tripwire, fast twig-snap and whipping wood strand"
+    },
+    {
+      "id": "charmed-wraith-heritage",
+      "seed": 220605,
+      "seconds": 0.41,
+      "priority": "P1",
+      "actor": "Charmed Wraith",
+      "stage": "heritage committed cast",
+      "intent": "Subtle spectral pressure seal, airy vacuum and low wavering rim; no false HP-hit"
+    },
+    {
+      "id": "lifebinder-cold-ring",
+      "seed": 220606,
+      "seconds": 0.46,
+      "priority": "P2",
+      "actor": "Lifebinder",
+      "stage": "Algor Mortis non-damaging slow cast",
+      "intent": "Brittle cold-wave halo and airy crystalline settling, not a damaging impact"
+    },
+    {
+      "id": "quest-complete",
+      "seed": 220607,
+      "seconds": 0.42,
+      "priority": "P3",
+      "actor": "Progression",
+      "stage": "earned quest payoff",
+      "intent": "Concise parchment/seal tap followed by warm restrained rising achievement resonance"
+    },
+    {
+      "id": "barracks-complete",
+      "seed": 220608,
+      "seconds": 0.44,
+      "priority": "P3",
+      "actor": "Barracks",
+      "stage": "actual completed construction",
+      "intent": "Dry timber joining knock and discrete last iron fastening with controlled settling"
+    }
+  ]
+}
