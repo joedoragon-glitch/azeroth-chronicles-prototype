@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   reconcile:
-    if: ${{ github.event.head_commit.message == 'ci(tutorial): guarded integrate current main dev290' }}
+    if: "${{ github.event.head_commit.message == 'ci(tutorial): retry guarded main dev290 sync' }}"
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
