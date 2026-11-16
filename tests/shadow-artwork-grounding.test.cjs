@@ -78,7 +78,7 @@ let darkness = 0;
 let dungeon = false;
 const game = {
   zoneId: 'vale',
-  s: { rescued: {}, throneClaimed: false },
+  s: { rescued: {}, throneClaimed: false, statistics: { deaths: 0 } },
   isDungeon: () => dungeon,
   daylightPhase: () => ({ darkness }),
   regionIndex: () => 0,
