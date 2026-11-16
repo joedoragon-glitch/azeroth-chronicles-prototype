@@ -7,7 +7,10 @@ on:
     paths:
       - .github/workflows/sfx-pilot-studio.yml
       - tools/audio/sfx-pilot-studio.py
+      - tools/audio/sfx-30-studio.py
+      - tools/audio/sfx-event-inventory.cjs
       - tests/audio-sfx-pilot-quality.test.py
+      - tests/audio-sfx-30-quality.test.py
       - tests/audio-sfx-pilot-browser.test.cjs
       - tests/audio-audition-browser.test.cjs
       - tools/audio/audition.js
@@ -39,6 +42,13 @@ jobs:
         run: python -m pip install --disable-pip-version-check --quiet numpy==2.3.5 scipy==1.17.0
       - name: Produce candidate-only WAVs
         run: python tools/audio/sfx-pilot-studio.py tools/audio/sfx-pilot-previews
+      - name: Render all 30 registered-effect identity studies (still unregistered)
+        run: python tools/audio/sfx-30-studio.py tools/audio/sfx-30-previews
+      - name: Verify all 30 physical candidate WAVs and source ID contract
+        run: |
+          python tests/audio-sfx-30-quality.test.py tools/audio/sfx-30-previews --verify-rebuild > "${RUNNER_TEMP}/sfx-30-quality.json"
+          node tools/audio/sfx-event-inventory.cjs > "${RUNNER_TEMP}/sfx-event-inventory.json"
+          cat "${RUNNER_TEMP}/sfx-30-quality.json"
       - name: Critically check actual waveform and deterministic output
         run: |
           python tests/audio-sfx-pilot-quality.test.py tools/audio/sfx-pilot-previews --verify-rebuild > "${RUNNER_TEMP}/sfx-pilot-quality.json"
@@ -72,7 +82,7 @@ jobs:
           test "${GITHUB_REF}" = 'refs/heads/audio/sfx-modernization-pilot-20261115'
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -f tools/audio/sfx-pilot-previews/*.wav tools/audio/sfx-pilot-previews/pilot-manifest.json
+          git add -f tools/audio/sfx-pilot-previews/*.wav tools/audio/sfx-pilot-previews/pilot-manifest.json tools/audio/sfx-30-previews/*.wav tools/audio/sfx-30-previews/candidate-manifest.json
           if ! git diff --cached --quiet; then
             git commit -m 'audio: preserve unshipped v2 SFX review WAVs [skip ci]'
             git push origin HEAD:refs/heads/audio/sfx-modernization-pilot-20261115
@@ -84,6 +94,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sibdlp-sfx-v2-quality-evidence
-          path: ${{ runner.temp }}/sfx-pilot-quality.json
+          path: |
+            ${{ runner.temp }}/sfx-pilot-quality.json
+            ${{ runner.temp }}/sfx-30-quality.json
+            ${{ runner.temp }}/sfx-event-inventory.json
           if-no-files-found: warn
           retention-days: 30
