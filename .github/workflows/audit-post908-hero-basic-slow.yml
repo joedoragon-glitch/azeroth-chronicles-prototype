@@ -1,0 +1,26 @@
+name: v0.9.2 post-908 hero basic integration audit (no deploy)
+
+on:
+  push:
+    branches: [audit/v092-post908-hero-basic-slow-20261116]
+
+permissions:
+  contents: read
+
+jobs:
+  hero-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify audit syntax and integrated cross-conditions
+        run: |
+          node --check tests/audit-post908-hero-basic-slow.test.cjs
+          node tests/audit-post908-hero-basic-slow.test.cjs
+      - name: Pre-existing targeted contracts on same source
+        run: |
+          node tests/v092-hero-auto-basic-target-fallback.test.cjs
+          node tests/v092-elite-auto-initiation.test.cjs
