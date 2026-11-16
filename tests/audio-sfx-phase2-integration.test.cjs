@@ -67,7 +67,11 @@ cold.effect({type:'rogueBellBasic',class:'rogue',combo:1});
 assert(coldSynthesis>0,'Unwarmed Rogue source must retain existing procedural output');
 // Model the actual boss VFX receipt; only the exact release is specialized.
 a.enemySoundDecision=(e)=>({
-  mode:'shared',key:e.stage==='release'?'enemyRelease':'enemyImpact',
+  mode:'shared',
+  // Match enemy-presentation.route: a ground resolve without confirmed
+  // contact must NEVER masquerade as a landed enemyImpact.
+  key:e.stage==='release'?'enemyRelease':
+    e.stage==='impact'&&e.contact===false?'enemyGroundImpact':'enemyImpact',
   material:'spectral',personality:'spectral',action:'spell',accent:null,
   signature:true
 });
