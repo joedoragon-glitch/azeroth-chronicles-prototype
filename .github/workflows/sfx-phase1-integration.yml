@@ -19,6 +19,11 @@ on:
       - tests/audio-browser.test.cjs
       - assets/audio/manifest.json
       - tools/audio/sfx-phase1-metrics.json
+      # Main's recently merged navigation update also changes the PWA cache.
+      # Rebuild the merged-source release candidate before any publish decision.
+      - sw.js
+      - src/prototype/app.js
+      - src/prototype/build-info.js
   workflow_dispatch:
 
 permissions:
