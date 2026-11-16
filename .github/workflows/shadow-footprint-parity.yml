@@ -1,0 +1,95 @@
+# #893 real-source alpha census and regional Canvas/Pixi evidence; never deploys.
+name: Shadow footprint and cross-renderer audit (NO deploy)
+
+on:
+  push:
+    branches:
+      - 'audit/shadow-footprints-parity-*'
+    paths:
+      - 'tests/shadow-registered-footprints.test.cjs'
+      - 'tests/pixi-parity-browser.test.cjs'
+      - 'docs/SHADOW_PRESENTATION_AUDIT_20261116.md'
+      - 'docs/GRAPHICS_CANON_SPRITE_COVERAGE.md'
+      - '.github/workflows/shadow-footprint-parity.yml'
+  pull_request:
+    paths:
+      - 'tests/shadow-registered-footprints.test.cjs'
+      - 'tests/pixi-parity-browser.test.cjs'
+      - 'docs/SHADOW_PRESENTATION_AUDIT_20261116.md'
+      - 'docs/GRAPHICS_CANON_SPRITE_COVERAGE.md'
+      - '.github/workflows/shadow-footprint-parity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  registered-pixel-census:
+    name: All registered PNG masters and idle frames (source-only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked sprite tools
+        run: npm ci --ignore-scripts
+      - name: Decode registered art; inspect alpha geometry; verify original byte hashes
+        run: |
+          node --check tests/shadow-registered-footprints.test.cjs
+          node tests/shadow-registered-footprints.test.cjs
+          node tests/shadow-artwork-grounding.test.cjs
+          node tests/pixi-parity.test.cjs
+          node scripts/build.cjs --check
+      - name: Preserve measured pixels and contact sheet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadow-893-registered-footprint-census
+          path: test-artifacts/shadow-893/
+          if-no-files-found: warn
+          retention-days: 21
+
+  real-renderer-scenes:
+    name: Real Canvas/Pixi ${{ matrix.site }} evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: greenwood-and-archive
+            fixtures: shadow-vale-day-paladin,shadow-vale-dusk-mage,shadow-vale-night-ranger,shadow-vale-night-rogue,shadow-archive-interior-paladin
+          - site: marches-and-highlands
+            fixtures: shadow-march-day-paladin,shadow-march-dusk-paladin,shadow-march-night-paladin,shadow-highlands-day-paladin,shadow-highlands-dusk-paladin,shadow-highlands-night-paladin
+          - site: frontier-and-crown
+            fixtures: shadow-frontier-day-paladin,shadow-frontier-dusk-paladin,shadow-frontier-night-paladin,shadow-crown-day-paladin,shadow-crown-dusk-paladin,shadow-crown-night-paladin
+          - site: bosses-wildlife-flight-ferry
+            fixtures: warlord,regalia,registered,wildlife,lamp,flight,ferry,idle
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked tools and real Chromium GPU browser
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install chromium --with-deps
+      - name: Capture fixed-scene original Campaign in Canvas and active Pixi
+        env:
+          PARITY_FIXTURES: ${{ matrix.fixtures }}
+          PARITY_OUT: test-artifacts/shadow-893/${{ matrix.site }}
+          PARITY_VIEWPORT: 912x600
+          PARITY_ZOOM: '1.5'
+          PARITY_ASSERT: '1'
+        run: node tests/pixi-parity-browser.test.cjs
+      - name: Keep real screenshots and GPU-status reports for visual adjudication
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shadow-893-${{ matrix.site }}-screenshots
+          path: test-artifacts/shadow-893/${{ matrix.site }}/
+          if-no-files-found: warn
+          retention-days: 21
