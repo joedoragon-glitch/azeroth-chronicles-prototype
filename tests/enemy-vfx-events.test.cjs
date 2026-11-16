@@ -16,8 +16,14 @@ for (const b of C.data.bosses)
   for (const form of ['normal', 'true'])
     for (let index = 0; index < C.rules.attacks[b.id].length; index++) {
       const run = (enabled) => {
-        const c = fresh(enabled),
-          e = c.bossEnemy(c.boss(b.id), form, { x: 1400, y: 1700 });
+        const c = fresh(enabled);
+        // The Cindermaw seven-seal cast requires real reachable placements.
+        // This VFX-only fixture artificially spawns the Crown boss inside
+        // occupied Greenwood scenery, which can prohibit every legal seal.
+        // Remove only the fixture's obstructing scenery for this cast. The
+        // native route, radius, separation, attack and VFX rules still run.
+        if (b.id === 'cindermaw' && index === 3) c.zone().props = [];
+        const e = c.bossEnemy(c.boss(b.id), form, { x: 1400, y: 1700 });
         c.zone().enemies = [e];
         e.aggro = true;
         assert(c.startAttack(e, c.hero, index), b.id + '/' + form + '/' + index + ': eligible native cast begins');
