@@ -84,7 +84,7 @@ for (const seed of [0.1, 0.5, 0.9]) {
   assert.equal(restored.zone().npcs.filter((n) => n.id === resident.id).length, 1);
 }
 for (const language of ['en', 'es']) {
-  const { scope, elements } = require('./helpers/production-shell.cjs').shell(language);
+  const { scope, elements, frame } = require('./helpers/production-shell.cjs').shell(language);
   const game = scope.Prototype.game;
   game.hero.level = 2;
   const resident = game.zone().npcs.find((n) => n.thornReport);
@@ -102,6 +102,51 @@ for (const language of ['en', 'es']) {
   assert(tile, 'the reported landmark has an actionable lead');
   tile.click();
   assert.deepEqual(game.hero.path.at(-1), target, 'the route uses the reported area snapshot');
+  assert.equal(scope.Prototype.trackedWaypoint?.id, lead.id);
+  // The real hero manually takes control. A short walk must NOT recompute
+  // the expensive path simply because a 100-unit threshold was crossed.
+  game.hero.order = null;
+  game.hero.path = [];
+  let routeRefreshes = 0;
+  const nativeTarget = game.navigationTarget;
+  game.navigationTarget = function (...args) {
+    routeRefreshes++;
+    return nativeTarget.apply(this, args);
+  };
+  const startX = game.hero.x;
+  const startTime = game.s.time;
+  game.hero.x += 120;
+  frame(0);
+  assert.equal(routeRefreshes, 0, 'manual 120-unit step does not request a new full route');
+  assert.equal(scope.Prototype.navigationState.active, true,
+    'unrelated short walk must not hide the existing waypoint');
+
+  // A meaningful movement is eligible only after the slower timeout.
+  game.s.time = startTime + 3;
+  frame(100);
+  assert.equal(routeRefreshes, 1, 'two-second refresh after manual displacement');
+  // Standing thereafter does not repeat the same static route, even over time.
+  game.s.time += 3;
+  frame(200);
+  assert.equal(routeRefreshes, 1, 'standing without new displacement does not replan');
+  game.hero.x = startX + 340;
+  game.s.time += 3;
+  frame(300);
+  assert.equal(routeRefreshes, 2, 'two-second refresh after another meaningful walk');
+  game.hero.x = startX + 800;
+  frame(400);
+  assert.equal(routeRefreshes, 3, 'substantial new movement refreshes without waiting');
+
+  // Finding the actual patrolling monster, rather than reaching the old
+  // snapshot waypoint, immediately fulfills this one informant guide.
+  Object.assign(boss, { x: game.hero.x + 110, y: game.hero.y + 40 });
+  assert(Math.hypot(game.hero.x - target.x, game.hero.y - target.y) > 25,
+    'the player did not visit the original landmark');
+  frame(500);
+  assert.equal(scope.Prototype.trackedWaypoint, null, 'Thornfang found clears the guide');
+  assert.equal(scope.Prototype.navigationState.active, false);
+  assert.equal(routeRefreshes, 3, 'the encounter check prevents another route search');
+  assert.equal(game.hero.order, null, 'manual hero control is preserved');
 
 }
 console.log('PASS #679 truthful, localized Thornfang/Mira clues; stable trail/witness IDs; v4 migration; rescue');
