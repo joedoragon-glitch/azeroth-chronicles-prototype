@@ -10552,7 +10552,14 @@
       saveTimer += dt;
       if (saveTimer >= 5) {
         saveTimer = 0;
-        save();
+        // Keep periodic serialization off the combat path. Milestone,
+        // death and recovery saves remain immediate and independent.
+        if (
+          !game.s.squadEngagement &&
+          !game.manaCombatActive() &&
+          !game.s.projectiles.some((p) => p.source === 'enemy')
+        )
+          save();
       }
     }
     const eventAt = stageTimes ? performance.now() : 0;
