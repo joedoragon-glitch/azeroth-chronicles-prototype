@@ -140,7 +140,7 @@ const root = path.resolve(__dirname, '..'),
           'All 30 effect recordings must be visible without extra paging');
         assert((await page.locator('#result-count').textContent()).includes('30 total in Phase 1'));
         assert.equal(await page.locator('#show-more').isVisible(), false);
-        assert.equal(await page.locator('#library-grid .sound-card .duration').first().textContent().then(t => /\\d+\\.\\d{2}s/.test(t)), true);
+        assert.equal(await page.locator('#library-grid .sound-card .duration').first().textContent().then(t => /\d+\.\d{2}s/.test(t)), true);
         await page.locator('#effect-stage').selectOption('release');
         assert.equal(await page.locator('#recording option').count(), 12);
         assert.equal(await page.locator('#library-grid .sound-card').count(), 12);
