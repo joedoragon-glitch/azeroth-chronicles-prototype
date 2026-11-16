@@ -1,0 +1,51 @@
+# Exact-source assessment of the owner's release/contact Sound Library report.
+# This isolated workflow cannot publish Pages or update player PWAs.
+name: SFX launch vs contact Sound Library audit (NO deploy)
+on:
+  push:
+    branches:
+      - audio/sfx-stage-differentiation-audit-20261116
+  pull_request:
+    paths:
+      - tools/audio/index.html
+      - tools/audio/audition.js
+      - tests/audition.test.cjs
+      - tests/audio-audition-browser.test.cjs
+      - tests/audio-sfx-phase1-quality.test.py
+      - assets/audio/effects/**
+      - assets/audio/manifest.json
+      - .github/workflows/sfx-stage-contrast-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verified-stage-contrast:
+    name: Actual registered WAV, launch/contact browser and offline contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install locked browser and PCM test dependencies
+        run: |
+          npm ci --ignore-scripts
+          python -m pip install --disable-pip-version-check --quiet numpy==2.3.5
+          node scripts/vendor-pixi.cjs --ensure
+          npx playwright install --with-deps chromium
+      - name: Validate actual new and archived WAV bytes, stage contrasts and registry
+        run: |
+          python tests/audio-sfx-phase1-quality.test.py
+          node scripts/audio-library.cjs check
+          node tests/audition.test.cjs
+      - name: Validate exact current Sound Library release/contact UI on desktop and phone
+        run: node tests/audio-audition-browser.test.cjs
+      - name: Validate reproducible offline build without publishing
+        run: node scripts/build.cjs --check
