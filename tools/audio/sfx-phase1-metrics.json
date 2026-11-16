@@ -1,0 +1,217 @@
+{
+  "status": "SOURCE/RENDER TECHNICAL CHECK; UNHEARD",
+  "retainedIds": 30,
+  "origin": "dev288",
+  "cues": {
+    "sfx-steel-release": {
+      "sha256": "086ff91ab5450df7e5a84d923e9fed9071e74c9a3e33fc49ed9ed8296179c5da",
+      "guide": "Blade edge & metal tension. clean air-edge movement. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.26346,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-steel-impact": {
+      "sha256": "2afaec71623f00868ad8de23231fc06c8018291b70dfd2fa0f6808021d73cb96",
+      "guide": "Blade edge & metal tension. resonant tempered-metal contact. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.04786,
+      "duration": 0.27
+    },
+    "sfx-claw-release": {
+      "sha256": "17288ccbeb3debad95752589c556a7ca7e65de0a26a3b5231ad1783a19468269",
+      "guide": "Animal tear & scrape. unpitched scratch entering range. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.28541,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-claw-impact": {
+      "sha256": "b776ae83e8e4b1b77fba2974f0bc172243e44dddb3da4f98c051257202ac4247",
+      "guide": "Animal tear & scrape. contact tear with short ripping drag. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.04828,
+      "duration": 0.27
+    },
+    "sfx-bone-release": {
+      "sha256": "abe1e842d46929967c9bc3cf2634cb684bd0f76f98aba350944cda520a4a60db",
+      "guide": "Dry calcified click. joint rattle before strike. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.29925,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-bone-impact": {
+      "sha256": "87351a5267d57ef367e81b7ccefada5d756fc091059b21810e0dc835072bec9b",
+      "guide": "Dry calcified click. hard brittle crack with dry debris. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.03184,
+      "duration": 0.27
+    },
+    "sfx-stone-release": {
+      "sha256": "3fd00257ab60acd117f9843eb49d7d8d0127b088830d6958b097e89d188ea361",
+      "guide": "Dense mineral mass. weight shift with falling grit. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.23425,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-stone-impact": {
+      "sha256": "23b83fcbe651f41b6b0b14b4f5a218f2781d8e7f87237539be69a19f08f2bd34",
+      "guide": "Dense mineral mass. solid mineral contact and quick gravel. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.0511,
+      "duration": 0.27
+    },
+    "sfx-wet-release": {
+      "sha256": "2765bd70d92ada3bf3c360ec50c3a5911eeb793d7130c048b472234003afd657",
+      "guide": "Mud & biological fluid. shallow suction and splash. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.25802,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-wet-impact": {
+      "sha256": "61a3b335f1124f31f4fd2ccbbd1bc4c79486dfa3313bcae608cd55e1ab89b410",
+      "guide": "Mud & biological fluid. viscous contact with secondary spray. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.05229,
+      "duration": 0.27
+    },
+    "sfx-arrow-release": {
+      "sha256": "7eed91f2670b2be599f7d865e84042e8a6cdb6f342b424ccbceae5c1a542e907",
+      "guide": "Bowstring & wooden shaft. single string snap and aerodynamic departure. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.29058,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-arrow-impact": {
+      "sha256": "58a7fc0443ce2eccb81e69aea86bd345b2ec361519d91c9fab8f533901588373",
+      "guide": "Bowstring & wooden shaft. crisp target contact and shaft ring. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.03233,
+      "duration": 0.27
+    },
+    "sfx-spectral-release": {
+      "sha256": "12c5d83edd3cd93e67bc00ccd32ac4810bf9b6953b821d9ae4993f6d8f671cc2",
+      "guide": "Unstable ghostly presence. ascending airy supernatural motion. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.19581,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-spectral-impact": {
+      "sha256": "5a352383f79e1aa3589ff40705a224710597bfd65eb1f771c3d3cf2c62358ccd",
+      "guide": "Unstable ghostly presence. reversed contour on spiritual collision. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.05306,
+      "duration": 0.27
+    },
+    "sfx-ash-release": {
+      "sha256": "f1257e087f81239480d3c6aef1a439c38c309567d6fd4c89ec139a5331c0bcad",
+      "guide": "Cinder & hot dust. dry sweeping heat-grit. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.29403,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-ash-impact": {
+      "sha256": "e56951ef5da3930d6b092d31248dfdec20e69a503c8ff23cfa06b66877b8dc57",
+      "guide": "Cinder & hot dust. brief cinder crackle on hit. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.04605,
+      "duration": 0.27
+    },
+    "sfx-holy-release": {
+      "sha256": "4b0b55180fbb4c190c1b4bba3195fe2df1a01611da53f48c737064a7837b78e2",
+      "guide": "Restrained luminous magic. short rising harmonic radiance. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.19728,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-holy-impact": {
+      "sha256": "9b7978d3b0d5b578b0bb2ff3a4252a4d52f2b57f5710db78f268844972b84d5d",
+      "guide": "Restrained luminous magic. bright consecrated contact, no choir. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.04151,
+      "duration": 0.27
+    },
+    "sfx-arcane-release": {
+      "sha256": "fa7599dec7853b6f2cfd27bd371040bd98848f68d527026bfefebc64249a05a6",
+      "guide": "Anomalous crystalline energy. accelerating harmonic flutter. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.23145,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-arcane-impact": {
+      "sha256": "ddda2de52d22aa5e664c48c61c78190e4b0d8cc01066c70eee43f0837446dc6a",
+      "guide": "Anomalous crystalline energy. short glass-like magical strike. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.03947,
+      "duration": 0.27
+    },
+    "sfx-root-release": {
+      "sha256": "262401f867d86b61c1397911e219b2bce99441f0ab264174f9e776091178deaa",
+      "guide": "Splitting wooden fibers. fibrous brushing approach. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.2608,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-root-impact": {
+      "sha256": "f2c0e8ae7f60100a17c7990c2505b503129fe702f2b2263fec3f3fe0956f4f30",
+      "guide": "Splitting wooden fibers. snapped branch and root entanglement. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.04965,
+      "duration": 0.27
+    },
+    "sfx-dust-release": {
+      "sha256": "0997b829398abc508cab834f73bbde0a6fafb68eae1bac163213577966c3df7c",
+      "guide": "Fine dry airborne particles. fine airy powder movement. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.251,
+      "rms": 0.041,
+      "duration": 0.285
+    },
+    "sfx-dust-impact": {
+      "sha256": "d759457f58bdf291209a8235124d94ae5c89a2b23bc234b5f95552f55f422cda",
+      "guide": "Fine dry airborne particles. compressed grit burst on contact. Short mono event; no voice, musical bed, generic boom or delayed contact.",
+      "peak": 0.4,
+      "rms": 0.03756,
+      "duration": 0.27
+    },
+    "sfx-critical-warning": {
+      "sha256": "dc9f0bc7e82b96ae5cd08852d1187d1754808935c70be17354edb12efa0bcd93",
+      "guide": "Two clearly separated midrange dangerous windup pulses; protected high-priority cue.",
+      "peak": 0.25738,
+      "rms": 0.053,
+      "duration": 0.32
+    },
+    "sfx-hero-steel-swing": {
+      "sha256": "90449b51415af93eb1a2c5f3a243e30c04e432d64a20cda82a61c14d51a548b9",
+      "guide": "Paladin basic sword air movement only; distinct from contact.",
+      "peak": 0.3517,
+      "rms": 0.053,
+      "duration": 0.25
+    },
+    "sfx-hero-steel-impact": {
+      "sha256": "daffff35e15aca51d19cc784dd2bb486819908f362f8977fbca44ccf77668642",
+      "guide": "Paladin basic sword contact only; tempered bright steel edge.",
+      "peak": 0.4,
+      "rms": 0.04556,
+      "duration": 0.29
+    },
+    "sfx-power-strike": {
+      "sha256": "1e4eeb76e91690e33fbd97419046bf490b16c54c134e8f1a29ac16e3ab887702",
+      "guide": "Companion Soldier Power Strike, heavier steel body with short attack.",
+      "peak": 0.39584,
+      "rms": 0.053,
+      "duration": 0.32
+    },
+    "sfx-holy-cleave": {
+      "sha256": "f570e5224528cfaad1d2cfb97e681af463a154295073b0ba5d5afb2f1ef9edd2",
+      "guide": "Companion Paladin Holy Cleave, moving blade and distinct luminous contact.",
+      "peak": 0.4,
+      "rms": 0.0368,
+      "duration": 0.37
+    },
+    "sfx-piercing-volley": {
+      "sha256": "0e4eb59a2b0cfe3b0a9adcc81de1a927027dda518e08f1ebc4ec43a2335336d9",
+      "guide": "Companion Piercing Volley, three short bow launches, not a machine gun.",
+      "peak": 0.4,
+      "rms": 0.04216,
+      "duration": 0.36
+    }
+  }
+}

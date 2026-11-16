@@ -1,0 +1,610 @@
+{
+  "schemaVersion": 1,
+  "origin": "SIBDLP dev.288 pre-modernization 30 SFX assets",
+  "originalEntries": {
+    "sfx-steel-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-steel-release.wav",
+      "duration": 0.32,
+      "sha256": "a91f44b1e79074ce3776890a82d68ca99b3384c2f238442f347c61c80ce5cea6",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Steel Release",
+      "generationGuide": "Short steel release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-steel-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-steel-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-steel-impact.wav",
+      "duration": 0.28,
+      "sha256": "b9a0525eee51b579f6b54dcf042c01cd6699407d8073f98a39ed99efe510a56f",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Steel Impact",
+      "generationGuide": "Short steel impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-steel-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-claw-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-claw-release.wav",
+      "duration": 0.32,
+      "sha256": "aa4cdc1514901c387af5588d2db56a8c3b48e55f6f7c5dfa1aa5fc8f0987fb6d",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Claw Release",
+      "generationGuide": "Short claw release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-claw-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-claw-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-claw-impact.wav",
+      "duration": 0.28,
+      "sha256": "09bb1f4a06d78f1f23576115c03a55761ff8557ffec65b3a493680f9af473689",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Claw Impact",
+      "generationGuide": "Short claw impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-claw-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-bone-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-bone-release.wav",
+      "duration": 0.32,
+      "sha256": "a98113bfec5e19dfa5fb31d0bf72da9062efb2af41b8c675ad8e8abe09b8537f",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Bone Release",
+      "generationGuide": "Short bone release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-bone-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-bone-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-bone-impact.wav",
+      "duration": 0.28,
+      "sha256": "7966eb918f729823c5ed252a5a068f5786fdf431bcc3f96072a82e72fe2f7e72",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Bone Impact",
+      "generationGuide": "Short bone impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-bone-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-stone-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-stone-release.wav",
+      "duration": 0.32,
+      "sha256": "455d3c8063a16d66968c62dc8d082c929e2b7d6977c5f35ab1ef4c10e4a025f2",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Stone Release",
+      "generationGuide": "Short stone release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-stone-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-stone-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-stone-impact.wav",
+      "duration": 0.28,
+      "sha256": "f35d1d45adc1278586c478fede04cb5907210894b6b41a7010c2fdcf90f5e894",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Stone Impact",
+      "generationGuide": "Short stone impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-stone-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-wet-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-wet-release.wav",
+      "duration": 0.32,
+      "sha256": "0187e6a65e075460717a2191cdf08dd5369c9e078a27f3d9d872cd707b00fe16",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Wet Release",
+      "generationGuide": "Short wet release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-wet-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-wet-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-wet-impact.wav",
+      "duration": 0.28,
+      "sha256": "d087746a17393e83727e1020ed568d545cc7ca2ef339bcecee89570d7c132eac",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Wet Impact",
+      "generationGuide": "Short wet impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-wet-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-arrow-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-arrow-release.wav",
+      "duration": 0.32,
+      "sha256": "563c33d2ae66d06a947509a6bdee17ec2d9335eaaca5263553705a89cda566f0",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Arrow Release",
+      "generationGuide": "Short arrow release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-arrow-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-arrow-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-arrow-impact.wav",
+      "duration": 0.28,
+      "sha256": "687744ba0f9141fb6ed59d3467f157c2417406412988e875dd6246333e4a05a3",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Arrow Impact",
+      "generationGuide": "Short arrow impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-arrow-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-spectral-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-spectral-release.wav",
+      "duration": 0.32,
+      "sha256": "42fda5af4d6f0ef7e5a675bbecaac52a42e1d1086ee3a446832eba90bd85c61b",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Spectral Release",
+      "generationGuide": "Short spectral release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-spectral-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-spectral-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-spectral-impact.wav",
+      "duration": 0.28,
+      "sha256": "23954e55a09e9c9bd405424b583e51003f91df9c8affc000dd1d64c6f99b982c",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Spectral Impact",
+      "generationGuide": "Short spectral impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-spectral-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-ash-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-ash-release.wav",
+      "duration": 0.32,
+      "sha256": "1ef07bba7b90e7a67a389bfad3c315adf12892c328b8076c82cbefd83c4fbaa8",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Ash Release",
+      "generationGuide": "Short ash release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-ash-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-ash-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-ash-impact.wav",
+      "duration": 0.28,
+      "sha256": "7fed2eded5faeeb25141ac41165f8a5403c5d0a4419d5541bfde7e4e88d30218",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Ash Impact",
+      "generationGuide": "Short ash impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-ash-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-holy-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-holy-release.wav",
+      "duration": 0.32,
+      "sha256": "9de4673ffd110a5748d3d383b1ab14e88d556661bed67383019d4e6ba333429f",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Holy Release",
+      "generationGuide": "Short holy release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-holy-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-holy-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-holy-impact.wav",
+      "duration": 0.28,
+      "sha256": "73d84187f468de9577f56b0bb8743aaf54206e6734a94983a108aa33293cbb4e",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Holy Impact",
+      "generationGuide": "Short holy impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-holy-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-arcane-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-arcane-release.wav",
+      "duration": 0.32,
+      "sha256": "859a9cde1e3dab40f88074c7b3e0d2e34b2c95061b1002dcdd17760942177404",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Arcane Release",
+      "generationGuide": "Short arcane release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-arcane-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-arcane-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-arcane-impact.wav",
+      "duration": 0.28,
+      "sha256": "916d6ff218721550e861b1374907433b77a8a71316efea4a96ab22fd552853b0",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Arcane Impact",
+      "generationGuide": "Short arcane impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-arcane-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-root-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-root-release.wav",
+      "duration": 0.32,
+      "sha256": "f81674185330868b3562b396be43fe57ebf3e335b88ce457f9b9c33d1eded8d5",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Root Release",
+      "generationGuide": "Short root release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-root-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-root-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-root-impact.wav",
+      "duration": 0.28,
+      "sha256": "992c8a702c9becf67abe4d632c870685aa35c7c9bf1306516eb9c8f4fc184bdb",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Root Impact",
+      "generationGuide": "Short root impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-root-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-dust-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-dust-release.wav",
+      "duration": 0.32,
+      "sha256": "0c060d67867852ce9dea8d59e677d1880c38e646f4adf50eed7e20e5ead4ecfd",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Dust Release",
+      "generationGuide": "Short dust release. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-dust-release",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-dust-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-dust-impact.wav",
+      "duration": 0.28,
+      "sha256": "65de0d703329e43a768c4deebc4aaf17e753a51ac43e8313f9d34c6a7bf89896",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Dust Impact",
+      "generationGuide": "Short dust impact. Distinct physical texture, localized transient, mono-compatible. No voice, musical bed, boom or long tail. Creature/faction motifs are layered live, not baked into every skill.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-dust-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-critical-warning": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-critical-warning.wav",
+      "duration": 0.3,
+      "sha256": "24d1fc99e57da1e7588dfb4d7b6212dc62a0b324491f52dc2cda71a76fd79389",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Critical Warning",
+      "generationGuide": "Two clear descending pulses over a small dry material tick. Critical danger cue, audible on small phone speakers, short and restrained.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-critical-warning",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-hero-steel-swing": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-hero-steel-swing.wav",
+      "duration": 0.24,
+      "sha256": "7a512d23e27e90764e45dffd37953e027bb258ef837bb125d426b8110c785f89",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Hero Steel Swing",
+      "generationGuide": "Short airy sword swish with a faint high steel edge. No falling pitched wooden thump. Preserve combo accents live.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-hero-steel-swing",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-hero-steel-impact": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-hero-steel-impact.wav",
+      "duration": 0.3,
+      "sha256": "4a20b5b39db35f80108db4729c8520298c1a99d67c4a6a0c34a37a996b8c9e3a",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Hero Steel Impact",
+      "generationGuide": "Crisp tempered-steel sword contact: bright inharmonic upper partials, brief edge scrape and a restrained low body. Short mono-compatible ring, no wooden knock or bass boom. Preserve combo accents live.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-hero-steel-impact",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-power-strike": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-power-strike.wav",
+      "duration": 0.36,
+      "sha256": "90dd223d36d6fe290367242b78a412b3876aa0b8052501498f10f4446c3b7149",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Power Strike",
+      "generationGuide": "Soldier special: a compact weighty steel hit with a clear attack and quick settle.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-power-strike",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-holy-cleave": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-holy-cleave.wav",
+      "duration": 0.4,
+      "sha256": "11db70f86c261f5ec455f70d284af1953802de42ea7c1deb8136430da090b865",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Holy Cleave",
+      "generationGuide": "Paladin companion cleave: short steel strike and restrained luminous overtone, no choir.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-holy-cleave",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    },
+    "sfx-piercing-volley": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-piercing-volley.wav",
+      "duration": 0.4,
+      "sha256": "24793d40239f85a4102f8025250f5422811328a1c4185945aa9ab1e1d794fc8b",
+      "credits": {
+        "author": "Azeroth Chronicles original synthesis",
+        "license": "CC0-1.0"
+      },
+      "managedBy": "sfx-book",
+      "creationMethod": "deterministic-spectral-synthesis",
+      "title": "Piercing Volley",
+      "generationGuide": "Three tightly spaced bow/string transients, not a machine gun; short airy tail.",
+      "recipe": {
+        "source": "tools/audio/sfx-book.json",
+        "id": "sfx-piercing-volley",
+        "renderer": "tools/audio/render-sfx.py"
+      }
+    }
+  },
+  "originalSha256": {
+    "sfx-steel-release": "a91f44b1e79074ce3776890a82d68ca99b3384c2f238442f347c61c80ce5cea6",
+    "sfx-steel-impact": "b9a0525eee51b579f6b54dcf042c01cd6699407d8073f98a39ed99efe510a56f",
+    "sfx-claw-release": "aa4cdc1514901c387af5588d2db56a8c3b48e55f6f7c5dfa1aa5fc8f0987fb6d",
+    "sfx-claw-impact": "09bb1f4a06d78f1f23576115c03a55761ff8557ffec65b3a493680f9af473689",
+    "sfx-bone-release": "a98113bfec5e19dfa5fb31d0bf72da9062efb2af41b8c675ad8e8abe09b8537f",
+    "sfx-bone-impact": "7966eb918f729823c5ed252a5a068f5786fdf431bcc3f96072a82e72fe2f7e72",
+    "sfx-stone-release": "455d3c8063a16d66968c62dc8d082c929e2b7d6977c5f35ab1ef4c10e4a025f2",
+    "sfx-stone-impact": "f35d1d45adc1278586c478fede04cb5907210894b6b41a7010c2fdcf90f5e894",
+    "sfx-wet-release": "0187e6a65e075460717a2191cdf08dd5369c9e078a27f3d9d872cd707b00fe16",
+    "sfx-wet-impact": "d087746a17393e83727e1020ed568d545cc7ca2ef339bcecee89570d7c132eac",
+    "sfx-arrow-release": "563c33d2ae66d06a947509a6bdee17ec2d9335eaaca5263553705a89cda566f0",
+    "sfx-arrow-impact": "687744ba0f9141fb6ed59d3467f157c2417406412988e875dd6246333e4a05a3",
+    "sfx-spectral-release": "42fda5af4d6f0ef7e5a675bbecaac52a42e1d1086ee3a446832eba90bd85c61b",
+    "sfx-spectral-impact": "23954e55a09e9c9bd405424b583e51003f91df9c8affc000dd1d64c6f99b982c",
+    "sfx-ash-release": "1ef07bba7b90e7a67a389bfad3c315adf12892c328b8076c82cbefd83c4fbaa8",
+    "sfx-ash-impact": "7fed2eded5faeeb25141ac41165f8a5403c5d0a4419d5541bfde7e4e88d30218",
+    "sfx-holy-release": "9de4673ffd110a5748d3d383b1ab14e88d556661bed67383019d4e6ba333429f",
+    "sfx-holy-impact": "73d84187f468de9577f56b0bb8743aaf54206e6734a94983a108aa33293cbb4e",
+    "sfx-arcane-release": "859a9cde1e3dab40f88074c7b3e0d2e34b2c95061b1002dcdd17760942177404",
+    "sfx-arcane-impact": "916d6ff218721550e861b1374907433b77a8a71316efea4a96ab22fd552853b0",
+    "sfx-root-release": "f81674185330868b3562b396be43fe57ebf3e335b88ce457f9b9c33d1eded8d5",
+    "sfx-root-impact": "992c8a702c9becf67abe4d632c870685aa35c7c9bf1306516eb9c8f4fc184bdb",
+    "sfx-dust-release": "0c060d67867852ce9dea8d59e677d1880c38e646f4adf50eed7e20e5ead4ecfd",
+    "sfx-dust-impact": "65de0d703329e43a768c4deebc4aaf17e753a51ac43e8313f9d34c6a7bf89896",
+    "sfx-critical-warning": "24d1fc99e57da1e7588dfb4d7b6212dc62a0b324491f52dc2cda71a76fd79389",
+    "sfx-hero-steel-swing": "7a512d23e27e90764e45dffd37953e027bb258ef837bb125d426b8110c785f89",
+    "sfx-hero-steel-impact": "4a20b5b39db35f80108db4729c8520298c1a99d67c4a6a0c34a37a996b8c9e3a",
+    "sfx-power-strike": "90dd223d36d6fe290367242b78a412b3876aa0b8052501498f10f4446c3b7149",
+    "sfx-holy-cleave": "11db70f86c261f5ec455f70d284af1953802de42ea7c1deb8136430da090b865",
+    "sfx-piercing-volley": "24793d40239f85a4102f8025250f5422811328a1c4185945aa9ab1e1d794fc8b"
+  },
+  "archiveFolder": "tools/audio/sfx-legacy/dev288",
+  "notPublished": true
+}
