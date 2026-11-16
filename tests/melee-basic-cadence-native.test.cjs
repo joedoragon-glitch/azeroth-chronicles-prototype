@@ -160,4 +160,32 @@ for (const [name, attrs] of [
     finalBasicDue: !!e.basicDue,
   }));
 }
+// Full authored boss-roster basic contact census. This verifies actual boss
+// construction and basic release for both forms, not spontaneous action
+// priority, earned progression or a boss-fight win. The Crypt unforced case
+// above separately measures the live special-vs-basic dispatcher.
+{
+  const definitions = Campaign.data.bosses;
+  assert.equal(definitions.length, 11, 'original authored boss roster retained');
+  let contactCases = 0;
+  for (const def of definitions)
+    for (const form of ['normal', 'true']) {
+      const { g, e: original } = scene({}, 100);
+      const boss = g.bossEnemy(def, form, { x: original.x, y: original.y });
+      g.zone().enemies = [boss];
+      g.engage(boss);
+      assert(boss.aggro && boss.type === 'boss' && boss.family === def.id,
+        def.id + '/' + form + ': authentic boss can engage');
+      const before = g.hero.hp;
+      g.enemyStartBasic(boss, g.hero, false);
+      assert(g.hero.hp < before,
+        def.id + '/' + form + ': actual boss basic causes melee HP loss');
+      close(boss.cd, R.bossCadence.basicCooldown,
+        def.id + '/' + form + ': boss basic clock');
+      contactCases++;
+    }
+  assert.equal(contactCases, 22, 'all eleven boss identities and both forms checked');
+  console.log('MELEE_895_BOSS_BASIC_CENSUS ' + contactCases + ' authentic direct contact cases');
+}
+
 console.log('PASS #895 native ordinary/elite/captain melee timing, night/Slow, Charmed isolation, hero independence and unforced basic fallback');
