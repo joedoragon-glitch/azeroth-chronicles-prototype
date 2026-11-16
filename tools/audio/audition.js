@@ -89,6 +89,32 @@
       context: 'DANGEROUS enemy windup only. This is a protected gameplay safety/clarity cue; study is not approved for substitution.',
       original: { asset: 'sfx-critical-warning' } },
   ];
+  let sfxRegisteredReady = false;
+  // These 30 are the actual existing recorded identities: their IDs and
+  // original guides come from the game manifest. They add no in-game assets.
+  function registerCurrentEffectComparisons(manifest) {
+    if (sfxRegisteredReady || !manifest?.assets) return;
+    const registered = Object.entries(manifest.assets)
+      .filter(([, entry]) => entry.kind === 'effect')
+      .map(([id, entry]) => ({
+        id, registered: true,
+        title: (entry.title || human(id)) + ' · registered effect',
+        context: 'Currently registered effect: ' + id + '. ' +
+          (entry.generationGuide || 'Compare this isolated source against its current event role.'),
+        original: { asset: id },
+      }));
+    if (registered.length !== 30) throw Error('Phase 1 expects exactly 30 current recorded effects.');
+    const group = document.createElement('optgroup');
+    group.label = 'PHASE 1 · 30 CURRENT RECORDED EFFECTS';
+    for (const study of registered) group.append(option(study.title, study.id));
+    $('sfx-study').prepend(group);
+    sfxStudies.unshift(...registered);
+    sfxRegisteredReady = true;
+    const requested = requestedLink.get('study');
+    if (sfxStudies.some((item) => item.id === requested)) $('sfx-study').value = requested;
+    else $('sfx-study').value = registered[0].id;
+    showSfxStudy();
+  }
   let sfxStudyContext = null;
   let sfxStudyBuffers = new Map();
   let sfxStudyVoice = null;
@@ -167,7 +193,8 @@
       }
       let buffer = sfxStudyBuffers.get(study.id);
       if (!buffer) {
-        const url = new URL('./sfx-pilot-previews/' + study.id + '.wav', location.href);
+        const folder = study.registered ? 'sfx-30-previews' : 'sfx-pilot-previews';
+        const url = new URL('./' + folder + '/' + study.id + '.wav', location.href);
         const response = await fetch(url);
         if (!response.ok) throw Error('This isolated pilot WAV is missing (' + response.status + ').');
         const bytes = await response.arrayBuffer();
@@ -761,7 +788,10 @@
       baseUrl,
       ...(data.fetch ? { fetch: data.fetch } : {}),
     });
-    if (requested === 'production') registry = data.manifest;
+    if (requested === 'production') {
+      registry = data.manifest;
+      registerCurrentEffectComparisons(registry);
+    }
     if (source && source !== requested) stopped('Switched audio libraries. Choose a recording or scene to begin.');
     source = requested;
     $('source').value = requested;
@@ -1020,7 +1050,10 @@
     }
   }
 
-  for (const study of sfxStudies) $('sfx-study').add(option(study.title, study.id));
+  const contextualGroup = document.createElement('optgroup');
+  contextualGroup.label = 'EXTRA · ENGINE-GENERATED HERO/EVENT STUDIES (NOT NEW REGISTRATIONS)';
+  for (const study of sfxStudies) contextualGroup.append(option(study.title, study.id));
+  $('sfx-study').append(contextualGroup);
   const requestedStudy = requestedLink.get('study');
   if (sfxStudies.some((item) => item.id === requestedStudy))
     $('sfx-study').value = requestedStudy;
