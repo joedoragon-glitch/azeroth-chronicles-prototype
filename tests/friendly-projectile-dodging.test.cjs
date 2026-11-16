@@ -51,11 +51,20 @@ for (const cls of ['mage', 'ranger'])
       const directions = g.s.projectiles.map((p) => [p.dx, p.dy]);
       if (dodge) e.y += 180;
       g.updateProjectiles(0.05);
-      assert.deepEqual(
-        g.s.projectiles.map((p) => [p.dx, p.dy]),
-        directions,
-        'launch direction never tracks movement',
-      );
+      const actualDirections = g.s.projectiles.map((p) => [p.dx, p.dy]);
+      if (cls === 'mage' && slot === 1 && !charged && dodge) {
+        // Native Mage Skill 1 is the sole bounded-homing exception, not an
+        // unrestricted retargeting license for ordinary projectile flight.
+        assert.equal(actualDirections.length, 1);
+        const start = Math.atan2(directions[0][1], directions[0][0]),
+          now = Math.atan2(actualDirections[0][1], actualDirections[0][0]),
+          turn = Math.abs(Math.atan2(Math.sin(now - start), Math.cos(now - start)));
+        assert(turn > 0 && turn <= 1.6 * 0.05 + 1e-9,
+          'Mage Skill 1 may steer only within its native per-update bound');
+      } else {
+        assert.deepEqual(actualDirections, directions,
+          'all other launched projectiles retain their original direction');
+      }
       fly(g);
       assert.equal(
         e.hp < hp,
