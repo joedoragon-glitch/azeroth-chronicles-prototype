@@ -21,6 +21,8 @@ function arena(cls, training=0, farOffset=null) {
     immune:0, order:null, basicCd:0});
   g.hero.skills[0] = 1;
   g.hero.talents[1] = training;
+  // Isolate cadence from the Rogue's separate lawful 12% enemy capture RNG.
+  if(cls==='rogue') g.rogueCharmAttempt=()=>false;
   const make = (name, distance) => {
     const e = g.makeEnemy({
       species:'goblin', name, level:1, hp:100000000,
