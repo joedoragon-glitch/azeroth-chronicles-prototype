@@ -329,7 +329,7 @@ const root = path.resolve(__dirname, '..'),
           const cold = await render(material, 'release', true, 'normal', false, null),
             warm = await render(material, 'release', true, 'normal', true, null);
           if (Math.abs(20 * Math.log10(warm.rms / cold.rms)) > 4)
-            throw Error('Common creature recording/fallback level jump: ' + material);
+            throw Error('Common creature recording/fallback level jump: ' + material + ' ' + (20 * Math.log10(warm.rms / cold.rms)).toFixed(2) + ' dB; cold=' + cold.rms + '; warm=' + warm.rms);
           comparisons.push({
             material,
             stage: 'common-release',
