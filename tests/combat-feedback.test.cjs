@@ -14,11 +14,11 @@ console.log('PASS landed hero, companion and enemy melee attacks retain actor/we
 
 for(const species of ['goblin','skeleton','reedbeast','mireling','ogre','orc','ashbeast','archer','crownguard','wraith']){
  const a=arena(),foe=a.makeEnemy({species,name:'Shooter',level:1,hp:1000,damage:10,gold:1,xp:1},{x:700,y:500});a.configureEnemy(foe,5);foe.aggro=true;foe.rangedAim={x:500,y:500,timer:0};a.zone().enemies.push(foe);a.updateEnemies(.1);
- const p=a.s.projectiles.find(p=>p.source==='enemy');assert(p,species);assert(Math.abs(p.speed-(foe.shotSpeed||260)*C.rules.rangedEnemyCombat.projectileMultiplier)<1e-8);assert(Math.abs(p.speed*p.life-(foe.shotSpeed||260)*2.5)<1e-8,'projectile range stays fixed');
+ const p=a.s.projectiles.find(p=>p.source==='enemy');assert(p,species);assert.equal(p.speed, C.rules.rangedProfiles[species]?.shotSpeed ?? (species==='wraith'?C.rules.projectileFlight.ordinaryDefault.spectral:C.rules.projectileFlight.ordinaryDefault.arrow));assert(Math.abs(p.speed*p.life-(C.rules.projectileFlight.ordinaryDistance[species]??650))<1e-8,'projectile original range stays fixed');
  const launch=a.effects.find(e=>e.type==='projectileLaunch');assert(launch,species+' launch event');assert.equal(launch.actor,'enemy');assert.equal(launch.species,species);
  const base=foe.shotSpeed,saved=C.restore(a.snapshot());assert.equal(saved.zone().enemies[0].shotSpeed,base);
 }
-const b=arena(),boss=b.bossEnemy(b.boss('crypt'),'normal',{x:700,y:500});b.zone().enemies.push(boss);boss.attackIndex=0;b.startAttack(boss,b.hero,1);const warning=boss.telegraph.total;b.resolveAttack(boss);assert.equal(warning,1.2);assert.equal(b.s.projectiles.length,3);assert(b.s.projectiles.every(p=>Math.abs(p.speed-299)<1e-8));assert(b.effects.some(e=>e.type==='projectileLaunch'&&e.actor==='enemy'&&e.boss));
+const b=arena(),boss=b.bossEnemy(b.boss('crypt'),'normal',{x:700,y:500});b.zone().enemies.push(boss);boss.attackIndex=0;b.startAttack(boss,b.hero,1);const warning=boss.telegraph.total;b.resolveAttack(boss);assert.equal(warning,1.2);assert.equal(b.s.projectiles.length,3);assert(b.s.projectiles.every(p=>Math.abs(p.speed-C.rules.projectileFlight.boss.cryptBoneVolley)<1e-8));assert(b.effects.some(e=>e.type==='projectileLaunch'&&e.actor==='enemy'&&e.boss));
 console.log('PASS ranged attacks retain launch identity without changing projectile timing or range');
 
 const a=new Audio();
