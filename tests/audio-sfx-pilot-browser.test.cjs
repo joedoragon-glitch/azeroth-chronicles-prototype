@@ -99,6 +99,21 @@ const known = [
         await page.waitForFunction(() =>
           document.querySelector('#sfx-study-status').textContent.includes('Played unapproved'));
         assert.equal(await page.evaluate(() => AudioAudition.audio.sfxPilotRegistered), undefined);
+        if (!phone) {
+          // Decode/play every Phase 1 candidate through the actual Sound Library
+          // controls. This is technological playback proof, NOT a listening verdict.
+          const catalog = Object.keys(await page.evaluate(() =>
+            Object.fromEntries(Object.entries(AudioAudition.audio.recordingManifest.assets)
+              .filter(([,entry]) => entry.kind === 'effect'))));
+          assert.equal(catalog.length,30);
+          for (const id of catalog) {
+            await page.locator('#sfx-study').selectOption(id);
+            await press('#sfx-candidate');
+            await page.waitForFunction(() =>
+              document.querySelector('#sfx-study-status').textContent.includes('Played unapproved'));
+            assert(!(await page.locator('#message').textContent()).includes('Could not play'), id);
+          }
+        }
         // The original Paladin stage must use its actual registered material recording.
         await page.locator('#sfx-study').selectOption('paladin-sword-swing');
         await press('#sfx-original');
