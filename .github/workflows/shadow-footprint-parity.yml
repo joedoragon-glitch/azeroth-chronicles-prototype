@@ -72,7 +72,7 @@ jobs:
           - site: greenwood-and-archive
             fixtures: shadow-vale-day-paladin,shadow-vale-dusk-mage,shadow-vale-night-ranger,shadow-vale-night-rogue,shadow-archive-interior-paladin
           - site: marches-and-highlands
-            fixtures: shadow-march-day-paladin,shadow-march-dusk-paladin,shadow-march-night-paladin,shadow-highlands-day-paladin,shadow-highlands-dusk-paladin,shadow-highlands-night-paladin
+            fixtures: shadow-march-day-paladin,shadow-march-dusk-paladin,shadow-march-night-paladin,shadow-highlands-day-paladin,shadow-highlands-dusk-paladin,shadow-highlands-night-paladin,shadow-highlands-shore-day-paladin,shadow-highlands-shore-night-paladin
           - site: frontier-and-crown
             fixtures: shadow-frontier-day-paladin,shadow-frontier-dusk-paladin,shadow-frontier-night-paladin,shadow-crown-day-paladin,shadow-crown-dusk-paladin,shadow-crown-night-paladin
           - site: bosses-wildlife-flight-ferry
