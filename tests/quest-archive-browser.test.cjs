@@ -156,18 +156,13 @@ const server = http.createServer((req, res) => {
         null,
         { timeout: 15000 },
       );
+      // G now opens the real Controls directory, following the accepted
+      // Settings/Help declutter. The former combined combat handbook copy
+      // no longer belongs to this page; combat/Archive topics are tested below.
       await page.keyboard.press('g');
-      assert(
-        (await page.locator('#modal-description').textContent()).includes(
-          'Fallen companions need Barracks',
-        ),
-      );
-      assert((await page.locator('#modal-description').textContent()).includes('Shield Bash'));
-      await page.getByRole('button', { name: 'Combat conditions', exact: true }).click();
-      await page.getByRole('button', { name: 'Slow', exact: true }).click();
-      assert((await page.locator('#modal-description').textContent()).includes('cooldown'));
-      await page.keyboard.press('Escape');
-      await page.keyboard.press('Escape');
+      assert.equal(await page.locator('#modal-title').textContent(), 'Controls');
+      assert.equal(await page.getByRole('button', { name: /Customize keyboard/ }).count(), 1);
+      assert.equal(await page.getByRole('button', { name: /Touch and mouse options/ }).count(), 1);
       await page.keyboard.press('Escape');
       await page.evaluate(() => {
         const c = Prototype.game;
