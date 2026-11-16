@@ -395,6 +395,32 @@ async function resumeLoadedCampaign(page) {
       });
       await page.keyboard.press('f');
       await page.getByRole('button', { name: 'Rescued specialists', exact: false }).click();
+      const remoteKeeper = await page.evaluate(() => {
+        const c = Prototype.game;
+        return {
+          pact: c.s.keeperPact,
+          rescued: c.s.rescued.archive,
+          normal: c.s.normal.archive,
+          true: c.s.true.archive,
+          pending: c.s.pending.archive || null,
+          available: c.keeperAvailable(),
+          zone: c.zoneId,
+          bosses: c.s.zones.archive.enemies
+            .filter((e) => e.type === 'boss' && e.family === 'archive')
+            .map((e) => ({ form: e.form, hp: e.hp, respawn: e.respawn })),
+          options: Array.from(document.querySelectorAll('#modal-actions button')).map((b) =>
+            b.textContent.trim(),
+          ),
+        };
+      });
+      assert(
+        remoteKeeper.available && remoteKeeper.pact,
+        'remote Keeper prerequisite after saved TRUE victory: ' + JSON.stringify(remoteKeeper),
+      );
+      assert(
+        remoteKeeper.options.some((label) => label.includes('Drowned Keeper · The Archive')),
+        'remote Keeper menu option remains accessible: ' + JSON.stringify(remoteKeeper),
+      );
       await page
         .getByRole('button', { name: 'Drowned Keeper · The Archive', exact: false })
         .click();
