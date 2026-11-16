@@ -892,12 +892,12 @@
           e.royalTaxShield -= absorbed;
           amount -= absorbed;
         }
-        // Royal Taxation counts committed strikes; budget-sliced status damage is not
-        // a fresh hero/companion attack on every simulation update.
-        if (!options?.periodicDamage && e.family === 'darklord' && e.royalTaxation) {
+        // Royal Taxation expires even during sustained DoT. Only separate
+        // committed strikes, not budget-sliced status updates, fund its shield.
+        if (e.family === 'darklord' && e.royalTaxation) {
           const tax = e.royalTaxation;
           if (this.s.time > tax.expires) e.royalTaxation = null;
-          else if (amount > 0 && tax.marked.includes(source)) {
+          else if (!options?.periodicDamage && amount > 0 && tax.marked.includes(source)) {
             // Four distinct sources in a full party. Smaller parties must
             // still make four real hits in total, including one from each
             // marked attacker. Four hits by just one member of a duo/trio
@@ -945,7 +945,10 @@
           e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
         e.hp = Math.max(0, e.hp - amount);
         this.recordMarchesDamage(e, actualDamage);
-        this.snapshotPassiveRecordHit(e, actualDamage, source);
+        // Per-attack defensive patterns (Veteran's Instinct / Violation)
+        // must not count dozens of HP-budget slices as distinct attacks.
+        // Preserve actual-damage tactical threat and DPS accounting below.
+        if (!options?.periodicDamage) this.snapshotPassiveRecordHit(e, actualDamage, source);
         this.tacticalRecordHit(e, source, actualDamage);
         if (actualDamage > 0 && e.hp > 0)
           this.noteEnemyUnderFire(e, source, origin, actualDamage);
