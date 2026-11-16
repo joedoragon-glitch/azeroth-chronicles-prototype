@@ -89,13 +89,30 @@ try {
     'periodic Wither updates are not repeated qualifying strike actions');
   assert.equal(foe.royalTaxShield || 0, 0,
     'Wither alone cannot instantly fund a Royal Taxation shield');
+  assert(!foe.passiveVeteranUntil || foe.passiveVeteranUntil <= game.s.time,
+    'Wither updates must not become four separate Veteran Instinct attacks');
+  assert.equal((foe.passiveVeteranHits || []).length, 0,
+    'an ongoing DoT does not build an attack-pattern hit roster');
   for (let i = 1; i <= 4; i++) {
     assert(game.damage(foe, 15, 'hero'), 'real direct attack still lands');
     if (i < 4) assert(!foe.royalTaxShield);
   }
   assert.equal(foe.royalTaxShield, foe.maxHp * 0.12,
     'four separate direct attacks preserve native shield mechanics');
-  console.log('PASS Rogue Wither cadence, multi-frame HP budget, VFX receipts and Royal Taxation identity');
+  assert(foe.passiveVeteranUntil > game.s.time,
+    'four legitimate solo attacks still trigger the native Veteran defense');
+
+  // Expiration is a separate lifecycle obligation: skipping DoT attack-count
+  // receipts must not leave an expired boss condition latched indefinitely.
+  const { game: expiredGame, foe: expiredFoe } = scene(true);
+  expiredFoe.royalTaxation = {
+    marked: ['hero'], expires: expiredGame.s.time - 0.01, sources: [], hits: 0,
+  };
+  advanceWither(expiredGame, expiredFoe, 0.05, 0.05);
+  assert.equal(expiredFoe.royalTaxation, null,
+    'existing taxation expires even if subsequent damage is only periodic');
+
+  console.log('PASS Rogue Wither cadence, real HP budget, VFX receipts, Veteran and Royal Taxation identity');
 } finally {
   if (!hadRogue) {
     delete Campaign.classes.rogue;
