@@ -31,7 +31,7 @@
       if (storage.getItem(performanceBaselineKey) === 'applied') return false;
       const defaults = [
         ['azeroth-screen-v1', 'auto'],
-        ['azeroth-camera-v2', JSON.stringify({ desktop: 1.5, phone: 1.5 })],
+        ['azeroth-camera-v2', JSON.stringify({ desktop: 1.25, phone: 1.25 })],
         ['azeroth-fps-v1', 'auto'],
         ['azeroth-adaptive-frame-skip-v1', 'on'],
         ['azeroth-render-resolution-v1', 'auto'],
@@ -128,7 +128,8 @@
     'Confirm clear capture': 'Confirmar borrado de la grabación',
     'Clear renderer capture?': '¿Borrar la grabación del motor gráfico?',
     'Clear effect capture?': '¿Borrar la grabación de efectos?',
-    'Export first to keep a copy. This clears the optional capture, not your campaign.': 'Exporta primero para guardar una copia. Esto borra la grabación opcional y conserva tu partida.',
+    'Export first to keep a copy. This clears the optional capture, not your campaign.':
+      'Exporta primero para guardar una copia. Esto borra la grabación opcional y conserva tu partida.',
     'Playtest tools': 'Herramientas de prueba',
     'Help and privacy': 'Ayuda y privacidad',
     'Optional profiling': 'Mediciones opcionales',
@@ -794,33 +795,51 @@
   });
   // v0.9.2 owner-authorized tutorial chain: authored bilingual UI.
   Object.assign(spanishText, {
-    "The Quest Board": "El tablón de misiones",
-    "Recover Dark Lord Tribute": "Recuperar el tributo del Señor Oscuro",
-    "Visit the Greenwood Quest Board to learn about adventures.": "Visita el tablón de misiones de Greenwood para conocer las aventuras.",
-    "Open a Main Story objective at the Quest Board.": "Abre un objetivo de la Historia principal en el tablón de misiones.",
-    "Inspect Side Quests at the Quest Board.": "Examina las Misiones secundarias del tablón.",
-    "Open your map and find Old Orchard Cellars.": "Abre el mapa y busca las Antiguas bodegas del huerto.",
-    "Select a destination on the map and choose Navigate.": "Elige un destino en el mapa y pulsa Navegar.",
-    "Explore Old Orchard Cellars and study The Art of Misdirection (+1 critical chance point).": "Explora las Antiguas bodegas del huerto y estudia El arte del engaño (+1 punto de probabilidad crítica).",
-    "Barracks → Operations → Gather resources: dispatch idle companions.": "Cuartel → Operaciones → Recoger recursos: envía a tus compañeros disponibles.",
-    "Escort your workers and recover their cargo as crowns at Town Supplies.": "Escolta a tus compañeros y recoge su carga como coronas en Suministros del pueblo.",
-    "Meet the Captain: Rogues Charm monsters rather than hire Soldiers and Rangers.": "Habla con el capitán: las Pícaras encantan monstruos en vez de contratar Soldados y Rangers.",
-    "Charm an eligible monster with Rogue automatic attacks; you begin alone.": "Encanta un monstruo elegible con los ataques automáticos de la Pícara; empiezas sin compañeros.",
-    "Construction in progress · keep an eligible companion assigned until complete": "Construcción en curso · mantén asignado a un compañero elegible hasta finalizar",
-    "You begin alone. Your automatic bell strikes can Charm eligible surviving monsters. A lawful Charmed companion can fight, gather and build your first Barracks. After a Charm, return to practice Recall.": "La pícara comienza sin compañía. Los golpes automáticos de su cascabel pueden encantar monstruos aptos que sobrevivan. Un aliado encantado puede combatir, recolectar y construir el primer cuartel. Después del primer encantamiento, vuelve para practicar Reagrupar.",
-    "Find your first Charmed companion": "Encuentra tu primer compañero encantado",
-    "Recover a companion first": "Recupera antes un compañero",
-    "Charm an eligible surviving monster with your automatic bell strikes.": "Encanta un monstruo elegible que sobreviva a los golpes automáticos de tu cascabel.",
-    "Recall needs a living active companion.": "Reagrupar necesita un compañero vivo y activo.",
-    "Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nAn idle eligible Charmed companion builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.": "Sal del pueblo. Busca terreno abierto fuera del camino.\nAbre Menú → Establecer cuartel básico (GRATIS).\nLo construye un compañero encantado disponible.\nAl terminar: Curar heridas restaura toda la salud del grupo por 30 coronas cuando sea seguro.",
-    "An idle active Charmed companion is needed": "Hace falta un compañero encantado activo y disponible",
-    "Gathering basics": "Lo básico de la recolección",
-    "Choose a tribute source": "Elegir una fuente de tributo",
-    "Dark Lord Tribute is finite. Choose a source, send your idle companions, and escort them along the waypoint. They fight or withdraw when threatened, then resume work. Recovered cargo becomes crowns when delivered to Town Supplies or another valid deposit.": "El tributo del Señor Oscuro es limitado. Elige una fuente, envía a tus compañeros disponibles y escóltalos siguiendo la ruta. Combatirán o se retirarán ante el peligro y luego reanudarán su trabajo. La carga recuperada se convierte en coronas al entregarla en Suministros del pueblo u otro depósito válido.",
-    "Choose one eligible, living, idle companion (active or reserve). The companion is unavailable for ": "Elige un compañero elegible, vivo y disponible (activo o en reserva). Estará ausente durante ",
-    "Full Barracks: recover finite leftover tribute from a previously visited region once all its captive specialists are rescued. Choose one eligible companion; the mission runs during active play, and recovered crowns arrive automatically on return.": "Cuartel completo: recupera el tributo restante de una región visitada anteriormente cuando se hayan rescatado todos sus especialistas cautivos. Elige un compañero elegible; la misión avanza mientras juegas y las coronas llegan automáticamente a su regreso.",
-    "TUTORIAL · ": "TUTORIAL · ",
-    "COMPANIONS · Charm an eligible monster with Rogue automatic attacks; you begin alone.": "COMPAÑEROS · Encanta un monstruo apto con los ataques automáticos de la Pícara; esta heroína comienza sin compañía.",
+    'The Quest Board': 'El tablón de misiones',
+    'Recover Dark Lord Tribute': 'Recuperar el tributo del Señor Oscuro',
+    'Visit the Greenwood Quest Board to learn about adventures.':
+      'Visita el tablón de misiones de Greenwood para conocer las aventuras.',
+    'Open a Main Story objective at the Quest Board.':
+      'Abre un objetivo de la Historia principal en el tablón de misiones.',
+    'Inspect Side Quests at the Quest Board.': 'Examina las Misiones secundarias del tablón.',
+    'Open your map and find Old Orchard Cellars.':
+      'Abre el mapa y busca las Antiguas bodegas del huerto.',
+    'Select a destination on the map and choose Navigate.':
+      'Elige un destino en el mapa y pulsa Navegar.',
+    'Explore Old Orchard Cellars and study The Art of Misdirection (+1 critical chance point).':
+      'Explora las Antiguas bodegas del huerto y estudia El arte del engaño (+1 punto de probabilidad crítica).',
+    'Barracks → Operations → Gather resources: dispatch idle companions.':
+      'Cuartel → Operaciones → Recoger recursos: envía a tus compañeros disponibles.',
+    'Escort your workers and recover their cargo as crowns at Town Supplies.':
+      'Escolta a tus compañeros y recoge su carga como coronas en Suministros del pueblo.',
+    'Meet the Captain: Rogues Charm monsters rather than hire Soldiers and Rangers.':
+      'Habla con el capitán: las Pícaras encantan monstruos en vez de contratar Soldados y Rangers.',
+    'Charm an eligible monster with Rogue automatic attacks; you begin alone.':
+      'Encanta un monstruo elegible con los ataques automáticos de la Pícara; empiezas sin compañeros.',
+    'Construction in progress · keep an eligible companion assigned until complete':
+      'Construcción en curso · mantén asignado a un compañero elegible hasta finalizar',
+    'You begin alone. Your automatic bell strikes can Charm eligible surviving monsters. A lawful Charmed companion can fight, gather and build your first Barracks. After a Charm, return to practice Recall.':
+      'La pícara comienza sin compañía. Los golpes automáticos de su cascabel pueden encantar monstruos aptos que sobrevivan. Un aliado encantado puede combatir, recolectar y construir el primer cuartel. Después del primer encantamiento, vuelve para practicar Reagrupar.',
+    'Find your first Charmed companion': 'Encuentra tu primer compañero encantado',
+    'Recover a companion first': 'Recupera antes un compañero',
+    'Charm an eligible surviving monster with your automatic bell strikes.':
+      'Encanta un monstruo elegible que sobreviva a los golpes automáticos de tu cascabel.',
+    'Recall needs a living active companion.': 'Reagrupar necesita un compañero vivo y activo.',
+    'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nAn idle eligible Charmed companion builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.':
+      'Sal del pueblo. Busca terreno abierto fuera del camino.\nAbre Menú → Establecer cuartel básico (GRATIS).\nLo construye un compañero encantado disponible.\nAl terminar: Curar heridas restaura toda la salud del grupo por 30 coronas cuando sea seguro.',
+    'An idle active Charmed companion is needed':
+      'Hace falta un compañero encantado activo y disponible',
+    'Gathering basics': 'Lo básico de la recolección',
+    'Choose a tribute source': 'Elegir una fuente de tributo',
+    'Dark Lord Tribute is finite. Choose a source, send your idle companions, and escort them along the waypoint. They fight or withdraw when threatened, then resume work. Recovered cargo becomes crowns when delivered to Town Supplies or another valid deposit.':
+      'El tributo del Señor Oscuro es limitado. Elige una fuente, envía a tus compañeros disponibles y escóltalos siguiendo la ruta. Combatirán o se retirarán ante el peligro y luego reanudarán su trabajo. La carga recuperada se convierte en coronas al entregarla en Suministros del pueblo u otro depósito válido.',
+    'Choose one eligible, living, idle companion (active or reserve). The companion is unavailable for ':
+      'Elige un compañero elegible, vivo y disponible (activo o en reserva). Estará ausente durante ',
+    'Full Barracks: recover finite leftover tribute from a previously visited region once all its captive specialists are rescued. Choose one eligible companion; the mission runs during active play, and recovered crowns arrive automatically on return.':
+      'Cuartel completo: recupera el tributo restante de una región visitada anteriormente cuando se hayan rescatado todos sus especialistas cautivos. Elige un compañero elegible; la misión avanza mientras juegas y las coronas llegan automáticamente a su regreso.',
+    'TUTORIAL · ': 'TUTORIAL · ',
+    'COMPANIONS · Charm an eligible monster with Rogue automatic attacks; you begin alone.':
+      'COMPAÑEROS · Encanta un monstruo apto con los ataques automáticos de la Pícara; esta heroína comienza sin compañía.',
   });
   Object.assign(spanishText, {
     'Complete · lesson learned': 'Completa · lección aprendida',
@@ -829,10 +848,12 @@
     'Dispatch companions to gather tribute and recover crowns from their cargo.':
       'Envía compañeros a recoger tributo y recupera las coronas de la carga que transporten.',
     'Critical executions': 'Ejecuciones críticas',
-    'A critical execution strengthens a real attack or supported effect; it does not make a missed attack hit. The Art of Misdirection permanently increases your hero critical chance by one percentage point. The Keeper Archive explains detailed critical rules.': 'Una ejecución crítica refuerza un ataque real o un efecto compatible, pero no convierte un fallo en un acierto. El arte del engaño aumenta permanentemente la probabilidad crítica de tu personaje en un punto porcentual. El Archivo del Guardián explica las reglas detalladas.',
+    'A critical execution strengthens a real attack or supported effect; it does not make a missed attack hit. The Art of Misdirection permanently increases your hero critical chance by one percentage point. The Keeper Archive explains detailed critical rules.':
+      'Una ejecución crítica refuerza un ataque real o un efecto compatible, pero no convierte un fallo en un acierto. El arte del engaño aumenta permanentemente la probabilidad crítica de tu personaje en un punto porcentual. El Archivo del Guardián explica las reglas detalladas.',
   });
   Object.assign(spanishText, {
-    'Uses one idle active Charmed companion': 'Se necesita un compañero encantado activo y disponible',
+    'Uses one idle active Charmed companion':
+      'Se necesita un compañero encantado activo y disponible',
     'An idle active Charmed companion is needed to build. Recall workers or recover a fallen companion first.':
       'Para construir necesitas un compañero encantado activo y disponible. Reagrupa a los trabajadores o recupera antes a un compañero caído.',
     // Introductory text describes the selected hero, not the real player's gender.
@@ -1021,7 +1042,8 @@
       'Las mascotas usan estas habilidades automáticamente en combate.',
     'Clear line required': 'Requiere línea despejada',
     'Automatic 0.65s charge': 'Carga automática de 0.65 s',
-    'Unlock: learn hero Skill 2 from Mira': 'Desbloqueo: aprende la habilidad 2 de tu personaje con Mira',
+    'Unlock: learn hero Skill 2 from Mira':
+      'Desbloqueo: aprende la habilidad 2 de tu personaje con Mira',
     'Joins your group for free.': 'Se une al grupo gratis.',
     'Group full. Recruits into reserve; rest a member to make room.':
       'Grupo lleno. Se recluta en reserva; deja descansar a alguien para hacer sitio.',
@@ -1075,7 +1097,7 @@
     'Optimization Mode': 'Modo de optimización',
     'Atmospheric particles': 'Partículas ambientales',
     'Active draw target': 'Objetivo de dibujo activo',
-    'Effective density': 'Densidad efectiva', 
+    'Effective density': 'Densidad efectiva',
     'Custom resolution. Optimization Mode applies the performance limit.':
       'Resolución personalizada. El modo de optimización aplica el límite de rendimiento.',
     'Use the Pixi performance preset. Turn it off to restore custom settings.':
@@ -1159,6 +1181,12 @@
     'Dungeon entrances': 'Entradas de mazmorras',
     'Places and threats': 'Lugares y amenazas',
     'Screen layout': 'Disposición de pantalla',
+    'Menu density': 'Densidad de los menús',
+    'Automatic · Recommended': 'Automática · Recomendada',
+    'Compact · More on screen': 'Compacta · Más opciones visibles',
+    'Standard · Roomier': 'Normal · Más espacio',
+    'Adapts all menus to the available screen. Compact preserves readable text and touch targets.':
+      'Adapta todos los menús al espacio disponible. El modo compacto conserva la legibilidad y los botones táctiles.',
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Graphics renderer': 'Motor gráfico',
@@ -1708,13 +1736,10 @@
         ' ' +
         spanishText[thornLore]
       );
-    const patrolLead = /^(Thornfang’s patrol is heading toward|Last word puts Thornfang near) (.+)\.$/.exec(
-      piece,
-    );
+    const patrolLead =
+      /^(Thornfang’s patrol is heading toward|Last word puts Thornfang near) (.+)\.$/.exec(piece);
     if (patrolLead)
-      return (
-        spanishText[patrolLead[1]] + ' ' + (spanishText[patrolLead[2]] || patrolLead[2]) + '.'
-      );
+      return spanishText[patrolLead[1]] + ' ' + (spanishText[patrolLead[2]] || patrolLead[2]) + '.';
     const miraWaiting =
       /^Thornfang was defeated\. Mira waits near (.+)\. Your journal can guide you to her last known waiting place\.$/.exec(
         piece,
@@ -2673,7 +2698,10 @@
       return 'WebGL2 was interrupted. Canvas backup is active; recovery will retry when safe.';
     if (snapshot.lastFallbackReason === 'interrupted-trial')
       return 'Canvas is active because the previous Pixi trial was interrupted.';
-    if (snapshot.preferredRenderer === 'webgl2' || snapshot.lastFallbackReason?.startsWith('webgl-'))
+    if (
+      snapshot.preferredRenderer === 'webgl2' ||
+      snapshot.lastFallbackReason?.startsWith('webgl-')
+    )
       return 'Canvas is active because Pixi could not start safely.';
     return '';
   }
@@ -2808,11 +2836,11 @@
           if (canvasQualityBeforePixi) {
             const previous = canvasQualityBeforePixi;
             canvasQualityBeforePixi = null;
-            const optimized = previous.preference === optimizationPreference
-              ? previous.optimizationMode
-              : optimizationPreference === 'on';
-            if (!setOptimizationActive(optimized, 'canvas-fallback'))
-              resize('canvas-fallback');
+            const optimized =
+              previous.preference === optimizationPreference
+                ? previous.optimizationMode
+                : optimizationPreference === 'on';
+            if (!setOptimizationActive(optimized, 'canvas-fallback')) resize('canvas-fallback');
           }
           renderer.draw();
           // Only release GPU resources after the reliable Canvas is visible.
@@ -3062,6 +3090,9 @@
     }
     viewport.width = innerWidth;
     viewport.height = innerHeight;
+    // Re-evaluate density only on an actual viewport/safe-area change.
+    // The platform caches the last logical dimensions; game frames never run this.
+    platform.updateMenuDensity();
     // Below the supported 375x800 portrait / 800x375 landscape layout,
     // proportionally fit controls instead of authoring a second smaller UI.
     // The Canvas continues to render at its actual viewport size.
@@ -3135,6 +3166,8 @@
     releaseJoystick();
     resize();
   });
+  // The phone shell forwards changed physical safe insets across the rotated frame.
+  addEventListener('phone-safe-area-updated', () => platform.updateMenuDensity());
   function activePlay() {
     return (
       started &&
@@ -3634,7 +3667,8 @@
           )));
     $('modal').setAttribute(
       'data-menu-layout',
-      options.layout || (readingView ? 'reading' : formControl ? 'form' : choiceGroup ? 'choices' : 'stack'),
+      options.layout ||
+        (readingView ? 'reading' : formControl ? 'form' : choiceGroup ? 'choices' : 'stack'),
     );
     $('modal').setAttribute('data-menu-count', String(actionable.length));
     audio.interfaceSound('open');
@@ -3725,55 +3759,109 @@
   // The browser must receive a trusted click on the actual file input.
   // Preserve its stable DOM node and onchange handler between dialog rebuilds.
   const importFileInput = $('import-file');
-  // The character picker uses precisely the appearances players see in-game:
-  // authored procedural Paladin/Mage/Rogue; the registered Ranger sprite once
-  // it is loaded, with the real procedural Ranger as an offline fallback.
-  // No portrait asset, gameplay state, or title-time GPU warmup is invented.
+  // Class previews use the CURRENT hero painters, never disconnected portrait art.
+  // Fit actual painted alpha bounds rather than assigning unrelated artist scales.
+  // Cache the four sources for this session; no per-frame readbacks or save changes.
+  const classPreviewSources = new Map();
   let rangerPickerLoadRequested = false;
   function paintClassSpritePreview(canvas, heroClass) {
     const ctx = canvas?.getContext?.('2d');
     if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const actor = {
-      renderKind: 'hero', class: heroClass, crowned: false,
-      x: 0, y: 0, hp: 100, maxHp: 100,
-    };
-    if (heroClass === 'ranger' && typeof PrototypeSprites !== 'undefined') {
-      ctx.save();
-      ctx.scale(0.74, 0.74);
+    let source = classPreviewSources.get(heroClass);
+    if (!source) {
+      const stage = document.createElement('canvas');
+      stage.width = 352;
+      stage.height = 384;
+      const artist = stage.getContext('2d', { willReadFrequently: true });
+      if (!artist) return;
+      const actor = {
+        renderKind: 'hero',
+        class: heroClass,
+        crowned: false,
+        x: 0,
+        y: 0,
+        hp: 100,
+        maxHp: 100,
+      };
+      artist.save();
+      artist.translate(stage.width / 2, stage.height * 0.72);
+      artist.scale(2.15, 2.15);
       let painted = false;
       try {
-        painted = !!PrototypeSprites.draw?.(ctx, actor, { x: 103, y: 189 }, 0, false);
+        if (heroClass === 'ranger' && typeof PrototypeSprites !== 'undefined')
+          painted = !!PrototypeSprites.draw?.(artist, actor, { x: 0, y: 0 }, 0, false);
+        if (!painted) PrototypeVisuals.draw(artist, actor, { x: 0, y: 0 }, 0, false);
       } finally {
-        ctx.restore();
+        artist.restore();
       }
-      if (painted) {
-        canvas.dataset.previewSource = 'game-sprite';
-        return;
-      }
+      const pixels = artist.getImageData(0, 0, stage.width, stage.height).data;
+      let left = stage.width,
+        top = stage.height,
+        right = -1,
+        bottom = -1;
+      for (let y = 0; y < stage.height; y++)
+        for (let x = 0; x < stage.width; x++)
+          if (pixels[(y * stage.width + x) * 4 + 3] > 24) {
+            if (x < left) left = x;
+            if (x > right) right = x;
+            if (y < top) top = y;
+            if (y > bottom) bottom = y;
+          }
+      if (right < left || bottom < top) return;
+      source = {
+        stage,
+        sourceType: painted ? 'game-sprite' : 'game-procedural',
+        left,
+        top,
+        width: right - left + 1,
+        height: bottom - top + 1,
+      };
+      classPreviewSources.set(heroClass, source);
     }
-    ctx.save();
-    ctx.scale(2.4, 2.4);
-    try {
-      PrototypeVisuals.draw(ctx, actor, { x: 31.7, y: 56 }, 0, false);
-      canvas.dataset.previewSource = 'game-procedural';
-    } finally {
-      ctx.restore();
-    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const marginX = canvas.width * 0.1,
+      marginY = canvas.height * 0.1;
+    const fit = Math.min(
+      (canvas.width - marginX * 2) / source.width,
+      (canvas.height - marginY * 2) / source.height,
+    );
+    const width = source.width * fit,
+      height = source.height * fit;
+    ctx.imageSmoothingEnabled = source.sourceType !== 'game-sprite';
+    ctx.drawImage(
+      source.stage,
+      source.left,
+      source.top,
+      source.width,
+      source.height,
+      (canvas.width - width) / 2,
+      (canvas.height - height) / 2,
+      width,
+      height,
+    );
+    canvas.dataset.previewSource = source.sourceType;
   }
   function warmRangerPickerPreview() {
-    if (rangerPickerLoadRequested || typeof PrototypeSprites === 'undefined' ||
-        typeof PrototypeSprites.preload !== 'function' || typeof fetch !== 'function')
+    if (
+      rangerPickerLoadRequested ||
+      typeof PrototypeSprites === 'undefined' ||
+      typeof PrototypeSprites.preload !== 'function' ||
+      typeof fetch !== 'function'
+    )
       return;
     rangerPickerLoadRequested = true;
     // A player has explicitly opened the class picker. Load only the real
     // Ranger body, not every animation, scene sprite or GPU texture.
-    PrototypeSprites.preload(undefined, ['hero:ranger']).then(() => {
-      const previews = $('modal-actions').querySelectorAll?.(
-        '.class-sprite-preview[data-hero-class="ranger"]',
-      ) || [];
-      for (const canvas of previews) paintClassSpritePreview(canvas, 'ranger');
-    }).catch(() => {}); // Offline class choice remains fully functional.
+    PrototypeSprites.preload(undefined, ['hero:ranger'])
+      .then(() => {
+        classPreviewSources.delete('ranger');
+        const previews =
+          $('modal-actions').querySelectorAll?.(
+            '.class-sprite-preview[data-hero-class="ranger"]',
+          ) || [];
+        for (const canvas of previews) paintClassSpritePreview(canvas, 'ranger');
+      })
+      .catch(() => {}); // Offline class choice remains fully functional.
   }
   function renderActions() {
     const host = $('modal-actions');
@@ -3926,7 +4014,8 @@
           b.setAttribute('aria-pressed', String(a.uiChosen));
         }
         if (a.uiWide) b.classList.add('menu-wide');
-        const isClassChoice = menu.view === 'class-select' &&
+        const isClassChoice =
+          menu.view === 'class-select' &&
           ['paladin', 'mage', 'ranger', 'rogue'].includes(a.classId);
         if (isClassChoice) {
           b.classList.add('class-character-choice');
@@ -4870,13 +4959,16 @@
     waitOrSkip(titleWarmup, reveal);
   }
   // Protect accidental Safari Back swipes; repeat Back within three seconds to leave.
-  let backGuardArmed = false, lastBlockedBackAt = 0;
+  let backGuardArmed = false,
+    lastBlockedBackAt = 0;
   function armBrowserBackGuard() {
     if (backGuardArmed || !window.history?.pushState) return;
     try {
       window.history.pushState({ sibdlpGameGuard: true }, '', location.href);
       backGuardArmed = true;
-    } catch (_) { /* Embedded/locked history: keep native navigation. */ }
+    } catch (_) {
+      /* Embedded/locked history: keep native navigation. */
+    }
   }
   function returnToTitleScreen() {
     if (!started || !writerGuard.canWrite() || !save()) {
@@ -5462,26 +5554,34 @@
     paladin: {
       en: 'Paladin',
       es: 'Paladín',
-      detail: 'He meets danger sword-first, shielding his companions with holy magic. The Paladin fights up close, heals wounds, and can briefly withstand an otherwise devastating strike.',
-      detailEs: 'Con espada y magia sagrada, el paladín se interpone entre el peligro y sus compañeros. Combate cuerpo a cuerpo, cura heridas y resiste durante unos instantes los golpes más terribles.',
+      detail:
+        'He meets danger sword-first, shielding his companions with holy magic. The Paladin fights up close, heals wounds, and can briefly withstand an otherwise devastating strike.',
+      detailEs:
+        'Con espada y magia sagrada, el paladín se interpone entre el peligro y sus compañeros. Combate cuerpo a cuerpo, cura heridas y resiste durante unos instantes los golpes más terribles.',
     },
     mage: {
       en: 'Mage',
       es: 'Maga',
-      detail: 'She commands the fight from a distance with arcane beams, frost and protective barriers. The Mage wins by choosing when to strike, interrupt and defend.',
-      detailEs: 'La maga domina el combate a distancia con rayos arcanos, hielo y barreras protectoras. Prefiere decidir cuándo atacar, interrumpir al enemigo y defender a su compañía.',
+      detail:
+        'She commands the fight from a distance with arcane beams, frost and protective barriers. The Mage wins by choosing when to strike, interrupt and defend.',
+      detailEs:
+        'La maga domina el combate a distancia con rayos arcanos, hielo y barreras protectoras. Prefiere decidir cuándo atacar, interrumpir al enemigo y defender a su compañía.',
     },
     ranger: {
       en: 'Ranger',
       es: 'Explorador',
-      detail: 'He reads the battlefield from behind his bow, moving before enemies can close in. The Ranger sends his hawk to disrupt retreats, then heals and rallies his companions.',
-      detailEs: 'El explorador se mueve antes de que el enemigo acorte distancias. Su arco y su halcón frenan retiradas, mientras sus curaciones y arengas mantienen en pie a la compañía.',
+      detail:
+        'He reads the battlefield from behind his bow, moving before enemies can close in. The Ranger sends his hawk to disrupt retreats, then heals and rallies his companions.',
+      detailEs:
+        'El explorador se mueve antes de que el enemigo acorte distancias. Su arco y su halcón frenan retiradas, mientras sus curaciones y arengas mantienen en pie a la compañía.',
     },
     rogue: {
       en: 'Rogue',
       es: 'Pícara',
-      detail: 'She begins alone, a jingling bell in hand instead of a squad. The Rogue disrupts opponents with unruly music, and monsters that survive her strikes may become Charmed allies.',
-      detailEs: 'La pícara empieza sola, con un cascabel en vez de escolta. Su música desconcierta al enemigo y los monstruos que sobreviven a sus golpes pueden convertirse en aliados encantados.',
+      detail:
+        'She begins alone, a jingling bell in hand instead of a squad. The Rogue disrupts opponents with unruly music, and monsters that survive her strikes may become Charmed allies.',
+      detailEs:
+        'La pícara empieza sola, con un cascabel en vez de escolta. Su música desconcierta al enemigo y los monstruos que sobreviven a sus golpes pueden convertirse en aliados encantados.',
     },
   });
   function heroClassLabel(id, localized = language === 'es') {
@@ -5687,16 +5787,28 @@
   // termination before the most recent successful local storage write.
   const playtestJournalKey = 'sibdlp-playtest-diagnostics-v1';
   function blankPlaytestJournal() {
-    return { version: 1, events: [], segments: [], frameHistory: [],
-      frame: null, capture: null, active: false, updatedAt: 0 };
+    return {
+      version: 1,
+      events: [],
+      segments: [],
+      frameHistory: [],
+      frame: null,
+      capture: null,
+      active: false,
+      updatedAt: 0,
+    };
   }
   function readPlaytestJournal() {
     try {
       const bytes = localStorage.getItem(playtestJournalKey);
       if (!bytes || bytes.length > 180000) return blankPlaytestJournal();
       const data = JSON.parse(bytes);
-      if (data?.version !== 1 || !Number.isFinite(data.updatedAt) ||
-          Date.now() - data.updatedAt > 7 * 86400000 || data.updatedAt > Date.now() + 60000)
+      if (
+        data?.version !== 1 ||
+        !Number.isFinite(data.updatedAt) ||
+        Date.now() - data.updatedAt > 7 * 86400000 ||
+        data.updatedAt > Date.now() + 60000
+      )
         return blankPlaytestJournal();
       return {
         version: 1,
@@ -5704,8 +5816,12 @@
         segments: Array.isArray(data.segments) ? data.segments.slice(-3) : [],
         frameHistory: Array.isArray(data.frameHistory) ? data.frameHistory.slice(-3) : [],
         frame: data.frame && typeof data.frame === 'object' ? data.frame : null,
-        capture: data.capture && typeof data.capture === 'object' &&
-          ['recording', 'stopped'].includes(data.capture.state) ? data.capture : null,
+        capture:
+          data.capture &&
+          typeof data.capture === 'object' &&
+          ['recording', 'stopped'].includes(data.capture.state)
+            ? data.capture
+            : null,
         active: data.active === true,
         updatedAt: data.updatedAt,
       };
@@ -5715,8 +5831,11 @@
   }
   // Ephemeral document identity distinguishes title transitions from a new JS document.
   // A new document is not itself proof of a process crash (reload/update also reboots it).
-  const playtestDocumentId = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
-  const playtestNavigationType = String(performance.getEntriesByType?.('navigation')?.[0]?.type || 'unknown').slice(0, 24);
+  const playtestDocumentId =
+    Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+  const playtestNavigationType = String(
+    performance.getEntriesByType?.('navigation')?.[0]?.type || 'unknown',
+  ).slice(0, 24);
   const playtestWasDiscarded = document.wasDiscarded === true;
   const playtestJournal = readPlaytestJournal();
   const resumeRendererCapture = playtestJournal.active;
@@ -5729,14 +5848,16 @@
     // Performance.now() restarts with every document. Keep the old summary
     // as its own honest segment; never pretend its elapsed time is continuous.
     playtestJournal.segments.push({
-      ...playtestJournal.capture, state: 'interrupted',
+      ...playtestJournal.capture,
+      state: 'interrupted',
       boundary: 'document-restarted-or-restored',
     });
     playtestJournal.segments = playtestJournal.segments.slice(-3);
     playtestJournal.capture = null;
   }
   playtestJournal.events.push({
-    kind: 'document-start', at: new Date().toISOString(),
+    kind: 'document-start',
+    at: new Date().toISOString(),
     documentId: playtestDocumentId,
     navigationType: playtestNavigationType,
     wasDiscarded: playtestWasDiscarded,
@@ -5774,9 +5895,14 @@
   }
   function notePlaytestLifecycle(kind, details = {}) {
     playtestJournal.events.push({
-      kind, at: new Date().toISOString(), documentId: playtestDocumentId,
-      playing: started, hidden: !!document.hidden,
-      visibilityState: String(document.visibilityState || (document.hidden ? 'hidden' : 'visible')).slice(0, 16),
+      kind,
+      at: new Date().toISOString(),
+      documentId: playtestDocumentId,
+      playing: started,
+      hidden: !!document.hidden,
+      visibilityState: String(
+        document.visibilityState || (document.hidden ? 'hidden' : 'visible'),
+      ).slice(0, 16),
       zone: game?.zoneId || null,
       ...details,
     });
@@ -5843,22 +5969,33 @@
   // 32 callbacks. Short per-zone / engagement summaries distinguish chronic
   // scene cost from exceptional bakes and combat; never mix their populations.
   const overlaySubpassStageNames = [
-    'groundAndClear', 'healthPlates', 'nameplates',
-    'occlusionCandidates', 'occlusionMasks', 'remainingCombatCues',
+    'groundAndClear',
+    'healthPlates',
+    'nameplates',
+    'occlusionCandidates',
+    'occlusionMasks',
+    'remainingCombatCues',
     'totalDrawMs',
     // Nested under occlusionMasks, not additional whole-overlay time.
-    'outlinePairMs', 'outlineBuffersMs', 'outlineClearMs', 'outlineActorMs',
-    'outlineTintMs', 'outlineEdgeMs', 'outlineCoverMs', 'outlineCompositeMs',
+    'outlinePairMs',
+    'outlineBuffersMs',
+    'outlineClearMs',
+    'outlineActorMs',
+    'outlineTintMs',
+    'outlineEdgeMs',
+    'outlineCoverMs',
+    'outlineCompositeMs',
   ];
   const overlaySubpassBoundsMs = [0.5, 1, 2, 4, 8, 12, 16, 24, 33, 50, 75, 100, 150, 250, 500];
   function recordOverlaySubpasses(capture, zone, engaged, overlayDraws) {
     if (!capture || !Array.isArray(overlayDraws) || !overlayDraws.length) return;
-    const zoneName = typeof zone === 'string' && /^[a-z0-9-]{1,40}$/.test(zone)
-      ? zone : 'unknown';
+    const zoneName = typeof zone === 'string' && /^[a-z0-9-]{1,40}$/.test(zone) ? zone : 'unknown';
     const activity = engaged ? 'engaged' : 'unengaged';
     let key = zoneName + ':' + activity;
-    if (!Object.hasOwn(capture.overlaySubpassByActivity, key) &&
-        Object.keys(capture.overlaySubpassByActivity).length >= 24)
+    if (
+      !Object.hasOwn(capture.overlaySubpassByActivity, key) &&
+      Object.keys(capture.overlaySubpassByActivity).length >= 24
+    )
       key = 'other:' + activity;
     const summaries = capture.overlaySubpassByActivity;
     if (!summaries[key]) {
@@ -5868,13 +6005,27 @@
         // Counters come directly from the already-reset per-draw Canvas
         // renderer, not a new entity/cover scan inside the diagnostics.
         outlineWork: {
-          samples: 0, maskCount: 0, maskPixels: 0, zeroMaskPasses: 0,
-          maxMasksPerDraw: 0, maxVisibleEntities: 0,
-          coverSpriteDraws: 0, sampledCoverPasses: 0, pairCount: 0,
+          samples: 0,
+          maskCount: 0,
+          maskPixels: 0,
+          zeroMaskPasses: 0,
+          maxMasksPerDraw: 0,
+          maxVisibleEntities: 0,
+          coverSpriteDraws: 0,
+          sampledCoverPasses: 0,
+          pairCount: 0,
         },
-        stages: Object.fromEntries(overlaySubpassStageNames.map((name) => [
-          name, { samples: 0, sumMs: 0, maxMs: 0, histogram: Array(overlaySubpassBoundsMs.length + 1).fill(0) },
-        ])),
+        stages: Object.fromEntries(
+          overlaySubpassStageNames.map((name) => [
+            name,
+            {
+              samples: 0,
+              sumMs: 0,
+              maxMs: 0,
+              histogram: Array(overlaySubpassBoundsMs.length + 1).fill(0),
+            },
+          ]),
+        ),
       };
     }
     const summary = summaries[key];
@@ -5884,7 +6035,10 @@
       let missing = false;
       for (const name of overlaySubpassStageNames) {
         const ms = stages[name];
-        if (!Number.isFinite(ms) || ms < 0) { missing = true; continue; }
+        if (!Number.isFinite(ms) || ms < 0) {
+          missing = true;
+          continue;
+        }
         const record = summary.stages[name];
         record.samples++;
         record.sumMs += ms;
@@ -5896,9 +6050,12 @@
         pixels = stages.occlusionMaskPixels,
         visible = stages.occlusionVisibleEntities;
       if (
-        Number.isSafeInteger(masks) && masks >= 0 &&
-        Number.isSafeInteger(pixels) && pixels >= 0 &&
-        Number.isSafeInteger(visible) && visible >= 0
+        Number.isSafeInteger(masks) &&
+        masks >= 0 &&
+        Number.isSafeInteger(pixels) &&
+        pixels >= 0 &&
+        Number.isSafeInteger(visible) &&
+        visible >= 0
       ) {
         const work = summary.outlineWork;
         work.samples++;
@@ -5907,8 +6064,12 @@
         if (masks === 0) work.zeroMaskPasses++;
         work.maxMasksPerDraw = Math.max(work.maxMasksPerDraw, masks);
         work.maxVisibleEntities = Math.max(work.maxVisibleEntities, visible);
-        if (Number.isSafeInteger(stages.outlineCoverSprites) && stages.outlineCoverSprites >= 0 &&
-            Number.isSafeInteger(stages.outlinePairs) && stages.outlinePairs >= 0) {
+        if (
+          Number.isSafeInteger(stages.outlineCoverSprites) &&
+          stages.outlineCoverSprites >= 0 &&
+          Number.isSafeInteger(stages.outlinePairs) &&
+          stages.outlinePairs >= 0
+        ) {
           work.sampledCoverPasses++;
           work.coverSpriteDraws += stages.outlineCoverSprites;
           work.pairCount += stages.outlinePairs;
@@ -5918,7 +6079,8 @@
   }
   function overlaySubpassReport(capture) {
     return {
-      scope: 'All completed opt-in Canvas-overlay passes in this renderer-recording segment, including normal draws and at most two same-callback draws; separated by zone and engagement state observed at callback completion. Timed JS only, added opt-in overhead, no GPU/presented FPS. outline*Ms are nested within occlusionMasks, not extra time; per-mask timestamps add profiler overhead. Independent p95 values are not additive.',
+      scope:
+        'All completed opt-in Canvas-overlay passes in this renderer-recording segment, including normal draws and at most two same-callback draws; separated by zone and engagement state observed at callback completion. Timed JS only, added opt-in overhead, no GPU/presented FPS. outline*Ms are nested within occlusionMasks, not extra time; per-mask timestamps add profiler overhead. Independent p95 values are not additive.',
       bucketUpperBoundsMs: overlaySubpassBoundsMs,
       groups: Object.entries(capture.overlaySubpassByActivity || {}).map(([key, group]) => ({
         zoneAndEngagement: key,
@@ -5930,22 +6092,26 @@
           totalMaskPixels: group.outlineWork.maskPixels,
           zeroMaskPasses: group.outlineWork.zeroMaskPasses,
           meanMasksPerDraw: group.outlineWork.samples
-            ? +(group.outlineWork.maskCount / group.outlineWork.samples).toFixed(2) : null,
+            ? +(group.outlineWork.maskCount / group.outlineWork.samples).toFixed(2)
+            : null,
           maxMasksPerDraw: group.outlineWork.maxMasksPerDraw,
           maxVisibleEntities: group.outlineWork.maxVisibleEntities,
           sampledCoverPasses: group.outlineWork.sampledCoverPasses,
           totalCoverSpriteDraws: group.outlineWork.coverSpriteDraws,
           totalOcclusionPairs: group.outlineWork.pairCount,
         },
-        stages: Object.fromEntries(Object.entries(group.stages).map(([name, row]) => [
-          name, {
-            samples: row.samples,
-            meanMs: row.samples ? +(row.sumMs / row.samples).toFixed(2) : null,
-            maxMs: +row.maxMs.toFixed(2),
-            p95UpperMs: rendererHistogramQuantile(row.histogram, 0.95, overlaySubpassBoundsMs),
-            histogram: row.histogram,
-          },
-        ])),
+        stages: Object.fromEntries(
+          Object.entries(group.stages).map(([name, row]) => [
+            name,
+            {
+              samples: row.samples,
+              meanMs: row.samples ? +(row.sumMs / row.samples).toFixed(2) : null,
+              maxMs: +row.maxMs.toFixed(2),
+              p95UpperMs: rendererHistogramQuantile(row.histogram, 0.95, overlaySubpassBoundsMs),
+              histogram: row.histogram,
+            },
+          ]),
+        ),
       })),
     };
   }
@@ -5992,7 +6158,9 @@
     lastRendererRecording = null;
     rendererDiagnosticActive = true;
     renderer.setOverlaySubpassProfiling(true);
-    notePlaytestLifecycle(retainPreviousSegments ? 'renderer-profiling-restored' : 'renderer-profiling-started');
+    notePlaytestLifecycle(
+      retainPreviousSegments ? 'renderer-profiling-restored' : 'renderer-profiling-started',
+    );
   }
   // Recent graphics-policy timeline, separate from the original arrival log.
   // Retain at most 48 events and eight same-callback actions, never a save.
@@ -6045,18 +6213,22 @@
       enemyAIMs: Math.round(stages.enemyAIMs * 10) / 10,
       otherSimulationMs: Math.round(stages.otherSimulationMs * 10) / 10,
       enemyDetail: stages.enemyDetail
-        ? Object.fromEntries(Object.entries(stages.enemyDetail.phases).map(([name, row]) => [
-            name, {
-              completed: row.completed,
-              ms: row.completed ? +row.elapsedMs.toFixed(2) : null,
-              routeCalls: row.routeCalls,
-              routeMs: +row.routeMs.toFixed(2),
-              maxRouteMs: +row.maxRouteMs.toFixed(2),
-              budgetedCalls: row.budgetedCalls,
-              budgetedMs: +row.budgetedMs.toFixed(2),
-              maxBudgetedMs: +row.maxBudgetedMs.toFixed(2),
-            },
-          ])) : null,
+        ? Object.fromEntries(
+            Object.entries(stages.enemyDetail.phases).map(([name, row]) => [
+              name,
+              {
+                completed: row.completed,
+                ms: row.completed ? +row.elapsedMs.toFixed(2) : null,
+                routeCalls: row.routeCalls,
+                routeMs: +row.routeMs.toFixed(2),
+                maxRouteMs: +row.maxRouteMs.toFixed(2),
+                budgetedCalls: row.budgetedCalls,
+                budgetedMs: +row.budgetedMs.toFixed(2),
+                maxBudgetedMs: +row.maxBudgetedMs.toFixed(2),
+              },
+            ]),
+          )
+        : null,
       pixiMs: Math.round(stages.pixiMs * 10) / 10,
       canvasOverlayMs: Math.round(stages.canvasOverlayMs * 10) / 10,
       canvasWorldMs: Math.round(stages.canvasWorldMs * 10) / 10,
@@ -6065,11 +6237,11 @@
       adaptiveSkipped: !!skipped,
       frameId: rendererRecordingFrameId,
       graphicsTransitions: rendererRecordingFrameEvents?.slice() || [],
-      overlayDraws: (stages.overlayDraws || []).slice(0, 2).map((stages) =>
-        Object.fromEntries(
-          Object.entries(stages).map(([name, ms]) => [name, +ms.toFixed(2)]),
+      overlayDraws: (stages.overlayDraws || [])
+        .slice(0, 2)
+        .map((stages) =>
+          Object.fromEntries(Object.entries(stages).map(([name, ms]) => [name, +ms.toFixed(2)])),
         ),
-      ),
       pixiDraws: (stages.pixiDraws || []).slice(0, 2).map((trace) => ({
         elapsedStartMs: +(trace.startedAtMs - capture.startedClockMs).toFixed(2),
         totalMs: +trace.totalMs.toFixed(2),
@@ -6100,9 +6272,10 @@
     }
   }
   function rendererRecordingReport(capture = rendererRecording || lastRendererRecording) {
-    if (!capture) return playtestJournal.capture?.state === 'stopped'
-      ? playtestJournal.capture
-      : { state: 'not-recorded', note: 'Optional recording is off.' };
+    if (!capture)
+      return playtestJournal.capture?.state === 'stopped'
+        ? playtestJournal.capture
+        : { state: 'not-recorded', note: 'Optional recording is off.' };
     const finish = capture.finished || rendererDiagnosticSnapshot();
     const keys = new Set([
       ...Object.keys(capture.baseline.counters),
@@ -6476,10 +6649,13 @@
     // The world renderer initializes on New Game / Continue, not on the title.
     // Before entry, show the intended Pixi settings instead of presenting the
     // title's independent Canvas surface as a failed world renderer.
-    const pixiSettings = graphics.mode === 'webgl2' ||
-      (!started && graphics.preferredRenderer === 'webgl2' &&
+    const pixiSettings =
+      graphics.mode === 'webgl2' ||
+      (!started &&
+        graphics.preferredRenderer === 'webgl2' &&
         previousRendererChoice.renderer === 'webgl2' &&
-        !graphics.recoveryPaused && !graphics.lastFallbackReason);
+        !graphics.recoveryPaused &&
+        !graphics.lastFallbackReason);
     const note = rendererFallbackMessage(graphics);
     const density = resolutionStatus().ratio.toFixed(2) + '×';
     const choices = (values) => values.map(([value, label]) => ({ value, label }));
@@ -6488,10 +6664,10 @@
       ...(!pixiSettings ? [['native', 'Maximum sharpness']] : []),
       ['100', '100% · Standard'],
       ['80', '80% · Balanced'],
-      ...(!pixiSettings || pixiResolution.preference === '60'
-        ? [['60', '60% · Performance']] : []),
+      ...(!pixiSettings || pixiResolution.preference === '60' ? [['60', '60% · Performance']] : []),
       ...(!pixiSettings || pixiResolution.preference === '50'
-        ? [['50', '50% · Maximum speed']] : []),
+        ? [['50', '50% · Maximum speed']]
+        : []),
     ];
     const frameRates = [
       ['auto', 'Auto 20–30 FPS · Default'],
@@ -6515,10 +6691,25 @@
         },
       ),
       performanceSelect(
+        'Menu density',
+        platform.menuDensity,
+        choices([
+          ['auto', 'Automatic · Recommended'],
+          ['compact', 'Compact · More on screen'],
+          ['standard', 'Standard · Roomier'],
+        ]),
+        (value) => {
+          platform.selectMenuDensity(value);
+          performancePage();
+        },
+        'Adapts all menus to the available screen. Compact preserves readable text and touch targets.',
+      ),
+      performanceSelect(
         'Camera zoom',
         String(platform.cameraZoom),
         choices([
           ['1', 'Camera 100%'],
+          ['1.25', 'Camera 125%'],
           ['1.5', 'Camera 150%'],
           ['1.75', 'Camera 175%'],
         ]),
@@ -6530,12 +6721,18 @@
         'Zoom changes how much you see and can affect graphics workload.',
       ),
       menuControls.section('Renderer and recovery'),
-      ...(started ? [menuControls.section(
-        'Active renderer',
-        graphics.mode === 'webgl2'
-          ? graphics.phase === 'trial' ? 'PixiJS WebGL2 (trial)' : 'PixiJS WebGL2'
-          : 'Canvas 2D',
-      )] : []),
+      ...(started
+        ? [
+            menuControls.section(
+              'Active renderer',
+              graphics.mode === 'webgl2'
+                ? graphics.phase === 'trial'
+                  ? 'PixiJS WebGL2 (trial)'
+                  : 'PixiJS WebGL2'
+                : 'Canvas 2D',
+            ),
+          ]
+        : []),
       ...(note ? [menuControls.section('Renderer status', note)] : []),
       performanceSelect(
         'Graphics renderer',
@@ -6556,10 +6753,14 @@
       ...(!pixiSettings && graphics.preferredRenderer === 'webgl2'
         ? [performanceAction('Retry PixiJS WebGL2', requestPerformancePixi)]
         : []),
-      ...(started ? [menuControls.section(
-        'Effective density',
-        density + ' · ' + canvas.width + ' × ' + canvas.height,
-      )] : []),
+      ...(started
+        ? [
+            menuControls.section(
+              'Effective density',
+              density + ' · ' + canvas.width + ' × ' + canvas.height,
+            ),
+          ]
+        : []),
       ...(pixiSettings
         ? [
             menuControls.toggle(
@@ -6664,13 +6865,9 @@
         false,
       ),
     ];
-    openMenu(
-      'Screen and performance',
-      'Choose how the game looks and runs.',
-      items,
-      systemMenu,
-      { view: 'performance-Screen and performance' },
-    );
+    openMenu('Screen and performance', 'Choose how the game looks and runs.', items, systemMenu, {
+      view: 'performance-Screen and performance',
+    });
   }
   function platformMenu() {
     performancePage();
@@ -6704,21 +6901,25 @@
     const commit = PrototypeBuild.commit?.slice(0, 7);
     const rendererName = !started
       ? tr('No game active')
-      : graphics.mode === 'webgl2' ? 'PixiJS WebGL2' : 'Canvas 2D';
-    const fallback = graphics.mode === 'webgl2' && graphics.phase !== 'trial' ? ''
-      : graphics.recoveryPaused
-      ? 'Fallback · safety hold'
-      : graphics.recoveryPending
-        ? 'Fallback · retry pending'
-        : graphics.phase === 'trial'
-          ? 'Pixi confirmation trial'
-          : graphics.phase === 'preparing'
-            ? 'Preparing Pixi'
-            : graphics.lastFallbackReason === 'interrupted-trial'
-              ? 'Fallback · trial interrupted'
-              : rendererFallbackMessage(graphics)
-                ? 'Fallback · Pixi startup failed'
-                : '';
+      : graphics.mode === 'webgl2'
+        ? 'PixiJS WebGL2'
+        : 'Canvas 2D';
+    const fallback =
+      graphics.mode === 'webgl2' && graphics.phase !== 'trial'
+        ? ''
+        : graphics.recoveryPaused
+          ? 'Fallback · safety hold'
+          : graphics.recoveryPending
+            ? 'Fallback · retry pending'
+            : graphics.phase === 'trial'
+              ? 'Pixi confirmation trial'
+              : graphics.phase === 'preparing'
+                ? 'Preparing Pixi'
+                : graphics.lastFallbackReason === 'interrupted-trial'
+                  ? 'Fallback · trial interrupted'
+                  : rendererFallbackMessage(graphics)
+                    ? 'Fallback · Pixi startup failed'
+                    : '';
     const timings = frame.stages;
     const timing = (stage) => (stage.samples ? stage.p95Ms + ' ms' : '—');
     const details = [
@@ -6783,13 +6984,15 @@
         ...((lastRendererRecording || playtestJournal.capture?.state === 'stopped') &&
         !rendererRecording
           ? [
-              performanceAction('Clear renderer profiling', () => confirmCaptureClear('Clear renderer capture?', () => {
-                lastRendererRecording = null;
-                playtestJournal.capture = null;
-                playtestJournal.active = false;
-                playtestJournal.segments = [];
-                notePlaytestLifecycle('renderer-profiling-cleared');
-              })),
+              performanceAction('Clear renderer profiling', () =>
+                confirmCaptureClear('Clear renderer capture?', () => {
+                  lastRendererRecording = null;
+                  playtestJournal.capture = null;
+                  playtestJournal.active = false;
+                  playtestJournal.segments = [];
+                  notePlaytestLifecycle('renderer-profiling-cleared');
+                }),
+              ),
             ]
           : []),
         performanceAction(
@@ -6814,10 +7017,12 @@
                 'Bounded, in-memory recording. Export with the existing playtest report.',
                 'effects-profiler',
               ),
-              performanceAction('Clear effect recording', () => confirmCaptureClear('Clear effect capture?', () => {
-                renderer.resetEffectDiagnostics();
-                effectRecording = false;
-              })),
+              performanceAction('Clear effect recording', () =>
+                confirmCaptureClear('Clear effect capture?', () => {
+                  renderer.resetEffectDiagnostics();
+                  effectRecording = false;
+                }),
+              ),
             ]
           : []),
         performanceAction('Refresh performance details', playtestTools),
@@ -6860,13 +7065,18 @@
     );
   }
   function confirmCaptureClear(title, clear) {
-    openMenu(title, 'Export first to keep a copy. This clears the optional capture, not your campaign.', [
-      performanceExport(),
-      performanceAction('Confirm clear capture', () => {
-        clear();
-        playtestTools();
-      }),
-    ], playtestTools);
+    openMenu(
+      title,
+      'Export first to keep a copy. This clears the optional capture, not your campaign.',
+      [
+        performanceExport(),
+        performanceAction('Confirm clear capture', () => {
+          clear();
+          playtestTools();
+        }),
+      ],
+      playtestTools,
+    );
   }
   function confirmPerformanceReset() {
     openMenu(
@@ -7209,11 +7419,14 @@
   }
   function nearestNPC() {
     const zone = game.zone();
-    const homestead = zone.id === 'vale'
-      ? zone.props.find((prop) => prop.id === 'greenwood-thorn-homestead-lodge')
-      : null;
+    const homestead =
+      zone.id === 'vale'
+        ? zone.props.find((prop) => prop.id === 'greenwood-thorn-homestead-lodge')
+        : null;
     return [
-      ...(homestead ? [{ ...homestead, kind: 'thorn-homestead', name: "Thornfang's Homestead" }] : []),
+      ...(homestead
+        ? [{ ...homestead, kind: 'thorn-homestead', name: "Thornfang's Homestead" }]
+        : []),
       ...game.visibleNPCs(),
       ...game.visibleResourceNodes(),
       ...zone.buildings.map((b) => ({ ...b, kind: 'barracks', name: b.name || 'Barracks' })),
@@ -7299,9 +7512,11 @@
     }
     if (n.thornReport) {
       const lead = game.thornWitnessLead();
-      openMenu(n.name, game.thornReport(true, lead), lead
-        ? [action('Follow this lead', () => storyNavigate(lead, lead.name), lead.name)]
-        : []);
+      openMenu(
+        n.name,
+        game.thornReport(true, lead),
+        lead ? [action('Follow this lead', () => storyNavigate(lead, lead.name), lead.name)] : [],
+      );
       return;
     }
     if (game.s.mode === 'arena' && n.kind === 'arena-guide') {
@@ -7340,7 +7555,8 @@
       return;
     }
     if (n.kind === 'exit') {
-      const destination = game.sideDungeon()?.region || game.supplyRoom()?.region || game.definition().id;
+      const destination =
+        game.sideDungeon()?.region || game.supplyRoom()?.region || game.definition().id;
       sceneTransitionTo(destination, n.name || destination, () => game.interact(n));
       return;
     }
@@ -7362,7 +7578,8 @@
       ].includes(n.kind)
     ) {
       const codexLesson =
-        n.kind === 'critical-codex' && n.sideCodex === 'side-vale-cellars' &&
+        n.kind === 'critical-codex' &&
+        n.sideCodex === 'side-vale-cellars' &&
         game.s.quests['quest-tutorial-board']?.active &&
         !game.s.criticalCodices?.['side-vale-cellars'];
       const success = game.interact(n);
@@ -7421,7 +7638,11 @@
       updateHUD();
     } else if (n.kind === 'recruiter') partyMenu();
     else if (n.kind === 'quests') {
-      if (game.zoneId === 'vale' && n.id === 'board' && !game.s.discovered['vale:quest-board-intro']) {
+      if (
+        game.zoneId === 'vale' &&
+        n.id === 'board' &&
+        !game.s.discovered['vale:quest-board-intro']
+      ) {
         game.s.discovered['vale:quest-board-intro'] = true;
         save();
       }
@@ -7429,8 +7650,7 @@
       // milestone; do not wait for an unrelated save to persist the lesson.
       if (game.recordBoardTutorialStep('boardOpened')) save();
       quests(true);
-    }
-    else if (n.kind === 'transport') {
+    } else if (n.kind === 'transport') {
       if (n.hub) {
         const destinations = game.hubDestinations();
         openMenu(
@@ -9254,13 +9474,16 @@
     pendingBackgroundReturn = null;
     if (!started || game !== pending.campaign) return;
     const hiddenDurationMs = Math.max(
-      0, Date.now() - pending.wallAt, performance.now() - pending.monotonicAt,
+      0,
+      Date.now() - pending.wallAt,
+      performance.now() - pending.monotonicAt,
     );
     // A Home Screen return can report focus without a visibilitychange or
     // pageshow callback. Keep the GPU guard in sync before making this choice.
     graphicsController.visibilityChanged(false);
     const graphics = graphicsController.status();
-    const needsGraphicsGate = !!sceneTransition ||
+    const needsGraphicsGate =
+      !!sceneTransition ||
       graphics.phase === 'preparing' ||
       graphics.recoveryPending === true ||
       (graphics.mode === 'webgl2' && !['confirmed', 'trial'].includes(graphics.phase));
@@ -9278,10 +9501,15 @@
       canWrite: writerGuard.canWrite(),
     });
     notePlaytestLifecycle('background-return-classified', {
-      source, hiddenDurationMs: Math.round(hiddenDurationMs),
-      decision: !canResume ? 'save-or-ownership-pause'
-        : mustUseTitle ? 'guarded-continue' : 'live-resume',
-      graphicsMode: graphics.mode, graphicsPhase: graphics.phase,
+      source,
+      hiddenDurationMs: Math.round(hiddenDurationMs),
+      decision: !canResume
+        ? 'save-or-ownership-pause'
+        : mustUseTitle
+          ? 'guarded-continue'
+          : 'live-resume',
+      graphicsMode: graphics.mode,
+      graphicsPhase: graphics.phase,
       recoveryPending: graphics.recoveryPending === true,
     });
     if (!canResume) {
@@ -9290,8 +9518,9 @@
       return;
     }
     if (mustUseTitle) {
-      showTitleScreen(needsGraphicsGate
-        ? 'document-hidden-graphics-recovery' : 'document-hidden-sustained');
+      showTitleScreen(
+        needsGraphicsGate ? 'document-hidden-graphics-recovery' : 'document-hidden-sustained',
+      );
       return;
     }
     // Short benign visibility glitches do not close a menu, change a campaign
@@ -9342,10 +9571,15 @@
       if (wasPlaying) {
         if (!pendingBackgroundReturn) {
           pendingBackgroundReturn = {
-            campaign: game, wallAt: Date.now(), monotonicAt: performance.now(),
-            wasPaused: paused, saved: saved && writerGuard.canWrite(),
+            campaign: game,
+            wallAt: Date.now(),
+            monotonicAt: performance.now(),
+            wasPaused: paused,
+            saved: saved && writerGuard.canWrite(),
           };
-          notePlaytestLifecycle('background-gameplay-suspended', { saved: pendingBackgroundReturn.saved });
+          notePlaytestLifecycle('background-gameplay-suspended', {
+            saved: pendingBackgroundReturn.saved,
+          });
         } else pendingBackgroundReturn.saved &&= saved && writerGuard.canWrite();
         paused = true;
         if (!saved || !writerGuard.canWrite())
@@ -9366,7 +9600,10 @@
     }
   });
   addEventListener('popstate', () => {
-    if (!started || !backGuardArmed) { backGuardArmed = false; return; }
+    if (!started || !backGuardArmed) {
+      backGuardArmed = false;
+      return;
+    }
     backGuardArmed = false;
     const now = Date.now();
     if (lastBlockedBackAt && now - lastBlockedBackAt <= 3000) {
@@ -9375,9 +9612,11 @@
     }
     lastBlockedBackAt = now;
     notePlaytestLifecycle('browser-back-guarded');
-    status(language === 'es'
-      ? 'El gesto Atrás no interrumpió tu partida. Repite Atrás para salir.'
-      : 'Back gesture blocked. Press Back again to leave the game.');
+    status(
+      language === 'es'
+        ? 'El gesto Atrás no interrumpió tu partida. Repite Atrás para salir.'
+        : 'Back gesture blocked. Press Back again to leave the game.',
+    );
     armBrowserBackGuard();
   });
   addEventListener('pagehide', (event) => {
@@ -9551,7 +9790,12 @@
     const promptVisible = !phone && !prompt.hidden;
     const cancelVisible = !phone && !cancelNavigationButton.hidden;
     const layout = [
-      platform.mode, width, height, language, promptVisible ? prompt.textContent : '', cancelVisible,
+      platform.mode,
+      width,
+      height,
+      language,
+      promptVisible ? prompt.textContent : '',
+      cancelVisible,
     ].join(':');
     if (layout !== state.layout) {
       state.layout = layout;
@@ -9559,7 +9803,8 @@
       const edge = (side) =>
         Math.max(12, Number.parseFloat(style?.getPropertyValue('--notice-safe-' + side)) || 0);
       const hud = $('hud').getBoundingClientRect();
-      let left = edge('left'), right = width - edge('right');
+      let left = edge('left'),
+        right = width - edge('right');
       let top = Math.max(8, hud.top);
       if (phone) {
         const menuButton = $('menu-button').getBoundingClientRect();
@@ -9570,7 +9815,9 @@
           top = Math.max(hud.bottom, menuButton.bottom) + 8;
         }
       } else {
-        const dock = cancelVisible ? Math.min(hud.left, cancelNavigationButton.getBoundingClientRect().left) : hud.left;
+        const dock = cancelVisible
+          ? Math.min(hud.left, cancelNavigationButton.getBoundingClientRect().left)
+          : hud.left;
         right = Math.min(right, dock - 12);
         if (promptVisible) {
           const promptRect = prompt.getBoundingClientRect();
@@ -10582,7 +10829,9 @@
           canvasWorldDrawn: false,
           pixiDraws: rendererDiagnosticActive ? [] : null,
           overlayDraws: rendererDiagnosticActive ? [] : null,
-          enemyDetail: rendererDiagnosticActive ? { phase: null, phases: Object.create(null) } : null,
+          enemyDetail: rendererDiagnosticActive
+            ? { phase: null, phases: Object.create(null) }
+            : null,
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
@@ -10632,9 +10881,15 @@
                 if (begin) {
                   trace.phase = phase;
                   trace.phases[phase] = {
-                    startedAtMs: at, elapsedMs: null, completed: false,
-                    routeCalls: 0, routeMs: 0, maxRouteMs: 0,
-                    budgetedCalls: 0, budgetedMs: 0, maxBudgetedMs: 0,
+                    startedAtMs: at,
+                    elapsedMs: null,
+                    completed: false,
+                    routeCalls: 0,
+                    routeMs: 0,
+                    maxRouteMs: 0,
+                    budgetedCalls: 0,
+                    budgetedMs: 0,
+                    maxBudgetedMs: 0,
                   };
                   game.setEnemyRouteTrace(trace);
                 } else {
