@@ -12,7 +12,6 @@ on:
 
 jobs:
   browser:
-    if: false # Formatting-only diagnostic commit; previous full matrix already passed.
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
