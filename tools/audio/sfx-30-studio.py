@@ -92,7 +92,7 @@ def claw(c,hit):
 def bone(c,hit):
     # Separate brittle dry small-component clacks.
     hits=[(.0,1),(.028,.55),(.052,.32)] if hit else [(.010,.63),(.041,.41)]
-    c.flecks(820,4300,hits,.048)
+    c.flecks(820,4300,hits,.070 if not hit else .048)
     for at,weight in hits:c.strike(1220,.026*weight,.018,at)
     if hit:c.strike(2850,.022,.039,.004)
 
