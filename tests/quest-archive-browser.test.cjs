@@ -306,6 +306,14 @@ const server = http.createServer((req, res) => {
         return { pact: c.s.keeperPact, evidence: c.s.keeperEvidence };
       });
       assert.deepEqual(restored, { pact: true, evidence: true });
+      // A restored campaign remains intentionally inactive at the title;
+      // game saves are correctly refused until Continue Adventure is chosen.
+      await page.locator('#title-continue').click();
+      await page.waitForFunction(
+        () => window.Prototype?.started && document.querySelector('#title-screen').hidden,
+        null,
+        { timeout: 90000 },
+      );
       await page.evaluate(() => {
         const c = Prototype.game;
         c.s.pending.archive = { kind: 'dungeon', count: 1 };
@@ -329,7 +337,11 @@ const server = http.createServer((req, res) => {
       await page.reload();
       await page.waitForFunction(
         () => !!window.Prototype && Prototype.game.s.pending.archive?.active,
+        null,
+        { timeout: 20000 },
       );
+      await page.locator('#title-continue').click();
+      await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
         Prototype.game.tick = () => {};
       });
@@ -359,6 +371,8 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('Escape');
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.true.archive);
+      await page.locator('#title-continue').click();
+      await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
         const c = Prototype.game;
         c.tick = () => {};
