@@ -2507,6 +2507,9 @@
           u.cd = Math.max(u.cd, 0.35);
           team[key] = this.s.time +
             (elite ? cfg.eliteSquadSpacing : cfg.basicSquadSpacing);
+          // Keep the original shared-squad cadence as well as the individual
+          // cooldown. The alternative must not grant a free parallel cast.
+          charmedSquadSkills.set(this, team);
           record[key]++;
           turns.set(u, record);
           this.event('companionSkill', {
