@@ -8,7 +8,16 @@ function shell(language, heroClass = 'paladin', options = {}) {
     documentEvents = {},
     storage = options.storage || new Map();
   let nextFrame;
-  const ctx = new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
+  // Headless shell has no painter. Canvas readback must still honor the
+  // browser's ImageData shape, with transparent pixels from the no-op artist.
+  const ctx = new Proxy(
+    {
+      getImageData(_x, _y, width, height) {
+        return { data: new Uint8ClampedArray(width * height * 4), width, height };
+      },
+    },
+    { get: (o, k) => o[k] || (() => {}) },
+  );
   function el() {
     const classes = new Set(),
       attributes = new Map();
