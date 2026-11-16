@@ -1677,12 +1677,49 @@ body[data-experience='phone'] #modal-actions output {
 }
 
 
-/* Fixed left-side combat row and menu controls, including the title flow. */
+/* Anchor combat buttons at the joystick's lower-left corner. Each skill
+   keeps its position as the player unlocks the others. */
 body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
-  width: min(224px, calc(100vw - 16px));
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  bottom: calc(122px + var(--phone-safe-bottom, env(safe-area-inset-bottom)));
+  display: block;
+  width: 0;
+  height: 0;
+  bottom: max(8px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
 }
+body[data-experience='phone'][data-phone-layout='left-hand'] #skills > button {
+  position: absolute;
+  width: 52px;
+  min-height: 52px;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #skill-1 {
+  left: 128px;
+  bottom: 8px;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #skill-2 {
+  left: 128px;
+  bottom: 66px;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #skill-3 {
+  left: 72px;
+  bottom: 109px;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #skill-4 {
+  left: 0;
+  bottom: 118px;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #quick-items {
+  position: absolute;
+  left: clamp(248px, 30vw, 326px);
+  bottom: 34px;
+  width: 88px;
+  grid-template-columns: 1fr;
+}
+body[data-experience='phone'][data-phone-layout='left-hand'] #touch-interact-button {
+  left: calc(
+    max(8px, var(--phone-safe-left, env(safe-area-inset-left))) + 186px * var(--phone-ui-fit, 1)
+  );
+}
+
+/* Keep the menu controls accessible on the title and loading overlays. */
 body[data-experience='phone'].title-active #movement,
 body[data-experience='phone']:has(#scene-loading-retry:not([hidden])) #movement,
 body[data-experience='phone']:has(#gpu-renderer-trial:not([hidden])) #movement {
