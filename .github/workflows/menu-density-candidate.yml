@@ -7,8 +7,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: menu-density-candidate-${{ github.ref }}
-  cancel-in-progress: true
+  group: menu-density-candidate-${{ github.sha }}
+  cancel-in-progress: false
 jobs:
   native:
     runs-on: ubuntu-latest
