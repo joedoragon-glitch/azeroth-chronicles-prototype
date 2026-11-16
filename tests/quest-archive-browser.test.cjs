@@ -165,7 +165,9 @@ async function resumeLoadedCampaign(page) {
         c.tick = () => {};
         c.hero.level = 20;
         c.hero.xp = 0;
-        const duration = isPhone ? 2.5 : 7;
+        // A meaningful on-screen reading window matters on slower WebKit
+        // phones too; short synthetic durations can expire during measurement.
+        const duration = 7;
         c.notice(
           'BOSS VANQUISHED · The Drowned Keeper',
           duration,
@@ -203,11 +205,18 @@ async function resumeLoadedCampaign(page) {
             getComputedStyle(status).visibility !== 'hidden' && important.top >= message.bottom;
           delete status.dataset.noticeTier;
           Prototype.updateHUD();
-          return routineDeferred && importantSeparated;
+          return {
+            routineDeferred,
+            importantSeparated,
+            noticeVisible: document.querySelector('#message').classList.contains('visible'),
+            messageBottom: message.bottom,
+            statusTop: important.top,
+          };
         });
         assert(
-          firstFits,
-          'phone routine receipts defer and important status remains below the milestone',
+          firstFits.routineDeferred && firstFits.importantSeparated && firstFits.noticeVisible,
+          'phone routine status defers and important status remains below the milestone: ' +
+            JSON.stringify(firstFits),
         );
         await page.waitForFunction(
           () => {
