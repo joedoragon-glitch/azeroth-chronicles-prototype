@@ -1,14 +1,10 @@
 name: Temporary #892 deterministic build-fingerprint generation
-
-# This one-PR internal maintenance job updates build-generated fingerprints
-# only on the isolated draft branch. Remove before merge.
+# Internal one-PR maintenance; remove before merge. Never publishes a site.
 on:
   pull_request:
     types: [synchronize]
-
 permissions:
   contents: write
-
 jobs:
   generate:
     if: ${{ github.event.pull_request.number == 899 && github.event.pull_request.head.ref == 'fix/v092-projectile-flight-coherence-892' && github.event.pull_request.head.repo.full_name == github.repository }}
@@ -24,30 +20,13 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --ignore-scripts
-      - name: Generate exact current-source PWA fingerprints without deployment
+      - name: Generate deterministic build outputs without publishing
         run: node scripts/build.cjs
       - name: Reject unrelated generated mutations
         shell: bash
         run: |
-          echo "Generated diff:"
           git status --short
-          if git diff --name-only | grep -v -E '^sw[.]js | grep -q .; then
-            echo "::error::Unexpected generated file changed"
-            exit 1
-          fi
-      - name: Commit only exact generated service-worker fingerprints to draft branch
-        shell: bash
-        run: |
-          git add sw.js
-          if git diff --cached --quiet; then
-            echo "Source fingerprints already match; no commit"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "build: synchronize #892 source fingerprints on isolated branch [no-pages]"
-          git push origin HEAD:refs/heads/fix/v092-projectile-flight-coherence-892
- | grep -q .; then
+          if git diff --name-only | grep -v -E '^sw[.]js$' | grep -q .; then
             echo "::error::Unexpected generated file changed"
             exit 1
           fi
