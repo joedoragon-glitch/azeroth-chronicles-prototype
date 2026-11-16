@@ -129,6 +129,38 @@ const root = path.resolve(__dirname, '..'),
         assert.equal(await page.locator('#recording option').count(), 148);
         assert.equal(await page.locator('#library-grid .sound-card').count(), 24);
         assert((await page.locator('#result-count').textContent()).includes('148 matching'));
+        // Compact, direct phase-one category navigation. Use the same sound
+        // browser and mixer, never a second player or mixed music catalog.
+        assert.equal(await page.locator('#effect-filters').isVisible(), false);
+        await press('#nav-effects');
+        assert.equal(await page.locator('#kind').inputValue(), 'effect');
+        assert.equal(await page.locator('#effect-filters').isVisible(), true);
+        assert.equal(await page.locator('#recording option').count(), 30);
+        assert.equal(await page.locator('#library-grid .sound-card').count(), 24);
+        assert((await page.locator('#result-count').textContent()).includes('30 total in Phase 1'));
+        assert.equal(await page.locator('#show-more').isVisible(), true);
+        await press('#show-more');
+        assert.equal(await page.locator('#library-grid .sound-card').count(), 30);
+        assert.equal(await page.locator('#library-grid .sound-card .duration').first().textContent().then(t => /\\d+\\.\\d{2}s/.test(t)), true);
+        await page.locator('#effect-stage').selectOption('release');
+        assert.equal(await page.locator('#recording option').count(), 12);
+        assert.equal(await page.locator('#library-grid .sound-card').count(), 12);
+        assert.equal(await page.locator('#show-more').isVisible(), false);
+        await page.locator('#effect-stage').selectOption('impact');
+        assert.equal(await page.locator('#recording option').count(), 12);
+        await page.locator('#effect-stage').selectOption('special');
+        assert.equal(await page.locator('#recording option').count(), 6);
+        await page.locator('#recording').selectOption('sfx-critical-warning');
+        assert((await page.locator('#guide-recipe').textContent()).includes('sfx-phase1-master.py'));
+        // Real short PCM preview follows an explicit user gesture and keeps the
+        // no-autoplay contract, independently of music playback.
+        assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
+        await press('#record-play');
+        await page.waitForFunction(() =>
+          document.querySelector('#now-playing').textContent.includes('Critical Warning'));
+        assert((await page.locator('#message').textContent()).includes('Short effects finish on their own'));
+        await page.locator('#kind').selectOption('music');
+        assert.equal(await page.locator('#effect-filters').isVisible(), false);
         await page.locator('#kind').selectOption('ambience');
         assert.equal(await page.locator('#recording option').count(), 34);
         assert.equal(await page.locator('#library-grid .sound-card').count(), 24);
