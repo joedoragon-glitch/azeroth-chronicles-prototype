@@ -141,8 +141,8 @@ test('F39 boss selection respects actual ring reach, anti-repeat fallbacks and D
   const thorn=c.bossEnemy(c.boss('thorn'),'normal',{x:1100,y:1200});
   c.zone().enemies=[thorn];thorn.summonCd=100;
   assert.equal(c.bossAttackWeights(thorn,{x:thorn.x+400,y:thorn.y})[0],0,'short bite excluded at range');
-  assert.equal(c.chooseBossAttack(thorn,{x:thorn.x+620,y:thorn.y}),-1,'no imaginary long-distance melee');
-  assert.equal(c.startAttack(thorn,{x:thorn.x+620,y:thorn.y}),false,'invalid selection does not start a telegraph');
+  assert.equal(c.chooseBossAttack(thorn,{x:thorn.x+740,y:thorn.y}),-1,'no imaginary long-distance melee');
+  assert.equal(c.startAttack(thorn,{x:thorn.x+740,y:thorn.y}),false,'invalid selection does not start a telegraph');
   const lord=c.bossEnemy(c.boss('darklord'),'normal',{x:1100,y:1200});
   c.zone().enemies=[lord];lord.summonCd=100;lord.lastAttackIndex=1;lord.hp=lord.maxHp*.8;
   assert.equal(c.chooseBossAttack(lord,{x:lord.x+440,y:lord.y}),5,'choose the usable levy instead of repeating gambit or wasting a cone');
