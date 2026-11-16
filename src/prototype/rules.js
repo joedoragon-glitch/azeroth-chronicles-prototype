@@ -5467,13 +5467,13 @@
     crown: ['jet', 'seal'],
   };
   const rangedProfiles = {
-    goblin: { variant: 'slinger', shotRange: 240, shotSpeed: 240, projectileStyle: 'stone' },
-    skeleton: { variant: 'bow guard', shotRange: 290, shotSpeed: 280, projectileStyle: 'arrow' },
+    goblin: { variant: 'slinger', shotRange: 240, shotSpeed: 816, projectileStyle: 'stone' },
+    skeleton: { variant: 'bow guard', shotRange: 290, shotSpeed: 850, projectileStyle: 'arrow' },
     reedbeast: {
       variant: 'spitter',
       hybrid: true,
       shotRange: 250,
-      shotSpeed: 220,
+      shotSpeed: 650,
       projectileStyle: 'spit',
       projectileSlow: 1.6,
     },
@@ -5481,7 +5481,7 @@
       variant: 'spitter',
       hybrid: true,
       shotRange: 230,
-      shotSpeed: 230,
+      shotSpeed: 660,
       projectileStyle: 'spit',
       projectileSlow: 1.6,
     },
@@ -5489,22 +5489,62 @@
       variant: 'stone thrower',
       hybrid: true,
       shotRange: 260,
-      shotSpeed: 220,
+      shotSpeed: 600,
       projectileStyle: 'stone',
     },
     orc: {
       variant: 'axe thrower',
       hybrid: true,
       shotRange: 260,
-      shotSpeed: 250,
+      shotSpeed: 630,
       projectileStyle: 'axe',
     },
     ashbeast: {
       variant: 'cinder spitter',
       hybrid: true,
       shotRange: 270,
-      shotSpeed: 240,
+      shotSpeed: 680,
       projectileStyle: 'cinder',
+    },
+  };
+  // Authored launcher velocity (world units/second), independently of attack tempo.
+  // No historical 1.7x ordinary or 1.15x boss compensation remains.
+  // The original *missed-shot distance* is independent of new velocity.
+  // Two neutral controls act only on actual physical missile flight. Fortified
+  // position bonuses remain independently conditional.
+  const projectileFlight = {
+    globalSpeedScale: 1,
+    hostileSpeedScale: 1,
+    ordinaryDefault: { arrow: 850, spectral: 700 },
+    ordinaryDistance: {
+      goblin: 600, skeleton: 700, reedbeast: 550, mireling: 575,
+      ogre: 550, orc: 625, ashbeast: 600,
+      archer: 650, crownguard: 650, wraith: 650,
+    },
+    charmedDistance: {
+      goblin: 720, skeleton: 840, reedbeast: 660, mireling: 690,
+      ogre: 660, orc: 750, ashbeast: 720,
+      archer: 900, crownguard: 900, wraith: 780,
+    },
+    boss: {
+      cryptBoneVolley: 720,
+      defaultVolley: 700,
+      ridgeCargo: 700,
+      citadelCanister: 650,
+      valeTrackingVolley: 600,
+    },
+    hero: {
+      rangerBasic: 850,
+      rangerRapid: 900,
+      rangerCharged: 920,
+      rangerHunt: 920,
+    },
+    companion: {
+      archerBasic: 850,
+      archerTriple: 900,
+      archerPiercing: 920,
+      petBasic: { crypt: 650, archive: 700, abyss: 700, fallback: 600 },
+      petSkill: { crypt: 700, archive: 750, abyss: 750, fallback: 650 },
     },
   };
   const forests = [
@@ -5809,13 +5849,21 @@
     frenzyCooldown: 0.6,
     frenzyAim: 0.75,
   };
+  // Explicit final Rogue reach. Attack radius and legal acquisition are different dimensions.
+  const enemyRogueGeometry = Object.freeze({
+    acquisition: Object.freeze({ boss: 600, captain: 528, other: 408 }),
+    fallbackRadius: Object.freeze({ boss: 126, captain: 114, other: 96 }),
+    mountedCrownRiderDashRadius: 198,
+    slabWarningFromOffset: 72,
+    slabWarningToOffset: 120,
+  });
   const nightEnemyCombat = {
     wraith: {
       hp: 2.4,
       damage: 1.8,
       skillCooldown: 4.8,
       warning: 0.85,
-      radius: 210,
+      radius: 252,
       coefficient: 1.15,
       slow: 2.5,
       heal: 0.08,
@@ -5826,9 +5874,11 @@
       damage: 2.0,
       skillCooldown: 4.2,
       warning: 0.7,
-      radius: 78,
+      radius: 93.6,
       coefficient: 1.6,
       pounceSpeed: 560,
+      // Night stalker acquisition is wider than its actual 93.6-unit strike area.
+      approachRange: 432,
       slow: 3,
     },
   };
@@ -5843,7 +5893,7 @@
       // captains receive reach/cadence tuning, not an unmeasured 50% HP boost.
       enduranceHp: 390,
       visualScale: 1.16,
-      specialRange: 560,
+      specialRange: 672,
       specialCooldown: 3.25,
       phase: { threshold: 0.55, name: 'Corrective Action', kind: 'scramble' },
       attacks: [
@@ -5863,7 +5913,7 @@
           coefficient: 0.75,
           persistent: true,
           slow: true,
-          radius: 120,
+          radius: 144,
           fixedRadius: true,
         },
         {
@@ -5873,7 +5923,7 @@
           recovery: 0.95,
           coefficient: 0.55,
           slow: true,
-          radius: 165,
+          radius: 227.7,
         },
         {
           name: 'Cradle-to-Grave Tracking',
@@ -5882,8 +5932,8 @@
           warning: 1,
           shotWarning: 0.45,
           shots: 4,
-          shotSpeed: 400,
-          shotLife: 2.1,
+          shotSpeed: 600,
+          shotLife: 1.68,
           recovery: 1.1,
           coefficient: 0.45,
         },
@@ -5898,7 +5948,7 @@
           recovery: 1.1,
           coefficient: 0.7,
           persistent: true,
-          radius: 64,
+          radius: 88.32,
         },
       ],
     },
@@ -5907,7 +5957,7 @@
       name: 'Direjaw',
       enduranceHp: 680,
       visualScale: 1.18,
-      specialRange: 490,
+      specialRange: 588,
       specialCooldown: 3.35,
       phase: { threshold: 0.55, name: 'Elastic Rebound', kind: 'molt' },
       attacks: [
@@ -5927,7 +5977,7 @@
           recovery: 1.05,
           coefficient: 0.8,
           slow: true,
-          radius: 150,
+          radius: 207,
         },
         {
           name: 'Mud Pumping',
@@ -5939,7 +5989,7 @@
           coefficient: 0.65,
           persistent: true,
           slow: true,
-          radius: 88,
+          radius: 121.44,
         },
       ],
     },
@@ -5952,7 +6002,7 @@
       species: 'ridge',
       enduranceHp: 1650,
       visualScale: 1.2,
-      specialRange: 535,
+      specialRange: 642,
       specialCooldown: 3.25,
       phase: { threshold: 0.55, name: 'Hostile Liquidation', kind: 'howl' },
       attacks: [
@@ -5972,7 +6022,7 @@
           warning: 1.15,
           recovery: 1.05,
           coefficient: 1.15,
-          radius: 86,
+          radius: 118.68,
         },
         {
           name: 'Bad Deal',
@@ -5981,7 +6031,7 @@
           warning: 0.8,
           recovery: 1.0,
           coefficient: 0.85,
-          radius: 145,
+          radius: 200.1,
         },
       ],
     },
@@ -5994,7 +6044,7 @@
         'Cindermaw’s devoted disciple administers crops, livestock, meat, dairy, poultry, fisheries and their distribution across all five Crown provinces. He co-manages the whole Treasury with the Interior ministry while retaining the guarded Inner Vault. Ridge Tyrant remains Master of Coin, and the Drowned Keeper remains the archivist.',
       enduranceHp: 5000,
       visualScale: 1.19,
-      specialRange: 545,
+      specialRange: 654,
       specialCooldown: 3.25,
       phase: { threshold: 0.45, name: 'Ash Carapace', kind: 'carapace' },
       summon: {
@@ -6017,7 +6067,7 @@
           nextWarning: 0.8,
           recovery: 1,
           coefficient: 0.9,
-          radius: 65,
+          radius: 78,
           count: 2,
           orbit: 70,
           fixedRadius: true,
@@ -6031,7 +6081,7 @@
           nextWarning: 0.9,
           recovery: 1.1,
           coefficient: 0.85,
-          radius: 40,
+          radius: 66.24,
           legLength: 170,
           speed: 340,
           charge: true,
@@ -6046,7 +6096,7 @@
           recovery: 1,
           coefficient: 0.7,
           slow: true,
-          radius: 190,
+          radius: 228,
           angleDegrees: 105,
           vaporLife: 2.2,
           vaporCoefficient: 0.15,
@@ -6072,7 +6122,7 @@
           warning: 1.1,
           recovery: 1.1,
           coefficient: 0.23,
-          radius: 170,
+          radius: 204,
           initialRadius: 170,
           finalRadius: 110,
           width: 17,
@@ -6109,7 +6159,7 @@
           nextWarning: 0.8,
           recovery: 1.1,
           coefficient: 0.7,
-          radius: 55,
+          radius: 66,
           count: 3,
           orbit: 100,
           vaporLife: 2,
@@ -6129,7 +6179,7 @@
         'Cinder Warlord is the Ashen Warlord’s roaming inspector and regional middle manager, not the military governor. His patrol checks roads, work details and occupied settlements. Mandatory Overtime orders at most seven already-present nearby workers into the fight; it cannot create troops from an empty or cleared road. The province still has working markets and repair crews under a compulsory military bureaucracy.',
       enduranceHp: 3000,
       visualScale: 1.18,
-      specialRange: 545,
+      specialRange: 654,
       specialCooldown: 3.25,
       patrolSpeed: 82,
       inspectionPause: 2.4,
@@ -6148,18 +6198,18 @@
           warning: 0.85,
           recovery: 1.0,
           coefficient: 1.0,
-          radius: 150,
+          radius: 207,
         },
         {
           name: 'Violation Marker',
-          captainRadiusMultiplier: 2,
+          patchRadius: 207,
           kind: 'circle',
           warning: 1.15,
           recovery: 1.0,
           coefficient: 0.95,
           count: 2,
           sequential: true,
-          radius: 76,
+          radius: 209.76,
         },
         {
           name: 'Compliance Charge',
@@ -6384,11 +6434,26 @@
     specialRecoveryMultiplier: 0.25,
     basicCooldown: 0.75,
     skillsPerBasic: 4,
-    specialRange: 600,
-    areaRangeMultiplier: 1.15,
+    // Effective existing reach (historically 600 × 1.2).
+    specialRange: 720,
   };
+  // Final world-unit footprints for conventional boss/captain attacks.
+  // These are gameplay values, not global bonuses; hit detection, warnings,
+  // ring travel and eligibility must all consume the same committed geometry.
+  const bossAreaGeometry = Object.freeze({
+    coneRadius: 227.7,
+    sectorRadius: 386.4,
+    ringInitialRadius: 144.9,
+    firstCircleRadius: 124.2,
+    otherCircleRadius: 158.7,
+    multiCircleRadius: 103.5,
+    doubleCircleRadius: 207,
+    ringLife: 2.208,
+    delayedBlastRadius: 124.2,
+    captainDefaultConeRadius: 200.1,
+    captainDefaultOtherRadius: 117.3,
+  });
   const rangedEnemyCombat = {
-    projectileMultiplier: 1.7,
     aimTime: 0.35,
     cooldown: 1.15,
     retreatFraction: 0.5,
@@ -6987,9 +7052,6 @@
     // Approved hostile ranged BASIC reach is an absolute final distance, not
     // another 10% bonus on a legacy species-specific shotRange.
     enemyRangedBasicRange: 320,
-    // Slinger stones should launch decisively without changing attack cadence
-    // or the maximum distance a missed hostile shot can travel.
-    goblinSlingerProjectileSpeedMultiplier: 2,
     // Melee-only enemy fundamentals: faster hostile pressure without altering
     // ranged aim, hero/party tempo, named skills, or physical pursuit.
     enemyOrdinaryMeleeBasicInterval: 0.8,
@@ -7192,47 +7254,47 @@
           // The starting Rogue has no inherited company bonuses in Greenwood.
           // Modest native HP/power improves early boss contribution.
           melee: { hp: 112, damage: 12, armor: 3, speed: 1.14, interval: 0.78, reach: 65 },
-          ranged: { hp: 100, damage: 13, armor: 2, speed: 1.1, interval: 1.03, reach: 240, retreat: 120, style: 'stone', shotSpeed: 240 },
+          ranged: { hp: 100, damage: 13, armor: 2, speed: 1.1, interval: 1.03, reach: 240, retreat: 120, style: 'stone', shotSpeed: 816 },
         },
         skeleton: {
           melee: { hp: 126, damage: 14, armor: 5, speed: 0.98, interval: 0.88, reach: 70 },
-          ranged: { hp: 114, damage: 14, armor: 4, speed: 1, interval: 1, reach: 290, retreat: 155, style: 'arrow', shotSpeed: 280 },
+          ranged: { hp: 114, damage: 14, armor: 4, speed: 1, interval: 1, reach: 290, retreat: 155, style: 'arrow', shotSpeed: 850 },
         },
         mireling: {
           melee: { hp: 122, damage: 12, armor: 6, speed: 0.95, interval: 0.96, reach: 72 },
-          ranged: { hp: 110, damage: 12, armor: 4, speed: 0.97, interval: 1.08, reach: 230, retreat: 105, style: 'spit', shotSpeed: 230 },
+          ranged: { hp: 110, damage: 12, armor: 4, speed: 0.97, interval: 1.08, reach: 230, retreat: 105, style: 'spit', shotSpeed: 660 },
         },
         reedbeast: {
           melee: { hp: 138, damage: 13, armor: 7, speed: 0.93, interval: 1.04, reach: 74 },
-          ranged: { hp: 118, damage: 13, armor: 5, speed: 0.96, interval: 1.1, reach: 250, retreat: 125, style: 'spit', shotSpeed: 220 },
+          ranged: { hp: 118, damage: 13, armor: 5, speed: 0.96, interval: 1.1, reach: 250, retreat: 125, style: 'spit', shotSpeed: 650 },
         },
         wolf: {
           melee: { hp: 112, damage: 15, armor: 4, speed: 1.2, interval: 0.73, reach: 68 },
         },
         ogre: {
           melee: { hp: 176, damage: 19, armor: 10, speed: 0.8, interval: 1.26, reach: 86 },
-          ranged: { hp: 152, damage: 17, armor: 8, speed: 0.83, interval: 1.23, reach: 260, retreat: 115, style: 'stone', shotSpeed: 220 },
+          ranged: { hp: 152, damage: 17, armor: 8, speed: 0.83, interval: 1.23, reach: 260, retreat: 115, style: 'stone', shotSpeed: 600 },
         },
         orc: {
           melee: { hp: 138, damage: 15, armor: 7, speed: 1.02, interval: 0.91, reach: 78 },
-          ranged: { hp: 122, damage: 15, armor: 5, speed: 1.04, interval: 1.06, reach: 260, retreat: 125, style: 'axe', shotSpeed: 250 },
+          ranged: { hp: 122, damage: 15, armor: 5, speed: 1.04, interval: 1.06, reach: 260, retreat: 125, style: 'axe', shotSpeed: 630 },
         },
         archer: {
           melee: { hp: 110, damage: 12, armor: 4, speed: 1.06, interval: 0.9, reach: 72 },
-          ranged: { hp: 104, damage: 14, armor: 3, speed: 1.08, interval: 0.94, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+          ranged: { hp: 104, damage: 14, armor: 3, speed: 1.08, interval: 0.94, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 850 },
         },
         ashbeast: {
           melee: { hp: 154, damage: 17, armor: 8, speed: 1.08, interval: 0.94, reach: 78 },
-          ranged: { hp: 134, damage: 16, armor: 6, speed: 1.04, interval: 1.16, reach: 270, retreat: 130, style: 'cinder', shotSpeed: 240 },
+          ranged: { hp: 134, damage: 16, armor: 6, speed: 1.04, interval: 1.16, reach: 270, retreat: 130, style: 'cinder', shotSpeed: 680 },
         },
         crownguard: {
           melee: { hp: 148, damage: 16, armor: 9, speed: 0.99, interval: 0.88, reach: 78 },
-          ranged: { hp: 130, damage: 15, armor: 7, speed: 1, interval: 0.98, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+          ranged: { hp: 130, damage: 15, armor: 7, speed: 1, interval: 0.98, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 850 },
         },
         // Night species join the friendly roster only through exact Rogue
         // Charm authorization; they are not added to the outdoor spawn pool.
         wraith: {
-          ranged: { hp: 108, damage: 13, armor: 4, speed: 1.05, interval: 1.1, reach: 225, retreat: 120, style: 'spectral', shotSpeed: 260 },
+          ranged: { hp: 108, damage: 13, armor: 4, speed: 1.05, interval: 1.1, reach: 225, retreat: 120, style: 'spectral', shotSpeed: 700 },
         },
         stalker: {
           melee: { hp: 125, damage: 16, armor: 5, speed: 1.14, interval: 0.84, reach: 74 },
@@ -7367,7 +7429,7 @@
         name: 'Alpha Crossbite',
         effect: 'scatter',
         warning: 1.15,
-        radius: 120,
+        radius: 144,
         push: 55,
         coefficient: 0.11,
       },
@@ -7375,7 +7437,7 @@
         name: 'Gang Boss Smoke Trick',
         effect: 'pivot',
         warning: 1.1,
-        radius: 115,
+        radius: 138,
         slowSeconds: 2.7,
         sidestep: 115,
         coefficient: 0.09,
@@ -7384,7 +7446,7 @@
         name: 'Ossuary Rattle',
         effect: 'sweep',
         warning: 1.3,
-        radius: 135,
+        radius: 162,
         push: 60,
         coefficient: 0.1,
       },
@@ -7392,7 +7454,7 @@
         name: 'Graveveil Retreat',
         effect: 'pivot',
         warning: 1.25,
-        radius: 125,
+        radius: 150,
         slowSeconds: 2.7,
         sidestep: 125,
         coefficient: 0.09,
@@ -7401,7 +7463,7 @@
         name: 'Nightclaw Reversal',
         effect: 'scatter',
         warning: 1.1,
-        radius: 125,
+        radius: 150,
         push: 60,
         coefficient: 0.1,
       },
@@ -7409,7 +7471,7 @@
         name: 'Broodbank Coil',
         effect: 'bind',
         warning: 1.25,
-        radius: 125,
+        radius: 150,
         slowSeconds: 2.7,
         coefficient: 0.09,
       },
@@ -7417,7 +7479,7 @@
         name: 'Reedquake Kick',
         effect: 'sweep',
         warning: 1.3,
-        radius: 135,
+        radius: 162,
         push: 60,
         coefficient: 0.1,
       },
@@ -7425,7 +7487,7 @@
         name: 'Bow Captain Shoulder Break',
         effect: 'scatter',
         warning: 1.1,
-        radius: 105,
+        radius: 126,
         push: 55,
         coefficient: 0.1,
       },
@@ -7433,7 +7495,7 @@
         name: 'Shieldwall Counterturn',
         effect: 'sweep',
         warning: 1.35,
-        radius: 140,
+        radius: 168,
         push: 65,
         coefficient: 0.11,
       },
@@ -7441,7 +7503,7 @@
         name: 'Ashmane Backlash',
         effect: 'scatter',
         warning: 1.3,
-        radius: 145,
+        radius: 174,
         push: 65,
         coefficient: 0.11,
       },
@@ -7449,7 +7511,7 @@
         name: 'Warband Shoulder Drive',
         effect: 'sweep',
         warning: 1.25,
-        radius: 140,
+        radius: 168,
         push: 65,
         coefficient: 0.11,
       },
@@ -7457,7 +7519,7 @@
         name: 'Boulderhand Sweep',
         effect: 'sweep',
         warning: 1.45,
-        radius: 165,
+        radius: 198,
         push: 80,
         coefficient: 0.12,
       },
@@ -7467,7 +7529,7 @@
         name: 'Alpha Covering Howl',
         effect: 'pivot',
         warning: 1.2,
-        radius: 145,
+        radius: 174,
         slowSeconds: 2.7,
         sidestep: 135,
         coefficient: 0.08,
@@ -7476,7 +7538,7 @@
         name: 'Slingmaster Split Screen',
         effect: 'bind',
         warning: 1.2,
-        radius: 140,
+        radius: 168,
         slowSeconds: 2.7,
         coefficient: 0.09,
       },
@@ -7484,7 +7546,7 @@
         name: 'Bone Archer Pinning Volley',
         effect: 'bind',
         warning: 1.35,
-        radius: 145,
+        radius: 174,
         slowSeconds: 2.7,
         coefficient: 0.09,
       },
@@ -7492,7 +7554,7 @@
         name: 'Spectral Withdrawal',
         effect: 'pivot',
         warning: 1.35,
-        radius: 150,
+        radius: 180,
         slowSeconds: 2.7,
         sidestep: 145,
         coefficient: 0.09,
@@ -7501,7 +7563,7 @@
         name: 'Dusktrail Screen',
         effect: 'pivot',
         warning: 1.2,
-        radius: 150,
+        radius: 180,
         slowSeconds: 2.7,
         sidestep: 145,
         coefficient: 0.08,
@@ -7510,7 +7572,7 @@
         name: 'Broodspit Barrage',
         effect: 'bind',
         warning: 1.3,
-        radius: 145,
+        radius: 174,
         slowSeconds: 2.7,
         coefficient: 0.09,
       },
@@ -7518,7 +7580,7 @@
         name: 'Reedbank Mudscreen',
         effect: 'bind',
         warning: 1.3,
-        radius: 145,
+        radius: 174,
         slowSeconds: 2.7,
         coefficient: 0.09,
       },
@@ -7526,7 +7588,7 @@
         name: 'Veteran Archer Denial Shot',
         effect: 'pivot',
         warning: 1.25,
-        radius: 150,
+        radius: 180,
         slowSeconds: 2.7,
         sidestep: 140,
         coefficient: 0.09,
@@ -7535,7 +7597,7 @@
         name: 'Crown Volley Screen',
         effect: 'bind',
         warning: 1.4,
-        radius: 155,
+        radius: 186,
         slowSeconds: 2.7,
         coefficient: 0.1,
       },
@@ -7543,7 +7605,7 @@
         name: 'Cinder Spitter Smokecloud',
         effect: 'pivot',
         warning: 1.35,
-        radius: 155,
+        radius: 186,
         slowSeconds: 2.7,
         sidestep: 125,
         coefficient: 0.09,
@@ -7552,7 +7614,7 @@
         name: 'Axe Thrower Crossfire',
         effect: 'bind',
         warning: 1.25,
-        radius: 145,
+        radius: 174,
         slowSeconds: 2.7,
         coefficient: 0.09,
       },
@@ -7560,7 +7622,7 @@
         name: 'Stone Thrower Denial',
         effect: 'bind',
         warning: 1.4,
-        radius: 160,
+        radius: 192,
         slowSeconds: 2.7,
         coefficient: 0.1,
       },
@@ -7575,7 +7637,7 @@
         name: 'Emergency Egress',
         effect: 'pivot',
         warning: 1.15,
-        radius: 115,
+        radius: 138,
         slowSeconds: 2.45,
         sidestep: 135,
         coefficient: 0.09,
@@ -7584,7 +7646,7 @@
         name: 'Grout Curtain',
         effect: 'bind',
         warning: 1.35,
-        radius: 125,
+        radius: 150,
         slowSeconds: 2.7,
         sidestep: 105,
         coefficient: 0.09,
@@ -7593,7 +7655,7 @@
         name: 'Crag Tyrant’s Paid Screen',
         effect: 'rally',
         warning: 1.35,
-        radius: 120,
+        radius: 144,
         slowSeconds: 2.2,
         rallySeconds: 2.3,
         coefficient: 0.08,
@@ -7608,7 +7670,7 @@
         name: 'Dreadmaw’s Idol Defiance',
         effect: 'scatter',
         warning: 1.5,
-        radius: 160,
+        radius: 192,
         push: 70,
         coefficient: 0.08,
       },
@@ -7616,7 +7678,7 @@
         name: 'Cinder Warlord’s Rearguard Order',
         effect: 'rally',
         warning: 1.4,
-        radius: 135,
+        radius: 162,
         slowSeconds: 2.2,
         rallySeconds: 2.8,
         coefficient: 0.08,
@@ -7632,7 +7694,7 @@
         name: 'Crowd Dispersal',
         effect: 'scatter',
         warning: 1.25,
-        radius: 165,
+        radius: 198,
         push: 70,
         coefficient: 0.08,
       },
@@ -7640,7 +7702,7 @@
         name: 'Pressure Grouting',
         effect: 'bind',
         warning: 1.4,
-        radius: 120,
+        radius: 144,
         slowSeconds: 2.6,
         coefficient: 0.09,
       },
@@ -7648,7 +7710,7 @@
         name: 'Rotational Slump',
         effect: 'bind',
         warning: 1.45,
-        radius: 145,
+        radius: 174,
         slowSeconds: 2.7,
         sidestep: 115,
         coefficient: 0.08,
@@ -7657,7 +7719,7 @@
         name: 'Drowned Keeper’s Floodgate Turn',
         effect: 'pivot',
         warning: 1.5,
-        radius: 140,
+        radius: 168,
         slowSeconds: 2.6,
         sidestep: 150,
         coefficient: 0.08,
@@ -7666,7 +7728,7 @@
         name: 'Ridge Tyrant’s Payroll Screen',
         effect: 'rally',
         warning: 1.5,
-        radius: 135,
+        radius: 162,
         slowSeconds: 2.2,
         rallySeconds: 3,
         coefficient: 0.07,
@@ -7681,7 +7743,7 @@
         name: 'Garun’s Passive Earth Pressure',
         effect: 'sweep',
         warning: 1.65,
-        radius: 195,
+        radius: 234,
         push: 95,
         coefficient: 0.1,
       },
@@ -7689,7 +7751,7 @@
         name: 'Ashen Warlord’s Shielded Withdrawal',
         effect: 'rally',
         warning: 1.55,
-        radius: 155,
+        radius: 186,
         slowSeconds: 2.2,
         rallySeconds: 3,
         coefficient: 0.08,
@@ -7703,7 +7765,7 @@
         name: 'Abyss Dragon’s Wingover',
         effect: 'scatter',
         warning: 1.7,
-        radius: 205,
+        radius: 246,
         push: 110,
         sidestep: 90,
         coefficient: 0.09,
@@ -7712,7 +7774,7 @@
         name: 'Ash Sentinel’s Guard Pivot',
         effect: 'pivot',
         warning: 1.6,
-        radius: 150,
+        radius: 180,
         slowSeconds: 2.45,
         sidestep: 115,
         coefficient: 0.09,
@@ -7722,7 +7784,7 @@
         effect: 'scatter',
         warning: 1.5,
         anonymousCast: true,
-        radius: 1200,
+        radius: 1440,
         push: 85,
         rallySeconds: 1.9,
         coefficient: 0.08,
@@ -7736,7 +7798,7 @@
         name: 'Dark Lord’s Crown Decree',
         effect: 'bind',
         warning: 1.8,
-        radius: 175,
+        radius: 210,
         slowSeconds: 2.7,
         rallySeconds: 2.2,
         coefficient: 0.09,
@@ -7816,7 +7878,7 @@
 
   // Expand enemy-owned offensive geometry once, before runtime consumers read it.
   // Heroes, pets, healing, timers, angles and damage coefficients retain their own tables.
-  function expandedEnemyGeometry(value) {
+  function expandedEnemyGeometry(value, preserveAuthoredRadius = false) {
     const dimensions = new Set([
       'radius',
       'initialRadius',
@@ -7829,16 +7891,16 @@
       'orbit',
       'minimumSeparation',
     ]);
-    if (Array.isArray(value)) return value.map(expandedEnemyGeometry);
+    if (Array.isArray(value)) return value.map((entry) => expandedEnemyGeometry(entry, preserveAuthoredRadius));
     if (!value || typeof value !== 'object') return value;
     return Object.fromEntries(
       Object.entries(value).map(([key, item]) => [
         key,
-        dimensions.has(key) && typeof item === 'number'
+        dimensions.has(key) && !(preserveAuthoredRadius && key === 'radius') && typeof item === 'number'
           ? item * balance.enemySpecialReachMultiplier
           : key === 'allowedRadii'
             ? item.map((r) => r * balance.enemySpecialReachMultiplier)
-            : expandedEnemyGeometry(item),
+            : expandedEnemyGeometry(item, preserveAuthoredRadius),
       ]),
     );
   }
@@ -7847,19 +7909,11 @@
       id,
       {
         ...profile,
-        specialRange: (profile.specialRange || 420) * balance.enemySpecialReachMultiplier,
+        specialRange: profile.specialRange,
         attacks:
           id === 'supply-crown'
-            ? expandedEnemyGeometry(profile.attacks)
-            : profile.attacks?.map((plan) => ({
-                ...plan,
-                ...(plan.fixedRadius
-                  ? { radius: plan.radius * balance.enemySpecialReachMultiplier }
-                  : {}),
-                ...(plan.tracking
-                  ? { shotLife: plan.shotLife * balance.enemySpecialReachMultiplier }
-                  : {}),
-              })),
+            ? expandedEnemyGeometry(profile.attacks, true)
+            : profile.attacks,
       },
     ]),
   );
@@ -7874,9 +7928,11 @@
     bossRecovery,
     tacticalFoundation: Object.freeze({
       ...tacticalFoundation,
-      rogueMoves: expandedEnemyGeometry(rogueMoves),
-      rogueSignatures: expandedEnemyGeometry(rogueSignatures),
-      rogueRingleaderSignatures: expandedEnemyGeometry(rogueRingleaderSignatures),
+      // All values in these profiles are final effective world-unit areas.
+      // The prior 1.2 hostile-special expansion is baked into each named attack.
+      rogueMoves,
+      rogueSignatures,
+      rogueRingleaderSignatures,
     }),
     balance,
     combatGeometry,
@@ -7891,11 +7947,9 @@
     dungeonCamp: { nearbyRadius: 300, builtRadius: 650 },
     companionJudgment,
     companionRecall,
-    bossCadence: {
-      ...bossCadence,
-      specialRange: bossCadence.specialRange * balance.enemySpecialReachMultiplier,
-      areaRangeMultiplier: bossCadence.areaRangeMultiplier * balance.enemySpecialReachMultiplier,
-    },
+    bossCadence,
+    bossAreaGeometry,
+    enemyRogueGeometry,
     // Rematches change readiness and warning windows, not boss health or damage.
     // Floors keep already brief warnings readable at the game's ~20 FPS target.
     rematchAdaptation: Object.freeze({
@@ -7913,6 +7967,7 @@
     marchesPassives,
     snapshotPassives,
     rangedEnemyCombat,
+    projectileFlight,
     chargedSkills,
     millhavenOnboarding: {
       version: 1,
@@ -7942,7 +7997,7 @@
     summonScaling,
     trueBossSummons,
     ringleaderScaling,
-    nightEnemyCombat: expandedEnemyGeometry(nightEnemyCombat),
+    nightEnemyCombat,
     roomCaptains: expandedCaptains,
     manaBalance,
     dungeonTrapTuning,
@@ -7956,7 +8011,6 @@
     rangerSupport,
     enemySupportHealing,
     movementBasicClasses,
-    enemyProjectileMultiplier: 1.15,
     progression,
     supplyRooms,
     treasuryRecovery: {

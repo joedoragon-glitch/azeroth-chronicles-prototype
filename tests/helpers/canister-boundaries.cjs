@@ -84,7 +84,9 @@ module.exports = function canisterBoundaries() {
               Math.abs(p.fortDistance - span) < 1e-8,
               'fort preserves the authored special footprint',
             );
-            assert.equal(p.speed, 637, '30% fort speed remains');
+            assert.equal(p.speed, C.rules.projectileFlight.boss.citadelCanister *
+              C.rules.balance.fortifications.projectileSpeedMultiplier,
+              '30% positional fort bonus applies to the new authored canister velocity');
             assert.equal(p.hitRadius, C.rules.combatGeometry.canisterHalfWidth);
           }
           assert.equal(g.s.projectiles.length, 0);

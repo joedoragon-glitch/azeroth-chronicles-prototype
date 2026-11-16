@@ -29,6 +29,9 @@
         const carriers = units.filter((u) => Number.isFinite(u.carry) && u.carry > 0),
           payout = this.creditRecoveredTribute(carriers.reduce((sum, u) => sum + u.carry, 0));
         for (const u of carriers) u.carry = 0;
+        // Only genuine locally recovered cargo can satisfy the first-use
+        // gathering lesson; remote expeditions credit through another path.
+        if (payout > 0) this.recordGatheringTutorialStep('gatherDeposited');
         return payout;
       }
       unloadCompanyTribute(npc) {

@@ -1870,7 +1870,8 @@
               this.rogueCompanionSpecialDamage(u, base)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: 520,
+            speed: R.projectileFlight.companion.archerTriple,
+            life: 520 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.companion.archerTriple,
             delay: j * 0.08,
             ...(j > 0 ? { companionDelayedLaunch: true } : {}),
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
@@ -1998,7 +1999,8 @@
               target: e.id,
               damage,
               source: u.id,
-              speed: 650,
+              speed: R.projectileFlight.companion.archerPiercing,
+              life: 650 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.companion.archerPiercing,
               style: this.charmedCompanionProfile(u)?.style || 'arrow',
               area: true,
               companionSkill: 'piercing-volley',
@@ -2771,6 +2773,10 @@
                 e.hp > 0 &&
                 !e.neutral &&
                 !e.returning &&
+                // Labor defense may pre-empt ordinary visible threats, but
+                // never volunteer the hero for an unengaged boss/captain.
+                (!(e.type === 'boss' || e.captain || e.roomCaptain || e.fieldCaptain) ||
+                  e.aggro) &&
                 dist(u, e) <=
                   Math.max(R.companionJudgment.nearThreatRadius, this.enemyAcquisitionRange(e)) &&
                 (e.aggro || this.enemyRangedLine(e, u)),

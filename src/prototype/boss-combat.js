@@ -742,7 +742,7 @@
         if (profile) Object.assign(s, profile, { ranged: true });
         else if (['archer', 'crownguard', 'wraith'].includes(s.species)) {
           s.shotRange = 280;
-          s.shotSpeed = 260;
+          s.shotSpeed = R.projectileFlight.ordinaryDefault.arrow;
           s.projectileStyle = s.species === 'wraith' ? 'spectral' : 'arrow';
         }
       }
@@ -1365,16 +1365,16 @@
         e.basicDue = false;
       }
       bossCenteredReach(e, plan) {
-        const scale = R.bossCadence.areaRangeMultiplier;
+        const shape = R.bossAreaGeometry;
         const kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind;
-        if (kind === 'cone') return 165 * scale;
-        if (kind === 'sector') return 280 * scale;
+        if (kind === 'cone') return shape.coneRadius;
+        if (kind === 'sector') return shape.sectorRadius;
         // The moving ring's reach comes from speed × lifetime, not its
         // initially displayed radius (which is overwritten on every tick).
         if (kind === 'ring')
           return plan.slowOnly
             ? plan.waveSpeed * plan.waveLife
-            : R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
+            : R.combatGeometry.ringSpeed * shape.ringLife;
         return null;
       }
       bossAttackWeights(e, target = this.hero, allowRepeat = false) {
@@ -1490,15 +1490,15 @@
             angle,
             count: plan.count || 1,
             radius:
-              (kind === 'cone'
-                ? 165
+              kind === 'cone'
+                ? R.bossAreaGeometry.coneRadius
                 : kind === 'sector'
-                  ? 280
+                  ? R.bossAreaGeometry.sectorRadius
                   : kind === 'ring'
-                    ? 105
+                    ? R.bossAreaGeometry.ringInitialRadius
                     : index === 0
-                      ? 90
-                      : 115) * R.bossCadence.areaRangeMultiplier,
+                      ? R.bossAreaGeometry.firstCircleRadius
+                      : R.bossAreaGeometry.otherCircleRadius,
           },
           sequence = [];
         if (e.family === 'mine' && index === 2 && a.doubleWave) {
@@ -1713,7 +1713,7 @@
               timer: plan.warning,
               total: plan.warning,
               name: 'Delayed flame patch',
-              radius: 90 * R.bossCadence.areaRangeMultiplier,
+              radius: R.bossAreaGeometry.delayedBlastRadius,
             });
           if (e.family === 'citadel' && index === 2) a.opening = 2.5;
         }
@@ -1925,11 +1925,8 @@
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
           y: a.y + (i % 2) * 100,
-          radius: a.captainRadiusMultiplier
-            ? 75 * R.bossCadence.areaRangeMultiplier * a.captainRadiusMultiplier
-            : a.count > 1
-              ? 75 * R.bossCadence.areaRangeMultiplier
-              : a.radius,
+          radius: a.patchRadius ||
+            (a.count > 1 ? R.bossAreaGeometry.multiCircleRadius : a.radius),
         }));
       }
       // Connected-terrain scanning remains solely for the Citadel's persistent
@@ -2343,8 +2340,8 @@
             y: e.y,
             dx: (a.x - e.x) / d,
             dy: (a.y - e.y) / d,
-            speed: 260,
-            life: 2,
+            speed: R.projectileFlight.boss.ridgeCargo,
+            life: 520 / R.projectileFlight.boss.ridgeCargo,
             damage: this.worldBossEffect(
               a, this.weakenedEnemyDamage(e) * a.coefficient, 'damage',
             ),
@@ -2434,8 +2431,8 @@
               y: e.y,
               dx: Math.cos(angle),
               dy: Math.sin(angle),
-              speed: 490,
-              life: (a.radius - 7) / 490, // The last fragment stays inside its actual warning.
+              speed: R.projectileFlight.boss.citadelCanister,
+              life: (a.radius - 7) / R.projectileFlight.boss.citadelCanister, // Keep the true warning footprint.
               preserveFootprint: true,
               hitRadius: R.combatGeometry.canisterHalfWidth,
               damage: this.worldBossEffect(a, this.weakenedEnemyDamage(e) / 9, 'damage'),
@@ -2548,8 +2545,8 @@
             y: e.y,
             dx: Math.cos(a.angle),
             dy: Math.sin(a.angle),
-            speed: a.shotSpeed,
-            life: a.shotLife,
+            speed: R.projectileFlight.boss.valeTrackingVolley,
+            life: (a.shotSpeed * a.shotLife) / R.projectileFlight.boss.valeTrackingVolley,
             damage: this.worldCriticalDamage(
               a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
             ),
@@ -2571,7 +2568,10 @@
           return;
         }
         if (a.kind === 'volley') {
-          const style = e.projectileStyle || 'arrow';
+          const style = e.projectileStyle || 'arrow',
+            volleySpeed = e.family === 'crypt'
+              ? R.projectileFlight.boss.cryptBoneVolley
+              : R.projectileFlight.boss.defaultVolley;
           for (const [i, delta] of [-0.22, 0, 0.22].entries())
             this.s.projectiles.push({
               id: 'projectile-' + this.s.nextId++,
@@ -2579,8 +2579,8 @@
               y: e.y,
               dx: Math.cos(a.angle + delta),
               dy: Math.sin(a.angle + delta),
-              speed: 260 * R.enemyProjectileMultiplier,
-              life: (2.5 * R.balance.enemySpecialReachMultiplier) / R.enemyProjectileMultiplier,
+              speed: volleySpeed,
+              life: (260 * 2.5 * R.balance.enemySpecialReachMultiplier) / volleySpeed,
               damage: this.worldBossEffect(a, this.weakenedEnemyDamage(e), 'damage'),
               ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
               manaDrain: a.manaDrain || 0,
@@ -2620,7 +2620,7 @@
             y: e.y,
             life: a.slowOnly
               ? a.waveLife
-              : R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
+              : R.bossAreaGeometry.ringLife,
             tick: 0,
             damage: a.slowOnly ? 0 : this.worldBossEffect(
               a, this.weakenedEnemyDamage(e), 'damage',

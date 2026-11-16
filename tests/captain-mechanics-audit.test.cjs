@@ -146,7 +146,7 @@ const near = (u, e, degrees, distance = 100) => {
     fromY: e.y,
     x: c.hero.x,
     y: c.hero.y,
-    radius: plan.radius * Campaign.rules.bossCadence.areaRangeMultiplier,
+    radius: plan.radius,
     captainSkill: true,
   };
   c.resolveArea(e, a);
@@ -170,7 +170,7 @@ const near = (u, e, degrees, distance = 100) => {
     y: e.y,
     fromX: e.x,
     fromY: e.y,
-    radius: plan.radius * Campaign.rules.bossCadence.areaRangeMultiplier,
+    radius: plan.radius,
     captainSkill: true,
   };
   const patches = c.attackPatches(a);

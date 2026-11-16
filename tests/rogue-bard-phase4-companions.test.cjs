@@ -73,16 +73,15 @@ try {
         { x: ally.x + 130, y: ally.y },
       );
       game.configureEnemy(enemy, 2);
-      const nativeSpeed = enemy.shotSpeed || 260;
-      const stonePace = species === 'goblin'
-        ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
-      const expected = nativeSpeed * R.rangedEnemyCombat.projectileMultiplier * stonePace;
+      const expected = R.rangedProfiles[species]?.shotSpeed ??
+        (species === 'wraith'
+          ? R.projectileFlight.ordinaryDefault.spectral
+          : R.projectileFlight.ordinaryDefault.arrow);
       const flight = game.charmedProjectileFlight(ally);
       assert.equal(flight.speed, expected, species + ': hostile launch parity');
       assert.equal(flight.style, game.charmedCompanionProfile(ally).style,
         species + ': preserve native style');
-      const formerTravel = R.balance.friendlyProjectiles.lifeSeconds *
-        game.charmedCompanionProfile(ally).shotSpeed;
+      const formerTravel = R.projectileFlight.charmedDistance[species];
       assert(Math.abs(flight.life * flight.speed - formerTravel) < 1e-8,
         species + ': preserve friendly missed-shot travel budget');
       game.zone().enemies = [enemy];
@@ -95,7 +94,9 @@ try {
     }
     const conventional = fresh().unit('archer', 500, 500);
     assert.deepEqual(fresh().charmedProjectileFlight(conventional),
-      { speed: 450, style: 'arrow' }, 'ordinary Archer unchanged');
+      { speed: R.projectileFlight.companion.archerBasic,
+        life: 450 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.companion.archerBasic,
+        style: 'arrow' }, 'ordinary Archer uses the authored bow speed');
   }
 
   // A level-1/2 Greenwood Rogue starts without inheritance, so both native
@@ -429,9 +430,7 @@ try {
       assert.equal(creature.companionArmor(ally),
         spec.armor + creature.companionInheritedArmorBonus());
       assert.equal(creature.companionCombatReach(ally), spec.reach);
-      assert.equal(creature.companionBasicInterval(ally),
-        role === 'melee' ? Math.min(spec.interval, 0.8) : spec.interval,
-        species + '/' + role + ': accurate native basic vs melee-only cap');
+      assert.equal(creature.companionBasicInterval(ally), spec.interval);
       assert.equal(creature.canGatherTribute(ally), true);
       if (role === 'ranged') {
         const woundedHero = creature.hero;
