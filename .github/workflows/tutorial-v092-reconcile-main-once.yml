@@ -6,7 +6,7 @@ permissions:
   contents: write
 jobs:
   reconcile:
-    if: "github.event.head_commit.message == 'fix(ci): enable guarded main reconciliation'"
+    if: "github.event.head_commit.message == 'fix(ci): avoid staging vendor in guarded tutorial merge'"
     runs-on: ubuntu-latest
     timeout-minutes: 22
     steps:
@@ -63,7 +63,8 @@ jobs:
           node tests/v092-elite-auto-initiation.test.cjs
           node tests/character-language-consistency-v092.test.cjs
           node tests/thorn-witness.test.cjs
-          git add -A
+          # Pinned Pixi vendor file is generated locally and is never a source change.
+          git add -A -- . ':!assets/vendor/pixi-8.22.0.min.js'
           git diff --cached --check
           if git diff --cached --quiet; then
             echo "::error::Expected meaningful main integration changes"
