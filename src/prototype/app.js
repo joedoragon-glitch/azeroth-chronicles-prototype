@@ -7410,6 +7410,30 @@
   function updateNavigationGuide(force = false) {
     const guide = navigationGuide;
     if (!guide) return;
+    // This scout lead denotes a reported patrol area, not a required
+    // destination after the player encounters Thornfang in person.
+    if (
+      guide.zone === 'vale' &&
+      guide.destination?.id?.startsWith('thorn-lead-') &&
+      (game.s.keys.thorn ||
+        game.zone().enemies.some(
+          (enemy) =>
+            enemy.type === 'boss' &&
+            enemy.family === 'thorn' &&
+            enemy.hp > 0 &&
+            !enemy.neutral &&
+            (enemy.aggro || enemy.thornIntroRetreat != null),
+        ))
+    ) {
+      if (guide.autopilot && game.hero.order === guide.order) {
+        game.hero.order = null;
+        game.hero.path = [];
+      }
+      navigationGuide = null;
+      cancelNavigationButton.hidden = true;
+      // A suspended gathering guide may resume after combat, not inside it.
+      return;
+    }
     if (
       guide.campaign !== game ||
       guide.hero !== game.hero ||
@@ -7449,6 +7473,19 @@
     guide.route = choice ? choice.path : [];
   }
   function updateQuestGuide(force = false) {
+    // The witness waypoint can finish early on combat entry; preserve
+    // an older gathering task and restore its marker only once combat clears.
+    if (
+      !navigationGuide &&
+      suspendedGatheringGuide &&
+      !game.s.squadEngagement &&
+      !game.s.projectiles?.length &&
+      !game.manaCombatActive()
+    ) {
+      if (suspendedGatheringGuide === game.s.gatheringTarget)
+        gatheringGuideRequest = null;
+      suspendedGatheringGuide = null;
+    }
     const gathering = game.s.gatheringTarget;
     if (gathering && gathering !== gatheringGuideRequest) {
       gatheringGuideRequest = gathering;
