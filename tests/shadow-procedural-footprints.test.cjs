@@ -99,6 +99,9 @@ for(const region of sites) {
 const canary=records.find(r=>r.id==='stronghold-wolf-packhold-prop-0');
 assert(canary && canary.alpha16?.occupiedPixels>500,
   'The native wolf-den stronghold prop must be visibly grounded');
+const shoreRope=records.find(r=>r.id==='appalachian-shore-rope');
+assert(shoreRope && shoreRope.alpha16?.occupiedPixels>100,
+  'The Highlands receiving shore rope coil must paint real art, not just an oversized ground shadow');
 const output={
   issue:893,baseline:process.env.GITHUB_SHA||'local-checkout',
   note:'Measurements of one live instance per unique region/visual signature, not all entities or every animation frame. Does not assign defect verdicts from simple alpha geometry.',
