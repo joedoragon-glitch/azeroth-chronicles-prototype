@@ -1497,7 +1497,9 @@
               directionX: p.dx,
               directionY: p.dy,
             });
-            if (p.charged && (!p.rapid || p.chargedBurst))
+            // A blocked projectile still has a contact receipt, but cannot
+            // claim the successful hero-only charged burst in audio or VFX.
+            if (landed && p.source === 'hero' && p.charged && (!p.rapid || p.chargedBurst))
               this.event('chargedImpact', {
                 actor: 'hero',
                 source: 'hero',
