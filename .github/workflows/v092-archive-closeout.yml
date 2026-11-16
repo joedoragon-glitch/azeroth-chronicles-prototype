@@ -1,0 +1,56 @@
+name: v0.9.2 Archive targeted closeout (temporary, no deploy)
+on:
+  push:
+    branches: [feat/v092-tutorial-quest-chain-20261112]
+    paths:
+      - tests/quest-archive-browser.test.cjs
+      - .github/workflows/v092-archive-closeout.yml
+
+permissions:
+  contents: read
+
+jobs:
+  archived-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Execute every Archive viewport and save/reload interaction
+        env:
+          QUEST_BROWSER_ENGINE: ${{ matrix.engine }}
+        run: node tests/quest-archive-browser.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: archive-closeout-${{ matrix.engine }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  syntax-format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: |
+          npx prettier --check tests/quest-archive-browser.test.cjs tests/helpers/production-shell.cjs tests/game-menu-ui.test.cjs tools/greenwood-layout/browser-review.cjs
+          node --check tests/quest-archive-browser.test.cjs
+          node --check tests/helpers/production-shell.cjs
+          node --check tests/game-menu-ui.test.cjs
+          node --check tools/greenwood-layout/browser-review.cjs
+          node scripts/build.cjs --check
