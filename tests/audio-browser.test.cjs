@@ -301,6 +301,7 @@ const root = path.resolve(__dirname, '..'),
               throw Error('Bad enemy stage ' + JSON.stringify(value));
           }
         const comparisons = [];
+        const levelMismatches = [];
         for (const material of materials)
           for (const stage of ['windup', 'release', 'impact']) {
             const cold = await render(material, stage),
@@ -308,9 +309,8 @@ const root = path.resolve(__dirname, '..'),
             if (warm.rms < 0.00005 || warm.peak >= 1) throw Error('Invalid warm output');
             const deltaDb = 20 * Math.log10(warm.rms / cold.rms);
             if (Math.abs(deltaDb) > 4)
-              throw Error(
-                'Recorded/fallback level jump: ' + material + '/' + stage + ' ' + deltaDb,
-              );
+              levelMismatches.push({ material, stage, deltaDb: +deltaDb.toFixed(2),
+                coldRms: +cold.rms.toFixed(7), warmRms: +warm.rms.toFixed(7) });
             if (
               stage === 'windup' &&
               (warm.secondPulse / warm.firstPulse < 0.35 ||
@@ -329,7 +329,9 @@ const root = path.resolve(__dirname, '..'),
           const cold = await render(material, 'release', true, 'normal', false, null),
             warm = await render(material, 'release', true, 'normal', true, null);
           if (Math.abs(20 * Math.log10(warm.rms / cold.rms)) > 4)
-            throw Error('Common creature recording/fallback level jump: ' + material + ' ' + (20 * Math.log10(warm.rms / cold.rms)).toFixed(2) + ' dB; cold=' + cold.rms + '; warm=' + warm.rms);
+            levelMismatches.push({ material, stage: 'common-release',
+              deltaDb: +(20 * Math.log10(warm.rms / cold.rms)).toFixed(2),
+              coldRms: +cold.rms.toFixed(7), warmRms: +warm.rms.toFixed(7) });
           comparisons.push({
             material,
             stage: 'common-release',
@@ -338,6 +340,9 @@ const root = path.resolve(__dirname, '..'),
             deltaDb: 20 * Math.log10(warm.rms / cold.rms),
           });
         }
+        if (levelMismatches.length)
+          throw Error('Recorded/procedural level jumps in actual browser engine (>4dB): ' +
+            JSON.stringify(levelMismatches));
         const missed = await render('steel', 'impact', false);
         const contact = await render('steel', 'impact', true);
         if (missed.route !== 'enemyGroundImpact' || !(missed.rms > 0 && missed.rms < contact.rms))
