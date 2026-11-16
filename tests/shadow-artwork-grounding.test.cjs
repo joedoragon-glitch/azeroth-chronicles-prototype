@@ -130,6 +130,28 @@ const heroDay = ground('hero');
 assert.deepEqual([heroDay.rx, heroDay.ry, heroDay.shadowOpacity], [18, 5.5, 1]);
 assert.equal(ground('enemy', { type: 'boss', family: 'thorn' }).rx, 31);
 assert.equal(ground('ally', { type: 'pet', petFamily: 'citadel' }).rx, 18);
+// A true post contact must not inherit the 22×6 ordinary prop puddle.
+// #893 original game screenshot: Marches' roadside lantern casts an
+// oversized dark oval several times broader than its visible base.
+for (const [structure, rx, ry] of [
+  ['roadside-lantern', 7, 2.5],
+  ['grave-lamp', 9, 3],
+  ['banner', 8, 3],
+  ['crown-banner', 8, 3],
+  ['royal-flight-standard', 8, 3],
+  ['tax-post', 8, 3],
+  ['inspection-marker', 8, 3],
+  ['checkpoint-standard', 8, 3],
+]) {
+  const contact = ground('prop', { structure });
+  assert.deepEqual([contact.rx, contact.ry, contact.shadowOpacity], [rx, ry, 1],
+    structure + ' measured narrow-foot shadow');
+}
+assert.deepEqual([ground('prop', { structure: 'rope-coil' }).rx,
+  ground('prop', { structure: 'rope-coil' }).ry], [22, 6],
+  'ordinary coil and structures retain their original grounding policy');
+const scaledPost = ground('prop', { structure: 'crown-banner', visualScale: 1.3 });
+assert.equal(scaledPost.rx, 10.4, 'narrow post still respects original visualScale');
 assert.equal(ground('prop', { greenwoodWall: true }).shadowOpacity, 0);
 assert.equal(ground('prop', { greenwoodField: true }).shadowOpacity, 0);
 assert.equal(ground('prop', { greenwoodFacility: 'thorn-work' }).shadowOpacity, 0);
@@ -138,6 +160,8 @@ darkness = 0.5;
 assert.equal(ground('hero').shadowOpacity, 10 / 16, 'twilight uses bounded quantized opacity');
 darkness = 1;
 assert.equal(ground('hero').shadowOpacity, 4 / 16, 'full nighttime has subdued contact treatment');
+assert.equal(ground('prop', { structure: 'roadside-lantern' }).shadowOpacity, 4 / 16,
+  'narrow lamp retains the same night attenuation as regular geometry');
 assert.equal(ground('prop', { structure: 'wildflowers' }).shadowOpacity, 1 / 16);
 dungeon = true;
 assert.equal(ground('hero').shadowOpacity, 1, 'existing dungeon illumination policy is unchanged');
