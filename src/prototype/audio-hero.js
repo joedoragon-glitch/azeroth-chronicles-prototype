@@ -32,6 +32,13 @@
             prior = this.sourcePriority;
           this.sourcePriority = 1;
           try {
+            // Phase 2: swap the authored single-bell gesture only when already
+            // decoded. A cold load, blocked recording or muted source retains
+            // this original procedural gesture without late/replayed sounds.
+            if (this.playSoundEvent(
+              emphatic ? 'effect.rogueBellEmphatic' : 'effect.rogueBellBasic',
+              e,
+            )) return true;
             for (let i = 0; i < ticks; i++) {
               const at = now + (i === 0 ? 0 : i === 1 ? 0.037 : 0.082);
               // A pair/triple of tiny metal-shell collisions. These filtered

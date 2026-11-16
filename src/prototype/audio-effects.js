@@ -325,6 +325,16 @@
           kind = this.soundKind(e),
           now = this.ctx.currentTime;
         if (!kind) return;
+        // Quest payouts legitimately emit questComplete and an immediately
+        // following automatic quest receipt. Give them one audible payoff,
+        // even during cold asset loading; independent quest notes are intact.
+        if (type === 'quest' && e.automatic &&
+            now - (this.lastSfx?.['phase2:questComplete'] ?? -Infinity) < 0.18)
+          return;
+        if (type === 'questComplete') {
+          this.lastSfx ||= {};
+          this.lastSfx['phase2:questComplete'] = now;
+        }
         if (e.style === 'cargo' && type === 'projectileLaunch' && !e.stage) this.duck(0.4);
         const actorKey =
             e.actor === 'hero'
