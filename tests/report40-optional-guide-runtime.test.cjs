@@ -115,7 +115,16 @@ game.budgetedTacticalRoute=function*(){
   return fallbackPath;
 };
 game.s.time += 3;
+const plansBeforeFallback = generated;
+const firstGuideActive = scope.Prototype.navigationState;
 frame(4200);
+console.log('REPORT40_MOVING_DEBUG ' + JSON.stringify({
+  plansBeforeFallback, plansAfterFallback: generated, fallbackCalls,
+  firstGuideActive, afterGuideActive:scope.Prototype.navigationState,
+  distFromOriginal: Math.hypot(game.hero.x-firstOrigin.x,game.hero.y-firstOrigin.y),
+  distanceToSelected: Math.hypot(game.hero.x-destination.x,game.hero.y-destination.y),
+  attached, time:game.s.time,
+}));
 assert.equal(fallbackCalls,1,
   'a new displacement starts incremental BFS fallback rather than reusing a stale request');
 Object.assign(game.hero,walkAlong(game.hero,fallbackPath,90));
