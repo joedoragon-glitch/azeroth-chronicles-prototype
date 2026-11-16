@@ -2406,6 +2406,7 @@
         }
         const profile = elite ? signature : ordinary;
         const slot = elite ? 2 : 1;
+        const skillTitle = this.monsterSkillTitle(profile.name, u);
         // Native Ringleaders have both a species basic and a separate
         // signature. Slot 2 never replaces, disables or consumes Slot 1.
         // Skill 1 is single-target; skill 2 is max two actual contacts.
@@ -2457,7 +2458,7 @@
           committed = true;
         } else {
           const previousDirect = this.developerCompanionBeginDirect(
-            u, profile.name || 'Native maneuver');
+            u, skillTitle || 'Native maneuver');
           for (const enemy of victims) {
             if (!this.damage(enemy, base, u.id, { area: elite, skillShape: elite ? 'area' : 'single', criticalExecution: criticalReceipt })) continue;
             committed = true;
@@ -2521,7 +2522,7 @@
         charmedSquadSkills.set(this, team);
         this.event('companionSkill', {
           source: u.id, unitType: u.type,
-          skill: profile.name, targetId: target.id, slot,
+          skill: skillTitle, targetId: target.id, slot,
         });
         return true;
       }
