@@ -47,15 +47,32 @@ for (const language of ['en', 'es']) {
   assert.equal(budgeted, 1, 'one resumable guide begins after movement');
   assert(blocked - before <= 128,
     'first animation callback respects 128-probe guide quota');
-  // Combat must suspend all optional route probes without canceling the guide.
-  game.s.squadEngagement = true;
+  // A bare squadEngagement flag is not a legitimate ongoing encounter:
+  // normal HUD/squad reconciliation clears it if there are no actual threats.
+  // Keep a real ordinary hostile actor engaged during these callbacks.
+  const hostile = game.zone().enemies.find((e) =>
+    e.type !== 'boss' && e.hp > 0 && !e.neutral);
+  assert(hostile, 'Greenwood provides an ordinary enemy for real combat gating');
+  const was = { x: hostile.x, y: hostile.y, aggro: hostile.aggro,
+    returning: hostile.returning };
+  Object.assign(hostile, {
+    x: game.hero.x + 80, y: game.hero.y + 10,
+    aggro: true, returning: false,
+  });
+  game.syncSquadDoctrine();
+  assert(game.squadContext().engaged && !!game.s.squadEngagement,
+    'genuine nearby hostile remains engaged during visual route updates');
   for (let i = 0; i < 4; i++) {
     before = blocked;
     frame(200 + i * 20);
+    assert(game.squadContext().engaged,
+      'the real encounter must still exist after each tested frame');
     assert.equal(blocked - before, 0,
       'no optional route work while squad combat is active');
   }
-  game.s.squadEngagement = false;
+  Object.assign(hostile, was);
+  game.syncSquadDoctrine();
+  assert(!game.s.squadEngagement, 'ending the fixture encounter allows the guide to resume');
   // Reposition to a known walkable downstream point WHILE the earlier-origin
   // search is unfinished. The result must reconnect from here, not its start.
   const rejoin = choice.path.slice(0, -1).filter((point) =>
