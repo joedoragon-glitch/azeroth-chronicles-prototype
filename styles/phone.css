@@ -199,7 +199,7 @@ body[data-experience='phone'] #touch-interact-button {
   background: linear-gradient(155deg, #69563b, #3e392d);
 }
 body[data-experience='phone'] #order-button {
-  right: max(8px, var(--phone-safe-right, env(safe-area-inset-right)));
+  left: calc(max(8px, var(--phone-safe-left, env(safe-area-inset-left))) + 110px);
   bottom: max(8px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
   width: 96px;
   min-height: 52px;
