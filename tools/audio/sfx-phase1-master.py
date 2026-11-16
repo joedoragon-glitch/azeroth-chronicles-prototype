@@ -212,13 +212,25 @@ def generate(key):
     v[-ramp:]*=np.linspace(1,0,ramp)
     peak=float(np.max(np.abs(v)));rms=float(np.sqrt(np.mean(v*v)))
     assert peak>.005 and rms>.001 and np.isfinite(v).all(),key
-    # Preserve realistic headroom, avoid uniform compression and no false audio GO.
-    target={"release":.041,"impact":.055}.get(raw.rsplit("-",1)[-1],.053)
+    # Independent post-render quality audit found that v1 inflated some RMS
+    # dramatically (hero sword swing 3.92x; warning 1.77x). That violates the
+    # standing "better identity != louder" contract. Preserve each original
+    # cue's relative presence, not a blanket RMS shared by all 30 sounds.
+    original=json.loads((ROOT/"tools/audio/sfx-measurements.json").read_text())
+    baseline=float(original[key]["rms"])
+    assert .005<baseline<.2,("Missing original authored reference level",key)
+    relative={"critical-warning":1.04,"hero-steel-swing":1.10,
+              "hero-steel-impact":1.12,"power-strike":1.10,
+              "holy-cleave":1.10,"piercing-volley":1.10}.get(
+                raw,1.05 if raw.endswith("-release") else 1.10)
+    target=baseline*relative
     v*=min(.40/peak,target/rms)
     peak=float(np.max(np.abs(v)));rms=float(np.sqrt(np.mean(v*v)))
     assert .025<peak<=.401 and .007<rms<.085,(key,peak,rms)
     pcm=np.round(np.clip(v,-1,1)*32767).astype('<i2')
-    return pcm.tobytes(),round(len(v)/RATE,6),guide,dict(peak=round(peak,5),rms=round(rms,5),duration=round(len(v)/RATE,6))
+    return pcm.tobytes(),round(len(v)/RATE,6),guide,dict(
+        peak=round(peak,5),rms=round(rms,5),referenceRms=round(baseline,6),
+        rmsRatio=round(rms/baseline,4),duration=round(len(v)/RATE,6))
 
 def writewav(path,frames):
     path.parent.mkdir(parents=True,exist_ok=True)
@@ -276,6 +288,35 @@ def integrate():
                        "retainedIds":len(IDS),"origin":"dev288","cues":samples})
     print("Integrated",len(IDS),"stable IDs, archived originals, new material-specific WAV masters")
 
+def revise():
+    # Safe rerender on an already staged development branch. Do not copy the
+    # modernized candidate over the archived v4-era original recording.
+    assert ROLLBACK.exists(),"No original audio archive to protect"
+    book=json.loads(ROLLBACK.read_text())
+    manifest=json.loads(MANIFEST.read_text())
+    assert set(book["originalEntries"])==set(IDS)
+    effects={k:v for k,v in manifest["assets"].items() if v["kind"]=="effect"}
+    assert set(effects)==set(IDS)
+    for key in IDS:
+        old=BACKUPS/(key+".wav")
+        assert sha(old)==book["originalSha256"][key],"Original immutable backup changed: "+key
+        entry=effects[key]
+        assert entry.get("managedBy")==KEY,("Unexpected active master owner",key)
+        assert entry["src"]=="./assets/audio/effects/"+key+".wav"
+        assert sha(ROOT/entry["src"][2:])==entry["sha256"],"Unexpected candidate change: "+key
+    results=render(ROOT/"assets/audio/effects")
+    for key in IDS:
+        entry=manifest["assets"][key]
+        entry["sha256"]=results[key]["sha256"]
+        entry["duration"]=results[key]["duration"]
+        entry["generationGuide"]=results[key]["guide"]
+    writejson(MANIFEST,manifest)
+    writejson(METRICS,{"status":"SOURCE/RENDER TECHNICAL CHECK; UNHEARD",
+        "qualityRevision":"v2 reference-RMS balanced after adversarial gain audit",
+        "retainedIds":len(IDS),"origin":"dev288","cues":results})
+    print("Revised",len(IDS),"SFX within original level hierarchy; exact backups preserved")
+
+
 def restore(ids):
     assert ROLLBACK.exists(),"No first-generation archive available"
     book=json.loads(ROLLBACK.read_text());manifest=json.loads(MANIFEST.read_text())
@@ -295,10 +336,12 @@ def main():
     p=argparse.ArgumentParser()
     mode=p.add_mutually_exclusive_group()
     mode.add_argument("--integrate",action="store_true")
+    mode.add_argument("--revise",action="store_true")
     mode.add_argument("--restore",metavar="all|sfx-id[,sfx-id...]")
     p.add_argument("--out",default="/tmp/sibdlp-sfx-phase1")
     a=p.parse_args()
     if a.integrate: integrate()
+    elif a.revise: revise()
     elif a.restore: restore(a.restore)
     else:
         data=render(Path(a.out));writejson(Path(a.out)/"sfx-phase1-preview.json",data)
