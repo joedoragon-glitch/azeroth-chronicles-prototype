@@ -79,18 +79,51 @@ assert.equal(JSON.stringify(game.snapshot()),beforeQuest,
   'optional guide planning does not mutate saved campaign state');
 
 // A reachable fallback is not rejected merely for differing from A* geometry.
+// Walk the real legal route while the fallback generator is still unfinished:
+// the displayed result must connect from the hero's NEW position.
+const walkAlong=(start,path,distance)=>{
+  let from={x:start.x,y:start.y};
+  for (const point of path) {
+    const span=Math.hypot(point.x-from.x,point.y-from.y);
+    if (span>=distance && span>0)
+      return {x:from.x+(point.x-from.x)*distance/span,
+        y:from.y+(point.y-from.y)*distance/span};
+    distance-=span;
+    from=point;
+  }
+  return from;
+};
+const pathBeforeFallback=game.route(game.hero,destination);
+assert(pathBeforeFallback.length,'existing route remains reachable');
+Object.assign(game.hero,walkAlong(game.hero,pathBeforeFallback,90));
+assert(!game.blocked(game.hero.x,game.hero.y),'moving hero remains on legal terrain');
 const fallbackPath=game.route(game.hero,destination);
-assert(fallbackPath.length,'safe fallback path exists');
+assert(fallbackPath.length,'safe fallback path exists from new origin');
 let fallbackCalls=0;
 game.budgetedCompanionRoute=function*(){ generated++; return []; };
-game.budgetedTacticalRoute=function*(){ fallbackCalls++; yield {kind:'node'}; return fallbackPath; };
-game.hero.x += 100;
+game.budgetedTacticalRoute=function*(){
+  fallbackCalls++;
+  for(let i=0;i<145;i++) yield {kind:'node'};
+  return fallbackPath;
+};
 game.s.time += 3;
 frame(4200);
+assert.equal(fallbackCalls,1,'A* failure starts incremental BFS fallback');
+Object.assign(game.hero,walkAlong(game.hero,fallbackPath,90));
+assert(!game.blocked(game.hero.x,game.hero.y),
+  'player continues moving safely while the search is pending');
 for(let t=4300;t<5700;t+=100) frame(t);
-assert.equal(fallbackCalls,1,'A* no-route result runs a bounded native BFS fallback');
-assert(scope.Prototype.trackedWaypoint?.points?.length,
-  'fallback leaves usable map guidance instead of hiding the destination');
+assert.equal(fallbackCalls,1,'the pending BFS generator is resumed instead of restarted');
+const fallbackVisible=scope.Prototype.trackedWaypoint?.points;
+assert(fallbackVisible?.length,'fallback leaves usable map guidance');
+assert(Math.hypot(fallbackVisible.at(-1).x-destination.x,
+  fallbackVisible.at(-1).y-destination.y)<1,'fallback still ends at the selected landmark');
+let safeFrom=game.hero;
+for(const point of fallbackVisible){
+  assert(game.clearSegment(safeFrom,point),
+    'fallback connects to current moving hero without an obsolete first leg');
+  safeFrom=point;
+}
 
 // Clearing a pending route means no later cancelled work may be published.
 let cancelledRequests=0;
@@ -98,7 +131,7 @@ game.budgetedCompanionRoute=function*(){
   for(let i=0;i<300;i++){ cancelledRequests++; yield {kind:'node'}; }
   return fallbackPath;
 };
-game.hero.x += 100;
+Object.assign(game.hero,walkAlong(game.hero,fallbackVisible,95));
 game.s.time += 3;
 frame(5800);
 assert(cancelledRequests>0,'a fresh optional plan is in flight before cancellation');
