@@ -197,7 +197,7 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#profile').selectOption('phone');
         await page.locator('#mix-scene').selectOption('world');
         await press('#scene-play');
-        await page.waitForFunction(() => AudioAudition.audio.context?.zone === 'vale' && AudioAudition.audio.recordedScore?.id === 'place-vale');
+        await page.waitForFunction(() => AudioAudition.audio.context?.zone === 'vale' && AudioAudition.audio.context?.millhavenTown && AudioAudition.audio.recordedScore?.id === 'millhaven-chamber');
         await page.locator('#scene-mode').selectOption('combat');
         await press('#scene-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
@@ -205,7 +205,7 @@ const root = path.resolve(__dirname, '..'),
         assert((await page.locator('#scene-description').textContent()).includes('2 synchronized'));
         await page.locator('#scene-mode').selectOption('night');
         await press('#scene-play');
-        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'night-vale');
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'millhaven-chamber');
         await page.locator('#scene-mode').selectOption('peace');
         await press('#scene-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'peace-vale');
