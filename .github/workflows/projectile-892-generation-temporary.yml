@@ -31,7 +31,23 @@ jobs:
         run: |
           echo "Generated diff:"
           git status --short
-          if git diff --name-only | grep -v -E '^sw\\.js$' | grep -q .; then
+          if git diff --name-only | grep -v -E '^sw[.]js | grep -q .; then
+            echo "::error::Unexpected generated file changed"
+            exit 1
+          fi
+      - name: Commit only exact generated service-worker fingerprints to draft branch
+        shell: bash
+        run: |
+          git add sw.js
+          if git diff --cached --quiet; then
+            echo "Source fingerprints already match; no commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build: synchronize #892 source fingerprints on isolated branch [no-pages]"
+          git push origin HEAD:refs/heads/fix/v092-projectile-flight-coherence-892
+ | grep -q .; then
             echo "::error::Unexpected generated file changed"
             exit 1
           fi
