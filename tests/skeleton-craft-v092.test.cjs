@@ -88,6 +88,36 @@ test('Actual context gates professional titles; wild independent actors retain o
   assert.equal(game.monsterSkillTitle('Rockside Slam', { species: 'ogre', guard: true }), 'Rockside Slam');
 });
 
+test('All 25 English aliases resolve in their scoped employment or habitat contexts', () => {
+  const game = new Campaign('normal', 'paladin', () => 0.99);
+  const map = Campaign.rules.tacticalFoundation.skillLoreTitles;
+  const roles = {
+    skeleton: ['vale', { species: 'skeleton' }],
+    habitat: ['vale', { species: 'wraith' }],
+    'vale-salvage': ['supply-vale', { species: 'goblin', roomGuard: true }],
+    'mine-warden': ['mine', { species: 'ogre', guard: true }],
+    'frontier-soldier': ['warlord', { species: 'orc', guard: true }],
+    'ridge-payroll': ['supply-highlands', { species: 'archer', roomGuard: true }],
+    'cindermaw-ministry': ['cindermaw', { species: 'ashbeast', guard: true }],
+    'crown-drill': ['vale', { species: 'crownguard', crownTroop: true }],
+  };
+  for (const [source, [approved, scope]] of Object.entries(map)) {
+    const pair = roles[scope];
+    assert(pair, 'every approved display context is explicitly classified: ' + scope);
+    const [zone, actor] = pair;
+    game.s.zone = zone;
+    assert.equal(game.monsterSkillTitle(source, actor), approved,
+      source + ': correct source identity resolves the locked English title');
+    if (!['skeleton', 'habitat'].includes(scope)) {
+      game.s.zone = 'vale';
+      const unaffiliated = { ...actor, guard: false, roomGuard: false,
+        crownTroop: false, pack: '' };
+      assert.equal(game.monsterSkillTitle(source, unaffiliated), source,
+        source + ': unrelated wildlife or guards retain their established labels');
+    }
+  }
+});
+
 test('Mortise Cut is a real L-shaped contact and leaves no additional Slow or shove', () => {
   const { game, enemy } = encounter();
   const x = game.hero.x, before = game.hero.hp;
@@ -295,6 +325,51 @@ test('Charmed Skeletons preserve their normal/earned repertoire without a new sa
       'genuinely Charmed Skeleton can perform Mortise contact');
     assert.equal(game.s.projectiles.length, 0);
 
+    // Invoke the real Charmed scheduler; merely calling the craft helper
+    // never proves normal/earned slot alternation or squad cooldowns.
+    game.s.companionCombatTraining = 1;
+    game.hero.skills[1] = 0;
+    const skillEvents = (slot) => game.effects.filter((e) =>
+      e.type === 'companionSkill' && e.source === melee.id && e.slot === slot);
+    const makeReady = (slot) => {
+      game.s.time += 10;
+      melee.skillGlobalCd = 0;
+      melee['skill' + slot + 'Cd'] = 0;
+      enemy.x = melee.x + 35;
+      enemy.y = melee.y;
+      enemy.hp = enemy.maxHp;
+      enemy.returning = false;
+      assert(game.line(melee, enemy), 'successive casts need a valid sightline');
+    };
+    makeReady(1);
+    assert(game.charmedCompanionSkill(melee, enemy),
+      'first native Skill 1 remains available through the real scheduler');
+    assert.equal(skillEvents(1).at(-1).skill, 'Counterpressure',
+      'the native technique keeps its exact approved display title');
+    melee.skill1Cd = melee.skillGlobalCd = 0;
+    assert(!game.charmedCompanionSkill(melee, enemy),
+      'individual cooldown reset cannot bypass native squad recovery');
+    makeReady(1);
+    assert(game.charmedCompanionSkill(melee, enemy),
+      'second actual Skill 1 activation executes the alternate craft');
+    assert.equal(skillEvents(1).at(-1).skill, 'Mortise Cut');
+    melee.skill1Cd = melee.skillGlobalCd = 0;
+    assert(!game.charmedCompanionSkill(melee, enemy),
+      'alternative craft also spends the existing shared squad cooldown');
+
+    // Original signature then earned craft signature inside Skill 2. No
+    // additional purchase, third heritage slot or forged capture receipt.
+    game.s.companionCombatTraining = 2;
+    makeReady(2);
+    assert(game.charmedCompanionSkill(melee, enemy),
+      'trained Charmed Ringleader signature executes');
+    assert.notEqual(skillEvents(2).at(-1).skill, 'Double Shear',
+      'first elite activation still executes its original native signature');
+    makeReady(2);
+    assert(game.charmedCompanionSkill(melee, enemy),
+      'earned Skill 2 alternates to the shared Skeleton craft');
+    assert.equal(skillEvents(2).at(-1).skill, 'Double Shear');
+
     const ranged = capture(true), rangedTarget = targetNear(ranged, 50);
     assert(game.charmedSkeletonCraft(ranged, rangedTarget, false, false),
       'lawfully Charmed Skeleton Bow Guard can launch Datum arrows');
@@ -312,6 +387,28 @@ test('Charmed Skeletons preserve their normal/earned repertoire without a new sa
     else Campaign.talentProfiles.rogue = oldTalents;
   }
 });
+test('Mid-Double Shear v4 snapshot clears queued attacks without changing live combat', () => {
+  const { game, enemy } = encounter({ elite: true });
+  assert(game.startSkeletonCraft(enemy, game.hero));
+  game.resolveAttack(enemy);
+  assert.equal(enemy.sequence.length, 1, 'real native attack queues a second strike');
+  enemy.telegraph = game.advanceQueuedAttack(enemy);
+  assert(enemy.telegraph?.skeletonCraft && enemy.telegraph.craftStep === 2);
+  const liveBefore = JSON.stringify(game.s);
+  const saved = game.snapshot();
+  Campaign.validate(saved);
+  assert.equal(saved.version, 4);
+  assert.equal(JSON.stringify(game.s), liveBefore, 'saving does not mutate live combat');
+  const signed = saved.zones.vale.enemies.find((e) => e.id === enemy.id);
+  assert(signed && !signed.telegraph && !signed.motion && !signed.sequence?.length,
+    'v4 saves never retain the new interrupted follow-up attack');
+  const restored = Campaign.restore(saved, () => 0.99);
+  const copy = restored.zone().enemies.find((e) => e.id === enemy.id);
+  assert(copy && !copy.telegraph && !copy.motion && !copy.sequence?.length,
+    'reload cannot execute an invisible old second strike');
+  assert.equal(restored.s.version, 4);
+});
+
 test('Native enemy-loop admits and releases craft without direct test-only casting', () => {
   for (const mode of ['normal', 'nightmare'])
     for (const ranged of [false, true])
