@@ -160,36 +160,64 @@ async function resumeLoadedCampaign(page) {
           'Recruiter glyph remains inside its marker circle',
         );
       }
-      await page.evaluate(() => {
+      await page.evaluate((isPhone) => {
         const c = Prototype.game;
         c.tick = () => {};
         c.hero.level = 20;
         c.hero.xp = 0;
-        c.notice('BOSS VANQUISHED · The Drowned Keeper', 7, 'The Archive is open to exploration.');
-        c.notice('Sunken Archive · halls secured', 7, 'First clear reward delivered.');
+        const duration = isPhone ? 2.5 : 7;
+        c.notice(
+          'BOSS VANQUISHED · The Drowned Keeper',
+          duration,
+          'The Archive is open to exploration.',
+        );
+        c.notice('Sunken Archive · halls secured', duration, 'First clear reward delivered.');
         Prototype.updateHUD();
-      });
+      }, phone);
       await page.waitForFunction(
-        () => document.querySelectorAll('#message .notice-card .notice-detail').length === 2,
+        (isPhone) => {
+          Prototype.updateHUD();
+          const cards = document.querySelectorAll('#message .notice-card');
+          return cards.length === (isPhone ? 1 : 2) &&
+            cards[0].textContent.includes('BOSS VANQUISHED');
+        },
+        phone,
       );
-      const cards = await page.locator('#message .notice-card').allTextContents();
-      assert(cards[0].includes('BOSS VANQUISHED') && cards[1].includes('halls secured'));
-      assert.equal(await page.locator('#message .notice-detail').count(), 2);
-      const bounds = await page.locator('#message').boundingBox();
-      assert(bounds.x >= 0 && bounds.x + bounds.width <= gameViewport.width + 1);
+      const firstCards = await page.locator('#message .notice-card').allTextContents();
+      assert(firstCards[0].includes('BOSS VANQUISHED'));
+      assert.equal(await page.locator('#message .notice-detail').count(), phone ? 1 : 2);
       if (phone) {
-        const separate = await page.evaluate(() => {
+        // The production phone HUD has one narrative slot. Both events must
+        // still be delivered sequentially rather than discarded or stacked.
+        const firstFits = await page.evaluate(() => {
           document.querySelector('#status').textContent = 'Need 70 crowns.';
           Prototype.updateHUD();
+          const message = document.querySelector('#message').getBoundingClientRect();
           const status = document.querySelector('#status').getBoundingClientRect();
-          const notices = document.querySelector('#message').getBoundingClientRect();
-          return (
-            document.querySelectorAll('#message .notice-card').length === 2 &&
-            status.top >= notices.bottom
-          );
+          return status.top >= message.bottom;
         });
-        assert(separate, 'stacked milestones and status remain separate');
+        assert(firstFits, 'phone milestone must not overlap the status line');
+        await page.waitForFunction(
+          () => {
+            Prototype.updateHUD();
+            const cards = document.querySelectorAll('#message .notice-card');
+            return cards.length === 1 &&
+              cards[0].textContent.includes('halls secured') &&
+              cards[0].querySelector('.notice-detail')?.textContent.includes('First clear reward');
+          },
+          null,
+          { timeout: 12000 },
+        );
+        const secondCard = await page.locator('#message .notice-card').allTextContents();
+        assert(secondCard[0].includes('halls secured'));
+      } else {
+        assert(firstCards[1].includes('halls secured'));
       }
+      const bounds = await page.evaluate(() => {
+        const rect = document.querySelector('#message').getBoundingClientRect();
+        return { x: rect.x, right: rect.right, viewportWidth: innerWidth };
+      });
+      assert(bounds.x >= 0 && bounds.right <= bounds.viewportWidth + 1);
       await page.screenshot({ path: path.join(out, 'archive-milestones-' + tag + '.png') });
       await page.evaluate(() => (document.querySelector('#status').textContent = ''));
       await page.waitForFunction(
