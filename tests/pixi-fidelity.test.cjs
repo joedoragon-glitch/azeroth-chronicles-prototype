@@ -1078,7 +1078,12 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'warm frames preserve sharing without rebaking the two actors',
   );
   sharedGpu.release();
-  game.props = [];
+  game.props = [{
+    id: 'predictive-already-warmed',
+    x: game.hero.x + 1400,
+    y: game.hero.y,
+    structure: 'lumber-pile',
+  }];
   // A complete region is cached during readiness. Roaming and combat do
   // not trigger the retired idle camera-window painter or repeat native
   // terrain rasterization; the same GPU source receives tile composites.
@@ -1138,12 +1143,16 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(typeof idleCallback, 'function', 'movement queues an optional prediction');
   const noNewPrediction = idleCallback;
   idleCallback = null;
+  const gpuUploadsBeforeEmpty = terrainGpu.status().proceduralGpuPrepared;
   await noNewPrediction();
   const emptyPrediction = terrainGpu.status();
+  assert(emptyPrediction.predictiveScannedCandidates > 0,
+    'repeat scan includes the previously warmed offscreen prop');
   assert.equal(emptyPrediction.predictiveScans, 1);
   assert.equal(emptyPrediction.predictivePreparedEntities, 0);
   assert.equal(emptyPrediction.predictiveZeroNewScans, 1);
-  assert.equal(emptyPrediction.proceduralGpuPrepared, 0, 'no redundant GPU upload');
+  assert.equal(emptyPrediction.proceduralGpuPrepared, gpuUploadsBeforeEmpty,
+    'no redundant GPU upload');
 
   // Dynamically admitted scenery is still eligible after whole-region arrival.
   // Halt mid-batch: the first two bakes are allowed before the encounter,
