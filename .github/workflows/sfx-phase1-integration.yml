@@ -14,6 +14,9 @@ on:
       - tools/audio/index.html
       - tools/audio/audition.js
       - tests/audio-audition-browser.test.cjs
+      - tests/audio-browser.test.cjs
+      - assets/audio/manifest.json
+      - tools/audio/sfx-phase1-metrics.json
   workflow_dispatch:
 
 permissions:
@@ -118,7 +121,7 @@ jobs:
           git add package.json package-lock.json docs/DEVELOPMENT_STATE.md sw.js src/prototype/audio-library.js src/prototype/build-info.js
           # No normal PR deploys Pages; all branch work and artifacts remain private from live PWA.
           if ! git diff --cached --quiet; then
-            git commit -m 'audio: stage reversible 30 original SFX masters in dev.289 candidate [skip ci]'
+            git commit -m 'audio: stage rollback-safe 30 SFX masters in dev.289 candidate'
             git push origin HEAD:refs/heads/audio/sfx-phase1-30-replacements-20261116
           fi
       - name: Validate existing Sound Library and actual registered 30 new WAVs
