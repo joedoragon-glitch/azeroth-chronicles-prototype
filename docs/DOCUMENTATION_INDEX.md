@@ -15,7 +15,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ## Jump to a subject
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
-- [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (24)
+- [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (30)
 - [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (131)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (22)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (52)
@@ -49,6 +49,12 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Audio Foundation](AUDIO_FOUNDATION.md)** — **Reference.** Reference structure or catalog for audio, with its original assumptions and scope.
 - **[Audio Playback](AUDIO_PLAYBACK.md)** — **Maintained guide.** Current audio engine, mixers, production scenes and standalone listening-room behavior.
 - **[Audio Sound Pass](AUDIO_SOUND_PASS.md)** — **Design reference.** Artistic identities of the soundtrack's 83 music cues and guidance for future composition.
+- **[SFX Phase 2 Design Handoff](AUDIO_SFX_PHASE2_DESIGN_HANDOFF_20261116.md)** — **Design-only current handoff.** Source-reconciled Phase 2 decisions, boundaries and sound-family production gates across all three priorities.
+- **[SFX Phase 2 P1 Heroes, Companions, Pets and Charmed](AUDIO_SFX_PHASE2_P1_HERO_COMPANION_PETS_CHARMS_20261116.md)** — **Design-only current assessment.** Four playable classes, Soldier/Archer, all 11 TRUE pets and authenticated Charmed species.
+- **[SFX Phase 2 P2 Bosses and Distinctive Enemies](AUDIO_SFX_PHASE2_P2_BOSSES_ENEMIES_20261116.md)** — **Design-only current assessment.** Eleven bosses, five captains and twelve species, differentiated against existing recorded enemy materials.
+- **[SFX Phase 2 P3 Interaction and Progression](AUDIO_SFX_PHASE2_P3_INTERACTION_PROGRESSION_20261116.md)** — **Design-only current assessment.** Actual gameplay receipts, procedural UI/footstep sources, reward/Barracks/discovery cues and intentional silence.
+- [Audio SFX Phase 1 20261116](AUDIO_SFX_PHASE1_20261116.md) — *Current Phase 1 technical record.* 30 original-effect replacements, exact rollback, Game Sound Library and integration boundary.
+- [Audio SFX Phase 1 Critical Review 20261116](AUDIO_SFX_PHASE1_CRITICAL_REVIEW_20261116.md) — *Dated source and signal audit.* Physical Wave, level and game-browser verification of the 30 Phase 1 masters, not human acoustic approval.
 - [Audio Environment Production Inventory 20261031](AUDIO_ENVIRONMENT_PRODUCTION_INVENTORY_20261031.md) — *Dated production record.* Original environmental-bed inventory, protected routes, and source quality assessments distinct from soundtrack #740.
 - [Audio Environment Stage1 Handoff 20261031](AUDIO_ENVIRONMENT_STAGE1_HANDOFF_20261031.md) — *Dated production record.* Independent environmental-sound workflow and stage transition; not part of the published 65-song soundtrack.
 - [Audio Phase3 Critical Review](AUDIO_PHASE3_CRITICAL_REVIEW.md) — *Dated production record.* Source-note and orchestration audits underlying eight recorded primary music cues.
