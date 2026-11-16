@@ -5467,13 +5467,13 @@
     crown: ['jet', 'seal'],
   };
   const rangedProfiles = {
-    goblin: { variant: 'slinger', shotRange: 240, shotSpeed: 240, projectileStyle: 'stone' },
-    skeleton: { variant: 'bow guard', shotRange: 290, shotSpeed: 280, projectileStyle: 'arrow' },
+    goblin: { variant: 'slinger', shotRange: 240, shotSpeed: 816, projectileStyle: 'stone' },
+    skeleton: { variant: 'bow guard', shotRange: 290, shotSpeed: 850, projectileStyle: 'arrow' },
     reedbeast: {
       variant: 'spitter',
       hybrid: true,
       shotRange: 250,
-      shotSpeed: 220,
+      shotSpeed: 650,
       projectileStyle: 'spit',
       projectileSlow: 1.6,
     },
@@ -5481,7 +5481,7 @@
       variant: 'spitter',
       hybrid: true,
       shotRange: 230,
-      shotSpeed: 230,
+      shotSpeed: 660,
       projectileStyle: 'spit',
       projectileSlow: 1.6,
     },
@@ -5489,22 +5489,62 @@
       variant: 'stone thrower',
       hybrid: true,
       shotRange: 260,
-      shotSpeed: 220,
+      shotSpeed: 600,
       projectileStyle: 'stone',
     },
     orc: {
       variant: 'axe thrower',
       hybrid: true,
       shotRange: 260,
-      shotSpeed: 250,
+      shotSpeed: 630,
       projectileStyle: 'axe',
     },
     ashbeast: {
       variant: 'cinder spitter',
       hybrid: true,
       shotRange: 270,
-      shotSpeed: 240,
+      shotSpeed: 680,
       projectileStyle: 'cinder',
+    },
+  };
+  // Authored launcher velocity (world units/second), independently of attack tempo.
+  // No historical 1.7x ordinary or 1.15x boss compensation remains.
+  // The original *missed-shot distance* is independent of new velocity.
+  // Two neutral controls act only on actual physical missile flight. Fortified
+  // position bonuses remain independently conditional.
+  const projectileFlight = {
+    globalSpeedScale: 1,
+    hostileSpeedScale: 1,
+    ordinaryDefault: { arrow: 850, spectral: 700 },
+    ordinaryDistance: {
+      goblin: 600, skeleton: 700, reedbeast: 550, mireling: 575,
+      ogre: 550, orc: 625, ashbeast: 600,
+      archer: 650, crownguard: 650, wraith: 650,
+    },
+    charmedDistance: {
+      goblin: 720, skeleton: 840, reedbeast: 660, mireling: 690,
+      ogre: 660, orc: 750, ashbeast: 720,
+      archer: 900, crownguard: 900, wraith: 780,
+    },
+    boss: {
+      cryptBoneVolley: 720,
+      defaultVolley: 700,
+      ridgeCargo: 700,
+      citadelCanister: 650,
+      valeTrackingVolley: 600,
+    },
+    hero: {
+      rangerBasic: 850,
+      rangerRapid: 900,
+      rangerCharged: 920,
+      rangerHunt: 920,
+    },
+    companion: {
+      archerBasic: 850,
+      archerTriple: 900,
+      archerPiercing: 920,
+      petBasic: { crypt: 650, archive: 700, abyss: 700, fallback: 600 },
+      petSkill: { crypt: 700, archive: 750, abyss: 750, fallback: 650 },
     },
   };
   const forests = [
@@ -6388,7 +6428,6 @@
     areaRangeMultiplier: 1.15,
   };
   const rangedEnemyCombat = {
-    projectileMultiplier: 1.7,
     aimTime: 0.35,
     cooldown: 1.15,
     retreatFraction: 0.5,
@@ -6989,7 +7028,6 @@
     enemyRangedBasicRange: 320,
     // Slinger stones should launch decisively without changing attack cadence
     // or the maximum distance a missed hostile shot can travel.
-    goblinSlingerProjectileSpeedMultiplier: 2,
     // Hostile ground baseline also bounds Charmed melee cadence/pursuit parity.
     enemyOrdinaryMeleeBasicInterval: 1.4,
     enemyOrdinaryMeleePursuitSpeed: 175,
@@ -7190,42 +7228,42 @@
           // The starting Rogue has no inherited company bonuses in Greenwood.
           // Modest native HP/power improves early boss contribution.
           melee: { hp: 112, damage: 12, armor: 3, speed: 1.14, interval: 0.78, reach: 65 },
-          ranged: { hp: 100, damage: 13, armor: 2, speed: 1.1, interval: 1.03, reach: 240, retreat: 120, style: 'stone', shotSpeed: 240 },
+          ranged: { hp: 100, damage: 13, armor: 2, speed: 1.1, interval: 1.03, reach: 240, retreat: 120, style: 'stone', shotSpeed: 816 },
         },
         skeleton: {
           melee: { hp: 126, damage: 14, armor: 5, speed: 0.98, interval: 0.88, reach: 70 },
-          ranged: { hp: 114, damage: 14, armor: 4, speed: 1, interval: 1, reach: 290, retreat: 155, style: 'arrow', shotSpeed: 280 },
+          ranged: { hp: 114, damage: 14, armor: 4, speed: 1, interval: 1, reach: 290, retreat: 155, style: 'arrow', shotSpeed: 850 },
         },
         mireling: {
           melee: { hp: 122, damage: 12, armor: 6, speed: 0.95, interval: 0.96, reach: 72 },
-          ranged: { hp: 110, damage: 12, armor: 4, speed: 0.97, interval: 1.08, reach: 230, retreat: 105, style: 'spit', shotSpeed: 230 },
+          ranged: { hp: 110, damage: 12, armor: 4, speed: 0.97, interval: 1.08, reach: 230, retreat: 105, style: 'spit', shotSpeed: 660 },
         },
         reedbeast: {
           melee: { hp: 138, damage: 13, armor: 7, speed: 0.93, interval: 1.04, reach: 74 },
-          ranged: { hp: 118, damage: 13, armor: 5, speed: 0.96, interval: 1.1, reach: 250, retreat: 125, style: 'spit', shotSpeed: 220 },
+          ranged: { hp: 118, damage: 13, armor: 5, speed: 0.96, interval: 1.1, reach: 250, retreat: 125, style: 'spit', shotSpeed: 650 },
         },
         wolf: {
           melee: { hp: 112, damage: 15, armor: 4, speed: 1.2, interval: 0.73, reach: 68 },
         },
         ogre: {
           melee: { hp: 176, damage: 19, armor: 10, speed: 0.8, interval: 1.26, reach: 86 },
-          ranged: { hp: 152, damage: 17, armor: 8, speed: 0.83, interval: 1.23, reach: 260, retreat: 115, style: 'stone', shotSpeed: 220 },
+          ranged: { hp: 152, damage: 17, armor: 8, speed: 0.83, interval: 1.23, reach: 260, retreat: 115, style: 'stone', shotSpeed: 600 },
         },
         orc: {
           melee: { hp: 138, damage: 15, armor: 7, speed: 1.02, interval: 0.91, reach: 78 },
-          ranged: { hp: 122, damage: 15, armor: 5, speed: 1.04, interval: 1.06, reach: 260, retreat: 125, style: 'axe', shotSpeed: 250 },
+          ranged: { hp: 122, damage: 15, armor: 5, speed: 1.04, interval: 1.06, reach: 260, retreat: 125, style: 'axe', shotSpeed: 630 },
         },
         archer: {
           melee: { hp: 110, damage: 12, armor: 4, speed: 1.06, interval: 0.9, reach: 72 },
-          ranged: { hp: 104, damage: 14, armor: 3, speed: 1.08, interval: 0.94, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+          ranged: { hp: 104, damage: 14, armor: 3, speed: 1.08, interval: 0.94, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 850 },
         },
         ashbeast: {
           melee: { hp: 154, damage: 17, armor: 8, speed: 1.08, interval: 0.94, reach: 78 },
-          ranged: { hp: 134, damage: 16, armor: 6, speed: 1.04, interval: 1.16, reach: 270, retreat: 130, style: 'cinder', shotSpeed: 240 },
+          ranged: { hp: 134, damage: 16, armor: 6, speed: 1.04, interval: 1.16, reach: 270, retreat: 130, style: 'cinder', shotSpeed: 680 },
         },
         crownguard: {
           melee: { hp: 148, damage: 16, armor: 9, speed: 0.99, interval: 0.88, reach: 78 },
-          ranged: { hp: 130, damage: 15, armor: 7, speed: 1, interval: 0.98, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+          ranged: { hp: 130, damage: 15, armor: 7, speed: 1, interval: 0.98, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 850 },
         },
         // Night species join the friendly roster only through exact Rogue
         // Charm authorization; they are not added to the outdoor spawn pool.
@@ -7908,6 +7946,7 @@
     marchesPassives,
     snapshotPassives,
     rangedEnemyCombat,
+    projectileFlight,
     chargedSkills,
     millhavenOnboarding: {
       version: 1,
@@ -7951,7 +7990,6 @@
     rangerSupport,
     enemySupportHealing,
     movementBasicClasses,
-    enemyProjectileMultiplier: 1.15,
     progression,
     supplyRooms,
     treasuryRecovery: {
