@@ -76,11 +76,23 @@ jobs:
           npm ci --ignore-scripts
           node scripts/vendor-pixi.cjs --ensure
           npx playwright install --with-deps chromium
+      - name: Stage exact-source Sound Library offline fingerprints (branch ONLY)
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/build.cjs
+          node scripts/build.cjs --check
+          touched="$(git diff --name-only)"
+          if [ "$touched" != 'sw.js' ] && [ -n "$touched" ]; then
+            echo "Unexpected generated game/source files; reject automatic staging: $touched" >&2
+            exit 1
+          fi
+          echo 'Only the review-branch service-worker fingerprint may be regenerated.'
       - name: Verify real Chromium SFX pilot A/B interactions (desktop and phone)
         run: node tests/audio-sfx-pilot-browser.test.cjs
       - name: Verify complete existing Sound Library and all registered audio (Chromium)
         run: node tests/audio-audition-browser.test.cjs
-      - name: Preserve playable preview WAVs only on the dedicated branch
+      - name: Preserve review WAVs and exact-source SW fingerprint on the dedicated branch
         shell: bash
         run: |
           set -euo pipefail
@@ -92,7 +104,7 @@ jobs:
             echo "Source branch advanced during this build; refusing to publish stale candidate WAVs."
             exit 0
           fi
-          git add -f tools/audio/sfx-pilot-previews/*.wav tools/audio/sfx-pilot-previews/pilot-manifest.json tools/audio/sfx-30-previews/*.wav tools/audio/sfx-30-previews/candidate-manifest.json
+          git add -f tools/audio/sfx-pilot-previews/*.wav tools/audio/sfx-pilot-previews/pilot-manifest.json tools/audio/sfx-30-previews/*.wav tools/audio/sfx-30-previews/candidate-manifest.json sw.js
           if ! git diff --cached --quiet; then
             git commit -m 'audio: preserve unshipped v2 SFX review WAVs [skip ci]'
             git push origin HEAD:refs/heads/audio/sfx-modernization-pilot-20261115
