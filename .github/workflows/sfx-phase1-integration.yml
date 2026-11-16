@@ -9,6 +9,10 @@ on:
       - tools/audio/sfx-phase1-master.py
       - tools/audio/sfx-phase1-version.cjs
       - tests/audio-sfx-phase1-quality.test.py
+      - tests/audio-sfx-phase1-rollback.test.py
+      - tests/audio-catalog.test.cjs
+      - tools/audio/index.html
+      - tools/audio/audition.js
       - tests/audio-audition-browser.test.cjs
   workflow_dispatch:
 
@@ -53,6 +57,7 @@ jobs:
       - name: Verify real audio source, WAV bytes, original hashes and file budgets
         run: |
           python tests/audio-sfx-phase1-quality.test.py > "${RUNNER_TEMP}/sfx-phase1-quality.json"
+          python tests/audio-sfx-phase1-rollback.test.py
           node scripts/audio-library.cjs check
           node tests/audio-production.test.cjs
           node tests/audio-recordings.test.cjs
