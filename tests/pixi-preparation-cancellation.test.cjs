@@ -181,6 +181,8 @@ function fixture({ delayLibrary = false, initGate = null, fetchGate = null, asse
     assert.equal(f.observed.apps.length, 2);
     assert.equal(f.observed.apps[1].destroyCount, 0,
       'obsolete rejection must leave current recovery app intact');
+    assert.equal(f.observed.apps[0].destroyCount, 1,
+      'previously released initialization must not be destroyed a second time');
     assert.equal(f.observed.errors.length, 0);
     second.reject(Error('synthetic current failure'));
     assert.equal(await newer, false);

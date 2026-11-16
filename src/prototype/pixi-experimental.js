@@ -2092,7 +2092,10 @@
         // A late rejection must not erase a newer attempt's first failure or
         // release its GPU scene after the Canvas guard invalidated this epoch.
         if (thisEpoch !== contextEpoch) {
-          discardStaleInit();
+          // Late library/manifest/texture failures already passed through
+          // ordinary fallback teardown. Only a still-initializing app can
+          // acquire GPU resources after that earlier teardown.
+          if (stage === 'application-init') discardStaleInit();
           return false;
         }
         noteFailure(
