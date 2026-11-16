@@ -54,14 +54,14 @@ console.log(
 );
 
 // Presentation preferences are separate from campaign saves and from each other.
-assert.equal(P.defaultCameraZoom, 1.5);
-assert.equal(platform.cameraZoom, 1.5, 'Desktop starts at selected 150% framing');
+assert.equal(P.defaultCameraZoom, 1.25);
+assert.equal(platform.cameraZoom, 1.25, 'Unconfigured desktop starts at 125% framing');
 const comparison = JSON.stringify({ desktop: 1, phone: 1.75 });
 items.set('azeroth-camera-v1', comparison);
 assert.equal(
   P.init(env).cameraZoom,
-  1.5,
-  'Old comparison choices do not override finalized framing',
+  1.25,
+  'Old comparison choices do not override the new default framing',
 );
 assert.equal(
   items.get('azeroth-camera-v1'),
@@ -70,7 +70,7 @@ assert.equal(
 );
 platform.selectCameraZoom(1);
 assert.equal(platform.cameraZoom, 1);
-assert.equal(P.init(env).cameraZoom, 1.5, 'Phone defaults to 150% independently');
+assert.equal(P.init(env).cameraZoom, 1.25, 'Phone defaults to 125% independently');
 platform.select('phone');
 platform.selectCameraZoom(1.75);
 assert.equal(platform.cameraZoom, 1.75);
@@ -82,10 +82,38 @@ assert.equal(platform.cameraZoom, 1, 'Desktop retains its independent camera cho
 items.set(P.cameraPreferenceKey, '{broken');
 assert.equal(
   P.init(env).cameraZoom,
-  1.5,
+  1.25,
   'Malformed camera preference returns to selected default',
 );
 console.log('PASS independent desktop/phone camera preferences, reload and invalid-data fallback');
+
+// Adaptive menu density resolves from CSS viewport geometry, not Retina pixels.
+// Settings persist independently of v4 campaign saves; effective Auto is cached.
+assert.equal(P.resolveMenuDensity({ mode: 'phone', width: 844, height: 390 }), 'compact');
+assert.equal(P.resolveMenuDensity({ mode: 'phone', width: 900, height: 600 }), 'standard');
+assert.equal(P.resolveMenuDensity({ mode: 'phone', width: 900, height: 505, top: 28, bottom: 28 }), 'compact');
+assert.equal(P.resolveMenuDensity({ mode: 'desktop', width: 1440, height: 900 }), 'standard');
+assert.equal(P.resolveMenuDensity({ mode: 'desktop', width: 720, height: 900 }), 'compact');
+assert.equal(P.resolveMenuDensity({ preference: 'standard', mode: 'phone', width: 600, height: 350 }), 'standard');
+assert.equal(P.resolveMenuDensity({ preference: 'compact', mode: 'desktop', width: 1920, height: 1080 }), 'compact');
+const densitySettings = P.init(env);
+assert.equal(densitySettings.menuDensity, 'auto');
+const initialAttr = attributes.get('data-menu-density-effective');
+densitySettings.updateMenuDensity({ width: 844, height: 390, top: 0, right: 0, bottom: 0, left: 0 });
+assert.equal(densitySettings.effectiveMenuDensity, 'compact');
+assert.equal(attributes.get('data-menu-density-effective'), 'compact');
+densitySettings.selectMenuDensity('standard');
+assert.equal(items.get(P.menuDensityPreferenceKey), 'standard');
+assert.equal(densitySettings.effectiveMenuDensity, 'standard');
+assert.equal(P.init(env).menuDensity, 'standard', 'Saved choice survives app reload');
+densitySettings.selectMenuDensity('invalid');
+assert.equal(densitySettings.menuDensity, 'standard', 'Invalid choices cannot overwrite the preference');
+densitySettings.selectMenuDensity('auto');
+assert.equal(items.get(P.menuDensityPreferenceKey), 'auto');
+assert.equal(densitySettings.updateMenuDensity({ width: 900, height: 505, top: 28, right: 0, bottom: 28, left: 0 }), 'compact');
+assert.equal(densitySettings.updateMenuDensity({ width: 900, height: 505, top: 0, right: 0, bottom: 0, left: 0 }), 'standard');
+assert.notEqual(initialAttr, undefined, 'Density is resolved when the platform initializes');
+console.log('PASS saved menu density, adaptive CSS viewport/safe-inset decisions and invalid-choice safety');
 
 const messages = [],
   storage = { getItem: (k) => items.get(k), setItem: (k, v) => items.set(k, v) },
