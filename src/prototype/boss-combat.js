@@ -1301,10 +1301,19 @@
         return receipt;
       }
       enemyStartBasic(e, target, ranged) {
-        const nightTempo = this.nightTempo();
+        const nightTempo = this.nightTempo(),
+          // Keep existing ranged aim/shot timing; only melee actors get the
+          // owner's faster ordinary/captain basic-attack balance.
+          interval =
+            e.type === 'boss'
+              ? R.bossCadence.basicCooldown
+              : ranged
+                ? 1.4
+                : e.captain || e.roomCaptain || e.fieldCaptain
+                  ? R.balance.enemyCaptainMeleeBasicInterval
+                  : R.balance.enemyOrdinaryMeleeBasicInterval;
         e.cd =
-          ((e.type === 'boss' ? R.bossCadence.basicCooldown :
-            ranged ? 1.4 : R.balance.enemyOrdinaryMeleeBasicInterval) *
+          (interval *
             (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
             (e.captainAttackRate || 1) *
             (e.quotaOvertime > 0 ? 0.75 : 1)) /
