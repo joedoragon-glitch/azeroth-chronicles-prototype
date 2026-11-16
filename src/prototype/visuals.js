@@ -9960,8 +9960,8 @@
           );
       return true;
     }
-    function craftedLandmark() {
-      switch (e.id) {
+    function craftedLandmark(id = e.id) {
+      switch (id) {
         case 'orchard':
           for (const [x, sc] of [
             [-22, 0.65],
@@ -12609,6 +12609,12 @@
     }
     function craftedDecoration(kind) {
       switch (kind) {
+        case 'wolf-den':
+          // The wolf stronghold places the same native den as a decorative prop.
+          // Reuse its existing landmark body instead of leaving an invisible
+          // prop that makes Canvas miss the artwork and Pixi reject the scene.
+          craftedLandmark('wolf-den');
+          break;
         case 'vale-working-mill': {
           // A two-storey timber mill reuses the Vale workshop's approved
           // materials and joinery. Its bank-side wheel does not paint water.
