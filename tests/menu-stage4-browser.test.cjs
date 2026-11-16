@@ -400,6 +400,21 @@ function contrast(item) {
           familyFit[view] = await assertDialogGeometry(frame, view);
           assert.equal(await frame.locator('body').getAttribute('data-menu-density-effective'),
             'compact', 'all nested menu families inherit the effective density: ' + view);
+          // Whole-menu design QA: compare the very same nested menu at both
+          // selectable densities. Check readable controls, Back and viewport
+          // bounds, not just whether the preference appears in Settings.
+          for (const selected of ['standard', 'compact']) {
+            await frame.evaluate((value) => window.Prototype.platform.selectMenuDensity(value), selected);
+            assert.equal(await frame.locator('body').getAttribute('data-menu-density-effective'),
+              selected, view + ': the requested density must be applied');
+            await assertDialogGeometry(frame, view + ' · ' + selected);
+            await measure(frame, '#modal-actions button', { targets: true, minFont: 13 });
+            if (language === 'en')
+              await page.screenshot({
+                path: path.join(output, 'en-' + view + '-' + selected + '-layout-probe.png'),
+              });
+          }
+          await frame.evaluate(() => window.Prototype.platform.selectMenuDensity('auto'));
           if (view === 'archive-reading')
             assert(
               familyFit[view].content.scrollHeight > familyFit[view].content.clientHeight,
