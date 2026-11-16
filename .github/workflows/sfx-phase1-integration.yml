@@ -104,11 +104,7 @@ jobs:
             fi
             echo "BASELINE LIMITATION: original and candidate both fail the same existing ${test} at line ${known}; not a candidate SFX regression or a PASS."
           done
-      - name: Validate existing Sound Library and actual registered 30 new WAVs
-        run: node tests/audio-audition-browser.test.cjs
-      - name: Verify selected browser gameplay audio/recording paths
-        run: node tests/audio-browser.test.cjs
-      - name: Preserve exact branch-only integrated files if all tests pass
+      - name: Preserve source-validated branch audio before independent browser acceptance
         shell: bash
         run: |
           set -euo pipefail
@@ -123,6 +119,10 @@ jobs:
             git commit -m 'audio: stage reversible 30 original SFX masters in dev.289 candidate [skip ci]'
             git push origin HEAD:refs/heads/audio/sfx-phase1-30-replacements-20261116
           fi
+      - name: Validate existing Sound Library and actual registered 30 new WAVs
+        run: node tests/audio-audition-browser.test.cjs
+      - name: Verify selected browser gameplay audio/recording paths
+        run: node tests/audio-browser.test.cjs
       - name: Preserve objectively verified audio evidence, never a Pages artifact
         if: always()
         uses: actions/upload-artifact@v4
