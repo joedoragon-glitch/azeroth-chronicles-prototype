@@ -90,7 +90,7 @@ jobs:
           - site: frontier-and-crown
             fixtures: shadow-frontier-day-paladin,shadow-frontier-dusk-paladin,shadow-frontier-night-paladin,shadow-crown-day-paladin,shadow-crown-dusk-paladin,shadow-crown-night-paladin
           - site: bosses-wildlife-flight-ferry
-            fixtures: warlord,regalia,registered,wildlife,wildlife-poultry,wildlife-pen,wildlife-pups,wildlife-mire,lamp,flight,ferry,idle
+            fixtures: warlord,regalia,registered,wildlife,wildlife-poultry,wildlife-pen,wildlife-pups,wildlife-mire,companions,charmed,lamp,flight,ferry,idle
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

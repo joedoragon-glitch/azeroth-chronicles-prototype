@@ -248,6 +248,59 @@ async function main() {
             habitat.props = [entity];
           }
         }
+        // #893 original allied actor rendering, not synthetic body painting.
+        // The Charmed case uses an actual landed Rogue Skill 1 capture through
+        // the same native path as tests/charmed-companion-native-critical.test.cjs;
+        // source identity remains validated and the normal app class gate stays
+        // untouched. Both fixtures are test-only, not earned playthroughs.
+        if (name === 'companions' || name === 'charmed') {
+          if (name === 'charmed') {
+            if (!Campaign.classes.rogue) Campaign.enableRoguePlaytest();
+            window.g = new Campaign('normal', 'rogue', () => 0.9);
+            window.originalCampaign = g;
+            window.painter = PrototypeRenderer.create(opts);
+            painter.setOptimizationMode(optimized);
+          } else if (!g.enter('vale')) throw Error('Cannot enter native companion region');
+          if (!g.enter('vale')) throw Error('Cannot enter native companion scene');
+          const allyZone = g.zone();
+          for (const key of ['props', 'buildings', 'npcs', 'enemies', 'nodes'])
+            allyZone[key] = [];
+          g.s.party = [];
+          g.s.loot = [];
+          g.s.projectiles = [];
+          g.s.clock = 245;
+          g.s.time = 100;
+          Object.assign(g.hero, { x: 1000, y: 1000, path: [], order: null });
+          if (name === 'charmed') {
+            g.s.mercyTime = 0;
+            g.s.valeFieldAwakened = true;
+            const foe = g.makeEnemy(
+              { species: 'goblin', name: 'Goblin', level: 1,
+                hp: 10000, damage: 0, xp: 0, gold: 0 },
+              { x: 1085, y: 1000 },
+            );
+            Object.assign(foe, { ranged: false, aggro: true, returning: false });
+            allyZone.enemies = [foe];
+            g.hero.basicCd = 0;
+            g.s.rogueCharmRng = 12345;
+            if (!g.cast(1, foe.id, false, null, true) ||
+                g.s.party.length !== 1 ||
+                !g.isCharmedCompanion(g.s.party[0]))
+              throw Error('Authentic Rogue Charm fixture failed native admission');
+            allyZone.enemies = [];
+            Object.assign(g.s.party[0], { x: 1070, y: 1000, active: true });
+          }
+          const soldier = g.unit('soldier', 930, 960);
+          const archer = g.unit('archer', 1030, 930);
+          const pet = g.unit('pet', 1120, 1020, 'thorn');
+          for (const ally of [soldier, archer, pet]) {
+            ally.active = true;
+            ally.hp = ally.maxHp;
+            g.s.party.push(ally);
+          }
+          if (!g.s.party.some((ally) => ally.type === 'pet' && ally.petFamily === 'thorn'))
+            throw Error('Native companion fixture lacked Thorn pet');
+        }
         if (name === 'lamp') {
           g.s.clock = 480;
           z.props = [
