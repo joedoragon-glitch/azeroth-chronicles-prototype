@@ -1,0 +1,38 @@
+name: Tutorial v0.9.2 focused formatting correction (no deployment)
+on:
+  push:
+    branches: [feat/v092-tutorial-quest-chain-20261112]
+permissions:
+  contents: write
+jobs:
+  format:
+    if: "github.event.head_commit.message == 'chore(ci): format tutorial integration files'"
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Format only affected files and regenerate exact offline fingerprints
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx prettier --write src/prototype/app.js tests/helpers/notice-browser.cjs tests/quest-archive-browser.test.cjs
+          node scripts/build.cjs
+          node scripts/build.cjs --check
+          npx prettier --check src/prototype/app.js tests/helpers/notice-browser.cjs tests/quest-archive-browser.test.cjs
+          node tests/tutorial-quest-chain-v092.test.cjs
+          node tests/tutorial-quest-chain-ui-v092.test.cjs
+          git add -- src/prototype/app.js tests/helpers/notice-browser.cjs tests/quest-archive-browser.test.cjs sw.js
+          git diff --cached --check
+          git config user.name "Tutorial integration reviewer"
+          git config user.email "noreply@users.noreply.github.com"
+          if ! git diff --cached --quiet; then
+            git commit -m "style(tutorial): format integrated UI and precise browser fixture"
+            git push origin HEAD:refs/heads/feat/v092-tutorial-quest-chain-20261112
+          fi
