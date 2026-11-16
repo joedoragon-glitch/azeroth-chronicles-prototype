@@ -5843,7 +5843,7 @@
       // captains receive reach/cadence tuning, not an unmeasured 50% HP boost.
       enduranceHp: 390,
       visualScale: 1.16,
-      specialRange: 560,
+      specialRange: 672,
       specialCooldown: 3.25,
       phase: { threshold: 0.55, name: 'Corrective Action', kind: 'scramble' },
       attacks: [
@@ -5863,7 +5863,7 @@
           coefficient: 0.75,
           persistent: true,
           slow: true,
-          radius: 120,
+          radius: 144,
           fixedRadius: true,
         },
         {
@@ -5873,7 +5873,7 @@
           recovery: 0.95,
           coefficient: 0.55,
           slow: true,
-          radius: 165,
+          radius: 227.7,
         },
         {
           name: 'Cradle-to-Grave Tracking',
@@ -5883,7 +5883,7 @@
           shotWarning: 0.45,
           shots: 4,
           shotSpeed: 400,
-          shotLife: 2.1,
+          shotLife: 2.52,
           recovery: 1.1,
           coefficient: 0.45,
         },
@@ -5898,7 +5898,7 @@
           recovery: 1.1,
           coefficient: 0.7,
           persistent: true,
-          radius: 64,
+          radius: 88.32,
         },
       ],
     },
@@ -5907,7 +5907,7 @@
       name: 'Direjaw',
       enduranceHp: 680,
       visualScale: 1.18,
-      specialRange: 490,
+      specialRange: 588,
       specialCooldown: 3.35,
       phase: { threshold: 0.55, name: 'Elastic Rebound', kind: 'molt' },
       attacks: [
@@ -5927,7 +5927,7 @@
           recovery: 1.05,
           coefficient: 0.8,
           slow: true,
-          radius: 150,
+          radius: 207,
         },
         {
           name: 'Mud Pumping',
@@ -5939,7 +5939,7 @@
           coefficient: 0.65,
           persistent: true,
           slow: true,
-          radius: 88,
+          radius: 121.44,
         },
       ],
     },
@@ -5952,7 +5952,7 @@
       species: 'ridge',
       enduranceHp: 1650,
       visualScale: 1.2,
-      specialRange: 535,
+      specialRange: 642,
       specialCooldown: 3.25,
       phase: { threshold: 0.55, name: 'Hostile Liquidation', kind: 'howl' },
       attacks: [
@@ -5972,7 +5972,7 @@
           warning: 1.15,
           recovery: 1.05,
           coefficient: 1.15,
-          radius: 86,
+          radius: 118.68,
         },
         {
           name: 'Bad Deal',
@@ -5981,7 +5981,7 @@
           warning: 0.8,
           recovery: 1.0,
           coefficient: 0.85,
-          radius: 145,
+          radius: 200.1,
         },
       ],
     },
@@ -5994,7 +5994,7 @@
         'Cindermaw’s devoted disciple administers crops, livestock, meat, dairy, poultry, fisheries and their distribution across all five Crown provinces. He co-manages the whole Treasury with the Interior ministry while retaining the guarded Inner Vault. Ridge Tyrant remains Master of Coin, and the Drowned Keeper remains the archivist.',
       enduranceHp: 5000,
       visualScale: 1.19,
-      specialRange: 545,
+      specialRange: 654,
       specialCooldown: 3.25,
       phase: { threshold: 0.45, name: 'Ash Carapace', kind: 'carapace' },
       summon: {
@@ -6017,7 +6017,7 @@
           nextWarning: 0.8,
           recovery: 1,
           coefficient: 0.9,
-          radius: 65,
+          radius: 78,
           count: 2,
           orbit: 70,
           fixedRadius: true,
@@ -6031,7 +6031,7 @@
           nextWarning: 0.9,
           recovery: 1.1,
           coefficient: 0.85,
-          radius: 40,
+          radius: 66.24,
           legLength: 170,
           speed: 340,
           charge: true,
@@ -6046,7 +6046,7 @@
           recovery: 1,
           coefficient: 0.7,
           slow: true,
-          radius: 190,
+          radius: 228,
           angleDegrees: 105,
           vaporLife: 2.2,
           vaporCoefficient: 0.15,
@@ -6072,7 +6072,7 @@
           warning: 1.1,
           recovery: 1.1,
           coefficient: 0.23,
-          radius: 170,
+          radius: 204,
           initialRadius: 170,
           finalRadius: 110,
           width: 17,
@@ -6109,7 +6109,7 @@
           nextWarning: 0.8,
           recovery: 1.1,
           coefficient: 0.7,
-          radius: 55,
+          radius: 66,
           count: 3,
           orbit: 100,
           vaporLife: 2,
@@ -6129,7 +6129,7 @@
         'Cinder Warlord is the Ashen Warlord’s roaming inspector and regional middle manager, not the military governor. His patrol checks roads, work details and occupied settlements. Mandatory Overtime orders at most seven already-present nearby workers into the fight; it cannot create troops from an empty or cleared road. The province still has working markets and repair crews under a compulsory military bureaucracy.',
       enduranceHp: 3000,
       visualScale: 1.18,
-      specialRange: 545,
+      specialRange: 654,
       specialCooldown: 3.25,
       patrolSpeed: 82,
       inspectionPause: 2.4,
@@ -6148,18 +6148,18 @@
           warning: 0.85,
           recovery: 1.0,
           coefficient: 1.0,
-          radius: 150,
+          radius: 207,
         },
         {
           name: 'Violation Marker',
-          captainRadiusMultiplier: 2,
+          patchRadius: 207,
           kind: 'circle',
           warning: 1.15,
           recovery: 1.0,
           coefficient: 0.95,
           count: 2,
           sequential: true,
-          radius: 76,
+          radius: 209.76,
         },
         {
           name: 'Compliance Charge',
@@ -6384,9 +6384,25 @@
     specialRecoveryMultiplier: 0.25,
     basicCooldown: 0.75,
     skillsPerBasic: 4,
-    specialRange: 600,
-    areaRangeMultiplier: 1.15,
+    // Effective existing reach (historically 600 × 1.2).
+    specialRange: 720,
   };
+  // Final world-unit footprints for conventional boss/captain attacks.
+  // These are gameplay values, not global bonuses; hit detection, warnings,
+  // ring travel and eligibility must all consume the same committed geometry.
+  const bossAreaGeometry = Object.freeze({
+    coneRadius: 227.7,
+    sectorRadius: 386.4,
+    ringInitialRadius: 144.9,
+    firstCircleRadius: 124.2,
+    otherCircleRadius: 158.7,
+    multiCircleRadius: 103.5,
+    doubleCircleRadius: 207,
+    ringLife: 2.208,
+    delayedBlastRadius: 124.2,
+    captainDefaultConeRadius: 200.1,
+    captainDefaultOtherRadius: 117.3,
+  });
   const rangedEnemyCombat = {
     projectileMultiplier: 1.7,
     aimTime: 0.35,
@@ -7811,7 +7827,7 @@
 
   // Expand enemy-owned offensive geometry once, before runtime consumers read it.
   // Heroes, pets, healing, timers, angles and damage coefficients retain their own tables.
-  function expandedEnemyGeometry(value) {
+  function expandedEnemyGeometry(value, preserveAuthoredRadius = false) {
     const dimensions = new Set([
       'radius',
       'initialRadius',
@@ -7824,16 +7840,16 @@
       'orbit',
       'minimumSeparation',
     ]);
-    if (Array.isArray(value)) return value.map(expandedEnemyGeometry);
+    if (Array.isArray(value)) return value.map((entry) => expandedEnemyGeometry(entry, preserveAuthoredRadius));
     if (!value || typeof value !== 'object') return value;
     return Object.fromEntries(
       Object.entries(value).map(([key, item]) => [
         key,
-        dimensions.has(key) && typeof item === 'number'
+        dimensions.has(key) && !(preserveAuthoredRadius && key === 'radius') && typeof item === 'number'
           ? item * balance.enemySpecialReachMultiplier
           : key === 'allowedRadii'
             ? item.map((r) => r * balance.enemySpecialReachMultiplier)
-            : expandedEnemyGeometry(item),
+            : expandedEnemyGeometry(item, preserveAuthoredRadius),
       ]),
     );
   }
@@ -7842,19 +7858,11 @@
       id,
       {
         ...profile,
-        specialRange: (profile.specialRange || 420) * balance.enemySpecialReachMultiplier,
+        specialRange: profile.specialRange,
         attacks:
           id === 'supply-crown'
-            ? expandedEnemyGeometry(profile.attacks)
-            : profile.attacks?.map((plan) => ({
-                ...plan,
-                ...(plan.fixedRadius
-                  ? { radius: plan.radius * balance.enemySpecialReachMultiplier }
-                  : {}),
-                ...(plan.tracking
-                  ? { shotLife: plan.shotLife * balance.enemySpecialReachMultiplier }
-                  : {}),
-              })),
+            ? expandedEnemyGeometry(profile.attacks, true)
+            : profile.attacks,
       },
     ]),
   );
@@ -7886,11 +7894,8 @@
     dungeonCamp: { nearbyRadius: 300, builtRadius: 650 },
     companionJudgment,
     companionRecall,
-    bossCadence: {
-      ...bossCadence,
-      specialRange: bossCadence.specialRange * balance.enemySpecialReachMultiplier,
-      areaRangeMultiplier: bossCadence.areaRangeMultiplier * balance.enemySpecialReachMultiplier,
-    },
+    bossCadence,
+    bossAreaGeometry,
     // Rematches change readiness and warning windows, not boss health or damage.
     // Floors keep already brief warnings readable at the game's ~20 FPS target.
     rematchAdaptation: Object.freeze({
