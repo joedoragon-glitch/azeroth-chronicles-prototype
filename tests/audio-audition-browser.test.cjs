@@ -150,7 +150,7 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#collection').selectOption('approved-derived');
         assert.equal(await page.locator('#recording option').count(), 1);
         assert.equal(await page.locator('#recording').inputValue(), 'millhaven-chamber');
-        assert.equal(await page.evaluate(() => AudioAudition.collectionFor?.('millhaven-chamber', AudioAudition.audio.recordingManifest.assets['millhaven-chamber']) || 'not-exported'), 'not-exported');
+        assert.equal(await page.locator('#library-grid .sound-card .tag').textContent(), 'Owner-approved theme arrangement');
         await press('#reset-library');
         assert((await page.locator('#catalog-count').textContent()).includes('148 registered'));
         assert.equal(await page.locator('#advanced').getAttribute('open'), null);
