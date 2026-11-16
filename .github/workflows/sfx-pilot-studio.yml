@@ -8,6 +8,11 @@ on:
       - .github/workflows/sfx-pilot-studio.yml
       - tools/audio/sfx-pilot-studio.py
       - tests/audio-sfx-pilot-quality.test.py
+      - tests/audio-sfx-pilot-browser.test.cjs
+      - tests/audio-audition-browser.test.cjs
+      - tools/audio/audition.js
+      - tools/audio/index.html
+      - tools/audio/audition.css
   workflow_dispatch:
 
 permissions:
@@ -46,6 +51,20 @@ jobs:
             echo 'This non-shipping pilot must not modify gameplay audio/manifest' >&2
             exit 1
           fi
+      - name: Validate actual authoring-room JavaScript syntax
+        run: |
+          node --check tools/audio/audition.js
+          node --check tests/audio-sfx-pilot-browser.test.cjs
+          node --check tests/audio-audition-browser.test.cjs
+      - name: Install browser test dependencies and pinned local PixiJS
+        run: |
+          npm ci --ignore-scripts
+          node scripts/vendor-pixi.cjs --ensure
+          npx playwright install --with-deps chromium
+      - name: Verify real Chromium SFX pilot A/B interactions (desktop and phone)
+        run: node tests/audio-sfx-pilot-browser.test.cjs
+      - name: Verify complete existing Sound Library and all registered audio (Chromium)
+        run: node tests/audio-audition-browser.test.cjs
       - name: Preserve playable preview WAVs only on the dedicated branch
         shell: bash
         run: |
