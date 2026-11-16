@@ -21,6 +21,11 @@ on:
 permissions:
   contents: write
 
+# Only one render/push per source branch; never race stale generated WAVs.
+concurrency:
+  group: isolated-sfx-candidates-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   isolated-sfx-studies:
     if: github.ref == 'refs/heads/audio/sfx-modernization-pilot-20261115'
@@ -82,6 +87,11 @@ jobs:
           test "${GITHUB_REF}" = 'refs/heads/audio/sfx-modernization-pilot-20261115'
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          remote_head="$(git ls-remote origin refs/heads/audio/sfx-modernization-pilot-20261115 | cut -f1)"
+          if [ "$remote_head" != "$GITHUB_SHA" ]; then
+            echo "Source branch advanced during this build; refusing to publish stale candidate WAVs."
+            exit 0
+          fi
           git add -f tools/audio/sfx-pilot-previews/*.wav tools/audio/sfx-pilot-previews/pilot-manifest.json tools/audio/sfx-30-previews/*.wav tools/audio/sfx-30-previews/candidate-manifest.json
           if ! git diff --cached --quiet; then
             git commit -m 'audio: preserve unshipped v2 SFX review WAVs [skip ci]'
