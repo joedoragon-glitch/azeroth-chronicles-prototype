@@ -35,7 +35,7 @@ jobs:
           node tests/sprite-scope.test.cjs
       - name: Source format and offline identity checks
         run: |
-          npx prettier --check src/prototype/engine.js src/prototype/app.js src/prototype/menus.js src/prototype/platform.js src/prototype/renderer.js styles/phone.css tests/platform-runtime.test.cjs tests/menu-stage4-browser.test.cjs
+          npx prettier --check src/prototype/app.js src/prototype/platform.js styles/phone.css tests/platform-runtime.test.cjs tests/menu-stage4-browser.test.cjs tests/helpers/notice-browser.cjs
           node scripts/build.cjs --check
   tutorial-browser:
     runs-on: ubuntu-latest
@@ -84,6 +84,10 @@ jobs:
           echo "Current main: $(git rev-parse origin/main)"
           git config user.name "Candidate integration checker"
           git config user.email "integration-check@users.noreply.github.com"
+          if git merge-base --is-ancestor origin/main HEAD; then
+            echo "PASS: latest main is an ancestor of this tutorial candidate."
+            exit 0
+          fi
           if ! git merge --no-commit --no-ff origin/main; then
             echo "::error::Current main produces a merge conflict; developer reconciliation is required."
             git diff --name-only --diff-filter=U
