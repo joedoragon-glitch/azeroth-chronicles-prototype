@@ -15,7 +15,9 @@ const counts = names.reduce((result, [, entry]) => {
   result[entry.kind] = (result[entry.kind] || 0) + 1;
   return result;
 }, {});
-assert.deepEqual(counts, { music: 84, ambience: 34, effect: 30 });
+assert.deepEqual(counts, { music: 84, ambience: 34, effect: 38 });
+assert.equal(names.filter(([,a])=>a.managedBy==='sfx-phase1-original-hybrid').length,30);
+assert.equal(names.filter(([,a])=>a.managedBy==='sfx-phase2-pilot-dsp').length,8);
 assert.equal(Object.keys(manifest.director.places).length, 19);
 assert.equal(Object.keys(manifest.director.bosses).length, 11);
 
@@ -23,6 +25,7 @@ for (const id of [
   'place', 'scene-mode', 'boss', 'form', 'scene-play', 'kind', 'search',
   'recording', 'record-play', 'stem-play', 'intensity', 'guide-event',
   'effect-stage-compare', 'effect-play-release', 'effect-play-impact',
+  'effect-identity','effect-language',
   'guide-text', 'copy-guide', 'profile', 'mix-scene', 'volumes', 'mute',
   'source', 'grid', 'warning', 'ui-play', 'pause', 'stop', 'report',
   'shared-listening', 'shared-play', 'shared-title', 'shared-description',
@@ -60,4 +63,4 @@ assert(page.includes('New authored soundtrack'));
 assert(page.includes('Advanced listening tools'));
 assert(page.includes('No save data is accessed.'));
 assert(!/\blocalStorage\b|\bsessionStorage\b/.test(code), 'Listening room must never access saves');
-console.log('PASS audition source contract: 148 real assets, 19 places, 11 bosses, 3 specials, complete UI controls and save isolation');
+console.log('PASS audition source contract: 156 draft assets (30 Phase 1 + 8 Phase 2 effects), 19 places, 11 bosses, save isolation and bilingual cue filters');
