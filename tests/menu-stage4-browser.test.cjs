@@ -613,6 +613,9 @@ function contrast(item) {
           return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
         }));
       assert.equal(boxes.length, 4);
+      const desktopDialog = await page.locator('#modal').boundingBox();
+      assert(Math.abs(desktopDialog.x + desktopDialog.width / 2 - 720) <= 2,
+        'PC title-owned character selection must be centered, unlike in-game field menus');
       assert(Math.abs(boxes[0].top - boxes[1].top) <= 4 &&
         boxes[1].left > boxes[0].right,
         'PC class picker lays out two readable columns, not a narrow phone stack');
