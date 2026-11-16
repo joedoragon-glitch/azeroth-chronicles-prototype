@@ -8,7 +8,7 @@
 
 | Date / record | What it actually established | What it does not prove |
 | --- | --- | --- |
-| 6 Oct, [PR #16](../..//pull/16) | First registered Paladin body kept the existing procedural shadow and marker | Sprite-footprint/shadow fit for every replacement |
+| 6 Oct, [PR #16](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/16) | First registered Paladin body kept the existing procedural shadow and marker | Sprite-footprint/shadow fit for every replacement |
 | 6 Oct, [PR #22](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/22), commit `6e350360` | Replaced the original single `#0006` oval with a two-pass, offset, translucent ground shadow and hard-coded kind/boss radii | That later bodies lack their own separate painted shadows |
 | 9 Oct, [PR #127](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/127) | Nature sprite replacements retained procedural world shadows | Current manifest has no baked-in ground paint |
 | 9 Oct, [PR #191](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/191) | Presentation-only size targets and asset-safe scale for houses, entrances, trees; no combat/collision changes | Every displayed sprite has a matching `rx/ry` foot |
