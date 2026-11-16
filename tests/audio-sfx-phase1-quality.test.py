@@ -12,6 +12,23 @@ all_ids=set(rollback['originalEntries'])
 assert len(all_ids)==30==metrics['retainedIds']
 assert set(metrics['cues'])==all_ids
 assert set(rollback['originalSha256'])==all_ids
+assert set(rollback['originalEventBindings'])==all_ids
+assert sum(len(x) for x in rollback['originalEventBindings'].values())==34
+expected_calibration={
+ 'sfx-steel-release':.29,'sfx-spectral-release':.50,
+ 'sfx-arcane-release':.54,'sfx-dust-release':.36}
+for key in all_ids:
+    receipts=rollback['originalEventBindings'][key]
+    assert receipts and all(x['binding']['asset']==key for x in receipts)
+    for receipt in receipts:
+        current=manifest['director']['events'][receipt['event']][receipt['index']]
+        assert current['asset']==key
+        original=receipt['binding']
+        if key in expected_calibration:
+            assert abs(current['gain']-expected_calibration[key])<1e-9
+            assert current=={**original,'gain':expected_calibration[key]},(key,'unexpected event change')
+        else:
+            assert current==original,(key,'unrelated event contract changed')
 assert set(k for k,v in manifest['assets'].items() if v['kind']=='effect')==all_ids
 assert len([v for v in manifest['assets'].values() if v['kind']=='music'])==84
 assert len([v for v in manifest['assets'].values() if v['kind']=='ambience'])==34
