@@ -190,13 +190,28 @@ async function resumeLoadedCampaign(page) {
         // The production phone HUD has one narrative slot. Both events must
         // still be delivered sequentially rather than discarded or stacked.
         const firstFits = await page.evaluate(() => {
-          document.querySelector('#status').textContent = 'Need 70 crowns.';
+          const status = document.querySelector('#status');
+          status.textContent = 'Need 70 crowns.';
+          Prototype.updateHUD();
+          const routineDeferred =
+            status.classList.contains('notice-deferred') &&
+            getComputedStyle(status).visibility === 'hidden';
+          // An important status stays visible and moves below the notice.
+          status.dataset.noticeTier = 'important';
           Prototype.updateHUD();
           const message = document.querySelector('#message').getBoundingClientRect();
-          const status = document.querySelector('#status').getBoundingClientRect();
-          return status.top >= message.bottom;
+          const important = status.getBoundingClientRect();
+          const importantSeparated =
+            getComputedStyle(status).visibility !== 'hidden' &&
+            important.top >= message.bottom;
+          delete status.dataset.noticeTier;
+          Prototype.updateHUD();
+          return routineDeferred && importantSeparated;
         });
-        assert(firstFits, 'phone milestone must not overlap the status line');
+        assert(
+          firstFits,
+          'phone routine receipts defer and important status remains below the milestone',
+        );
         await page.waitForFunction(
           () => {
             Prototype.updateHUD();
