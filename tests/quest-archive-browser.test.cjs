@@ -38,6 +38,18 @@ const server = http.createServer((req, res) => {
   res.setHeader('Content-Length', fs.statSync(file).size);
   fs.createReadStream(file).pipe(res);
 });
+// A restored campaign is title-owned until the real Continue gesture.
+async function resumeLoadedCampaign(page) {
+  await page.locator('#title-continue').click();
+  await page.waitForFunction(
+    () =>
+      window.Prototype.started &&
+      document.querySelector('#title-screen').hidden &&
+      document.querySelector('#scene-loading')?.hidden !== false,
+    null,
+    { timeout: 90000 },
+  );
+}
 (async () => {
   let browser, page;
   try {
@@ -61,23 +73,76 @@ const server = http.createServer((req, res) => {
       const phone = viewport.width < 1000,
         tag = engine + '-' + viewport.width + 'x' + viewport.height,
         errors = [];
-      page = await browser.newPage({ viewport, hasTouch: phone, isMobile: phone });
-      page.on('pageerror', (e) => errors.push(e.message));
-      await page.goto(
+      const shell = await browser.newPage({ viewport, hasTouch: phone, isMobile: phone });
+      shell.on('pageerror', (e) => errors.push(e.message));
+      // The first-run language welcome is covered elsewhere; use a genuine
+      // persisted English preference so this exercise enters the title.
+      // This suite audits Archive mechanics, menus and v4 persistence. Set
+      // legitimate player preferences so unrelated first-use GPU trials do
+      // not cover modal buttons and WebKit media fetches cannot outlive the
+      // controlled sequence of saved-game iframe reloads. Renderer and SFX
+      // playback have their own independent browser acceptance suites.
+      await shell.addInitScript(() => {
+        localStorage.setItem('azeroth-display-language-v1', 'en');
+        localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
+        localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+        localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+        localStorage.setItem(
+          'azeroth-v4-profile',
+          JSON.stringify({
+            activeMode: 'normal',
+            nightmareUnlocked: false,
+            audio: { master: 0.33, music: 1, ambience: 1, effects: 1, interface: 1, muted: true },
+          }),
+        );
+      });
+      await shell.goto(
         (process.env.PLAYTEST_URL || 'http://127.0.0.1:' + server.address().port + '/') +
           (phone ? 'phone.html' : 'index.html'),
       );
+      // phone.html hosts the actual game inside its landscape-safe iframe.
+      // Route gameplay queries there, while screenshots and key presses belong
+      // to the outer browser page. Preserve the real phone entry route.
+      if (phone)
+        await shell
+          .frameLocator('#phone-game-frame')
+          .locator('#title-screen')
+          .waitFor({ state: 'attached' });
+      const gameFrame = phone ? shell.frame({ url: /phone-game\.html/ }) : shell;
+      assert(gameFrame, 'the playable game frame is available');
+      page = {
+        locator: (...args) => gameFrame.locator(...args),
+        getByRole: (...args) => gameFrame.getByRole(...args),
+        evaluate: (...args) => gameFrame.evaluate(...args),
+        waitForFunction: (...args) => gameFrame.waitForFunction(...args),
+        waitForTimeout: (...args) => shell.waitForTimeout(...args),
+        keyboard: shell.keyboard,
+        screenshot: (...args) => shell.screenshot(...args),
+        reload: () => gameFrame.goto(gameFrame.url()),
+        close: () => shell.close(),
+      };
       await page.waitForFunction(() => !!window.Prototype);
       await require('./helpers/language-browser.cjs').selectEnglish(page);
-      await page.keyboard.press('f');
-      await page.keyboard.press('f');
-      await page.waitForFunction(() => document.querySelector('#modal').hidden);
+      // This browser exercise must enter a real playable campaign. Prior
+      // double-F presses merely dismissed the title dialogs while "started"
+      // remained false; gameplay-only F/G input then silently did nothing.
+      await page.locator('#title-new').click();
+      await page.getByRole('button', { name: /^Choose Hero/ }).click();
+      await page.locator('#modal-actions button.class-character-choice').first().click();
+      await page.waitForFunction(
+        () => window.Prototype.started && document.querySelector('#modal').hidden,
+        null,
+        { timeout: 90000 },
+      );
+      // Validate geometry in the actual game CSS viewport. In portrait,
+      // phone.html rotates its landscape game frame, so outer width differs.
+      const gameViewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
       await require('./helpers/notice-browser.cjs').verifyNoticeStrip(
         page,
         out,
         tag,
         phone,
-        viewport,
+        gameViewport,
       );
       const cuePlacement = await page.evaluate(() => {
         const c = Prototype.game,
@@ -113,36 +178,87 @@ const server = http.createServer((req, res) => {
           'Recruiter glyph remains inside its marker circle',
         );
       }
-      await page.evaluate(() => {
+      await page.evaluate((isPhone) => {
         const c = Prototype.game;
         c.tick = () => {};
         c.hero.level = 20;
         c.hero.xp = 0;
-        c.notice('BOSS VANQUISHED · The Drowned Keeper', 7, 'The Archive is open to exploration.');
-        c.notice('Sunken Archive · halls secured', 7, 'First clear reward delivered.');
+        // A meaningful on-screen reading window matters on slower WebKit
+        // phones too; short synthetic durations can expire during measurement.
+        const duration = 7;
+        c.notice(
+          'BOSS VANQUISHED · The Drowned Keeper',
+          duration,
+          'The Archive is open to exploration.',
+        );
+        c.notice('Sunken Archive · halls secured', duration, 'First clear reward delivered.');
         Prototype.updateHUD();
-      });
-      await page.waitForFunction(
-        () => document.querySelectorAll('#message .notice-card .notice-detail').length === 2,
-      );
-      const cards = await page.locator('#message .notice-card').allTextContents();
-      assert(cards[0].includes('BOSS VANQUISHED') && cards[1].includes('halls secured'));
-      assert.equal(await page.locator('#message .notice-detail').count(), 2);
-      const bounds = await page.locator('#message').boundingBox();
-      assert(bounds.x >= 0 && bounds.x + bounds.width <= viewport.width + 1);
+      }, phone);
+      await page.waitForFunction((isPhone) => {
+        Prototype.updateHUD();
+        const cards = document.querySelectorAll('#message .notice-card');
+        return (
+          cards.length === (isPhone ? 1 : 2) && cards[0].textContent.includes('BOSS VANQUISHED')
+        );
+      }, phone);
+      const firstCards = await page.locator('#message .notice-card').allTextContents();
+      assert(firstCards[0].includes('BOSS VANQUISHED'));
+      assert.equal(await page.locator('#message .notice-detail').count(), phone ? 1 : 2);
       if (phone) {
-        const separate = await page.evaluate(() => {
-          document.querySelector('#status').textContent = 'Need 70 crowns.';
+        // The production phone HUD has one narrative slot. Both events must
+        // still be delivered sequentially rather than discarded or stacked.
+        const firstFits = await page.evaluate(() => {
+          const status = document.querySelector('#status');
+          status.textContent = 'Need 70 crowns.';
           Prototype.updateHUD();
-          const status = document.querySelector('#status').getBoundingClientRect();
-          const notices = document.querySelector('#message').getBoundingClientRect();
-          return (
-            document.querySelectorAll('#message .notice-card').length === 2 &&
-            status.top >= notices.bottom
-          );
+          const routineDeferred =
+            status.classList.contains('notice-deferred') &&
+            getComputedStyle(status).visibility === 'hidden';
+          // An important status stays visible and moves below the notice.
+          status.dataset.noticeTier = 'important';
+          Prototype.updateHUD();
+          const message = document.querySelector('#message').getBoundingClientRect();
+          const important = status.getBoundingClientRect();
+          const importantSeparated =
+            getComputedStyle(status).visibility !== 'hidden' && important.top >= message.bottom;
+          delete status.dataset.noticeTier;
+          Prototype.updateHUD();
+          return {
+            routineDeferred,
+            importantSeparated,
+            noticeVisible: document.querySelector('#message').classList.contains('visible'),
+            messageBottom: message.bottom,
+            statusTop: important.top,
+          };
         });
-        assert(separate, 'stacked milestones and status remain separate');
+        assert(
+          firstFits.routineDeferred && firstFits.importantSeparated && firstFits.noticeVisible,
+          'phone routine status defers and important status remains below the milestone: ' +
+            JSON.stringify(firstFits),
+        );
+        await page.waitForFunction(
+          () => {
+            Prototype.updateHUD();
+            const cards = document.querySelectorAll('#message .notice-card');
+            return (
+              cards.length === 1 &&
+              cards[0].textContent.includes('halls secured') &&
+              cards[0].querySelector('.notice-detail')?.textContent.includes('First clear reward')
+            );
+          },
+          null,
+          { timeout: 12000 },
+        );
+        const secondCard = await page.locator('#message .notice-card').allTextContents();
+        assert(secondCard[0].includes('halls secured'));
+      } else {
+        assert(firstCards[1].includes('halls secured'));
       }
+      const bounds = await page.evaluate(() => {
+        const rect = document.querySelector('#message').getBoundingClientRect();
+        return { x: rect.x, right: rect.right, viewportWidth: innerWidth };
+      });
+      assert(bounds.x >= 0 && bounds.right <= bounds.viewportWidth + 1);
       await page.screenshot({ path: path.join(out, 'archive-milestones-' + tag + '.png') });
       await page.evaluate(() => (document.querySelector('#status').textContent = ''));
       await page.waitForFunction(
@@ -150,19 +266,36 @@ const server = http.createServer((req, res) => {
         null,
         { timeout: 15000 },
       );
+      // G is the live, remappable Controls shortcut; technical skill and
+      // combat detail now belongs to the separate X Skill journal.
       await page.keyboard.press('g');
+      assert.equal(await page.locator('#modal-title').textContent(), 'Controls');
+      await page.getByRole('button', { name: /^Customize keyboard/ }).click();
+      assert.equal(await page.locator('#modal-title').textContent(), 'Customize keyboard');
+      await page.getByRole('button', { name: /^Movement and menu keys/ }).click();
       assert(
-        (await page.locator('#modal-description').textContent()).includes(
-          'Fallen companions need Barracks',
-        ),
+        await page.getByRole('button', { name: /Confirm \/ interact · F/ }).count(),
+        'the real interaction binding remains visible in Controls',
       );
-      assert((await page.locator('#modal-description').textContent()).includes('Shield Bash'));
-      await page.getByRole('button', { name: 'Combat conditions', exact: true }).click();
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
+      assert(await page.locator('#modal').isHidden(), 'Controls return to live gameplay');
+      await page.keyboard.press('x');
+      assert.equal(await page.locator('#modal-title').textContent(), 'Skill journal');
+      await page.getByRole('button', { name: /^Skill 1 ·/ }).click();
+      assert(
+        (await page.locator('#modal-description').textContent()).length > 50,
+        'a learned skill has a real technical description',
+      );
+      await page.keyboard.press('Escape');
+      await page.getByRole('button', { name: /^Combat conditions/ }).click();
       await page.getByRole('button', { name: 'Slow', exact: true }).click();
       assert((await page.locator('#modal-description').textContent()).includes('cooldown'));
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
+      assert(await page.locator('#modal').isHidden(), 'journal Back restores field input');
       await page.evaluate(() => {
         const c = Prototype.game;
         c.enter('archive');
@@ -178,7 +311,12 @@ const server = http.createServer((req, res) => {
       await page.screenshot({ path: path.join(out, 'keeper-captive-' + tag + '.png') });
       await page.keyboard.press('f');
       assert.equal(await page.locator('#modal-title').textContent(), 'The Drowned Keeper');
-      assert((await page.locator('#modal-description').textContent()).includes('Free Neri'));
+      const captiveCopy = await page.locator('#modal-description').textContent();
+      assert(
+        captiveCopy.includes('Neri knows how to preserve them') &&
+          captiveCopy.includes('Free her; then we can speak'),
+        'the captive Keeper retains the approved Neri rescue prerequisite',
+      );
       await page.keyboard.press('Escape');
       await page.evaluate(() => {
         const c = Prototype.game;
@@ -228,12 +366,12 @@ const server = http.createServer((req, res) => {
       assert.equal(await page.locator('#modal-title').textContent(), 'The Keeper’s ledger');
       assert(await page.evaluate(() => Prototype.game.s.keeperEvidence));
       await page.keyboard.press('Escape');
-      await page.evaluate(() => Prototype.save());
+      assert(
+        await page.evaluate(() => Prototype.save()),
+        'Keeper evidence saves during active play',
+      );
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.keeperPact);
-      await page.evaluate(() => {
-        Prototype.game.tick = () => {};
-      });
       assert(
         await page.evaluate(
           () => Prototype.game.s.keeperEvidence && Prototype.game.keeperAvailable(),
@@ -249,8 +387,11 @@ const server = http.createServer((req, res) => {
         return { pact: c.s.keeperPact, evidence: c.s.keeperEvidence };
       });
       assert.deepEqual(restored, { pact: true, evidence: true });
+      await resumeLoadedCampaign(page);
       await page.evaluate(() => {
         const c = Prototype.game;
+        if (c.zoneId !== 'archive') c.enter('archive');
+        c.tick = () => {};
         c.s.pending.archive = { kind: 'dungeon', count: 1 };
         c.activatePending();
         Prototype.updateHUD();
@@ -268,20 +409,22 @@ const server = http.createServer((req, res) => {
         ),
         1,
       );
-      await page.evaluate(() => Prototype.save());
+      assert(await page.evaluate(() => Prototype.save()), 'The active TRUE encounter saves');
       await page.reload();
       await page.waitForFunction(
         () => !!window.Prototype && Prototype.game.s.pending.archive?.active,
+        null,
+        { timeout: 20000 },
       );
-      await page.evaluate(() => {
-        Prototype.game.tick = () => {};
-      });
       assert(
         !(await page.evaluate(() => Prototype.game.keeperAvailable())),
         'Reload preserves escape',
       );
+      await resumeLoadedCampaign(page);
       await page.evaluate(() => {
         const c = Prototype.game;
+        if (c.zoneId !== 'archive') c.enter('archive');
+        c.tick = () => {};
         const boss = c
           .zone()
           .enemies.find((e) => e.family === 'archive' && e.form === 'true' && e.hp > 0);
@@ -290,7 +433,7 @@ const server = http.createServer((req, res) => {
         c.notices.length = 0;
         const n = c.visibleNPCs().find((n) => n.kind === 'keeper');
         Object.assign(c.hero, { x: n.x, y: n.y + 80 });
-        Prototype.save();
+        if (!Prototype.save()) throw Error('TRUE Keeper recapture must save');
         Prototype.updateHUD();
       });
       await page.keyboard.press('f');
@@ -302,6 +445,7 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('Escape');
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.true.archive);
+      await resumeLoadedCampaign(page);
       await page.evaluate(() => {
         const c = Prototype.game;
         c.tick = () => {};
@@ -322,7 +466,37 @@ const server = http.createServer((req, res) => {
         Prototype.updateHUD();
       });
       await page.keyboard.press('f');
-      await page.getByRole('button', { name: 'Rescued specialists', exact: false }).click();
+      assert.equal(await page.locator('#modal-title').textContent(), 'Basic Barracks');
+      await page.getByRole('button', { name: /^Training/ }).click();
+      assert.equal(await page.locator('#modal-title').textContent(), 'Training');
+      await page.getByRole('button', { name: /^Rescued specialists/ }).click();
+      assert.equal(await page.locator('#modal-title').textContent(), 'Rescued specialists');
+      const remoteKeeper = await page.evaluate(() => {
+        const c = Prototype.game;
+        return {
+          pact: c.s.keeperPact,
+          rescued: c.s.rescued.archive,
+          normal: c.s.normal.archive,
+          true: c.s.true.archive,
+          pending: c.s.pending.archive || null,
+          available: c.keeperAvailable(),
+          zone: c.zoneId,
+          bosses: c.s.zones.archive.enemies
+            .filter((e) => e.type === 'boss' && e.family === 'archive')
+            .map((e) => ({ form: e.form, hp: e.hp, respawn: e.respawn })),
+          options: Array.from(document.querySelectorAll('#modal-actions button')).map((b) =>
+            b.textContent.trim(),
+          ),
+        };
+      });
+      assert(
+        remoteKeeper.available && remoteKeeper.pact,
+        'remote Keeper prerequisite after saved TRUE victory: ' + JSON.stringify(remoteKeeper),
+      );
+      assert(
+        remoteKeeper.options.some((label) => label.includes('Drowned Keeper · The Archive')),
+        'remote Keeper menu option remains accessible: ' + JSON.stringify(remoteKeeper),
+      );
       await page
         .getByRole('button', { name: 'Drowned Keeper · The Archive', exact: false })
         .click();

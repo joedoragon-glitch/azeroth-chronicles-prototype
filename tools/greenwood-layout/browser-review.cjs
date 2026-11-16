@@ -107,6 +107,10 @@ const types = {
       await page.addInitScript((state) => {
         localStorage.setItem('azeroth-display-language-v1', 'en');
         localStorage.setItem('azeroth-v4-normal', JSON.stringify(state));
+        // This capture's 150% geometry is intentional. The default for new
+        // players is now 125%, but explicit zoom preferences remain supported.
+        localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
+        localStorage.setItem('azeroth-camera-v2', JSON.stringify({ desktop: 1.5, phone: 1.5 }));
       }, seed);
       await page.goto(
         'http://127.0.0.1:' +
