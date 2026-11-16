@@ -178,8 +178,10 @@ async function resumeLoadedCampaign(page) {
         (isPhone) => {
           Prototype.updateHUD();
           const cards = document.querySelectorAll('#message .notice-card');
-          return cards.length === (isPhone ? 1 : 2) &&
-            cards[0].textContent.includes('BOSS VANQUISHED');
+          return (
+            cards.length === (isPhone ? 1 : 2) &&
+            cards[0].textContent.includes('BOSS VANQUISHED')
+          );
         },
         phone,
       );
@@ -216,9 +218,11 @@ async function resumeLoadedCampaign(page) {
           () => {
             Prototype.updateHUD();
             const cards = document.querySelectorAll('#message .notice-card');
-            return cards.length === 1 &&
+            return (
+              cards.length === 1 &&
               cards[0].textContent.includes('halls secured') &&
-              cards[0].querySelector('.notice-detail')?.textContent.includes('First clear reward');
+              cards[0].querySelector('.notice-detail')?.textContent.includes('First clear reward')
+            );
           },
           null,
           { timeout: 12000 },
