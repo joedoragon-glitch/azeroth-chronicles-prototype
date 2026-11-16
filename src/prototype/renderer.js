@@ -1128,6 +1128,14 @@
       const littlePlant = e.greenwoodNature === 'understory' ||
         /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure);
       if (littlePlant) { rx = 7; ry = 2; }
+      // #893 registered dead-tree master: only ~9 logical px across the
+      // visible trunk at its 75%-height foot pivot (37/768 atlas px at
+      // 192 logical width). Original 22×6 prop radii, enlarged further by
+      // approved tree scale, made obvious detached black discs in the real
+      // Frontier road/bridge screenshots in both Canvas and Pixi.
+      // Reduce only this proved thin-trunk footprint, not canopy/tree scale,
+      // retained sprouts, painted foundations, or the night fade policy.
+      if (e.renderKind === 'prop' && structure === 'dead-tree') { rx = 10; ry = 3.5; }
       // #893 measured the actual local alpha at the physical foot anchor.
       // These narrow poles were inheriting the general 44 px prop ellipse
       // despite only ~6-16 px of painted base. In real Marches daylight
