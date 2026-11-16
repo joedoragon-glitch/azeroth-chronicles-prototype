@@ -310,23 +310,24 @@ async function main() {
         // #893: unmodified regional scenery, real native Campaign and all four heroes.
         // Only test-local camera/class/clock changes: no fake sprite contacts,
         // gameplay rewrites, or synthetic shadow overlays.
-        const shadowSite = /^shadow-(vale|march|highlands|frontier|crown|archive)-(day|dusk|night|interior)-(paladin|mage|ranger|rogue)$/.exec(name);
+        const shadowSite = /^shadow-(vale|march|highlands|highlands-shore|frontier|crown|archive)-(day|dusk|night|interior)-(paladin|mage|ranger|rogue)$/.exec(name);
         if (shadowSite) {
           const [, region, phase, heroClass] = shadowSite;
+          const actualRegion = region === 'highlands-shore' ? 'highlands' : region;
           if (heroClass === 'rogue' && !Campaign.classes.rogue) Campaign.enableRoguePlaytest();
           window.g = new Campaign('normal', heroClass, () => 0.73);
           window.originalCampaign = g;
-          if (!g.enter(region)) throw Error('Native shadow audit site unavailable: ' + region);
+          if (!g.enter(actualRegion)) throw Error('Native shadow audit site unavailable: ' + actualRegion);
           window.painter = PrototypeRenderer.create(opts);
           painter.setOptimizationMode(optimized);
           const site = {
             vale: [550, 1750], march: [1880, 2600],
-            highlands: [480, 1010], frontier: [1450, 2160],
+            highlands: [480, 1010], 'highlands-shore': [660, 1760], frontier: [1450, 2160],
             crown: [720, 900], archive: [1000, 1000],
           }[region];
           Object.assign(g.hero, { x: site[0], y: site[1], path: [], order: null });
           g.s.clock = { day: 245, dusk: 345, night: 480, interior: 480 }[phase];
-          if (g.zoneId !== region) throw Error('Shadow fixture did not enter native region: ' + region);
+          if (g.zoneId !== actualRegion) throw Error('Shadow fixture did not enter native region: ' + actualRegion);
           if (g.hero.class !== heroClass && g.hero.heroClass !== heroClass &&
               g.s.heroClass !== heroClass && g.s.class !== heroClass)
             throw Error('Shadow fixture class mismatch: ' + heroClass);
