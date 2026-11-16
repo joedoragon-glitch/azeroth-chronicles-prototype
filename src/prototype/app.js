@@ -7473,7 +7473,14 @@
            nodes < guideSliceLimits.nodes &&
            performance.now() - started < guideSliceLimits.milliseconds) {
       if (!work.request) {
-        const next = work.iterator.next(work.reply);
+        let next;
+        try {
+          next = work.iterator.next(work.reply);
+        } catch (_) {
+          // An optional visual guide must never interrupt combat or the game.
+          work.finished = [];
+          break;
+        }
         work.reply = undefined;
         if (next.done) {
           if (work.phase === 'solve') {
