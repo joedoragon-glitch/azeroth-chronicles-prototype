@@ -1,5 +1,11 @@
 # SIBDLP v0.9.2 — tutorial workstream handoff (16 November 2026)
 
+## 16 November 2026 — dev.291 guard and release gate (current)
+
+The newer `main@fd016b044b94cd085f86d869ada7803905c82ec2` includes source-only PR #897's automatic Canvas rescue, 60-second stalled-image watcher and 120-second inactive GPU preparation guard, without exposing a manual Canvas bypass. This source was combined with the staged tutorial and adaptive menus through an actual feature-branch merge. [Scoped guarded integration #43870174756](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43870174756) passed native tutorial/EN-ES/v4 persistence, new scene/sprite loading lifecycle, sprite fingerprint audit and offline build. The only source conflicts were version/documentation, sprite-source metadata, the timer-aware production test shell and generated `sw.js`; `app.js` merged cleanly and main's timer behavior was preserved. No Pages publish occurred during feature-branch integration.
+
+**Merge acceptance:** Require all applicable final-head GitHub PR checks after removing temporary merge/diagnostic workflows. Owner approved merging and subsequent player-facing Pages publication only when these checks pass. Preserve this as a development snapshot, **not** a completed v0.9.2 release or uninterrupted earned campaign/device validation. Existing save continuity draft #864 is separate. Verify the exact main push deployment and PWA update adoption separately before claiming publication.
+
 ## 16 November 2026 — integrated release-readiness checkpoint (supersedes historical no-merge instructions)
 
 **Owner decision (latest, supersedes earlier restrictions):** The owner explicitly authorized **both merging this tutorial PR and publishing player-facing development updates after engineering review and green relevant CI**. This does not certify v0.9.2 as functionally complete, and is not permission to merge unrelated draft/NO-MERGE branches without their own verified gates.
