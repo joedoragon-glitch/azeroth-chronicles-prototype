@@ -109,10 +109,18 @@ for (const language of ['en', 'es']) {
   game.hero.path = [];
   let routeRefreshes = 0;
   let boundedRefreshes = 0;
+  let requestedTerrainProbes = 0;
   const originalPlanner = game.budgetedCompanionRoute;
-  game.budgetedCompanionRoute = function (...args) {
+  game.budgetedCompanionRoute = function* (...args) {
     boundedRefreshes++;
-    return originalPlanner.apply(this, args);
+    const native = originalPlanner.apply(this, args);
+    let request = native.next();
+    while (!request.done) {
+      if (request.value.kind === 'blocked') requestedTerrainProbes++;
+      const answer = yield request.value;
+      request = native.next(answer);
+    }
+    return request.value;
   };
   const nativeTarget = game.navigationTarget;
   game.navigationTarget = function (...args) {
@@ -130,11 +138,23 @@ for (const language of ['en', 'es']) {
   // A meaningful movement is eligible only after the slower timeout.
   game.s.time = startTime + 3;
   frame(100);
+  assert(requestedTerrainProbes <= 256, 'one frame can submit at most 256 optional route probes');
   assert.equal(routeRefreshes, 0, 'manual guide refresh never calls synchronous navigationTarget');
+  // The optional planner must immediately yield the frame to live combat.
+  const normalCombat = game.manaCombatActive;
+  game.manaCombatActive = () => true;
+  const beforeCombat = requestedTerrainProbes;
+  frame(150);
+  assert.equal(requestedTerrainProbes, beforeCombat,
+    'an active fight preempts all optional route probes, preserving the unfinished plan');
+  game.manaCombatActive = normalCombat;
   assert.equal(boundedRefreshes, 1, 'displacement starts one bounded, optional visual reroute');
   // Standing thereafter does not repeat the same static route, even over time.
   game.s.time += 3;
+  const beforeResume = requestedTerrainProbes;
   frame(200);
+  assert(requestedTerrainProbes - beforeResume <= 256,
+    'after combat the same work resumes within its original per-frame probe ceiling');
   assert.equal(routeRefreshes, 0, 'standing cannot schedule a synchronous route');
   assert.equal(boundedRefreshes, 1, 'existing partial search is resumed, not restarted');
   game.hero.x = startX + 340;
