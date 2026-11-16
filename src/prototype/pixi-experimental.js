@@ -1926,9 +1926,24 @@
       // A second opt-in trial must release the previous GPU context and scene.
       if (app) disposeResources();
       const thisEpoch = ++contextEpoch;
+      let initializingApp = null;
+      // A stalled optional Pixi boot may be abandoned for Canvas while an
+      // earlier library/context promise is still pending. Only dispose the
+      // stale attempt's own app; never touch a newer recovery attempt.
+      const discardStaleInit = () => {
+        if (!initializingApp?.renderer) return;
+        try {
+          const node = initializingApp.canvas;
+          initializingApp.destroy(true);
+          node?.remove();
+        } catch (_) {
+          // An already released or failed context must not mask Canvas recovery.
+        }
+      };
       let stage = 'library-load';
       try {
         const PIXI = await loadPixi();
+        if (thisEpoch !== contextEpoch) return false;
         stage = 'prepare-plugin';
         requireValue(
           PIXI.PrepareSystem && PIXI.extensions?.add,
@@ -1947,8 +1962,9 @@
             root.AzerothNativeWebGLCore,
           'PixiJS scene modules not loaded',
         );
-        app = new PIXI.Application();
-        await app.init({
+        initializingApp = new PIXI.Application();
+        app = initializingApp;
+        await initializingApp.init({
           width: viewport.width,
           height: viewport.height,
           preference: ['webgl'],
@@ -1959,6 +1975,10 @@
           antialias: false,
           background: 0x0c1913,
         });
+        if (thisEpoch !== contextEpoch || app !== initializingApp) {
+          discardStaleInit();
+          return false;
+        }
         stage = 'webgl2-context';
         const actualContext = app.canvas.getContext('webgl2');
         requireValue(actualContext, 'WebGL2 context not available');
@@ -1998,9 +2018,11 @@
         // Otherwise entering any previously unseen neighborhood forces fallback.
         stage = 'sprite-manifest';
         const response = await fetch('./assets/sprites/manifest.json');
+        if (thisEpoch !== contextEpoch) return false;
         requireValue(response.ok, 'Original sprite manifest unavailable');
         const manifest = await response.json(),
           urls = new Set();
+        if (thisEpoch !== contextEpoch) return false;
         function collect(value) {
           if (!value || typeof value !== 'object') return;
           if (
@@ -2027,6 +2049,7 @@
         await Promise.all(
           [...urls].map(async (src) => {
             const texture = await PIXI.Assets.load(src);
+            if (thisEpoch !== contextEpoch) return;
             requireValue(texture?.source, 'Approved sprite decode failed: ' + src);
             texture.source.scaleMode = 'nearest';
             scene.registerTexture(src, texture);
@@ -2034,6 +2057,7 @@
             approvedTextures.push(texture);
           }),
         );
+        if (thisEpoch !== contextEpoch) return false;
         startupSpritePreloadMs = Math.max(0, measureNow() - preloadStarted);
         stage = 'gpu-approved-upload';
         if (!(await prepareGpuTextures(thisEpoch, approvedTextures, 'approved'))) return false;
@@ -2065,6 +2089,15 @@
         if (thisEpoch !== contextEpoch) return false;
         return true;
       } catch (error) {
+        // A late rejection must not erase a newer attempt's first failure or
+        // release its GPU scene after the Canvas guard invalidated this epoch.
+        if (thisEpoch !== contextEpoch) {
+          // Late library/manifest/texture failures already passed through
+          // ordinary fallback teardown. Only a still-initializing app can
+          // acquire GPU resources after that earlier teardown.
+          if (stage === 'application-init') discardStaleInit();
+          return false;
+        }
         noteFailure(
           stage === 'webgl2-context' ? 'context-unavailable' : 'preparation-failed',
           stage,

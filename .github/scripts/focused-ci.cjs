@@ -136,6 +136,20 @@ const groups = [
     tests: [TEST + 'hero-skill1-area3-input.test.cjs'],
   },
   {
+    // Loading owns the authoritative first painted frame and native travel
+    // commit barriers. Include this dedicated lifecycle regression whenever
+    // its actual app, Pixi or recovery guard source changes.
+    match:
+      /^src\/prototype\/(?:app|pixi-experimental)\.js$|^tools\/webgl-pilot\/renderer-switch-guard\.js$|^templates\/game\.html$/,
+    tests: [TEST + 'scene-transition-lifecycle.test.cjs'],
+  },
+  {
+    // Silently stalled image decode/load must release its bounded queue slot.
+    // Merely checking the sprite catalog does not validate this behavior.
+    match: /^src\/prototype\/sprites\.js$/,
+    tests: [TEST + 'sprite-lifecycle.test.cjs'],
+  },
+  {
     match: /^src\/prototype\/(?:hero-combat|combat|rules|save|engine)\.js$/,
     tests: [TEST + 'hero-skill1-stage1.test.cjs', TEST + 'hero-skill1-integration.test.cjs'],
   },
@@ -152,6 +166,7 @@ const groups = [
       /(?:^|\/)(?:pixi-experimental\.js|pixi-scene-bridge\.js|native-sprite-adapter\.js|renderer-switch-guard\.js|native-webgl2-core\.js)$|^tests\/pixi-|^tools\/webgl-pilot\//,
     tests: [
       TEST + 'pixi-fidelity.test.cjs',
+      TEST + 'pixi-preparation-cancellation.test.cjs',
       TEST + 'pixi-fixed-quality-pilot.test.cjs',
       TEST + 'pixi-parity.test.cjs',
       TEST + 'pixi-step3-source.test.cjs',
