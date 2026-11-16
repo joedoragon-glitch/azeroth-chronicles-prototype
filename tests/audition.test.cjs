@@ -22,6 +22,7 @@ assert.equal(Object.keys(manifest.director.bosses).length, 11);
 for (const id of [
   'place', 'scene-mode', 'boss', 'form', 'scene-play', 'kind', 'search',
   'recording', 'record-play', 'stem-play', 'intensity', 'guide-event',
+  'effect-stage-compare', 'effect-play-release', 'effect-play-impact',
   'guide-text', 'copy-guide', 'profile', 'mix-scene', 'volumes', 'mute',
   'source', 'grid', 'warning', 'ui-play', 'pause', 'stop', 'report',
   'shared-listening', 'shared-play', 'shared-title', 'shared-description',
@@ -48,7 +49,8 @@ for (const phrase of [
   "registry?.director?.places?.", 'document.hidden || userPaused',
   "requestedLink.get('track')", "requestedLink.get('legacy')",
   'function listeningUrl(key, id)', 'function prepareSharedLink()',
-  'function playSharedLink()',
+  'function playSharedLink()', 'function effectMaterial(id, entry)',
+  'function playEffectStage(stage)',
 ]) assert(code.includes(phrase), 'Missing audition integration: ' + phrase);
 assert(!page.includes('The production registry is empty'));
 assert(!page.includes('Audio audition</h1>'));
