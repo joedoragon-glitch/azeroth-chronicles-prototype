@@ -753,12 +753,14 @@
       const first = slot > 4 ? slot - 4 : slot, second = first + 4,
         learned = getGame().hero.skills[second - 1] > 0,
         es = getLanguage() === 'es';
-      if (slot <= 4 && !learned)
+      if (!learned)
         return es
-          ? 'Más adelante podrás aprender la habilidad ' + second +
-            '. Cuando la tengas, acompañará a esta en su versión normal o cargada.'
-          : 'You can learn Skill ' + second +
-            ' later. Once learned, it follows this skill in the normal or charged form.';
+          ? 'Cuando aprendas la habilidad ' + second +
+            ', acompañará a la ' + first +
+            ' en su versión normal o cargada. No tendrá botón propio.'
+          : 'Once you learn Skill ' + second +
+            ', it will follow Skill ' + first +
+            ' in the normal or charged form without its own button.';
       return es
         ? 'La habilidad ' + second + ' acompaña a la ' + first +
           ': no tiene botón propio. Al usar la ' + first +
