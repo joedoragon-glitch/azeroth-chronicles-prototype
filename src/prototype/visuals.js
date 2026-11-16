@@ -522,15 +522,6 @@
     };
     const variant = hash(e.id || e.name || e.species || e.family || e.kind || 'azeroth'),
       flip = variant & 1 ? -1 : 1;
-    const shade = (rx = 22, ry = 7, a = 0.24) => {
-      ctx.save();
-      ctx.globalAlpha = a;
-      ctx.fillStyle = '#07110d';
-      ctx.beginPath();
-      ctx.ellipse(0, 10, rx, ry, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    };
     const glint = (x, y, c = '#f3d690', r = 2) => {
       ctx.save();
       ctx.globalAlpha = 0.85;
@@ -4983,7 +4974,7 @@
 
     function craftedPet(family) {
       if (!Object.hasOwn(R.petCompanions, family)) return false;
-      shade(18, 5, 0.24);
+      // Shared Canvas/Pixi ground presentation owns pet contact shading.
       if (family === 'citadel') {
         littleMarshal();
         return true;
@@ -11055,7 +11046,7 @@
         );
         for (const x of [-25, 25]) oval(x, 6, 5, 4, '#77796f');
       } else if (boss === 'cindermaw') {
-        shade(35, 9, 0.22);
+        // Cindermaw uses the shared world-space shadow, not baked body shading.
         for (const [x, y, r, c] of [
           [-25, -5, 14, '#4a4652'],
           [-10, -20, 17, '#5a5160'],
@@ -19121,11 +19112,8 @@
       else if (role === 'goblin-archer') goblinArcher();
       else human(role);
     } else if (e.type === 'boss' || e.captainProfile === 'supply-highlands') {
-      shade(
-        e.form === 'true' ? 42 : 34,
-        e.form === 'true' ? 13 : 10,
-        e.form === 'true' ? 0.42 : 0.32,
-      );
+      // All boss forms use one renderer-owned contact treatment. Baking a
+      // second ground oval into this body bypasses outdoor night attenuation.
       const bossScale =
         e.captainProfile === 'supply-highlands'
           ? 1
