@@ -1,7 +1,7 @@
 /* Each published release prepares an atomic offline cache; the game controls activation. */
 const CACHE_VERSION = {{CACHE_VERSION}};
 {{SPRITE_FORMAT}}
-const CACHE_PREFIX = 'gta-cuba-app-';
+const CACHE_PREFIX = 'alternate-layout-app-';
 const APP_FILES = {{APP_FILES}};
 const APP_FINGERPRINTS = {{APP_FINGERPRINTS}};
 const LEGACY_FILES = {{LEGACY_FILES}};

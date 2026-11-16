@@ -58,7 +58,7 @@ generated.set(
   'sw.js',
   read('templates/service-worker.js')
     .replace('{{SPRITE_FORMAT}}', read('src/prototype/sprite-format.js'))
-    .replace('{{CACHE_VERSION}}', JSON.stringify('gta-cuba-app-v' + pkg.version))
+    .replace('{{CACHE_VERSION}}', JSON.stringify('alternate-layout-app-v' + pkg.version))
     .replace('{{APP_FILES}}', JSON.stringify(['./', ...core.map((p) => './' + p)]))
     .replace('{{APP_FINGERPRINTS}}', JSON.stringify(appFingerprints))
     .replace('{{LEGACY_FILES}}', JSON.stringify(legacy.map((p) => './' + p))),

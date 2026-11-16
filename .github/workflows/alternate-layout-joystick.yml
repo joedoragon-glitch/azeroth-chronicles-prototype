@@ -1,0 +1,45 @@
+name: Alternate layout focused checks (no deployment)
+
+on:
+  push:
+    branches: [developer/alternate-layout-mode]
+  pull_request:
+    branches: [developer/alternate-layout-mode]
+
+permissions:
+  contents: read
+
+jobs:
+  alternate-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and focused runtime checks
+        run: |
+          node --check src/prototype/input.js
+          node --check src/prototype/app.js
+          node --check src/prototype/platform.js
+          node --check sw.js
+          node tests/alternate-layout-joystick.test.cjs
+          node tests/alternate-layout-new-save.test.cjs
+      - name: Exact worker fingerprints and neutral naming
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          const worker = fs.readFileSync('sw.js', 'utf8');
+          for (const path of ['src/prototype/app.js', 'src/prototype/input.js', 'src/prototype/platform.js']) {
+            const bytes = fs.readFileSync(path);
+            const hash = crypto.createHash('sha1')
+              .update('blob ' + bytes.length + String.fromCharCode(0)).update(bytes).digest('hex');
+            const entry = JSON.stringify('./' + path) + ':' + JSON.stringify(hash);
+            if (!worker.includes(entry)) throw Error('Stale worker fingerprint: ' + path);
+          }
+          if (!worker.includes('alternate-layout-app-')) throw Error('Wrong offline cache namespace');
+          if (worker.includes('gta-' + 'cuba')) throw Error('Old cache branding');
+          console.log('PASS worker filenames, hashes and isolated namespace');
+          NODE

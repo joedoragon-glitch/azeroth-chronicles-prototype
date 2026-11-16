@@ -58,9 +58,9 @@
   }
   // The edition uses its own keys even if a local operator serves both games on one origin.
   const editionStorage = {
-    getItem: (key) => localStorage.getItem('gta-cuba:' + key),
-    setItem: (key, value) => localStorage.setItem('gta-cuba:' + key, value),
-    removeItem: (key) => localStorage.removeItem('gta-cuba:' + key),
+    getItem: (key) => localStorage.getItem('alternate-layout:' + key),
+    setItem: (key, value) => localStorage.setItem('alternate-layout:' + key, value),
+    removeItem: (key) => localStorage.removeItem('alternate-layout:' + key),
   };
   applyPerformanceBaseline(editionStorage);
   let optimizationPreference = 'auto';
@@ -1812,7 +1812,7 @@
 
   const writerGuard = PrototypePersistence.createWriterGuard({
     locks: navigator.locks,
-    lockName: 'gta-cuba-campaign-writer-v1',
+    lockName: 'alternate-layout-campaign-writer-v1',
     required: location.protocol === 'https:',
   });
   const persistence = PrototypePersistence.create({

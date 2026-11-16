@@ -55,7 +55,7 @@
     const bindings = Object.freeze(Object.fromEntries(actions.map(([id, , code]) => [id, code])));
     const preferences = Object.freeze({
       bindings,
-      preset: 'gta-cuba-edition',
+      preset: 'alternate-layout',
       phoneLayout: 'left-hand',
       joystickMode: 'fixed',
       hudStyle: 'classic',
