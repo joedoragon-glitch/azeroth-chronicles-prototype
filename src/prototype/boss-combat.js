@@ -742,7 +742,7 @@
         if (profile) Object.assign(s, profile, { ranged: true });
         else if (['archer', 'crownguard', 'wraith'].includes(s.species)) {
           s.shotRange = 280;
-          s.shotSpeed = 260;
+          s.shotSpeed = R.projectileFlight.ordinaryDefault.arrow;
           s.projectileStyle = s.species === 'wraith' ? 'spectral' : 'arrow';
         }
       }
