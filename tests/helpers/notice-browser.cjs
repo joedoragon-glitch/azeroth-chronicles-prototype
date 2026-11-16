@@ -84,9 +84,14 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
       0,
       'victory frame cannot immediately reshow prose',
     );
-    await page.waitForFunction(() => document.querySelector('#message .notice-narration'), null, {
-      timeout: 4500,
-    });
+    // This fixture deliberately replaces Campaign.tick with a no-op and can
+    // remain on the title screen, where the normal active-play HUD pump is
+    // suspended. Drive the actual public HUD update while waiting for its
+    // real 2.5-second combat-quiet interval; never change game notice timing.
+    await page.waitForFunction(() => {
+      window.Prototype.updateHUD();
+      return !!document.querySelector('#message .notice-narration');
+    }, null, { timeout: 4500 });
     assert.equal(
       await page.locator('#message .notice-narration').textContent(),
       text,
