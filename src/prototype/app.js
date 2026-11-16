@@ -9786,6 +9786,14 @@
     focused = true;
     last = performance.now();
     settleBackgroundVisibility('focus');
+    // Blur-only interruptions suspend audio without a visibilitychange.
+    // On a foreground focus return, restore the playable soundtrack only
+    // if the game was not intentionally paused, is still write-owned and has
+    // no pending guarded scene/background recovery.
+    if (started && !paused && !document.hidden && !sceneTransition &&
+        !pendingBackgroundReturn && writerGuard.canWrite() &&
+        !persistence.conflicted(game.s.mode))
+      audio.setPaused(false);
     if (sceneTransition?.committed) {
       const token = sceneTransition.token;
       requestAnimationFrame(() => revealSceneTransition(token));

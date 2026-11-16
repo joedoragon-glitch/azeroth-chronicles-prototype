@@ -106,6 +106,18 @@ const server = http.createServer((req, res) => {
       }));
       assert.equal(loaded.id, 'millhaven-chamber',
         'new game inside expanded Millhaven plays the approved chamber recording');
+      // Reproduce the specific blur-only audio interruption without
+      // document visibilitychange. The game must resume the same soundtrack
+      // on focus, without restarting the run or giving an extra input.
+      await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+      await page.waitForFunction(() => Prototype.audio.paused &&
+        Prototype.audio.ctx?.state === 'suspended',
+        null, { timeout: 8000 });
+      await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+      await page.waitForFunction(() => !Prototype.audio.paused &&
+        Prototype.audio.ctx?.state === 'running' &&
+        Prototype.audio.recordedScore?.id === 'millhaven-chamber',
+        null, { timeout: 8000 });
       const peacefulMix = await page.evaluate(() => {
         const a = Prototype.audio, spec = a.productionCue(a.context);
         return { engaged: a.context.engaged, town: a.context.millhavenTown,
