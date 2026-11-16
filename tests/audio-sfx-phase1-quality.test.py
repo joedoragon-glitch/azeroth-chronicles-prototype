@@ -17,7 +17,7 @@ assert sum(len(x) for x in rollback['originalEventBindings'].values())==34
 expected_calibration={
  'sfx-steel-release':.29,'sfx-spectral-release':.50,
  'sfx-arcane-release':.54,'sfx-dust-release':.36,
- 'sfx-claw-release':.20}
+ 'sfx-claw-release':.20,'sfx-stone-release':.24,'sfx-holy-release':.53}
 for key in all_ids:
     receipts=rollback['originalEventBindings'][key]
     assert receipts and all(x['binding']['asset']==key for x in receipts)
@@ -39,6 +39,7 @@ def frac(x,rate,lo,hi):
     freqs=np.fft.rfftfreq(len(x),1/rate);amps=np.abs(np.fft.rfft(x*np.hanning(len(x))))**2
     return float(amps[(freqs>=lo)&(freqs<hi)].sum()/max(1e-9,amps.sum()))
 details={}
+stage_signals={}
 for key in sorted(all_ids):
     orig=ROOT/'tools/audio/sfx-legacy/dev288'/f'{key}.wav'
     new=ROOT/'assets/audio/effects'/f'{key}.wav'
@@ -59,6 +60,7 @@ for key in sorted(all_ids):
     assert .24<=duration<=.38,(key,duration)
     assert abs(duration-entry['duration'])<.00005,key
     assert np.isfinite(x).all() and x[0]==0 and x[-1]==0,key
+    stage_signals[key]=x
     peak=float(abs(x).max());rms=float(np.sqrt(np.mean(x*x)))
     assert .025<peak<=.402 and .007<rms<.086,(key,peak,rms)
     # The v1 render raised hero sword swing RMS 3.92x and danger warning 1.77x.
@@ -73,6 +75,31 @@ for key in sorted(all_ids):
     details[key]={'peak':round(peak,5),'rms':round(rms,5),
       'lowUnder350':round(low,4),'mid1to6k':round(mid,4),
       'duration':round(duration,3),'rmsRatioToOriginal':round(ratio,4)}
+# Source/render stage contrast gate: a launch must not inherit the same
+# front-loaded transient as a landed contact. This catches accidental file
+# aliasing and close amplitude-envelope staging, but is NOT proof that
+# two cues sound distinct on headphones or phone speakers.
+stage_contrast={}
+for material in ('steel','claw','bone','stone','wet','arrow','spectral',
+                 'ash','holy','arcane','root','dust'):
+    launch=stage_signals[f'sfx-{material}-release']
+    contact=stage_signals[f'sfx-{material}-impact']
+    def first40(x):
+        power=np.square(x)
+        return float(power[:int(.040*48000)].sum()/max(1e-12,power.sum()))
+    def center_ms(x):
+        power=np.square(x)
+        return float((power*np.arange(len(power))).sum()/max(1e-12,power.sum())/48)
+    release_early,impact_early=first40(launch),first40(contact)
+    release_center,impact_center=center_ms(launch),center_ms(contact)
+    assert impact_early-release_early>.20,(material,'release and impact onset too alike',
+                                            release_early,impact_early)
+    assert release_center-impact_center>14,(material,'release lacks stage movement',
+                                            release_center,impact_center)
+    stage_contrast[material]={'releaseFirst40':round(release_early,3),
+        'impactFirst40':round(impact_early,3),
+        'releaseCenterMs':round(release_center,1),
+        'impactCenterMs':round(impact_center,1)}
 assert details['sfx-arrow-impact']['lowUnder350']<.10, 'Arrow target contact masked on small speakers'
 assert details['sfx-critical-warning']['mid1to6k']>.30, 'Danger warning lacks midrange'
 assert details['sfx-hero-steel-swing']['duration']<details['sfx-hero-steel-impact']['duration']
@@ -88,4 +115,5 @@ assert len(manifest['director']['events'])==95
 assert len([a for a in manifest['director']['events'].values() if a])==8
 print(json.dumps({'status':'PASS: 30 original recordings archived, replaced and hashed; '
  'source/render technical gates only, no by-ear or device acceptance',
- 'recordedEffects':30,'olderSourceProtected':30,'signalData':details},indent=2))
+ 'recordedEffects':30,'olderSourceProtected':30,
+ 'stageContrast':stage_contrast,'signalData':details},indent=2))
