@@ -12,6 +12,8 @@ on:
       - tests/audio-sfx-phase1-rollback.test.py
       - tests/audio-catalog.test.cjs
       - tools/audio/index.html
+      - tools/audio/audition.css
+      - tools/audio/sfx-phase1-rollback.json
       - tools/audio/audition.js
       - tests/audio-audition-browser.test.cjs
       - tests/audio-browser.test.cjs
