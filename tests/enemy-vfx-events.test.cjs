@@ -7,6 +7,10 @@ const fresh = (enabled = true) => {
   c.enemyVfxEnabled = enabled;
   c.s.party = [];
   c.zone().enemies = [];
+  // Isolate the VFX sidecar from Vale scenery: Cindermaw's seven native
+  // seal placements require traversable ground, not a random room obstacle.
+  // Gameplay state/route selection is still exercised; no route mock is used.
+  c.zone().props = [];
   Object.assign(c.hero, { x: 1480, y: 1700, hp: 100000, maxHp: 100000, mp: 10000, maxMp: 10000 });
   c.line = () => true;
   return c;
