@@ -44,9 +44,18 @@ for (const cls of ['mage', 'ranger'])
       : []),
   ])
     for (const dodge of [false, true]) {
+      // Ranger multi-arrow skills release later shafts from the live bow and
+      // re-aim at their actual departure; moving before those releases is
+      // NOT a physical dodge. That exact contract and post-release misses
+      // have separate coverage in hero-postcast-visuals.test.cjs.
+      const deferredRangerVolley = cls === 'ranger' &&
+        ((slot === 1 && !charged) || (slot === 2 && !charged) ||
+          (slot === 6 && charged) || (slot === 8 && !charged));
+      if (dodge && deferredRangerVolley) continue;
       const { g, e } = arena(cls);
       assert(g.cast(slot, e.id, charged), cls + ' ' + slot + ' admission');
-      assert(g.s.projectiles.length, 'cast produces actual flight');
+      assert(g.s.projectiles.length,
+        cls + ' slot ' + slot + (charged ? ' charged' : ' tap') + ' produces physical flight');
       const cooldown = g.hero.cd[slot - 1],
         hp = e.hp;
       const directions = g.s.projectiles.map((p) => [p.dx, p.dy]);
