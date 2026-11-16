@@ -2334,8 +2334,8 @@
             y: e.y,
             dx: (a.x - e.x) / d,
             dy: (a.y - e.y) / d,
-            speed: 260,
-            life: 2,
+            speed: R.projectileFlight.boss.ridgeCargo,
+            life: 520 / R.projectileFlight.boss.ridgeCargo,
             damage: this.worldBossEffect(
               a, this.weakenedEnemyDamage(e) * a.coefficient, 'damage',
             ),
@@ -2425,8 +2425,8 @@
               y: e.y,
               dx: Math.cos(angle),
               dy: Math.sin(angle),
-              speed: 490,
-              life: (a.radius - 7) / 490, // The last fragment stays inside its actual warning.
+              speed: R.projectileFlight.boss.citadelCanister,
+              life: (a.radius - 7) / R.projectileFlight.boss.citadelCanister, // Keep the true warning footprint.
               preserveFootprint: true,
               hitRadius: R.combatGeometry.canisterHalfWidth,
               damage: this.worldBossEffect(a, this.weakenedEnemyDamage(e) / 9, 'damage'),
@@ -2539,8 +2539,8 @@
             y: e.y,
             dx: Math.cos(a.angle),
             dy: Math.sin(a.angle),
-            speed: a.shotSpeed,
-            life: a.shotLife,
+            speed: R.projectileFlight.boss.valeTrackingVolley,
+            life: (a.shotSpeed * a.shotLife) / R.projectileFlight.boss.valeTrackingVolley,
             damage: this.worldCriticalDamage(
               a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
             ),
@@ -2562,7 +2562,10 @@
           return;
         }
         if (a.kind === 'volley') {
-          const style = e.projectileStyle || 'arrow';
+          const style = e.projectileStyle || 'arrow',
+            volleySpeed = e.family === 'crypt'
+              ? R.projectileFlight.boss.cryptBoneVolley
+              : R.projectileFlight.boss.defaultVolley;
           for (const [i, delta] of [-0.22, 0, 0.22].entries())
             this.s.projectiles.push({
               id: 'projectile-' + this.s.nextId++,
@@ -2570,8 +2573,8 @@
               y: e.y,
               dx: Math.cos(a.angle + delta),
               dy: Math.sin(a.angle + delta),
-              speed: 260 * R.enemyProjectileMultiplier,
-              life: (2.5 * R.balance.enemySpecialReachMultiplier) / R.enemyProjectileMultiplier,
+              speed: volleySpeed,
+              life: (260 * 2.5 * R.balance.enemySpecialReachMultiplier) / volleySpeed,
               damage: this.worldBossEffect(a, this.weakenedEnemyDamage(e), 'damage'),
               ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
               manaDrain: a.manaDrain || 0,
