@@ -7743,6 +7743,59 @@
       },
     },
   };
+  // One narrow Greenwood pilot: explicit new offensive decisions, not
+  // replacements for existing reactive Rogue signatures or ordinary attacks.
+  // The same skill/role repertoire applies to Vale and Forest Crypt.
+  // Reuse the native enemy special cooldown and cast/sequence lifecycle.
+  const skeletonCraftSkills = Object.freeze({
+    melee: Object.freeze({
+      ordinary: Object.freeze({
+        name: 'Mortise Cut',
+        cast: 0.82,
+        cooldown: 11.5,
+        guardianCooldown: 14,
+        reach: 132,
+        coefficient: 0.72,
+        guardianCoefficient: 0.95,
+      }),
+      ringleader: Object.freeze({
+        name: 'Double Shear',
+        cast: 0.95,
+        chargedCast: 1.55,
+        secondBeat: 0.46,
+        chargedSecondBeat: 0.62,
+        cooldown: 12,
+        chargedCooldown: 16,
+        reach: 162,
+        coefficient: 0.58,
+        chargedCoefficient: 0.75,
+      }),
+    }),
+    ranged: Object.freeze({
+      ordinary: Object.freeze({
+        name: 'Datum Line',
+        cast: 0.95,
+        cooldown: 13,
+        guardianCooldown: 16,
+        reach: 350,
+        boltDamage: 0.38,
+        guardianBoltDamage: 0.48,
+        boltCount: 3,
+        interval: 0.27,
+      }),
+      ringleader: Object.freeze({
+        name: 'Resection',
+        cast: 0.9,
+        chargedCast: 1.55,
+        cooldown: 12,
+        chargedCooldown: 16,
+        reach: 370,
+        normalBoltDamage: 0.72,
+        chargedBoltDamage: 0.85,
+        flankDelay: 0.38,
+      }),
+    }),
+  });
   // Actor-specific *presentation* only. Never use titles as mechanic/save IDs.
   // Unverified affiliations retain the original species-native display name.
   const skillLoreTitles = Object.freeze({
@@ -7815,6 +7868,7 @@
     initialAssessmentSeconds: 0.4,
     escapeSeconds: 5.5,
     skillLoreTitles,
+    skeletonCraftSkills,
     rogueMoves,
     rogueRingleaderSignatures,
     rogueSignatures,
