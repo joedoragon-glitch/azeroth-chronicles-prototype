@@ -21,7 +21,7 @@ for(const cue of CUES){
   const filepath=path.join(root,'tools/audio/sfx-phase2-previews',cue.id+'.wav');
   const existing=fs.readFileSync(filepath);
   assert(existing.equals(Buffer.from(bytes)),cue.id+': not bit-for-bit reproducible');
-  assert.equal(bytes.toString?.(),undefined,'WAV bytes should be typed arrays, not text');
+  assert(bytes instanceof Uint8Array,'PCM render must return bytes, not text');
   assert.equal(Buffer.from(bytes).toString('ascii',0,4),'RIFF');
   assert.equal(Buffer.from(bytes).toString('ascii',8,12),'WAVE');
   assert.equal(Buffer.from(bytes).readUInt16LE(20),1);
