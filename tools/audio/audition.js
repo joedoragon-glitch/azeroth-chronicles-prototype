@@ -578,6 +578,12 @@
     syncNavigation();
     const pair = pairFor(id);
     $('record-play').disabled = !entry;
+    // Short game effects have no soundtrack stems or music-share route.
+    // Do not invite ineffective controls into the focused 30-effect view.
+    const musicOnly = entry?.kind === 'music';
+    $('copy-recording-link').hidden = !musicOnly;
+    $('stem-play').hidden = !musicOnly;
+    $('paired-controls').hidden = !musicOnly;
     $('stem-play').disabled = !pair &&
       !(source === 'diagnostic' && ['diagnostic-a', 'diagnostic-b'].includes(id));
     $('intensity').disabled = $('stem-play').disabled;
