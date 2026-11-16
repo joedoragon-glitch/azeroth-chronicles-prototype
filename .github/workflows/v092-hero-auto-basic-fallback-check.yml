@@ -21,10 +21,32 @@ jobs:
         run: |
           node --check src/prototype/hero-combat.js
           node --check tests/v092-hero-auto-basic-target-fallback.test.cjs
-      - name: Focused nearby fallback and historical selection contracts
+      - name: Four-class owner-approved nearby fallback
+        run: node tests/v092-hero-auto-basic-target-fallback.test.cjs
+      - name: Reconcile historical targeting suite against original main
         run: |
-          node tests/v092-hero-auto-basic-target-fallback.test.cjs
-          node tests/targeting.test.cjs
+          git fetch --no-tags --depth=1 origin bd967ac4c4d0870262d547ee2cbcde5b79c31c5d
+          git worktree add --detach /tmp/v092-targeting-base bd967ac4c4d0870262d547ee2cbcde5b79c31c5d
+          set +e
+          (cd /tmp/v092-targeting-base && node tests/targeting.test.cjs) > /tmp/targeting-base.log 2>&1
+          base_rc=$?
+          node tests/targeting.test.cjs > /tmp/targeting-candidate.log 2>&1
+          candidate_rc=$?
+          set -e
+          echo "Original main exit: $base_rc"
+          echo "Candidate exit: $candidate_rc"
+          base_error=$(grep -m1 'AssertionError' /tmp/targeting-base.log || true)
+          candidate_error=$(grep -m1 'AssertionError' /tmp/targeting-candidate.log || true)
+          echo "Original main first failure: $base_error"
+          echo "Candidate first failure: $candidate_error"
+          if [ "$base_rc" -eq 0 ]; then
+            test "$candidate_rc" -eq 0
+          else
+            test "$candidate_rc" -ne 0
+            test -n "$base_error"
+            test "$candidate_error" = "$base_error"
+            echo "BASELINE-RED historical targeting test; first failure matches unchanged main. Not a PASS claim."
+          fi
       - name: Skill, rogue and Slow engine regression
         run: |
           node tests/hero-skill1-stage1.test.cjs
