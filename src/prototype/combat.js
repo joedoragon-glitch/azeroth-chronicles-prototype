@@ -892,7 +892,9 @@
           e.royalTaxShield -= absorbed;
           amount -= absorbed;
         }
-        if (e.family === 'darklord' && e.royalTaxation) {
+        // Royal Taxation counts committed strikes; budget-sliced status damage is not
+        // a fresh hero/companion attack on every simulation update.
+        if (!options?.periodicDamage && e.family === 'darklord' && e.royalTaxation) {
           const tax = e.royalTaxation;
           if (this.s.time > tax.expires) e.royalTaxation = null;
           else if (amount > 0 && tax.marked.includes(source)) {
@@ -950,7 +952,9 @@
         if (source === 'hero') this.recordDeveloperDamage('outgoing', actualDamage);
         else if (this.s.mode === 'developer')
           this.recordDeveloperCompanionDamage(source, actualDamage);
-        this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
+        // Status damage still passes through every live HP/defense rule. Its
+        // bounded visible impact cues are emitted by the originating DoT owner.
+        if (!options?.periodicDamage) this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) {
           this.clearEnemyUnderFire(e);
           this.kill(e);
