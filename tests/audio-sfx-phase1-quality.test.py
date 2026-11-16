@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 manifest=json.loads((ROOT/'assets/audio/manifest.json').read_text())
 rollback=json.loads((ROOT/'tools/audio/sfx-phase1-rollback.json').read_text())
 metrics=json.loads((ROOT/'tools/audio/sfx-phase1-metrics.json').read_text())
+old_levels=json.loads((ROOT/'tools/audio/sfx-measurements.json').read_text())
 all_ids=set(rollback['originalEntries'])
 assert len(all_ids)==30==metrics['retainedIds']
 assert set(metrics['cues'])==all_ids
@@ -42,10 +43,18 @@ for key in sorted(all_ids):
     assert np.isfinite(x).all() and x[0]==0 and x[-1]==0,key
     peak=float(abs(x).max());rms=float(np.sqrt(np.mean(x*x)))
     assert .025<peak<=.402 and .007<rms<.086,(key,peak,rms)
+    # The v1 render raised hero sword swing RMS 3.92x and danger warning 1.77x.
+    # New material identities must not silently remaster the entire game's SFX
+    # loudness or override the existing bus, duck and priority decisions.
+    original_rms=float(old_levels[key]['rms'])
+    ratio=rms/original_rms
+    assert 0.80<=ratio<=1.14,(key,'unexpected original-relative loudness shift',ratio)
+    assert abs(metrics['cues'][key]['referenceRms']-original_rms)<.000002,key
+    assert abs(metrics['cues'][key]['rmsRatio']-ratio)<.002,key
     low=frac(x,48000,0,350);mid=frac(x,48000,1000,6000)
     details[key]={'peak':round(peak,5),'rms':round(rms,5),
       'lowUnder350':round(low,4),'mid1to6k':round(mid,4),
-      'duration':round(duration,3)}
+      'duration':round(duration,3),'rmsRatioToOriginal':round(ratio,4)}
 assert details['sfx-arrow-impact']['lowUnder350']<.10, 'Arrow target contact masked on small speakers'
 assert details['sfx-critical-warning']['mid1to6k']>.30, 'Danger warning lacks midrange'
 assert details['sfx-hero-steel-swing']['duration']<details['sfx-hero-steel-impact']['duration']
