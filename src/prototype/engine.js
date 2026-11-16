@@ -6276,7 +6276,7 @@
         return false;
       const turns = this._skeletonCraftTurns ||= new WeakMap(),
         turn = turns.get(e) || 0,
-        charged = elite && (turn % 2 === 1 || (e.frenzy && turn > 0)),
+        charged = elite && (turn % 2 === 1 || (!!e.frenzy && turn > 0)),
         cast = charged ? cfg.chargedCast : cfg.cast,
         angle = Math.atan2(target.y - e.y, target.x - e.x);
       turns.set(e, turn + 1);
