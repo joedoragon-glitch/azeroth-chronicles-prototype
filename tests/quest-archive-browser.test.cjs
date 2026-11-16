@@ -230,7 +230,12 @@ const server = http.createServer((req, res) => {
       await page.screenshot({ path: path.join(out, 'keeper-captive-' + tag + '.png') });
       await page.keyboard.press('f');
       assert.equal(await page.locator('#modal-title').textContent(), 'The Drowned Keeper');
-      assert((await page.locator('#modal-description').textContent()).includes('Free Neri'));
+      const captiveCopy = await page.locator('#modal-description').textContent();
+      assert(
+        captiveCopy.includes('Neri knows how to preserve them') &&
+          captiveCopy.includes('Free her; then we can speak'),
+        'the captive Keeper retains the approved Neri rescue prerequisite',
+      );
       await page.keyboard.press('Escape');
       await page.evaluate(() => {
         const c = Prototype.game;
