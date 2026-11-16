@@ -35,3 +35,14 @@ The owner believes these four interdependent systems are currently suboptimal an
 Step 7 may group/filter/present the existing destination *list* for readability, but must leave the underlying route solver, canvas hit testing, navigation execution, and Clear waypoint semantics **unchanged**. Step 7's source audit should note any suspicious behavior as an unverified follow-up, not claim these systems are correct or already fixed.
 
 **Future chat starter:** “Please begin the deferred Map Routing and Waypoint Reliability audit documented in `docs/MAP_WAYFINDING_FOLLOWUP.md`. Audit first; do not change gameplay or deploy without my approval.”
+
+
+## 16 November 2026 — action-RPG route tolerance and bounded guide candidate
+
+The owner clarified that this single-player action RPG does **not** require competitive-RTS-style path optimality or byte-for-byte/waypoint-for-waypoint parity with the old BFS. A passive visual guide may take a different, slightly longer safe route. The required player outcomes remain: responsive play, terrain-valid guidance, useful reachable destinations, uninterrupted player control, and no loss of quest, travel, campaign or save continuity. Do not relax actual wall/obstacle blocking or silently alter enemy, companion, pet or charmed-unit movement to satisfy an artificial exact-parity test.
+
+The old 339–396ms synchronous Greenwood search remains a substantive cost even after the published #879/#882 100→450-unit frequency reduction. New seven-position *test-only* benchmark on draft #885 confirms the **existing** incremental A* planner finds safe routes to the same landmark in 30–53 finite chunks (256 collision probes/40 graph nodes each; max observed Node-runner slice 11.62ms without wall time cap). Those timings are not Chromebook FPS measurements or conclusive attribution of the seven historical stalls.
+
+[Draft PR #889](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/889) applies bounded A* only to **optional manual map-waypoint visual refreshes**, with a native incremental BFS fallback, a 4ms best-effort per-update wall-clock limit, combat deferral, and collision-tested reattachment to the moving hero. It retains the last guide until a safe replacement is ready; it does not change first explicit Navigate orders, quest/gathering routing, any actor combat planner, PWA or v4 saves. See [the focused candidate record](REPORT40_BOUNDED_GUIDE_CANDIDATE_20261116.md) for design, limitations and test boundaries.
+
+**Status:** draft; focused CI and practical acceptance pending. #886 remains **open**. This candidate is not approved for merging/publishing in either official or GTA Cuba editions; device acceptance is still required.

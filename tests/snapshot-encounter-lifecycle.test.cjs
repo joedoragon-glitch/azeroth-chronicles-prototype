@@ -46,7 +46,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       assert(
         c
           .attackPatches(unrelated)
-          .every((p) => p.radius === 75 * C.rules.bossCadence.areaRangeMultiplier),
+          .every((p) => p.radius === C.rules.bossAreaGeometry.multiCircleRadius),
         'another family cannot inherit Groundwork geometry',
       );
       for (const action of ['disengage', 'travel', 'death', 'snapshot', 'restore']) {

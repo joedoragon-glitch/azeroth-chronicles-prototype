@@ -165,7 +165,7 @@
           { x: a.fromX, y: a.fromY },
           (a.slowOnly
             ? a.waveSpeed * a.waveLife
-            : G.ringSpeed * G.ringLife * R.bossCadence.areaRangeMultiplier) + G.ringHalfWidth,
+            : G.ringSpeed * R.bossAreaGeometry.ringLife) + G.ringHalfWidth,
         ),
       ];
     return patches.map((p) => circlePoints(p, p.radius));

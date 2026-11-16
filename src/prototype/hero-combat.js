@@ -6,6 +6,9 @@
     // Enemy-only charged hush is transient; never saved or inherited.
     const rogueEnemySilences = new WeakMap();
     const rogueEnemyWithers = new WeakMap();
+    // Wither spends its full native HP budget each simulation update. Only its
+    // damage *presentation* is sampled; no new saved timers or combat rolls.
+    const rogueWitherVisualDue = new WeakMap();
     const rogueEnemyWeakens = new WeakMap();
     // At most two finite stationary performance circles per campaign.
     // Weakly owned, unsaved and automatically scoped to the active region.
@@ -187,7 +190,8 @@
           skillShape: 'area',
           ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           style: 'arrow',
-          speed: 650,
+          speed: R.projectileFlight.hero.rangerHunt,
+          life: 650 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.hero.rangerHunt,
           delay,
           charged,
           ...(delay > 0 ? { rangerDelayedLaunch: true } : {}),
@@ -472,7 +476,8 @@
             damage,
             source: 'hero',
             slot,
-            speed: style === 'beam' ? 1000 : 620,
+            speed: style === 'beam' ? 1000 : R.projectileFlight.hero.rangerCharged,
+            ...(style === 'arrow' ? { life: 620 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.hero.rangerCharged } : {}),
             style,
             charged: true,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
@@ -632,7 +637,7 @@
           .enemies.filter(
             (e) =>
               e !== target &&
-              (!automatic || !this.awaitsHeroAttack(e)) &&
+              (!automatic || this.automaticHeroTargetAllowed(e)) &&
               e.hp > 0 &&
               !e.neutral &&
               dist(e, from) <= def.range &&
@@ -694,6 +699,14 @@
       skillReady(slot, charged = false) {
         const i = slot - 1;
         return (this.hero.cd[i] || 0) <= 0 && (!charged || (this.hero.chargedCd?.[i] || 0) <= 0);
+      }
+      // Auto basics may cover a nearer lawful enemy while a deliberate selection
+      // remains outside BASIC reach. Never clear/replace that selection: manual
+      // skill targeting, locks and skill-approach orders keep their own authority.
+      // Explicitly targeted auto calls never redirect to another foe.
+      automaticBasicNearbyFallbackAllowed(selected, range, targetId = null) {
+        return (targetId === null || targetId === undefined) &&
+          (!selected || dist(selected, this.hero) > range);
       }
       // Target selection is transient: no changes to campaign saves or difficulty.
       // A held Target locks the current foe even while dodging beyond selection range.
@@ -1281,9 +1294,16 @@
           const live = Math.max(0.01, effect.until - (this.s.time - dt)),
             amount = Math.min(effect.remaining,
               effect.remaining * Math.min(dt, live) / live);
-          if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true })) continue;
+          if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true, periodicDamage: true })) continue;
           effect.remaining -= amount;
           landed = true;
+        }
+        // One visible contact about every half-second instead of 20–60 tiny
+        // flashes per second. Multiple legitimate Withers share this actor cue;
+        // every underlying damage budget step remains separately authoritative.
+        if (landed && this.s.time >= (rogueWitherVisualDue.get(e) ?? -Infinity)) {
+          rogueWitherVisualDue.set(e, this.s.time + 0.5);
+          this.effects.push({ type: 'hit', x: e.x, y: e.y });
         }
         return landed;
       }
@@ -1714,14 +1734,16 @@
           preferred = targetId ?? selected?.id ?? this.basicComboTargetId ?? this.s.heroTarget,
           eligible = this.zone().enemies.filter((e) =>
             e.hp > 0 && !e.neutral && !e.returning &&
-            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.automaticHeroTargetAllowed(e) && !this.attackResetProtected(e) &&
             this.tacticalDirectTargetable(e) &&
             dist(e, this.hero) <= cfg.range && this.line(this.hero, e),
           ),
-          locked = !!selected || (targetId !== null && targetId !== undefined),
+          canCoverNearby = this.automaticBasicNearbyFallbackAllowed(selected, cfg.range, targetId),
           primary = eligible.find((e) => e.id === preferred) ||
-            (locked ? null : eligible.sort((a, b) =>
-              dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
+            (canCoverNearby
+              ? eligible.sort((a, b) =>
+                dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]
+              : null);
         if (!primary) return false;
         // Recall remains under player/timer control during all offense.
         this.engage(primary);
@@ -1743,7 +1765,7 @@
             radius = combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius;
           const secondary = this.zone().enemies.filter((e) =>
             e !== primary && e.hp > 0 && !e.neutral && !e.returning &&
-            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.automaticHeroTargetAllowed(e) && !this.attackResetProtected(e) &&
             this.tacticalDirectTargetable(e) &&
             dist(e, this.hero) <= radius && this.line(this.hero, e),
           ).sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
@@ -1854,7 +1876,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
-              (!automatic || !this.awaitsHeroAttack(e)) &&
+              (!automatic || this.automaticHeroTargetAllowed(e)) &&
               !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= range &&
@@ -1869,11 +1891,15 @@
             [1, 2, 6, 7].includes(slot) ||
             (slot === 8 && this.hero.class !== 'paladin') ||
             (slot === 4 && this.hero.class !== 'ranger'),
-          // Preserve a valid distant selection, while a target made ineligible
-          // by Blinding Dust still permits the established automatic fallback.
+          // Automatic basics may cover a nearby lawful enemy when a selected
+          // foe is beyond BASIC reach. The selection/lock stays intact for
+          // deliberate manual skills; in-range selections still take priority.
+          nearbyBasicFallback =
+            automatic && slot === 1 &&
+            this.automaticBasicNearbyFallbackAllowed(selected, range, targetId),
           lockedOut =
             requiresTarget &&
-            (!!selected ||
+            ((!!selected && !nearbyBasicFallback) ||
               this.zone().enemies.some(
                 (e) =>
                   e.id === targetId &&
@@ -2085,7 +2111,8 @@
                 target: target.id,
                 damage: damage / 3,
                 source: 'hero',
-                speed: 620,
+                speed: R.projectileFlight.hero.rangerRapid,
+                life: 620 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.hero.rangerRapid,
                 delay: j * 0.08,
                 ...(j > 0 ? { rangerDelayedLaunch: true } : {}),
                 style: 'arrow',
@@ -2264,7 +2291,8 @@
                 target: foe.id,
                 damage,
                 source: 'hero',
-                speed: 650,
+                speed: R.projectileFlight.hero.rangerCharged,
+                life: 650 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.hero.rangerCharged,
                 style: 'arrow',
                 slot: 2,
                 charged: true,
@@ -2720,7 +2748,8 @@
                   criticalReceipt, power * 2.3 * scale, 'damage',
                 ),
                 source: 'hero',
-                speed: 650,
+                speed: R.projectileFlight.hero.rangerCharged,
+                life: 650 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.hero.rangerCharged,
                 style: 'arrow',
                 slot: 5,
                 area: true,
@@ -2827,7 +2856,10 @@
                 target: target.id,
                 damage: count === 2 ? power * 1.2 * scale : dmg,
                 source: 'hero',
-                speed: 550,
+                speed: this.hero.class === 'ranger' ? R.projectileFlight.hero.rangerBasic : 550,
+                ...(this.hero.class === 'ranger' ? {
+                  life: 550 * R.balance.friendlyProjectiles.lifeSeconds / R.projectileFlight.hero.rangerBasic,
+                } : {}),
                 delay: j * 0.12,
                 ...(this.hero.class === 'ranger' && j > 0
                   ? { rangerDelayedLaunch: true }

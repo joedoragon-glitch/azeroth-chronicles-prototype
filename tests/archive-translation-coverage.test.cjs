@@ -12,6 +12,7 @@ const C = require(
   ),
 );
 const A = require('../src/prototype/archive.js');
+C.enableRoguePlaytest();
 const approved = require('../src/prototype/narration.js').approved;
 const { shell } = require('./helpers/production-shell.cjs');
 // Inspect the real matcher without adding a debug API to the shipped game.
@@ -35,7 +36,7 @@ const gapsFor = (text, names) => {
 const numbers = (text) => text.match(/\d+(?:\.\d+)?/g) || [];
 let checked = 0;
 const untranslated = new Set();
-for (const heroClass of ['paladin', 'mage', 'ranger']) {
+for (const heroClass of ['paladin', 'mage', 'ranger', 'rogue']) {
   const g = new C('normal', heroClass, () => 0.93);
   for (const boss of C.data.bosses) {
     g.enter(boss.id);
@@ -168,7 +169,7 @@ assert(blockSpanish.includes('Los monstruos encantados legítimamente y las masc
   'merged player reference acknowledges lawfully owned monsters at night');
 assert(blockSpanish.includes('Los soldados y arqueros no la reciben'),
   'ordinary companions are specifically excluded from monster-night Block');
-assert(A.translateArchive(blockReference[2]).includes('El héroe no tiene bloqueo general de habilidades'));
+assert(A.translateArchive(blockReference[2]).includes('Tu personaje no tiene bloqueo general de habilidades'));
 const variedBlock = A.conditionTopics({
   ...C.rules, skillBlock: { ...C.rules.skillBlock, enemySingle: 0.1775, nightEnemyBonus: 0.075 },
 }).find(([name]) => name === 'Skill Block');
@@ -196,5 +197,5 @@ assert.equal(
 console.log(
   'PASS Archive technical-copy coverage: ' +
     checked +
-    ' fields, 3 classes, both resource modes, learned/unlearned ranks, evidence/throne gates, pets and keyboard reading',
+    ' fields, 4 classes, both resource modes, learned/unlearned ranks, evidence/throne gates, pets and keyboard reading',
 );

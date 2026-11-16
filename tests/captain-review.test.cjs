@@ -35,7 +35,7 @@ for (const [zone, hp, name] of cases) {
   assert(Math.abs(old.hp / old.maxHp - 0.37) < 1e-8, name + ' migration retains HP fraction');
 }
 assert.equal(profiles['supply-vale'].phase.threshold, 0.55);
-assert.equal(profiles['supply-vale'].attacks[1].radius, 120);
+assert.equal(profiles['supply-vale'].attacks[1].radius, 144);
 assert.equal(profiles['supply-march'].attacks[0].warning, 0);
 assert.equal(profiles['supply-march'].attacks[1].angleDegrees, 196);
 assert.equal(profiles['supply-march'].attacks[2].count, 4);
@@ -45,7 +45,7 @@ assert.equal(profiles['supply-crown'].summon.cap, 4);
 assert.equal(profiles['supply-crown'].summon.guardPerSummon, 0.25);
 assert.equal(profiles['frontier-overseer'].phase.threshold, 0.6);
 const c = new Campaign('normal', 'paladin', () => 0.7);
-const r = 86 * Campaign.rules.bossCadence.areaRangeMultiplier;
+const r = Campaign.rules.roomCaptains['supply-highlands'].attacks[1].radius;
 for (const count of [4, 5]) {
   const patches = c.attackPatches({ captainSpread: true, count, x: 1200, y: 1200, radius: r });
   assert.equal(patches.length, count);

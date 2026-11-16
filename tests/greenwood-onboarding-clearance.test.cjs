@@ -92,7 +92,20 @@ const after = restored.snapshot(),
 assert.deepEqual(z.enemies, before.enemies, 'actor identities/wounds/deaths/homes preserved');
 assert.deepEqual(z.nodes, before.nodes, 'finite tribute/hidden amounts preserved');
 assert.deepEqual(z.buildings, before.buildings, 'Barracks construction preserved');
-assert.deepEqual(after.quests, raw.quests);
+// A newer legitimate v4 tutorial adds inactive quest identities on restore.
+// Preserve every historical objective verbatim without treating new dormant
+ // tutorial records as lost progress, an arbitrary migration, or a regression.
+for (const [id, original] of Object.entries(raw.quests))
+  assert.deepEqual(after.quests[id], original, 'historical quest preserved: ' + id);
+const newTutorialIds = Object.keys(after.quests)
+  .filter((id) => !Object.hasOwn(raw.quests, id))
+  .sort();
+assert.deepEqual(newTutorialIds, ['quest-tutorial-board', 'quest-tutorial-gather'],
+  'only the two authorized v0.9.2 tutorial identities may be added');
+for (const id of newTutorialIds)
+  assert.deepEqual(after.quests[id],
+    { active: false, count: 0, done: false, paid: false },
+    id + ' starts inactive when restoring an unrelated old v4 save');
 assert.deepEqual(after.paid, raw.paid);
 assert.equal(after.hero.gold, raw.hero.gold);
 for (const p of before.props.filter((p) => !ids.includes(p.id)))

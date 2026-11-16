@@ -67,14 +67,21 @@ async function assertDialogGeometry(frame, label, { noScroll = false } = {}) {
       back = dialog.querySelector('#close-button'),
       c = content.getBoundingClientRect(),
       b = back.getBoundingClientRect();
-    const controls = [...dialog.querySelectorAll('#modal-actions button, #modal-actions input, #modal-actions select')].filter(
-      (node) => node.getClientRects().length && !node.disabled,
-    );
+    const controls = [
+      ...dialog.querySelectorAll(
+        '#modal-actions button, #modal-actions input, #modal-actions select',
+      ),
+    ].filter((node) => node.getClientRects().length && !node.disabled);
     return {
       view: dialog.dataset.view,
       viewport: [innerWidth, innerHeight],
       modal: { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height },
-      content: { top: c.top, bottom: c.bottom, clientHeight: content.clientHeight, scrollHeight: content.scrollHeight },
+      content: {
+        top: c.top,
+        bottom: c.bottom,
+        clientHeight: content.clientHeight,
+        scrollHeight: content.scrollHeight,
+      },
       back: { top: b.top, bottom: b.bottom, width: b.width, height: b.height },
       targetMinimums: controls.every((node) => {
         const x = node.getBoundingClientRect();
@@ -84,12 +91,21 @@ async function assertDialogGeometry(frame, label, { noScroll = false } = {}) {
   });
   const { modal, content, back, viewport } = bounds;
   assert(modal.left >= -1 && modal.top >= -1, label + ': ' + JSON.stringify(bounds));
-  assert(modal.right <= viewport[0] + 1 && modal.bottom <= viewport[1] + 1, label + ': ' + JSON.stringify(bounds));
-  assert(back.top >= content.bottom - 2 && back.bottom <= modal.bottom + 1, label + ': ' + JSON.stringify(bounds));
+  assert(
+    modal.right <= viewport[0] + 1 && modal.bottom <= viewport[1] + 1,
+    label + ': ' + JSON.stringify(bounds),
+  );
+  assert(
+    back.top >= content.bottom - 2 && back.bottom <= modal.bottom + 1,
+    label + ': ' + JSON.stringify(bounds),
+  );
   assert(back.width >= 44 && back.height >= 44, label + ': ' + JSON.stringify(bounds));
   assert(bounds.targetMinimums, label + ': undersized action ' + JSON.stringify(bounds));
   if (noScroll)
-    assert(content.scrollHeight <= content.clientHeight + 3, label + ': unnecessary scrolling ' + JSON.stringify(bounds));
+    assert(
+      content.scrollHeight <= content.clientHeight + 3,
+      label + ': unnecessary scrolling ' + JSON.stringify(bounds),
+    );
   return bounds;
 }
 const luminance = (rgb) =>
@@ -172,13 +188,120 @@ function contrast(item) {
         await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
         const newGameFit = await assertDialogGeometry(frame, 'New Adventure', { noScroll: true });
         await frame
-          .getByRole('button', { name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/ })
+          .getByRole('button', { name: language === 'es' ? /^Elegir personaje/ : /^Choose Hero/ })
           .tap();
         const cards = await measure(frame, '#modal-actions button', { targets: true, minFont: 13 });
         assert.equal(cards.length, 4);
         cards.forEach(contrast);
+        const portraits = frame.locator('#modal-actions canvas.class-sprite-preview');
+        assert.equal(
+          await portraits.count(),
+          4,
+          'all four protagonists have actual game-art previews',
+        );
+        await frame.waitForFunction(
+          () =>
+            document.querySelector('.class-sprite-preview[data-hero-class="ranger"]')?.dataset
+              .previewSource === 'game-sprite',
+          null,
+          { timeout: 20000 },
+        );
+        const portraitPixels = await portraits.evaluateAll((canvases) =>
+          canvases.map((canvas) => {
+            const data = canvas
+              .getContext('2d')
+              .getImageData(0, 0, canvas.width, canvas.height).data;
+            let opaque = 0,
+              left = canvas.width,
+              right = -1,
+              top = canvas.height,
+              bottom = -1;
+            for (let y = 0; y < canvas.height; y++)
+              for (let x = 0; x < canvas.width; x++) {
+                const alpha = data[(y * canvas.width + x) * 4 + 3];
+                if (alpha <= 24) continue;
+                opaque++;
+                left = Math.min(left, x);
+                right = Math.max(right, x);
+                top = Math.min(top, y);
+                bottom = Math.max(bottom, y);
+              }
+            return {
+              hero: canvas.dataset.heroClass,
+              source: canvas.dataset.previewSource,
+              pixels: opaque,
+              bounds: {
+                left,
+                right,
+                top,
+                bottom,
+                width: right - left + 1,
+                height: bottom - top + 1,
+                canvasWidth: canvas.width,
+                canvasHeight: canvas.height,
+              },
+              hiddenFromSpeech: canvas.getAttribute('aria-hidden') === 'true',
+            };
+          }),
+        );
+        assert.deepEqual(
+          portraitPixels.map((p) => p.hero),
+          ['paladin', 'mage', 'ranger', 'rogue'],
+          'portraits follow the live four-class roster',
+        );
+        assert(
+          portraitPixels.every((p) => p.pixels > 120 && p.hiddenFromSpeech),
+          'every playable protagonist has a genuinely painted, non-decorative preview',
+        );
+        assert.equal(
+          portraitPixels.find((p) => p.hero === 'ranger').source,
+          'game-sprite',
+          'Ranger matches the actual registered image, not substitute art',
+        );
+        assert(
+          portraitPixels.filter((p) => p.source === 'game-procedural').length === 3,
+          'Paladin, Mage, and Rogue use the actual procedural renderer',
+        );
+        for (const { hero, bounds: b } of portraitPixels) {
+          assert(
+            Math.abs((b.left + b.right) / 2 - b.canvasWidth / 2) <= 4,
+            hero + ' preview must be horizontally centered by actual painted alpha',
+          );
+          assert(
+            Math.abs((b.top + b.bottom) / 2 - b.canvasHeight / 2) <= 4,
+            hero + ' preview must be vertically centered by actual painted alpha',
+          );
+        }
+        const heights = portraitPixels.map((p) => p.bounds.height);
+        assert(
+          Math.min(...heights) / Math.max(...heights) >= 0.45,
+          'Ranger cannot be microscopic beside the other native character previews',
+        );
+        assert.equal(
+          await frame.locator('body').getAttribute('data-menu-density-preference'),
+          'auto',
+          'the player has a persisted Auto choice by default',
+        );
+        assert.equal(
+          await frame.locator('body').getAttribute('data-menu-density-effective'),
+          'compact',
+          '800x375 logical phone layout resolves to Compact once',
+        );
         await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
-        const heroFit = await assertDialogGeometry(frame, 'Choose Hero', { noScroll: true });
+        // A two-sentence protagonist introduction is intentional reading
+        // content, not a truncated skill tag. On a 375px-tall landscape
+        // phone, keep complete copy scrollable and ensure the fourth hero and
+        // optional name remain reachable without moving the Back control.
+        const heroFit = await assertDialogGeometry(frame, 'Choose Hero');
+        const lastHero = frame.locator('#modal-actions button').last();
+        await lastHero.scrollIntoViewIfNeeded();
+        const lastHeroBox = await lastHero.boundingBox();
+        assert(
+          lastHeroBox.y >= heroFit.content.top - 2 &&
+            lastHeroBox.y + lastHeroBox.height <= heroFit.content.bottom + 2,
+          'last playable hero is fully reachable in short landscape',
+        );
+        await frame.locator('#character-name').scrollIntoViewIfNeeded();
         const back = await frame.locator('#close-button').boundingBox();
         assert(back.height >= 44 && back.y + back.height <= 365);
         assert.equal(
@@ -203,41 +326,100 @@ function contrast(item) {
         await frame.locator('#close-button').tap();
         await frame.locator('#title-settings').tap();
         const settingsFit = await assertDialogGeometry(frame, 'Settings', { noScroll: true });
-        await frame.getByRole('button', { name: language === 'es' ? /Pantalla y rendimiento/ : /Screen and performance/ }).tap();
+        await frame
+          .getByRole('button', {
+            name: language === 'es' ? /Pantalla y rendimiento/ : /Screen and performance/,
+          })
+          .tap();
         const graphicsFit = await assertDialogGeometry(frame, 'Screen and performance');
+        const densitySelect = frame.getByRole('combobox', {
+          name: language === 'es' ? 'Densidad de los menús' : 'Menu density',
+          exact: true,
+        });
+        assert.equal(await densitySelect.inputValue(), 'auto');
+        await densitySelect.selectOption('standard');
         assert.equal(
-          await frame.locator('#modal-actions .menu-section')
+          await frame.locator('body').getAttribute('data-menu-density-effective'),
+          'standard',
+          'manual Standard remains available even at the short viewport',
+        );
+        assert.equal(
+          await frame.evaluate(() => localStorage.getItem('azeroth-menu-density-v1')),
+          'standard',
+          'menu selection is saved without serializing a campaign',
+        );
+        await frame
+          .getByRole('combobox', {
+            name: language === 'es' ? 'Densidad de los menús' : 'Menu density',
+            exact: true,
+          })
+          .selectOption('compact');
+        assert.equal(
+          await frame.locator('body').getAttribute('data-menu-density-effective'),
+          'compact',
+        );
+        await frame
+          .getByRole('combobox', {
+            name: language === 'es' ? 'Densidad de los menús' : 'Menu density',
+            exact: true,
+          })
+          .selectOption('auto');
+        assert.equal(
+          await frame
+            .locator('#modal-actions .menu-section')
             .filter({ hasText: language === 'es' ? 'Gráficos de Canvas' : 'Canvas graphics' })
             .count(),
           0,
           'redundant Canvas graphics heading was removed',
         );
         assert.equal(
-          await frame.getByRole('combobox', {
-            name: language === 'es' ? 'Modo de optimización' : 'Optimization Mode',
-            exact: true,
-          }).count(),
+          await frame
+            .getByRole('combobox', {
+              name: language === 'es' ? 'Modo de optimización' : 'Optimization Mode',
+              exact: true,
+            })
+            .count(),
           1,
           'Canvas optimization remains an inline working control',
         );
         assert.equal(
-          await frame.getByRole('combobox', {
-            name: language === 'es' ? 'Objetivo de dibujo (FPS)' : 'Drawing target (FPS)',
-            exact: true,
-          }).count(),
+          await frame
+            .getByRole('combobox', {
+              name: language === 'es' ? 'Objetivo de dibujo (FPS)' : 'Drawing target (FPS)',
+              exact: true,
+            })
+            .count(),
           1,
           'frame pacing remains reachable on the same page',
         );
         await frame.locator('#close-button').tap();
-        await frame.getByRole('button', { name: language === 'es' ? 'Herramientas de prueba' : 'Playtest tools', exact: true }).tap();
+        await frame
+          .getByRole('button', {
+            name: language === 'es' ? 'Herramientas de prueba' : 'Playtest tools',
+            exact: true,
+          })
+          .tap();
         await assertDialogGeometry(frame, 'Playtest tools');
         const readout = frame.locator('#modal-actions .menu-section-detail').first();
-        assert(await readout.isVisible(), 'Performance details is visible without opening another page');
-        assert(await readout.evaluate((row) =>
-          row.getBoundingClientRect().bottom <= document.querySelector('#modal-content').getBoundingClientRect().bottom),
-          'The entire initial quick readout fits without scrolling');
+        assert(
+          await readout.isVisible(),
+          'Performance details is visible without opening another page',
+        );
+        assert(
+          await readout.evaluate(
+            (row) =>
+              row.getBoundingClientRect().bottom <=
+              document.querySelector('#modal-content').getBoundingClientRect().bottom,
+          ),
+          'The entire initial quick readout fits without scrolling',
+        );
         await page.screenshot({ path: path.join(output, language + '-playtest-tools.png') });
-        await frame.getByRole('button', { name: language === 'es' ? 'Ayuda y privacidad' : 'Help and privacy', exact: true }).tap();
+        await frame
+          .getByRole('button', {
+            name: language === 'es' ? 'Ayuda y privacidad' : 'Help and privacy',
+            exact: true,
+          })
+          .tap();
         await frame.locator('#close-button').tap();
         assert(await readout.isVisible(), 'Back returns to the working page');
         await frame.locator('#close-button').tap();
@@ -260,12 +442,15 @@ function contrast(item) {
         // surface after entering a real, non-diagnostic Paladin campaign.
         await frame.locator('#close-button').tap();
         await frame.locator('#title-new').tap();
-        await frame.getByRole('button', {
-          name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/,
-        }).tap();
+        await frame
+          .getByRole('button', {
+            name: language === 'es' ? /^Elegir personaje/ : /^Choose Hero/,
+          })
+          .tap();
         await frame.getByRole('button', { name: /Palad/i }).tap();
         await frame.waitForFunction(
-          () => !!window.Prototype?.started &&
+          () =>
+            !!window.Prototype?.started &&
             document.querySelector('#title-screen')?.hidden &&
             document.querySelector('#scene-loading')?.hidden !== false,
           null,
@@ -273,27 +458,57 @@ function contrast(item) {
         );
         await frame.locator('#menu-button').tap();
         const adventureFit = await assertDialogGeometry(frame, 'In-game Adventure index');
-        await frame.getByRole('button', { name: language === 'es' ? /Personaje/ : /^Character$/ }).tap();
+        await frame
+          .getByRole('button', { name: language === 'es' ? /Personaje/ : /^Character$/ })
+          .tap();
         const characterFit = await assertDialogGeometry(frame, 'In-game Character');
         await frame.locator('#close-button').tap();
-        await frame.getByRole('button', {
-          name: language === 'es' ? /Ajustes|Configuración/i : /Settings/,
-        }).tap();
-        const gameSettingsFit = await assertDialogGeometry(frame, 'In-game Settings', { noScroll: true });
-        await frame.getByRole('button', { name: language === 'es' ? 'Herramientas de prueba' : 'Playtest tools', exact: true }).tap();
-        assert(await readout.evaluate((row) =>
-          row.getBoundingClientRect().bottom <= document.querySelector('#modal-content').getBoundingClientRect().bottom),
-          'The in-game quick readout fits before scrolling');
-        await frame.getByRole('button', { name: language === 'es' ? /^Iniciar registro del renderizador/ : /^Start renderer profiling/ }).tap();
-        const stopProfiler = frame.getByRole('button', { name: language === 'es' ? /^Detener registro del renderizador/ : /^Stop renderer profiling/ });
-        assert(await stopProfiler.evaluate((button) => document.activeElement === button),
-          'Profiler toggle retains focus across its label change');
+        await frame
+          .getByRole('button', {
+            name: language === 'es' ? /Ajustes|Configuración/i : /Settings/,
+          })
+          .tap();
+        const gameSettingsFit = await assertDialogGeometry(frame, 'In-game Settings', {
+          noScroll: true,
+        });
+        await frame
+          .getByRole('button', {
+            name: language === 'es' ? 'Herramientas de prueba' : 'Playtest tools',
+            exact: true,
+          })
+          .tap();
+        assert(
+          await readout.evaluate(
+            (row) =>
+              row.getBoundingClientRect().bottom <=
+              document.querySelector('#modal-content').getBoundingClientRect().bottom,
+          ),
+          'The in-game quick readout fits before scrolling',
+        );
+        await frame
+          .getByRole('button', {
+            name:
+              language === 'es'
+                ? /^Iniciar registro del renderizador/
+                : /^Start renderer profiling/,
+          })
+          .tap();
+        const stopProfiler = frame.getByRole('button', {
+          name:
+            language === 'es' ? /^Detener registro del renderizador/ : /^Stop renderer profiling/,
+        });
+        assert(
+          await stopProfiler.evaluate((button) => document.activeElement === button),
+          'Profiler toggle retains focus across its label change',
+        );
         await stopProfiler.tap();
         await frame.locator('#close-button').tap();
         await frame.locator('#close-button').tap();
-        await frame.getByRole('button', {
-          name: language === 'es' ? /Mapa|rutas/i : /Map and travel routes/,
-        }).tap();
+        await frame
+          .getByRole('button', {
+            name: language === 'es' ? /Mapa|rutas/i : /Map and travel routes/,
+          })
+          .tap();
         const mapFit = await assertDialogGeometry(frame, 'In-game map');
         await frame.locator('#close-button').tap();
         // Isolated *presentation* probes for the additional real game menu
@@ -307,28 +522,70 @@ function contrast(item) {
           ['archive-index', 8, 2],
           ['archive-reading', 3, 1],
         ]) {
-          await frame.evaluate(({ view, count }) => {
-            const actions = Array.from({ length: count }, (_, i) => ({
-              label: 'Option ' + (i + 1),
-              detail: 'Explanatory text about requirements, effects and crowns.',
-              action() {},
-            }));
-            const description =
-              view === 'archive-reading'
-                ? Array(28).fill('A Keeper passage remains readable without altering or truncating its text.').join(' ')
-                : 'A complete description is retained when the panel is scrollable.';
-            window.Prototype.openMenu('Menu presentation probe', description, actions,
-              window.Prototype.closeMenu, { view });
-          }, { view, count });
+          await frame.evaluate(
+            ({ view, count }) => {
+              const actions = Array.from({ length: count }, (_, i) => ({
+                label: 'Option ' + (i + 1),
+                detail: 'Explanatory text about requirements, effects and crowns.',
+                action() {},
+              }));
+              const description =
+                view === 'archive-reading'
+                  ? Array(28)
+                      .fill(
+                        'A Keeper passage remains readable without altering or truncating its text.',
+                      )
+                      .join(' ')
+                  : 'A complete description is retained when the panel is scrollable.';
+              window.Prototype.openMenu(
+                'Menu presentation probe',
+                description,
+                actions,
+                window.Prototype.closeMenu,
+                { view },
+              );
+            },
+            { view, count },
+          );
           familyFit[view] = await assertDialogGeometry(frame, view);
+          assert.equal(
+            await frame.locator('body').getAttribute('data-menu-density-effective'),
+            'compact',
+            'all nested menu families inherit the effective density: ' + view,
+          );
+          // Whole-menu design QA: compare the very same nested menu at both
+          // selectable densities. Check readable controls, Back and viewport
+          // bounds, not just whether the preference appears in Settings.
+          for (const selected of ['standard', 'compact']) {
+            await frame.evaluate(
+              (value) => window.Prototype.platform.selectMenuDensity(value),
+              selected,
+            );
+            assert.equal(
+              await frame.locator('body').getAttribute('data-menu-density-effective'),
+              selected,
+              view + ': the requested density must be applied',
+            );
+            await assertDialogGeometry(frame, view + ' · ' + selected);
+            await measure(frame, '#modal-actions button', { targets: true, minFont: 13 });
+            if (language === 'en')
+              await page.screenshot({
+                path: path.join(output, 'en-' + view + '-' + selected + '-layout-probe.png'),
+              });
+          }
+          await frame.evaluate(() => window.Prototype.platform.selectMenuDensity('auto'));
           if (view === 'archive-reading')
             assert(
               familyFit[view].content.scrollHeight > familyFit[view].content.clientHeight,
               'full Keeper prose should scroll without clipping',
             );
-          const trackCount = await frame.locator('#modal-actions').evaluate((node) =>
-            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
-          );
+          const trackCount = await frame
+            .locator('#modal-actions')
+            .evaluate(
+              (node) =>
+                getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean)
+                  .length,
+            );
           assert.equal(trackCount, columns, view + ': peer choice vs reading layout');
           await frame.locator('#close-button').tap();
         }
@@ -355,8 +612,13 @@ function contrast(item) {
           shortLandscapeFit.content.scrollHeight > shortLandscapeFit.content.clientHeight,
           'long service lists must scroll instead of being clipped',
         );
-        await frame.locator('#modal-content').evaluate((node) => { node.scrollTop = node.scrollHeight; });
-        const shortLandscapeScrolled = await assertDialogGeometry(frame, 'short landscape after scroll');
+        await frame.locator('#modal-content').evaluate((node) => {
+          node.scrollTop = node.scrollHeight;
+        });
+        const shortLandscapeScrolled = await assertDialogGeometry(
+          frame,
+          'short landscape after scroll',
+        );
         await frame.locator('#close-button').tap();
         await page.setViewportSize({ width: 800, height: 375 });
         // An iPhone Air-size logical landscape viewport has more room than
@@ -371,26 +633,35 @@ function contrast(item) {
           ['barracks-hub', 4],
           ['npc-training-hub', 5],
         ]) {
-          await frame.evaluate(({ view, amount }) => {
-            const actions = Array.from({ length: amount }, (_, i) => ({
-              label: 'Menu choice ' + (i + 1),
-              detail: 'Requirements and costs remain readable.',
-              action() {},
-            }));
-            window.Prototype.openMenu(
-              'Responsive navigation',
-              view === 'archive-index' ? 'Choose one of the Keeper’s shelves.' : 'Choose a service.',
-              actions,
-              window.Prototype.closeMenu,
-              { view },
-            );
-          }, { view, amount });
+          await frame.evaluate(
+            ({ view, amount }) => {
+              const actions = Array.from({ length: amount }, (_, i) => ({
+                label: 'Menu choice ' + (i + 1),
+                detail: 'Requirements and costs remain readable.',
+                action() {},
+              }));
+              window.Prototype.openMenu(
+                'Responsive navigation',
+                view === 'archive-index'
+                  ? 'Choose one of the Keeper’s shelves.'
+                  : 'Choose a service.',
+                actions,
+                window.Prototype.closeMenu,
+                { view },
+              );
+            },
+            { view, amount },
+          );
           roomyFit[view] = await assertDialogGeometry(frame, 'roomy ' + view, {
             noScroll: true,
           });
-          const columns = await frame.locator('#modal-actions').evaluate((node) =>
-            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
-          );
+          const columns = await frame
+            .locator('#modal-actions')
+            .evaluate(
+              (node) =>
+                getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean)
+                  .length,
+            );
           assert.equal(columns, 2, view + ': roomy landscape uses two columns');
           await frame.locator('#close-button').tap();
         }
@@ -408,33 +679,59 @@ function contrast(item) {
             { view: 'npc-service-catalog' },
           );
         });
-        const smallCatalog = await assertDialogGeometry(frame, 'small supplier', { noScroll: true });
+        const smallCatalog = await assertDialogGeometry(frame, 'small supplier', {
+          noScroll: true,
+        });
         assert(
           smallCatalog.modal.right - smallCatalog.modal.left <= 530,
           'a two-service supplier must keep a content-sized panel',
         );
         assert.equal(
-          await frame.locator('#modal-actions').evaluate((node) =>
-            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length),
+          await frame
+            .locator('#modal-actions')
+            .evaluate(
+              (node) =>
+                getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean)
+                  .length,
+            ),
           1,
           'small supplier options stay in one readable column',
         );
         await frame.locator('#close-button').tap();
         await frame.evaluate(() => {
-          window.Prototype.openMenu('Single option', 'Change the current setting.', [
-            { kind: 'select', label: 'Graphics', value: 'normal',
-              options: [{ value: 'normal', label: 'Normal' }, { value: 'low', label: 'Low' }],
-              onChange() {} },
-          ], window.Prototype.closeMenu);
+          window.Prototype.openMenu(
+            'Single option',
+            'Change the current setting.',
+            [
+              {
+                kind: 'select',
+                label: 'Graphics',
+                value: 'normal',
+                options: [
+                  { value: 'normal', label: 'Normal' },
+                  { value: 'low', label: 'Low' },
+                ],
+                onChange() {},
+              },
+            ],
+            window.Prototype.closeMenu,
+          );
         });
-        const smallForm = await assertDialogGeometry(frame, 'small settings form', { noScroll: true });
+        const smallForm = await assertDialogGeometry(frame, 'small settings form', {
+          noScroll: true,
+        });
         assert(
           smallForm.modal.right - smallForm.modal.left <= 560,
           'one native select does not require a full-screen settings form',
         );
         assert.equal(
-          await frame.locator('#modal-actions').evaluate((node) =>
-            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length),
+          await frame
+            .locator('#modal-actions')
+            .evaluate(
+              (node) =>
+                getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean)
+                  .length,
+            ),
           1,
           'single form control stays one column',
         );
@@ -444,18 +741,46 @@ function contrast(item) {
             'Screen settings',
             'Two settings share the wider viewport without shrinking their inputs.',
             [
-              { kind: 'select', label: 'Graphics', value: 'normal',
-                options: [{value: 'normal', label: 'Normal'}, {value: 'low', label: 'Low'}],
-                onChange() {} },
-              { kind: 'select', label: 'Camera', value: '150',
-                options: [{value: '150', label: '150%'}, {value: '100', label: '100%'}],
-                onChange() {} },
-              { kind: 'select', label: 'Language', value: 'en',
-                options: [{value: 'en', label: 'English'}, {value: 'es', label: 'Español'}],
-                onChange() {} },
-              { kind: 'select', label: 'FPS', value: '30',
-                options: [{value: '30', label: '30'}, {value: '60', label: '60'}],
-                onChange() {} },
+              {
+                kind: 'select',
+                label: 'Graphics',
+                value: 'normal',
+                options: [
+                  { value: 'normal', label: 'Normal' },
+                  { value: 'low', label: 'Low' },
+                ],
+                onChange() {},
+              },
+              {
+                kind: 'select',
+                label: 'Camera',
+                value: '150',
+                options: [
+                  { value: '150', label: '150%' },
+                  { value: '100', label: '100%' },
+                ],
+                onChange() {},
+              },
+              {
+                kind: 'select',
+                label: 'Language',
+                value: 'en',
+                options: [
+                  { value: 'en', label: 'English' },
+                  { value: 'es', label: 'Español' },
+                ],
+                onChange() {},
+              },
+              {
+                kind: 'select',
+                label: 'FPS',
+                value: '30',
+                options: [
+                  { value: '30', label: '30' },
+                  { value: '60', label: '60' },
+                ],
+                onChange() {},
+              },
             ],
             window.Prototype.closeMenu,
           );
@@ -466,16 +791,46 @@ function contrast(item) {
           'form',
           'selects must use a form layout, not unlabelled choice tiles',
         );
-        const formColumns = await frame.locator('#modal-actions').evaluate((node) =>
-          getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
-        );
+        const formColumns = await frame
+          .locator('#modal-actions')
+          .evaluate(
+            (node) =>
+              getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
+          );
         assert.equal(formColumns, 2, 'roomy settings use two paired setting columns');
         await frame.locator('#close-button').tap();
         await page.setViewportSize({ width: 800, height: 375 });
         assert.deepEqual(errors, []);
         fs.writeFileSync(
           path.join(output, language + '-measurements.json'),
-          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit, familyFit, shortLandscapeFit, shortLandscapeScrolled, roomyFit, roomyForms, smallCatalog, smallForm }, null, 2),
+          JSON.stringify(
+            {
+              title,
+              cards,
+              ratios,
+              titleBounds,
+              newGameFit,
+              heroFit,
+              savesFit,
+              settingsFit,
+              graphicsFit,
+              helpFit,
+              readingFit,
+              adventureFit,
+              characterFit,
+              gameSettingsFit,
+              mapFit,
+              familyFit,
+              shortLandscapeFit,
+              shortLandscapeScrolled,
+              roomyFit,
+              roomyForms,
+              smallCatalog,
+              smallForm,
+            },
+            null,
+            2,
+          ),
         );
         console.log(
           'PASS ' +
@@ -492,6 +847,72 @@ function contrast(item) {
       } finally {
         await context.close();
       }
+    }
+    // Actual desktop visual acceptance, not inferred from the phone grid:
+    // render four real class characters side by side and exercise resize.
+    const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    try {
+      await desktop.addInitScript(() => {
+        localStorage.setItem('azeroth-display-language-v1', 'en');
+        localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+      });
+      const page = await desktop.newPage();
+      await page.goto('http://127.0.0.1:' + server.address().port + '/index.html');
+      await page.waitForFunction(
+        () => !!window.Prototype?.renderer && document.querySelector('#startup-update')?.hidden,
+      );
+      assert.equal(await page.locator('body').getAttribute('data-experience'), 'desktop');
+      assert.equal(
+        await page.locator('body').getAttribute('data-menu-density-effective'),
+        'standard',
+        'roomy desktop must use Standard density automatically',
+      );
+      await page.locator('#title-new').click();
+      await page.getByRole('button', { name: /^Choose Hero/ }).click();
+      await page.waitForFunction(
+        () =>
+          document.querySelector('.class-sprite-preview[data-hero-class="ranger"]')?.dataset
+            .previewSource === 'game-sprite',
+        null,
+        { timeout: 20000 },
+      );
+      const boxes = await page
+        .locator('#modal-actions button.class-character-choice')
+        .evaluateAll((nodes) =>
+          nodes.map((n) => {
+            const r = n.getBoundingClientRect();
+            return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+          }),
+        );
+      assert.equal(boxes.length, 4);
+      const desktopDialog = await page.locator('#modal').boundingBox();
+      assert(
+        Math.abs(desktopDialog.x + desktopDialog.width / 2 - 720) <= 2,
+        'PC title-owned character selection must be centered, unlike in-game field menus',
+      );
+      assert(
+        Math.abs(boxes[0].top - boxes[1].top) <= 4 && boxes[1].left > boxes[0].right,
+        'PC class picker lays out two readable columns, not a narrow phone stack',
+      );
+      await page.screenshot({ path: path.join(output, 'desktop-en-heroes.png') });
+      await page.evaluate(() => window.Prototype.platform.selectMenuDensity('compact'));
+      assert.equal(
+        await page.locator('body').getAttribute('data-menu-density-effective'),
+        'compact',
+      );
+      await page.screenshot({ path: path.join(output, 'desktop-en-heroes-compact.png') });
+      await page.evaluate(() => window.Prototype.platform.selectMenuDensity('auto'));
+      await page.setViewportSize({ width: 740, height: 600 });
+      await page.waitForFunction(
+        () => document.body.getAttribute('data-menu-density-effective') === 'compact',
+      );
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.waitForFunction(
+        () => document.body.getAttribute('data-menu-density-effective') === 'standard',
+      );
+      console.log('PASS ' + engine + ' desktop class-selection grid, adaptive density and artwork');
+    } finally {
+      await desktop.close();
     }
   } finally {
     await browser?.close();
