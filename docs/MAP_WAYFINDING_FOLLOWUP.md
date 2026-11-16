@@ -12,7 +12,7 @@ The former **manual** navigation visual guide refresh was permitted at 100 units
 
 Current Report (40) lacked active-guide measurement, so source/CI testing and the owner's direct observation establish the informant waypoint lifetime defect, not the original stall's cause. To distinguish the latter on a later build, the app now includes small session-only `performance.waypointPathDiagnostics` route-refresh counts and cumulative/maximum durations for **map and quest guides only**, with the game-time of the slowest call. Existing opt-in crowd/AI diagnostics already distinguish companion planning from main frame residual work; no new full profiler, campaign field or immediate owner test is needed.
 
-**Status:** change drafted for owner review; no merge, Pages/PWA update, release claim or GTA Cuba edition deployment. The cache-combat interruption in [PR #876](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/876) and combat save policy in [PR #873](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/873) remain separate and unmerged.
+**Status:** change drafted for owner review; no merge, Pages/PWA update, release claim or separate layout deployment. The cache-combat interruption in [PR #876](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/876) and combat save policy in [PR #873](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/873) remain separate and unmerged.
 
 **Owner direction:** October 23, 2026. **Status:** Deliberately deferred until after the seven-step Menu Usability Overhaul workflow. **This is a separate future chat/task**, not a hidden addition to Step 7 or a request to merge now.
 
@@ -45,4 +45,4 @@ The old 339–396ms synchronous Greenwood search remains a substantive cost even
 
 [Draft PR #889](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/889) applies bounded A* only to **optional manual map-waypoint visual refreshes**, with a native incremental BFS fallback, a 4ms best-effort per-update wall-clock limit, combat deferral, and collision-tested reattachment to the moving hero. It retains the last guide until a safe replacement is ready; it does not change first explicit Navigate orders, quest/gathering routing, any actor combat planner, PWA or v4 saves. See [the focused candidate record](REPORT40_BOUNDED_GUIDE_CANDIDATE_20261116.md) for design, limitations and test boundaries.
 
-**Status:** draft; focused CI and practical acceptance pending. #886 remains **open**. This candidate is not approved for merging/publishing in either official or GTA Cuba editions; device acceptance is still required.
+**Status:** draft; focused CI and practical acceptance pending. #886 remains **open**. This candidate is not approved for merging/publishing in either official or retired alternate layout; device acceptance is still required.
