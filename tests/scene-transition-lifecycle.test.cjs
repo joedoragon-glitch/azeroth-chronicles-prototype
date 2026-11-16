@@ -169,6 +169,98 @@ function openForwardTravel(app) {
       'preparation does not move the saved hero to another location');
   }
 
+  // An unresponsive GPU preparation must return to Canvas automatically,
+  // but actual progress extends the inactivity window. This is a real title
+  // shell with the same async startup readiness path and a controlled clock.
+  {
+    let nowMs = 0, timerId = 0, textureProgress = 0, attempts = 0, released = 0;
+    const timers = new Map();
+    class TestDate extends Date {
+      static now() { return nowMs; }
+    }
+    const gpuState = {
+      mode: 'canvas2d', phase: 'canvas', preferredRenderer: 'webgl2',
+      recoveryPaused: false, recoveryPending: false,
+    };
+    const graphicsGuard = {
+      startupChoice: () => ({ renderer: 'webgl2', reason: 'confirmed-preference' }),
+      create: ({ prepareWebGL, showCanvas }) => ({
+        status: () => gpuState,
+        resumeConfirmedWebGL: async () => {
+          gpuState.phase = 'preparing';
+          const ready = await prepareWebGL();
+          if (!ready) {
+            gpuState.phase = 'canvas';
+            gpuState.mode = 'canvas2d';
+            showCanvas();
+          }
+          return ready;
+        },
+        requestWebGL: async () => false,
+        maybeRecover: async () => false,
+        confirm: () => false,
+        revert: () => false,
+        webglFailed: () => false,
+        visibilityChanged() {},
+      }),
+    };
+    const pixi = {
+      create: () => ({
+        prepare: () => {
+          attempts++;
+          return new Promise(() => {});
+        },
+        status: () => ({ active: false, loadedTextures: textureProgress }),
+        warmArrival: async () => false,
+        draw() {},
+        activate() {},
+        deactivate() {},
+        release() { released++; },
+        noteEvents() {},
+        failureDetails: () => null,
+      }),
+    };
+    const app = shell('en', 'ranger', {
+      stayOnTitle: true, graphicsGuard, pixi, Date: TestDate,
+      now: () => nowMs,
+      onTimeout: (fn, ms) => {
+        const id = ++timerId;
+        timers.set(id, { fn, ms });
+        return id;
+      },
+      onClearTimeout: (id) => timers.delete(id),
+    });
+    const zone = app.scope.Prototype.game.zoneId;
+    app.elements.get('title-continue').click();
+    await flush();
+    assert.equal(attempts, 1, 'the confirmed renderer enters its actual startup path');
+    assert.equal(app.scope.Prototype.started, false);
+    const tick = () => {
+      const found = [...timers].find(([, item]) => item.ms === 10000);
+      assert(found, 'a guarded GPU preparation is being observed');
+      timers.delete(found[0]);
+      found[1].fn();
+    };
+    nowMs = 121000;
+    textureProgress = 1;
+    tick();
+    await flush();
+    assert.equal(app.scope.Prototype.started, false,
+      'a new uploaded texture resets inactivity instead of forcing Canvas');
+    nowMs = 242000;
+    tick();
+    await flush();
+    app.frame(242100);
+    assert.equal(app.scope.Prototype.started, true,
+      'a genuinely stalled GPU preparation resumes the saved scene on Canvas');
+    assert.equal(app.scope.Prototype.game.zoneId, zone,
+      'automatic renderer recovery does not move the saved hero');
+    assert(released > 0, 'the failing GPU resources are released after Canvas takes over');
+    assert(!app.elements.get('title-screen').children.some(
+      (item) => /Continue with Canvas/.test(item.textContent)),
+    'renderer fallback is automatic, not a loading-screen choice');
+  }
+
   // A slow resource stays covered until it settles; no manual Canvas choice
   // may appear or silently mutate an uncommitted journey.
   {

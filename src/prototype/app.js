@@ -2565,6 +2565,62 @@
             );
           },
         });
+  // The loading screen no longer asks the player to select Canvas. A GPU
+  // request that never settles must still have an automatic exit, but a long,
+  // PROGRESSING terrain/texture build is not a renderer failure. Count only
+  // inactivity, not total load time; keep the guarded Canvas recovery policy.
+  const GPU_PREPARATION_IDLE_MS = 120_000;
+  function graphicsProgressStamp() {
+    let details = null;
+    try {
+      details = pixiGame.status();
+    } catch (_) {
+      return '';
+    }
+    const counters = [
+      details?.loadedTextures,
+      details?.terrainTilesPrepared,
+      details?.proceduralTextures,
+      details?.proceduralBakes,
+      details?.gpuPreparationBatches,
+      details?.backgroundRepaints,
+    ];
+    return counters.map((value) => Number.isFinite(value) ? value : 0).join(':');
+  }
+  function awaitResponsiveGraphics(pending) {
+    return new Promise((resolve) => {
+      let finished = false, timer = null;
+      let lastActivity = Date.now();
+      let progress = graphicsProgressStamp();
+      const finish = (ready) => {
+        if (finished) return;
+        finished = true;
+        if (timer !== null) clearTimeout(timer);
+        resolve(ready === true);
+      };
+      const check = () => {
+        if (finished) return;
+        if (document.hidden || !focused) {
+          // Hidden/blurred preparation is already cancelled by the renderer
+          // guard. Do not leave an independent timer active in the background.
+          finish(false);
+          return;
+        }
+        const current = graphicsProgressStamp();
+        if (current !== progress) {
+          progress = current;
+          lastActivity = Date.now();
+        } else if (Date.now() - lastActivity >= GPU_PREPARATION_IDLE_MS) {
+          finish(false);
+          return;
+        }
+        timer = setTimeout(check, 10_000);
+      };
+      timer = setTimeout(check, 10_000);
+      Promise.resolve(pending).then(finish, () => finish(false));
+    });
+  }
+
   // P0 #839 DRAFT EXPERIMENT: keep the existing Pixi density stable through
   // combat, rather than re-baking cached artwork when Auto reacts to lag.
   // This does not affect player-chosen settings, frame-skip emergency protection,
@@ -2693,7 +2749,7 @@
           };
           // Select explicit quality before Pixi creates its backing surfaces.
           if (!setOptimizationActive(false, 'pixi-prepare')) resize('pixi-prepare');
-          return pixiGame.prepare();
+          return awaitResponsiveGraphics(pixiGame.prepare());
         },
         getFailureDetails: () => pixiGame.failureDetails?.() || null,
         // Do not rebuild a GPU scene while the player is moving or enemies
@@ -4235,9 +4291,11 @@
       return null;
     // Await real GPU readiness rather than treating slow hardware as a failure.
     // Actual Pixi errors/context cancellation still return false for Canvas recovery.
-    return Promise.resolve()
-      .then(() => pixiGame.warmArrival())
-      .catch(() => false);
+    return awaitResponsiveGraphics(
+      Promise.resolve()
+        .then(() => pixiGame.warmArrival())
+        .catch(() => false),
+    );
   }
   function drawReadyScene() {
     if (titleLoading) startupEvent('scene-draw-start', startupGraphics());
