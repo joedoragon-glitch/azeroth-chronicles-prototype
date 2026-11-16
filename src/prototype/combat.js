@@ -1172,11 +1172,19 @@
               if (terrainFraction === Infinity) terrainFraction = 0;
             }
             const radius = p.hitRadius ?? (p.style === 'cargo' ? 34 : 22);
-            const victim = (hostileTargets ||= this.combatTargets()).find(
-              (u) =>
-                this.distanceToSegment(u, before, p) < radius &&
-                sweptCircleEntry(u, before, p, radius) < terrainFraction,
-            );
+            // Party roster order is not contact order. At high missile speeds
+            // one swept step can cross the front companion and the rear hero.
+            // Resolve the earliest legal circle intersection ahead of terrain;
+            // keep original roster priority only for exactly tied contacts.
+            let victim = null, firstContact = terrainFraction;
+            for (const u of (hostileTargets ||= this.combatTargets())) {
+              if (this.distanceToSegment(u, before, p) >= radius) continue;
+              const entry = sweptCircleEntry(u, before, p, radius);
+              if (entry < firstContact) {
+                firstContact = entry;
+                victim = u;
+              }
+            }
             if (terrainContact && !victim) {
               hostileTargets = null;
               this.enemyVfxProjectileImpact?.(p, { ...terrainContact, terrain: true });
