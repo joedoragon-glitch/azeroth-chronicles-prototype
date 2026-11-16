@@ -84,7 +84,7 @@ for (const seed of [0.1, 0.5, 0.9]) {
   assert.equal(restored.zone().npcs.filter((n) => n.id === resident.id).length, 1);
 }
 for (const language of ['en', 'es']) {
-  const { scope, elements } = require('./helpers/production-shell.cjs').shell(language);
+  const { scope, elements, frame } = require('./helpers/production-shell.cjs').shell(language);
   const game = scope.Prototype.game;
   game.hero.level = 2;
   const resident = game.zone().npcs.find((n) => n.thornReport);
@@ -116,20 +116,20 @@ for (const language of ['en', 'es']) {
   const startX = game.hero.x;
   const startTime = game.s.time;
   game.hero.x += 120;
-  scope.Prototype.frame?.(0);
+  frame(0);
   assert.equal(routeRefreshes, 0, 'manual 120-unit step does not request a new full route');
   assert.equal(scope.Prototype.navigationState.active, true,
     'unrelated short walk must not hide the existing waypoint');
 
   // A stationary guide should not repeat full route-finding on a timer.
   game.s.time = startTime + 3;
-  scope.Prototype.frame?.(100);
+  frame(100);
   assert.equal(routeRefreshes, 0, 'standing after an interrupted autopilot does not replan');
   game.hero.x = startX + 340;
-  scope.Prototype.frame?.(200);
+  frame(200);
   assert.equal(routeRefreshes, 1, '2 seconds and meaningful displacement refresh once');
   game.hero.x = startX + 800;
-  scope.Prototype.frame?.(300);
+  frame(300);
   assert.equal(routeRefreshes, 2, 'substantial subsequent movement refreshes the route');
 
   // Finding the actual patrolling monster, rather than reaching the old
@@ -137,7 +137,7 @@ for (const language of ['en', 'es']) {
   Object.assign(boss, { x: game.hero.x + 110, y: game.hero.y + 40 });
   assert(Math.hypot(game.hero.x - target.x, game.hero.y - target.y) > 25,
     'the player did not visit the original landmark');
-  scope.Prototype.frame?.(400);
+  frame(400);
   assert.equal(scope.Prototype.trackedWaypoint, null, 'Thornfang found clears the guide');
   assert.equal(scope.Prototype.navigationState.active, false);
   assert.equal(routeRefreshes, 2, 'the encounter check prevents another route search');
