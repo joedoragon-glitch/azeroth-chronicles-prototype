@@ -348,7 +348,7 @@ def revise():
         entry["generationGuide"]=results[key]["guide"]
     writejson(MANIFEST,manifest)
     writejson(METRICS,{"status":"SOURCE/RENDER TECHNICAL CHECK; UNHEARD",
-        "qualityRevision":"v2 reference-RMS balanced after adversarial gain audit",
+        "qualityRevision":"v3 owner-reported stage differentiation (5 material families), reference-RMS preserved",
         "retainedIds":len(IDS),"origin":"dev288","cues":results})
     print("Revised",len(IDS),"SFX within original level hierarchy; exact backups preserved")
 
