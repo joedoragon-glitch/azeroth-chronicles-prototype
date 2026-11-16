@@ -52,6 +52,10 @@ const root = path.resolve(__dirname, '..'),
         errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
       await page.goto('http://127.0.0.1:' + server.address().port + '/' + entry);
+      // The alternate phone shell can bootstrap via an asynchronous script.
+      // Test the locked/no-autoplay audio state only AFTER the real game object
+      // exists; otherwise a fast network load races the phone initializer.
+      await page.waitForFunction(() => !!window.Prototype?.audio, null, { timeout: 15000 });
       assert.equal(await page.evaluate(() => Prototype.audio.ctx), null);
       // Current game shows an independent bilingual first-run welcome, then a
       // title screen, then New Adventure -> Choose Hero -> class selection.
