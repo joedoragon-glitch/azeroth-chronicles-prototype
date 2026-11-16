@@ -77,7 +77,25 @@ async function resumeLoadedCampaign(page) {
       shell.on('pageerror', (e) => errors.push(e.message));
       // The first-run language welcome is covered elsewhere; use a genuine
       // persisted English preference so this exercise enters the title.
-      await shell.addInitScript(() => localStorage.setItem('azeroth-display-language-v1', 'en'));
+      // This suite audits Archive mechanics, menus and v4 persistence. Set
+      // legitimate player preferences so unrelated first-use GPU trials do
+      // not cover modal buttons and WebKit media fetches cannot outlive the
+      // controlled sequence of saved-game iframe reloads. Renderer and SFX
+      // playback have their own independent browser acceptance suites.
+      await shell.addInitScript(() => {
+        localStorage.setItem('azeroth-display-language-v1', 'en');
+        localStorage.setItem('azeroth-pixi-settings-baseline-v1', 'applied');
+        localStorage.setItem('azeroth-renderer-webgl-primary-v1', 'applied');
+        localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+        localStorage.setItem(
+          'azeroth-v4-profile',
+          JSON.stringify({
+            activeMode: 'normal',
+            nightmareUnlocked: false,
+            audio: { master: 0.33, music: 1, ambience: 1, effects: 1, interface: 1, muted: true },
+          }),
+        );
+      });
       await shell.goto(
         (process.env.PLAYTEST_URL || 'http://127.0.0.1:' + server.address().port + '/') +
           (phone ? 'phone.html' : 'index.html'),
