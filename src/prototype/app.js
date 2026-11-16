@@ -31,7 +31,7 @@
       if (storage.getItem(performanceBaselineKey) === 'applied') return false;
       const defaults = [
         ['azeroth-screen-v1', 'auto'],
-        ['azeroth-camera-v2', JSON.stringify({ desktop: 1.5, phone: 1.5 })],
+        ['azeroth-camera-v2', JSON.stringify({ desktop: 1.25, phone: 1.25 })],
         ['azeroth-fps-v1', 'auto'],
         ['azeroth-adaptive-frame-skip-v1', 'on'],
         ['azeroth-render-resolution-v1', 'auto'],
@@ -1159,6 +1159,11 @@
     'Dungeon entrances': 'Entradas de mazmorras',
     'Places and threats': 'Lugares y amenazas',
     'Screen layout': 'Disposición de pantalla',
+    'Menu density': 'Densidad de los menús',
+    'Automatic · Recommended': 'Automática · Recomendada',
+    'Compact · More on screen': 'Compacta · Más opciones visibles',
+    'Standard · Roomier': 'Normal · Más espacio',
+    'Adapts all menus to the available screen. Compact preserves readable text and touch targets.': 'Adapta todos los menús al espacio disponible. El modo compacto conserva la legibilidad y los botones táctiles.',
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Graphics renderer': 'Motor gráfico',
@@ -3062,6 +3067,9 @@
     }
     viewport.width = innerWidth;
     viewport.height = innerHeight;
+    // Re-evaluate density only on an actual viewport/safe-area change.
+    // The platform caches the last logical dimensions; game frames never run this.
+    platform.updateMenuDensity();
     // Below the supported 375x800 portrait / 800x375 landscape layout,
     // proportionally fit controls instead of authoring a second smaller UI.
     // The Canvas continues to render at its actual viewport size.
@@ -3135,6 +3143,8 @@
     releaseJoystick();
     resize();
   });
+  // The phone shell forwards changed physical safe insets across the rotated frame.
+  addEventListener('phone-safe-area-updated', () => platform.updateMenuDensity());
   function activePlay() {
     return (
       started &&
@@ -3725,41 +3735,66 @@
   // The browser must receive a trusted click on the actual file input.
   // Preserve its stable DOM node and onchange handler between dialog rebuilds.
   const importFileInput = $('import-file');
-  // The character picker uses precisely the appearances players see in-game:
-  // authored procedural Paladin/Mage/Rogue; the registered Ranger sprite once
-  // it is loaded, with the real procedural Ranger as an offline fallback.
-  // No portrait asset, gameplay state, or title-time GPU warmup is invented.
+  // Class previews use the CURRENT hero painters, never disconnected portrait art.
+  // Fit actual painted alpha bounds rather than assigning unrelated artist scales.
+  // Cache the four sources for this session; no per-frame readbacks or save changes.
+  const classPreviewSources = new Map();
   let rangerPickerLoadRequested = false;
   function paintClassSpritePreview(canvas, heroClass) {
     const ctx = canvas?.getContext?.('2d');
     if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const actor = {
-      renderKind: 'hero', class: heroClass, crowned: false,
-      x: 0, y: 0, hp: 100, maxHp: 100,
-    };
-    if (heroClass === 'ranger' && typeof PrototypeSprites !== 'undefined') {
-      ctx.save();
-      ctx.scale(0.74, 0.74);
+    let source = classPreviewSources.get(heroClass);
+    if (!source) {
+      const stage = document.createElement('canvas');
+      stage.width = 352;
+      stage.height = 384;
+      const artist = stage.getContext('2d', { willReadFrequently: true });
+      if (!artist) return;
+      const actor = {
+        renderKind: 'hero', class: heroClass, crowned: false,
+        x: 0, y: 0, hp: 100, maxHp: 100,
+      };
+      artist.save();
+      artist.translate(stage.width / 2, stage.height * 0.72);
+      artist.scale(2.15, 2.15);
       let painted = false;
       try {
-        painted = !!PrototypeSprites.draw?.(ctx, actor, { x: 103, y: 189 }, 0, false);
+        if (heroClass === 'ranger' && typeof PrototypeSprites !== 'undefined')
+          painted = !!PrototypeSprites.draw?.(artist, actor, { x: 0, y: 0 }, 0, false);
+        if (!painted) PrototypeVisuals.draw(artist, actor, { x: 0, y: 0 }, 0, false);
       } finally {
-        ctx.restore();
+        artist.restore();
       }
-      if (painted) {
-        canvas.dataset.previewSource = 'game-sprite';
-        return;
-      }
+      const pixels = artist.getImageData(0, 0, stage.width, stage.height).data;
+      let left = stage.width, top = stage.height, right = -1, bottom = -1;
+      for (let y = 0; y < stage.height; y++)
+        for (let x = 0; x < stage.width; x++)
+          if (pixels[(y * stage.width + x) * 4 + 3] > 24) {
+            if (x < left) left = x;
+            if (x > right) right = x;
+            if (y < top) top = y;
+            if (y > bottom) bottom = y;
+          }
+      if (right < left || bottom < top) return;
+      source = {
+        stage, sourceType: painted ? 'game-sprite' : 'game-procedural',
+        left, top, width: right - left + 1, height: bottom - top + 1,
+      };
+      classPreviewSources.set(heroClass, source);
     }
-    ctx.save();
-    ctx.scale(2.4, 2.4);
-    try {
-      PrototypeVisuals.draw(ctx, actor, { x: 31.7, y: 56 }, 0, false);
-      canvas.dataset.previewSource = 'game-procedural';
-    } finally {
-      ctx.restore();
-    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const marginX = canvas.width * 0.10, marginY = canvas.height * 0.10;
+    const fit = Math.min(
+      (canvas.width - marginX * 2) / source.width,
+      (canvas.height - marginY * 2) / source.height,
+    );
+    const width = source.width * fit, height = source.height * fit;
+    ctx.imageSmoothingEnabled = source.sourceType !== 'game-sprite';
+    ctx.drawImage(
+      source.stage, source.left, source.top, source.width, source.height,
+      (canvas.width - width) / 2, (canvas.height - height) / 2, width, height,
+    );
+    canvas.dataset.previewSource = source.sourceType;
   }
   function warmRangerPickerPreview() {
     if (rangerPickerLoadRequested || typeof PrototypeSprites === 'undefined' ||
@@ -3769,6 +3804,7 @@
     // A player has explicitly opened the class picker. Load only the real
     // Ranger body, not every animation, scene sprite or GPU texture.
     PrototypeSprites.preload(undefined, ['hero:ranger']).then(() => {
+      classPreviewSources.delete('ranger');
       const previews = $('modal-actions').querySelectorAll?.(
         '.class-sprite-preview[data-hero-class="ranger"]',
       ) || [];
@@ -6515,10 +6551,25 @@
         },
       ),
       performanceSelect(
+        'Menu density',
+        platform.menuDensity,
+        choices([
+          ['auto', 'Automatic · Recommended'],
+          ['compact', 'Compact · More on screen'],
+          ['standard', 'Standard · Roomier'],
+        ]),
+        (value) => {
+          platform.selectMenuDensity(value);
+          performancePage();
+        },
+        'Adapts all menus to the available screen. Compact preserves readable text and touch targets.',
+      ),
+      performanceSelect(
         'Camera zoom',
         String(platform.cameraZoom),
         choices([
           ['1', 'Camera 100%'],
+          ['1.25', 'Camera 125%'],
           ['1.5', 'Camera 150%'],
           ['1.75', 'Camera 175%'],
         ]),
