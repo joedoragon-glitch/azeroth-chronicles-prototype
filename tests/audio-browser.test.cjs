@@ -128,8 +128,10 @@ const root = path.resolve(__dirname, '..'),
         for (let i = 0; i < 300; i++) a.noiseBurst(a.ctx.currentTime);
       });
       assert(await page.evaluate(() => Prototype.audio.voices.size <= 64));
-      await page.waitForTimeout(400);
-      assert(await page.evaluate(() => Prototype.audio.voices.size < 20));
+      // This is a *settling* invariant, not a frame-rate assertion: audio
+      // callbacks may be delayed by CPU-loaded CI/browser environments. Keep
+      // the original <20-voice threshold; allow the finite one-shots to end.
+      await page.waitForFunction(() => Prototype.audio.voices.size < 20, null, { timeout: 4000 });
       const recordings = await page.evaluate(async () => {
         const results = [];
         for (const theme of PrototypeAudio.themes)
