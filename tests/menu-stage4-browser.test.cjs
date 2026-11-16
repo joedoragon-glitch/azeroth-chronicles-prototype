@@ -184,12 +184,21 @@ function contrast(item) {
             ?.dataset.previewSource === 'game-sprite', null, { timeout: 20000 });
         const portraitPixels = await portraits.evaluateAll((canvases) => canvases.map((canvas) => {
           const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
-          let opaque = 0;
-          for (let i = 3; i < data.length; i += 4) if (data[i] > 20) opaque++;
+          let opaque = 0, left = canvas.width, right = -1, top = canvas.height, bottom = -1;
+          for (let y = 0; y < canvas.height; y++)
+            for (let x = 0; x < canvas.width; x++) {
+              const alpha = data[(y * canvas.width + x) * 4 + 3];
+              if (alpha <= 24) continue;
+              opaque++;
+              left = Math.min(left, x); right = Math.max(right, x);
+              top = Math.min(top, y); bottom = Math.max(bottom, y);
+            }
           return {
             hero: canvas.dataset.heroClass,
             source: canvas.dataset.previewSource,
             pixels: opaque,
+            bounds: { left, right, top, bottom, width: right - left + 1,
+              height: bottom - top + 1, canvasWidth: canvas.width, canvasHeight: canvas.height },
             hiddenFromSpeech: canvas.getAttribute('aria-hidden') === 'true',
           };
         }));
@@ -201,6 +210,19 @@ function contrast(item) {
           'game-sprite', 'Ranger matches the actual registered image, not substitute art');
         assert(portraitPixels.filter((p) => p.source === 'game-procedural').length === 3,
           'Paladin, Mage, and Rogue use the actual procedural renderer');
+        for (const { hero, bounds: b } of portraitPixels) {
+          assert(Math.abs((b.left + b.right) / 2 - b.canvasWidth / 2) <= 4,
+            hero + ' preview must be horizontally centered by actual painted alpha');
+          assert(Math.abs((b.top + b.bottom) / 2 - b.canvasHeight / 2) <= 4,
+            hero + ' preview must be vertically centered by actual painted alpha');
+        }
+        const heights = portraitPixels.map((p) => p.bounds.height);
+        assert(Math.min(...heights) / Math.max(...heights) >= 0.45,
+          'Ranger cannot be microscopic beside the other native character previews');
+        assert.equal(await frame.locator('body').getAttribute('data-menu-density-preference'),
+          'auto', 'the player has a persisted Auto choice by default');
+        assert.equal(await frame.locator('body').getAttribute('data-menu-density-effective'),
+          'compact', '800x375 logical phone layout resolves to Compact once');
         await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
         // A two-sentence protagonist introduction is intentional reading
         // content, not a truncated skill tag. On a 375px-tall landscape
@@ -240,6 +262,26 @@ function contrast(item) {
         const settingsFit = await assertDialogGeometry(frame, 'Settings', { noScroll: true });
         await frame.getByRole('button', { name: language === 'es' ? /Pantalla y rendimiento/ : /Screen and performance/ }).tap();
         const graphicsFit = await assertDialogGeometry(frame, 'Screen and performance');
+        const densitySelect = frame.getByRole('combobox', {
+          name: language === 'es' ? 'Densidad de los menús' : 'Menu density',
+          exact: true,
+        });
+        assert.equal(await densitySelect.inputValue(), 'auto');
+        await densitySelect.selectOption('standard');
+        assert.equal(await frame.locator('body').getAttribute('data-menu-density-effective'),
+          'standard', 'manual Standard remains available even at the short viewport');
+        assert.equal(await frame.evaluate(() => localStorage.getItem('azeroth-menu-density-v1')),
+          'standard', 'menu selection is saved without serializing a campaign');
+        await frame.getByRole('combobox', {
+          name: language === 'es' ? 'Densidad de los menús' : 'Menu density',
+          exact: true,
+        }).selectOption('compact');
+        assert.equal(await frame.locator('body').getAttribute('data-menu-density-effective'),
+          'compact');
+        await frame.getByRole('combobox', {
+          name: language === 'es' ? 'Densidad de los menús' : 'Menu density',
+          exact: true,
+        }).selectOption('auto');
         assert.equal(
           await frame.locator('#modal-actions .menu-section')
             .filter({ hasText: language === 'es' ? 'Gráficos de Canvas' : 'Canvas graphics' })
@@ -356,6 +398,8 @@ function contrast(item) {
               window.Prototype.closeMenu, { view });
           }, { view, count });
           familyFit[view] = await assertDialogGeometry(frame, view);
+          assert.equal(await frame.locator('body').getAttribute('data-menu-density-effective'),
+            'compact', 'all nested menu families inherit the effective density: ' + view);
           if (view === 'archive-reading')
             assert(
               familyFit[view].content.scrollHeight > familyFit[view].content.clientHeight,
