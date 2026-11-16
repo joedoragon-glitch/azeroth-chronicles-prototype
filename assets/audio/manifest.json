@@ -3252,7 +3252,7 @@
           "when": {
             "material": "claw"
           },
-          "gain": 0.18,
+          "gain": 0.2,
           "minGap": 0.035,
           "bus": "effects"
         },

@@ -20,6 +20,8 @@ The existing library at `tools/audio/index.html` now has a prominent **30 new ef
 
 The first browser mixing audit found four common-creature **release** sounds too quiet relative to the engine's cold procedural sound: steel –4.26 dB, spectral –4.29 dB, arcane –5.13 dB and dust –6.25 dB. Rather than falsely call their levels acceptable or increase all 30 WAV masters, the release-event gains were locally adjusted to **0.29, 0.50, 0.54 and 0.36**, respectively, from 0.18/0.30/0.30/0.18. The browser's full material/stage test measures whether the adjusted results remain within ±4 dB, including boss/personality accents and no-repeat warnings.
 
+The subsequent phone-profile browser test identified a smaller fifth exception: **claw common-creature release –4.23 dB** despite passing the desktop limit. Its playback gain is adjusted conservatively from **0.18 to 0.20**, preserving its original gain in the same per-event rollback ledger. The focused browser check must still pass on both desktop and phone before publication.
+
 The rollback ledger now freezes **34 original event binding entries for all 30 effects**, in addition to their exact original WAV hashes and asset metadata. Selective restore must restore the previous event gain for that one sound, without altering gains for other materials. Restoration preflights the requested archives before replacing any bytes. Source tests verify these conditions; new master/binding identities remain unchanged.
 
 ## Production and fully reversible source state

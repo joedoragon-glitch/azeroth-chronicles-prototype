@@ -16,7 +16,8 @@ assert set(rollback['originalEventBindings'])==all_ids
 assert sum(len(x) for x in rollback['originalEventBindings'].values())==34
 expected_calibration={
  'sfx-steel-release':.29,'sfx-spectral-release':.50,
- 'sfx-arcane-release':.54,'sfx-dust-release':.36}
+ 'sfx-arcane-release':.54,'sfx-dust-release':.36,
+ 'sfx-claw-release':.20}
 for key in all_ids:
     receipts=rollback['originalEventBindings'][key]
     assert receipts and all(x['binding']['asset']==key for x in receipts)
