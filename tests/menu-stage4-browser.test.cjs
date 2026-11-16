@@ -572,6 +572,50 @@ function contrast(item) {
         await context.close();
       }
     }
+    // Actual desktop visual acceptance, not inferred from the phone grid:
+    // render four real class characters side by side and exercise resize.
+    const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    try {
+      await desktop.addInitScript(() => {
+        localStorage.setItem('azeroth-display-language-v1', 'en');
+        localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+      });
+      const page = await desktop.newPage();
+      await page.goto('http://127.0.0.1:' + server.address().port + '/index.html');
+      await page.waitForFunction(() => !!window.Prototype?.renderer &&
+        document.querySelector('#startup-update')?.hidden);
+      assert.equal(await page.locator('body').getAttribute('data-experience'), 'desktop');
+      assert.equal(await page.locator('body').getAttribute('data-menu-density-effective'),
+        'standard', 'roomy desktop must use Standard density automatically');
+      await page.locator('#title-new').click();
+      await page.getByRole('button', { name: /^Choose Hero/ }).click();
+      await page.waitForFunction(() =>
+        document.querySelector('.class-sprite-preview[data-hero-class="ranger"]')
+          ?.dataset.previewSource === 'game-sprite', null, { timeout: 20000 });
+      const boxes = await page.locator('#modal-actions button.class-character-choice')
+        .evaluateAll((nodes) => nodes.map((n) => {
+          const r = n.getBoundingClientRect();
+          return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+        }));
+      assert.equal(boxes.length, 4);
+      assert(Math.abs(boxes[0].top - boxes[1].top) <= 4 &&
+        boxes[1].left > boxes[0].right,
+        'PC class picker lays out two readable columns, not a narrow phone stack');
+      await page.screenshot({ path: path.join(output, 'desktop-en-heroes.png') });
+      await page.evaluate(() => window.Prototype.platform.selectMenuDensity('compact'));
+      assert.equal(await page.locator('body').getAttribute('data-menu-density-effective'), 'compact');
+      await page.screenshot({ path: path.join(output, 'desktop-en-heroes-compact.png') });
+      await page.evaluate(() => window.Prototype.platform.selectMenuDensity('auto'));
+      await page.setViewportSize({ width: 740, height: 600 });
+      await page.waitForFunction(() =>
+        document.body.getAttribute('data-menu-density-effective') === 'compact');
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.waitForFunction(() =>
+        document.body.getAttribute('data-menu-density-effective') === 'standard');
+      console.log('PASS ' + engine + ' desktop class-selection grid, adaptive density and artwork');
+    } finally {
+      await desktop.close();
+    }
   } finally {
     await browser?.close();
     await new Promise((resolve) => server.close(resolve));
