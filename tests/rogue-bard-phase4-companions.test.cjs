@@ -136,8 +136,8 @@ try {
       'wolf', 'ogre', 'orc', 'archer', 'ashbeast', 'crownguard', 'stalker']) {
       const game = fresh();
       const ally = capture(game, species, false);
-      assert(game.companionBasicInterval(ally) <= R.balance.enemyOrdinaryMeleeBasicInterval,
-        species + ': ordinary melee cadence at least native hostile cadence');
+      assert(game.companionBasicInterval(ally) <= R.balance.companions.charmedBasicIntervalCeiling,
+        species + ': recruited native cadence keeps its independent historical cap');
       assert(game.companionRallyMoveSpeed(ally, 230) >=
         R.balance.enemyOrdinaryMeleePursuitSpeed,
         species + ': ordinary combat movement at least hostile ground pursuit');
