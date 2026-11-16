@@ -1078,7 +1078,12 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'warm frames preserve sharing without rebaking the two actors',
   );
   sharedGpu.release();
-  game.props = [];
+  game.props = [{
+    id: 'predictive-already-warmed',
+    x: game.hero.x + 1400,
+    y: game.hero.y,
+    structure: 'lumber-pile',
+  }];
   // A complete region is cached during readiness. Roaming and combat do
   // not trigger the retired idle camera-window painter or repeat native
   // terrain rasterization; the same GPU source receives tile composites.
@@ -1133,6 +1138,66 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'combat while moving continues to reuse prepared terrain',
   );
   game.s.projectiles = [];
+  // Arrival already prepared all admitted art. A repeat prediction may scan,
+  // but must not bake or upload it again.
+  assert.equal(typeof idleCallback, 'function', 'movement queues an optional prediction');
+  const noNewPrediction = idleCallback;
+  idleCallback = null;
+  const gpuUploadsBeforeEmpty = terrainGpu.status().proceduralGpuPrepared;
+  await noNewPrediction();
+  const emptyPrediction = terrainGpu.status();
+  assert(emptyPrediction.predictiveScannedCandidates > 0,
+    'repeat scan includes the previously warmed offscreen prop');
+  assert.equal(emptyPrediction.predictiveScans, 1);
+  assert.equal(emptyPrediction.predictivePreparedEntities, 0);
+  assert.equal(emptyPrediction.predictiveZeroNewScans, 1);
+  assert.equal(emptyPrediction.proceduralGpuPrepared, gpuUploadsBeforeEmpty,
+    'no redundant GPU upload');
+
+  // Dynamically admitted scenery is still eligible after whole-region arrival.
+  // Halt mid-batch: the first two bakes are allowed before the encounter,
+  // then no more optional bakes should run after the yielded continuation.
+  game.props = Array.from({ length: 6 }, (_, i) => ({
+    id: 'predictive-new-' + i,
+    x: game.hero.x + 900 + i * 45,
+    y: game.hero.y,
+    structure: 'lumber-pile',
+  }));
+  game.hero.x += 190;
+  terrainGpu.draw();
+  assert.equal(typeof idleCallback, 'function', 'fresh movement schedules the candidate scan');
+  holdWarmFrames = true;
+  const inFlightPrediction = idleCallback();
+  idleCallback = null;
+  assert.equal(typeof deferredWarmFrame, 'function', 'two optional new bakes yield to animation');
+  const preparedBeforeFight = terrainGpu.status().predictivePreparedEntities;
+  assert(preparedBeforeFight >= 2, 'predictive scan discovers genuine new scenery');
+  game.s.projectiles = [{ id: 'combat-begins-during-async-yield' }];
+  const bakesAtFight = terrainGpu.status().proceduralBakes;
+  holdWarmFrames = false;
+  const resumePrediction = deferredWarmFrame;
+  deferredWarmFrame = null;
+  resumePrediction();
+  await inFlightPrediction;
+  assert.equal(
+    terrainGpu.status().proceduralBakes,
+    bakesAtFight,
+    'combat immediately stops further optional bakes at the next cooperative yield',
+  );
+  assert.equal(terrainGpu.status().predictiveCombatInterruptions, 1);
+  game.s.projectiles = [];
+
+  // Once clear of combat, the remaining new identities may still preload;
+  // the full-region terrain cache remains installed throughout.
+  game.hero.x += 190;
+  terrainGpu.draw();
+  assert.equal(typeof idleCallback, 'function');
+  const followUpPrediction = idleCallback;
+  idleCallback = null;
+  await followUpPrediction();
+  assert(terrainGpu.status().predictivePreparedEntities > preparedBeforeFight);
+  assert(terrainGpu.status().cachedTerrainZones.includes('vale'));
+  game.props = [];
   terrainGpu.release();
   assert.equal(terrainGpu.status().backgroundLookaheadBytes, 0);
   game.hero.x = oldX;
