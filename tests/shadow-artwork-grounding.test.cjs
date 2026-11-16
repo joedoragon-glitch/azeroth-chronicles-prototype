@@ -74,6 +74,30 @@ for (const [name, entity, region] of [
   assert(pixels.some((value, index) => index % 4 === 3 && value > 0), name + ' actual procedural body still paints');
 }
 
+// The actual stronghold prop is a decorative 'wolf-den', not the landmark
+// whose id is simply 'wolf-den'. Both need the same authored den body.
+// Before #893 continuation the prop produced zero pixels and could make
+// Pixi's procedural preparation fail (Canvas silently painted only a shadow).
+const wolfDen = {
+  id: 'stronghold-wolf-packhold-prop-0',
+  renderKind: 'prop',
+  structure: 'wolf-den',
+  decorative: true,
+  stronghold: 'wolf-packhold',
+  strongholdDefenseStyle: 'ruin',
+  x: 235,
+  y: 970,
+  r: 0,
+};
+const wolfSaved = JSON.stringify(wolfDen);
+const wolfCanvas = createCanvas(576, 576);
+Visuals.draw(wolfCanvas.getContext('2d'), wolfDen, { x: 288, y: 460 }, 2, false);
+assert.equal(JSON.stringify(wolfDen), wolfSaved, 'decorative prop paint must not mutate saved object');
+const wolfData = wolfCanvas.getContext('2d').getImageData(0, 0, 576, 576).data;
+let wolfPainted = 0;
+for (let i = 3; i < wolfData.length; i += 4) if (wolfData[i] > 16) wolfPainted++;
+assert(wolfPainted > 500, 'the native stronghold wolf-den prop renders its canonical den body');
+
 let darkness = 0;
 let dungeon = false;
 const game = {
