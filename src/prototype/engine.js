@@ -1994,7 +1994,9 @@
       if (e.forcedRole === 'ranged') {
         e.ranged = true;
         e.shotRange = 280;
-        e.shotSpeed = 260;
+        e.shotSpeed = e.species === 'wraith'
+          ? R.projectileFlight.ordinaryDefault.spectral
+          : R.projectileFlight.ordinaryDefault.arrow;
         e.projectileStyle = e.species === 'wraith' ? 'spectral' : 'arrow';
         return;
       }
@@ -2010,7 +2012,9 @@
       } else if (['archer', 'crownguard', 'wraith'].includes(e.species)) {
         e.ranged = true;
         e.shotRange = 280;
-        e.shotSpeed = 260;
+        e.shotSpeed = e.species === 'wraith'
+          ? R.projectileFlight.ordinaryDefault.spectral
+          : R.projectileFlight.ordinaryDefault.arrow;
         e.projectileStyle = e.species === 'wraith' ? 'spectral' : 'arrow';
       }
     }
@@ -5243,7 +5247,7 @@
             if (x.plan.kind === 'summon')
               return summonCfg && owned < (summonCfg.cap || 3) && (e.summonCd || 0) <= 0;
             if (x.plan.kind === 'cone')
-              return d <= (x.plan.radius || 145) * R.bossCadence.areaRangeMultiplier + 25;
+              return d <= (x.plan.radius || R.bossAreaGeometry.captainDefaultConeRadius) + 25;
             return true;
           }),
         available = eligible.filter((x) => x.index !== e.lastCaptainAttack),
@@ -5311,10 +5315,10 @@
           fromY: e.y,
           angle,
           ...center,
-          radius:
-            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) *
-            (plan.fixedRadius ? 1 : R.bossCadence.areaRangeMultiplier) *
-            (plan.captainRadiusMultiplier || 1),
+          radius: plan.radius ||
+            (plan.kind === 'cone'
+              ? R.bossAreaGeometry.captainDefaultConeRadius
+              : R.bossAreaGeometry.captainDefaultOtherRadius),
           sequence: [],
         };
       if (plan.tracking) {
@@ -6696,7 +6700,7 @@
                 ...basic,
                 name: e.ranged ? 'Crown Direwolf Archer Dash' : 'Crown Direwolf Lance Dash',
                 style: 'dash',
-                radius: 165 * R.balance.enemySpecialReachMultiplier,
+                radius: R.enemyRogueGeometry.mountedCrownRiderDashRadius,
               }
             : basic,
         coveringRetreat = ['extended', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase),
@@ -6712,9 +6716,11 @@
               ? threat
               : closeTargets[0]
             : threat,
-        maxRange =
-          (e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340) *
-          R.balance.enemySpecialReachMultiplier;
+        maxRange = e.type === 'boss'
+          ? R.enemyRogueGeometry.acquisition.boss
+          : e.captain || e.roomCaptain
+            ? R.enemyRogueGeometry.acquisition.captain
+            : R.enemyRogueGeometry.acquisition.other;
       if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
       if (profile.style === 'withdraw' && this.hawkRetreatLocked(e, 'withdraw')) return false;
       const effect = isSignature ? profile.effect : null,
@@ -6723,8 +6729,11 @@
           profile.warning || (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : 0.75),
         radius =
           profile.radius ||
-          (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80) *
-            R.balance.enemySpecialReachMultiplier;
+          (e.type === 'boss'
+            ? R.enemyRogueGeometry.fallbackRadius.boss
+            : e.captain || e.roomCaptain
+              ? R.enemyRogueGeometry.fallbackRadius.captain
+              : R.enemyRogueGeometry.fallbackRadius.other);
       const displayName = this.monsterSkillTitle(profile.name, e);
       e.telegraph = {
         rogueMove: true,
@@ -6746,7 +6755,7 @@
         targetId: target === this.hero ? 'hero' : target.id,
         fromX:
           profile.style === 'slab'
-            ? target.x - (target.x >= e.x ? 60 : -60) * R.balance.enemySpecialReachMultiplier
+            ? target.x - (target.x >= e.x ? 1 : -1) * R.enemyRogueGeometry.slabWarningFromOffset
             : e.x,
         fromY: profile.style === 'slab' ? target.y : e.y,
         angle:
@@ -6757,7 +6766,7 @@
             : Math.atan2(target.y - e.y, target.x - e.x),
         x:
           profile.style === 'slab'
-            ? target.x + (target.x >= e.x ? 100 : -100) * R.balance.enemySpecialReachMultiplier
+            ? target.x + (target.x >= e.x ? 1 : -1) * R.enemyRogueGeometry.slabWarningToOffset
             : centered
               ? e.x
               : target.x,
@@ -8132,19 +8141,27 @@
               // ranged shot launches; collision, dodges and armor stay native.
               const criticalReceipt = this.worldCriticalRelease(e, 'ranged');
               const style = e.projectileStyle || 'arrow';
-              const stonePace =
-                e.species === 'goblin' && style === 'stone'
-                  ? R.balance.goblinSlingerProjectileSpeedMultiplier
-                  : 1;
+              // Re-read the authored launcher, rather than trusting a legacy
+              // v4 enemy.shotSpeed persisted before the velocity redesign.
+              const nativeSpeed = e.forcedRole === 'ranged'
+                ? (style === 'spectral'
+                    ? R.projectileFlight.ordinaryDefault.spectral
+                    : R.projectileFlight.ordinaryDefault.arrow)
+                : (R.rangedProfiles[e.species]?.shotSpeed ??
+                    (style === 'spectral'
+                      ? R.projectileFlight.ordinaryDefault.spectral
+                      : R.projectileFlight.ordinaryDefault.arrow));
+              const flightDistance = e.forcedRole === 'ranged'
+                ? 650 : (R.projectileFlight.ordinaryDistance[e.species] ?? 650);
               const shot = {
                 id: 'projectile-' + this.s.nextId++,
                 x: e.x,
                 y: e.y,
                 dx: Math.cos(angle),
                 dy: Math.sin(angle),
-                speed: (e.shotSpeed || 260) * pace.projectileMultiplier * stonePace,
-                // Keep the original travel budget: faster stones do not fly farther.
-                life: 2.5 / pace.projectileMultiplier / stonePace,
+                speed: nativeSpeed,
+                // Independent missed-shot travel budget (also for old v4 saves).
+                life: flightDistance / nativeSpeed,
                 damage: this.worldCriticalDamage(
                   criticalReceipt,
                   this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
@@ -8232,7 +8249,7 @@
           d <
             (e.species === 'wraith'
               ? R.nightEnemyCombat.wraith.radius
-              : 360 * R.balance.enemySpecialReachMultiplier) &&
+              : R.nightEnemyCombat.stalker.approachRange) &&
           this.startNightSkill(e, target)
         ) {
           opportunity = true;

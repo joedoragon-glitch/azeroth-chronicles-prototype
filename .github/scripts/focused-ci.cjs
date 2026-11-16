@@ -314,6 +314,13 @@ const groups = [
     tests: [TEST + 'projectile-order.test.cjs'],
   },
   {
+    // The real Citadel canister boundary helper exports a callable native
+    // regression, not a standalone executable. Run its entrypoint when the
+    // helper or its projectile/area combat owners change.
+    match: /^tests\/helpers\/canister-boundaries\.cjs$|^src\/prototype\/(?:boss-combat|rules)\.js$/,
+    tests: [TEST + 'citadel-canister-boundaries.test.cjs'],
+  },
+  {
     // Native garrison wall-lane audit belongs to focused combat geometry checks.
     match: /^tools\/native-fort-audit-dev145\/positive-lanes\.cjs$/,
     tests: [TEST + 'fortifications.test.cjs', TEST + 'treasury-fortifications.test.cjs'],

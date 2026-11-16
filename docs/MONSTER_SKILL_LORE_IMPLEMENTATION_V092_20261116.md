@@ -1,5 +1,15 @@
 # SIBDLP v0.9.2 — Greenwood Skeleton combat candidate and lore-title integration
 
+## Post-#908 published-source reconciliation — 16 November 2026
+
+**Live combined release verified in GitHub:** `main@985c3e802abec3e6cef01cebb6ee788f4d772b15` serving `0.9.1+snapshot.dev.291`, PR #908 merged. The owner reports passing post-merge validation and Pages deployment. This is a **development update**, not completed v0.9.2; long-session saves, earned campaign and physical device acceptance remain open.
+
+**Draft-only source integration:** PR #900's earlier focused run [43881636288](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43881636288) and browser/PWA run [43881636391](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43881636391) passed for `7a458844…` *before* #908. The new merge candidate takes the **published main tree**, retains its approved #908 behavior, and reapplies the authorized #900 monster/naming changes. `engine.js` contextual skill label admission was adjusted to coexist with #908's `R.enemyRogueGeometry` fallback. The source includes #908's `R.projectileFlight` and `R.bossAreaGeometry` and retains v4 snapshots and native Charmed gates. Source code was syntax-checked in isolation, but exact *post-integration* focused and browser tests, canonical build, affected PWA fingerprint and sprite evidence still require CI confirmation.
+
+**Audit goals after integration:** detect genuine non-generic melee/projectile mechanic defects, recover original regression gaps, test normal/charged Ringleaders and Guardians across Vale/Crypt, actual allied Charmed scheduling and enemy-name provenance. Preserve approved 29 English labels (Fixation final), new Mira-training canon and all 27 owner directions. Verify both EN/ES modes retain English skill names for v0.9.2. Protect the #908 AoE/projectile/Wither/targeting/navigation/canvas/tutorial behavior from regressions. Original #889/#899/#902/#904/#905 branches still appear GitHub-open but their selected *source* was integrated by #908; do not remerge them. No separate PR #900 merge/deployment is authorized.
+
+**Status:** unmerged draft, code rebase/merge staged; exact-head CI, player/renderer balance, earned campaign, long-session save and physical acceptance **unverified**. Later completed CI results must be appended with exact run SHA and outcomes.
+
 ## Current repository and release coordination — 16 November 2026
 
 **MAINTENANCE HOLD / NO MERGE / NO PUBLICATION.** The owner is coordinating several other game updates and has requested that this workstream's GitHub records be brought current without advancing an unverified monster-combat release. This is a status reconciliation, **not** completion, acceptance, a new design decision or a mandate to merge related branches.
