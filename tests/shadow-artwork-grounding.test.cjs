@@ -150,6 +150,17 @@ for (const [structure, rx, ry] of [
   assert(Math.abs(contact.ry - ry * scale) < 1e-7, structure + ' scaled post depth');
   assert.equal(contact.shadowOpacity, 1, structure + ' daylight shadow strength');
 }
+// Source+real-scene #893: 37/768 atlas pixels of trunk at foot pivot,
+ // compared with a ~57px scaled default contact on Frontier trees.
+ // Keep the approved asset-safe tree scale while avoiding a dark disc.
+const thinTrunk = ground('prop', { structure: 'dead-tree' });
+assert(Math.abs(thinTrunk.rx - 13) < 1e-8 &&
+  Math.abs(thinTrunk.ry - 4.55) < 1e-8 && thinTrunk.shadowOpacity === 1,
+  'Frontier dead-tree contact respects thin measured trunk and 130% original tree scale');
+assert.equal(ground('prop', { structure: 'sapling' }).rx, 22 * 1.3,
+  'Unreviewed sapling shadow is unchanged');
+assert.equal(ground('prop', { structure: 'burned-log' }).rx, 22,
+  'Grounded log keeps broad contact independent of tree-trunk correction');
 assert.deepEqual([ground('prop', { structure: 'rope-coil' }).rx,
   ground('prop', { structure: 'rope-coil' }).ry], [22, 6],
   'ordinary coil and structures retain their original grounding policy');
