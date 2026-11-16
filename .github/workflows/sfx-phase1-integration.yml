@@ -67,7 +67,6 @@ jobs:
           node tests/audio-production.test.cjs
           node tests/audio-recordings.test.cjs
           node tests/audio-catalog.test.cjs
-          node tests/combat-feedback.test.cjs
           node scripts/build.cjs --check
           node tests/docs-release-consistency.test.cjs
           node scripts/docs-release-consistency.cjs
@@ -77,10 +76,11 @@ jobs:
           set -euo pipefail
           git fetch --no-tags --depth=1 origin main
           git worktree add --detach "${RUNNER_TEMP}/sfx-baseline-main" FETCH_HEAD
-          for test in tests/enemy-audio.test.cjs tests/audio-stage3-action-audit.test.cjs; do
+          for test in tests/enemy-audio.test.cjs tests/audio-stage3-action-audit.test.cjs tests/combat-feedback.test.cjs; do
             case "${test}" in
-              tests/enemy-audio.test.cjs) known=47 ;;
-              tests/audio-stage3-action-audit.test.cjs) known=190 ;;
+              tests/enemy-audio.test.cjs) known='47:7' ;;
+              tests/audio-stage3-action-audit.test.cjs) known='190:7' ;;
+              tests/combat-feedback.test.cjs) known='7:53' ;;
             esac
             name="$(basename "${test}" .test.cjs)"
             if node "${test}" > "${RUNNER_TEMP}/sfx-branch-${name}.log" 2>&1; then
@@ -94,7 +94,7 @@ jobs:
             fi
             # Both branch and main must fail at the EXACT pre-existing assertion,
             # not merely both exit non-zero for unrelated reasons.
-            signature="${test}:${known}:7"
+            signature="${test}:${known}"
             if ! grep -Fq "${signature}" "${RUNNER_TEMP}/sfx-main-${name}.log" ||
                ! grep -Fq "${signature}" "${RUNNER_TEMP}/sfx-branch-${name}.log"; then
               echo "Different source failure in ${test}; investigate before release" >&2
