@@ -104,12 +104,15 @@ const server = http.createServer((req, res) => {
         null,
         { timeout: 90000 },
       );
+      // Validate geometry in the actual game CSS viewport. In portrait,
+      // phone.html rotates its landscape game frame, so outer width differs.
+      const gameViewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }));
       await require('./helpers/notice-browser.cjs').verifyNoticeStrip(
         page,
         out,
         tag,
         phone,
-        viewport,
+        gameViewport,
       );
       const cuePlacement = await page.evaluate(() => {
         const c = Prototype.game,
@@ -161,7 +164,7 @@ const server = http.createServer((req, res) => {
       assert(cards[0].includes('BOSS VANQUISHED') && cards[1].includes('halls secured'));
       assert.equal(await page.locator('#message .notice-detail').count(), 2);
       const bounds = await page.locator('#message').boundingBox();
-      assert(bounds.x >= 0 && bounds.x + bounds.width <= viewport.width + 1);
+      assert(bounds.x >= 0 && bounds.x + bounds.width <= gameViewport.width + 1);
       if (phone) {
         const separate = await page.evaluate(() => {
           document.querySelector('#status').textContent = 'Need 70 crowns.';
@@ -186,9 +189,9 @@ const server = http.createServer((req, res) => {
       // combat detail now belongs to the separate X Skill journal.
       await page.keyboard.press('g');
       assert.equal(await page.locator('#modal-title').textContent(), 'Controls');
-      await page.getByRole('button', { name: 'Customize keyboard', exact: true }).click();
+      await page.getByRole('button', { name: /^Customize keyboard/ }).click();
       assert.equal(await page.locator('#modal-title').textContent(), 'Customize keyboard');
-      await page.getByRole('button', { name: 'Movement and menu keys', exact: true }).click();
+      await page.getByRole('button', { name: /^Movement and menu keys/ }).click();
       assert(
         await page.getByRole('button', { name: /Confirm \/ interact · F/ }).count(),
         'the real interaction binding remains visible in Controls',
@@ -205,7 +208,7 @@ const server = http.createServer((req, res) => {
         'a learned skill has a real technical description',
       );
       await page.keyboard.press('Escape');
-      await page.getByRole('button', { name: 'Combat conditions', exact: true }).click();
+      await page.getByRole('button', { name: /^Combat conditions/ }).click();
       await page.getByRole('button', { name: 'Slow', exact: true }).click();
       assert((await page.locator('#modal-description').textContent()).includes('cooldown'));
       await page.keyboard.press('Escape');
