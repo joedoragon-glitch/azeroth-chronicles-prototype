@@ -53,9 +53,20 @@ const root = path.resolve(__dirname, '..'),
       page.on('pageerror', (e) => errors.push(e.message));
       await page.goto('http://127.0.0.1:' + server.address().port + '/' + entry);
       assert.equal(await page.evaluate(() => Prototype.audio.ctx), null);
-      await require('./helpers/language-browser.cjs').selectEnglish(page);
-      await page.locator('#modal-actions button').first().click();
-      await page.locator('#modal-actions button').first().click();
+      // Current game shows an independent bilingual first-run welcome, then a
+      // title screen, then New Adventure -> Choose Hero -> class selection.
+      // This original audio test predates those steps; two blind modal clicks
+      // never actually started a game and timed out before testing any sound.
+      await page.waitForFunction(() => !!window.Prototype && !!document.querySelector('#language-welcome'));
+      if (await page.locator('#language-welcome').isVisible()) {
+        await page.locator('#language-welcome button[data-language="en"]').click();
+      } else {
+        await require('./helpers/language-browser.cjs').selectEnglish(page);
+      }
+      await page.locator('#title-new').waitFor({ state: 'visible' });
+      await page.locator('#title-new').click();
+      await page.locator('#modal-actions button').filter({ hasText: 'Choose Hero' }).click();
+      await page.locator('#modal-actions button').filter({ hasText: 'Paladin' }).first().click();
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running');
       try {
         await page.waitForFunction(() => !!Prototype.audio.recordedScore);
