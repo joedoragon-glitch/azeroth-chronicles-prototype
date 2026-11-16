@@ -462,12 +462,16 @@
   function collectionFor(id, entry) {
     if (entry.kind === 'ambience') return 'environment';
     if (entry.kind === 'effect') return 'effects';
-    return entry.creationMethod === 'authored-recorded-source-score' ? 'new-score' : 'dark-crown';
+    if (entry.creationMethod === 'authored-recorded-source-score') return 'new-score';
+    if (entry.creationMethod === 'original-theme-source-derived-synthesized-recording')
+      return 'approved-derived';
+    return 'dark-crown';
   }
   function labelFor(id, entry) {
     if (entry.kind === 'ambience') return 'Environment';
     if (entry.kind === 'effect') return 'Recorded effect';
     if (collectionFor(id, entry) === 'dark-crown') return 'Preserved original';
+    if (collectionFor(id, entry) === 'approved-derived') return 'Owner-approved theme arrangement';
     if (id.endsWith('-true')) return 'TRUE boss layer';
     if (id.startsWith('boss-')) return 'Boss score';
     if (id.startsWith('action-')) return 'Action layer';
@@ -613,7 +617,7 @@
     const kind = $('kind').value, collection = $('collection').value;
     const query = $('search').value.trim().toLowerCase();
     const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [],
-      legacy: [], ambience: [], effect: [] };
+      legacy: [], approved: [], ambience: [], effect: [] };
     visibleRecordings = [];
     for (const [id, entry] of Object.entries(manifest.assets)) {
       if (kind !== 'all' && entry.kind !== kind) continue;
@@ -624,6 +628,7 @@
       const item = { id, name: soundTitle(id, entry) + ' · ' + id, entry, uses };
       visibleRecordings.push(item);
       if (entry.kind !== 'music') bucket[entry.kind].push(item);
+      else if (collectionFor(id, entry) === 'approved-derived') bucket.approved.push(item);
       else if (entry.creationMethod !== 'authored-recorded-source-score') bucket.legacy.push(item);
       else if (id.startsWith('boss-')) bucket.bosses.push(item);
       else if (id.startsWith('interior-') || id.startsWith('peace-interior-'))
@@ -645,6 +650,7 @@
       ['interiors', 'Treasuries and side interiors'],
       ['special', 'Title, defeat and finale'],
       ['legacy', 'Original Dark Crown — preserved'],
+      ['approved', 'Owner-approved re-arranged original themes'],
       ['ambience', 'Environmental sound beds'],
       ['effect', 'Recorded sound effects'],
     ]) group(label, bucket[key], target);
@@ -1018,7 +1024,11 @@
   const requestedStudy = requestedLink.get('study');
   if (sfxStudies.some((item) => item.id === requestedStudy))
     $('sfx-study').value = requestedStudy;
-  $('sfx-study').addEventListener('change', showSfxStudy);
+  $('sfx-study').addEventListener('change', () => {
+    action++; // Cancel any pending asynchronous preview for the previous selection.
+    stopSfxStudyEffects();
+    showSfxStudy();
+  });
   $('sfx-original').addEventListener('click', run(() => playSfxStudy('original')));
   $('sfx-candidate').addEventListener('click', run(() => playSfxStudy('candidate')));
   showSfxStudy();
