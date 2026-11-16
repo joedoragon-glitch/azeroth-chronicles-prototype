@@ -304,15 +304,38 @@
       if (bindings.some((rule) => rule.asset === id)) uses.push('Event · ' + human(event));
     return [...new Set(uses)];
   }
+  function effectStage(id, entry) {
+    if (entry?.kind !== 'effect') return null;
+    if (id.endsWith('-release')) return 'release';
+    if (id.endsWith('-impact') && !id.startsWith('sfx-hero-')) return 'impact';
+    return 'special';
+  }
+  function effectsOnly() {
+    return $('kind').value === 'effect' || $('collection').value === 'effects';
+  }
+  function syncEffectFilters() {
+    $('effect-filters').hidden = !effectsOnly();
+    if (!effectsOnly()) $('effect-stage').value = 'all';
+  }
   function collectionFor(id, entry) {
     if (entry.kind === 'ambience') return 'environment';
     if (entry.kind === 'effect') return 'effects';
-    return entry.creationMethod === 'authored-recorded-source-score' ? 'new-score' : 'dark-crown';
+    if (entry.creationMethod === 'authored-recorded-source-score') return 'new-score';
+    if (entry.creationMethod === 'original-theme-source-derived-synthesized-recording')
+      return 'approved-derived';
+    return 'dark-crown';
   }
   function labelFor(id, entry) {
     if (entry.kind === 'ambience') return 'Environment';
-    if (entry.kind === 'effect') return 'Recorded effect';
+    if (entry.kind === 'effect') {
+      const stage = effectStage(id, entry);
+      return entry.managedBy === 'sfx-phase1-original-hybrid'
+        ? { release: 'New · attack release', impact: 'New · attack contact',
+            special: 'New · special / warning' }[stage]
+        : 'Recorded effect';
+    }
     if (collectionFor(id, entry) === 'dark-crown') return 'Preserved original';
+    if (collectionFor(id, entry) === 'approved-derived') return 'Owner-approved theme arrangement';
     if (id.endsWith('-true')) return 'TRUE boss layer';
     if (id.startsWith('boss-')) return 'Boss score';
     if (id.startsWith('action-')) return 'Action layer';
@@ -333,7 +356,9 @@
     duration.className = 'duration';
     if (Number.isFinite(entry.duration)) {
       const seconds = Math.round(entry.duration);
-      duration.textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
+      duration.textContent = entry.kind === 'effect'
+        ? entry.duration.toFixed(2) + 's'
+        : Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
     }
     top.append(label, duration);
     const title = document.createElement('button');
@@ -381,8 +406,12 @@
     await playRecording();
   }
   function renderCards() {
-    $('library-grid').replaceChildren(...visibleRecordings.slice(0, visibleLimit).map(cardFor));
-    $('show-more').hidden = visibleLimit >= visibleRecordings.length;
+    // This focused category has only 30 short sounds: show every card on the
+    // first visit. Don't make users discover the final six via "Show more".
+    // Large music/ambience catalogs retain their progressive-loading limit.
+    const limit = effectsOnly() ? Math.max(30, visibleLimit) : visibleLimit;
+    $('library-grid').replaceChildren(...visibleRecordings.slice(0, limit).map(cardFor));
+    $('show-more').hidden = limit >= visibleRecordings.length;
   }
   function renderGenerated() {
     const query = $('search').value.trim().toLowerCase();
@@ -451,24 +480,32 @@
   function fillLibrary(previousId) {
     const manifest = audio.recordingManifest;
     if (!manifest) return;
+    syncEffectFilters();
     if ($('kind').value === 'generated') return renderGenerated();
     $('library-grid').hidden = false;
     $('recorded-panel').hidden = false;
     $('generated-panel').hidden = true;
+    syncEffectFilters();
     const kind = $('kind').value, collection = $('collection').value;
+    const stage = $('effect-stage').value;
+    // This is a deliberately small 30-cue collection: don't hide its last six
+    // items behind the soundtrack's 24-at-a-time pagination.
+    if (effectsOnly()) visibleLimit = 30;
     const query = $('search').value.trim().toLowerCase();
     const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [],
-      legacy: [], ambience: [], effect: [] };
+      legacy: [], approved: [], ambience: [], effect: [] };
     visibleRecordings = [];
     for (const [id, entry] of Object.entries(manifest.assets)) {
       if (kind !== 'all' && entry.kind !== kind) continue;
       if (collection !== 'all' && collectionFor(id, entry) !== collection) continue;
+      if (effectsOnly() && stage !== 'all' && effectStage(id, entry) !== stage) continue;
       const uses = usageFor(id, manifest);
       if (query && !(id + ' ' + soundTitle(id, entry) + ' ' + uses.join(' ') +
         ' ' + (entry.generationGuide || '')).toLowerCase().includes(query)) continue;
       const item = { id, name: soundTitle(id, entry) + ' · ' + id, entry, uses };
       visibleRecordings.push(item);
       if (entry.kind !== 'music') bucket[entry.kind].push(item);
+      else if (collectionFor(id, entry) === 'approved-derived') bucket.approved.push(item);
       else if (entry.creationMethod !== 'authored-recorded-source-score') bucket.legacy.push(item);
       else if (id.startsWith('boss-')) bucket.bosses.push(item);
       else if (id.startsWith('interior-') || id.startsWith('peace-interior-'))
@@ -490,13 +527,16 @@
       ['interiors', 'Treasuries and side interiors'],
       ['special', 'Title, defeat and finale'],
       ['legacy', 'Original Dark Crown — preserved'],
+      ['approved', 'Owner-approved re-arranged original themes'],
       ['ambience', 'Environmental sound beds'],
       ['effect', 'Recorded sound effects'],
     ]) group(label, bucket[key], target);
     if (!target.options.length) target.add(option('No recordings match this filter', ''));
     if (selected && [...target.options].some((o) => o.value === selected)) target.value = selected;
-    $('result-count').textContent = visibleRecordings.length + ' matching recordings · ' +
-      Object.keys(manifest.assets).length + ' total registered';
+    $('result-count').textContent = effectsOnly()
+      ? visibleRecordings.length + ' new recorded effects · 30 total in Phase 1'
+      : visibleRecordings.length + ' matching recordings · ' +
+        Object.keys(manifest.assets).length + ' total registered';
     renderCards();
     showRecording();
   }
@@ -512,6 +552,8 @@
       const details = document.createElement('div');
       const labels = [
         source === 'diagnostic' ? 'Engineering test recording'
+          : entry.kind === 'effect' && entry.managedBy === 'sfx-phase1-original-hybrid'
+            ? 'New Phase 1 original sound effect · replaces previous game recording'
           : entry.kind === 'music'
             ? entry.creationMethod === 'authored-recorded-source-score'
               ? 'Phase 3–6 recorded-source composition'
@@ -539,6 +581,12 @@
     syncNavigation();
     const pair = pairFor(id);
     $('record-play').disabled = !entry;
+    // Short game effects have no soundtrack stems or music-share route.
+    // Do not invite ineffective controls into the focused 30-effect view.
+    const musicOnly = entry?.kind === 'music';
+    $('copy-recording-link').hidden = !musicOnly;
+    $('stem-play').hidden = !musicOnly;
+    $('paired-controls').hidden = !musicOnly;
     $('stem-play').disabled = !pair &&
       !(source === 'diagnostic' && ['diagnostic-a', 'diagnostic-b'].includes(id));
     $('intensity').disabled = $('stem-play').disabled;
@@ -570,6 +618,8 @@
           ? 'Original preserved Dark Crown music: tools/audio/score-book.json; renderer: render-score.py.'
         : entry?.managedBy === 'environment-book'
           ? 'Original environment recipe: tools/audio/environment-book.json; renderer: render-environment.py.'
+          : entry?.managedBy === 'sfx-phase1-original-hybrid'
+            ? 'New Phase 1 original effect master: tools/audio/sfx-phase1-master.py; previous game master is SHA-frozen for rollback. This is a solo recording, not the full game mix.'
           : entry?.managedBy === 'sfx-book'
             ? 'Original effect recipe: tools/audio/sfx-book.json; renderer: render-sfx.py.'
             : entry?.creationMethod === 'imported-recording'
@@ -659,6 +709,10 @@
       settlement: !boss && mode === 'settlement' ? 'audition-refuge' : null,
       boss: boss ? { family: boss.id, form: $('form').value, name: boss.name } : null,
       engaged: boss ? 1 : mode === 'combat' ? 4 : 0,
+      // The production director prioritizes nearbyEngaged over engaged. A
+      // standalone combat preview must describe actual nearby combat, not
+      // inherit an empty new-campaign proximity count from audio.describe().
+      nearbyEngaged: boss ? 1 : mode === 'combat' ? 4 : 0,
       situation: boss ? 'boss' : mode === 'combat' ? 'combat' : mode === 'peace' ? 'peace' : mode,
       started: true,
       gameOver: false,
@@ -872,14 +926,30 @@
     syncScene();
   });
   $('form').addEventListener('change', syncScene);
+  $('nav-effects').addEventListener('click', () => {
+    $('kind').value = 'effect';
+    $('collection').value = 'all';
+    $('collection').disabled = false;
+    $('effect-stage').value = 'all';
+    $('search').value = '';
+    $('sort').value = 'catalog';
+    visibleLimit = 24;
+    fillLibrary();
+  });
+  $('effect-stage').addEventListener('change', () => {
+    visibleLimit = 24;
+    fillLibrary();
+  });
   $('kind').addEventListener('change', () => {
     $('collection').value = 'all';
     $('collection').disabled = $('kind').value === 'generated';
+    $('effect-stage').value = 'all';
     visibleLimit = 24;
     fillLibrary();
   });
   $('collection').addEventListener('change', () => {
     if ($('collection').value !== 'all') $('kind').value = 'all';
+    $('effect-stage').value = 'all';
     visibleLimit = 24;
     fillLibrary();
   });
@@ -890,6 +960,7 @@
   $('next').addEventListener('click', run(() => navigateRecording(1)));
   $('reset-library').addEventListener('click', () => {
     $('kind').value = 'all';
+    $('effect-stage').value = 'all';
     $('collection').value = 'all';
     $('collection').disabled = false;
     $('sort').value = 'catalog';

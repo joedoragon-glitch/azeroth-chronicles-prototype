@@ -4,7 +4,7 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const {execFileSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..'),m=require('../assets/audio/manifest.json');
 const map=require('../tools/audio/environment-727-production-routing.json');
-assert.equal(Object.keys(m.assets).length,147);
+assert.equal(Object.keys(m.assets).length,148);
 assert.equal(m.director.environment.rules.length,22);
 assert.equal(Object.keys(m.director.places).length,19);
 assert.equal(m.director.environment.combatGain,.45);
@@ -19,4 +19,4 @@ const page=fs.readFileSync(path.join(root,'tools/audio/environment-727-audition/
 for(const id of ['scene','original','candidate','amb','score','critical','warning','decision','notes','export'])
  assert(page.includes('id="'+id+'"'),'Local comparative UI component missing '+id);
 assert(page.includes('src="data.js"')&&page.includes('src="player.js"'));
-console.log('PASS #727 current 147-asset playable registration, 16 original-source SHA frozen; Sound Library and owner comparison source integrity; no release or hearing claim.');
+console.log('PASS #727 current 148-asset playable registration, 16 original-source SHA frozen; Sound Library and owner comparison source integrity; no release or hearing claim.');

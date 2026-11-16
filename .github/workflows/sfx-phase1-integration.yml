@@ -1,0 +1,145 @@
+# SIBDLP Phase 1: 30 existing SFX IDs. Isolated integration; never deploy.
+name: SIBDLP SFX Phase 1 replacement, rollback, PWA checks (NO deploy)
+on:
+  push:
+    branches:
+      - audio/sfx-phase1-30-replacements-20261116
+    paths:
+      - .github/workflows/sfx-phase1-integration.yml
+      - tools/audio/sfx-phase1-master.py
+      - tools/audio/sfx-phase1-version.cjs
+      - tests/audio-sfx-phase1-quality.test.py
+      - tests/audio-sfx-phase1-rollback.test.py
+      - tests/audio-catalog.test.cjs
+      - tools/audio/index.html
+      - tools/audio/audition.css
+      - tools/audio/sfx-phase1-rollback.json
+      - tools/audio/audition.js
+      - tests/audio-audition-browser.test.cjs
+      - tests/audio-browser.test.cjs
+      - assets/audio/manifest.json
+      - tools/audio/sfx-phase1-metrics.json
+      # Main's recently merged navigation update also changes the PWA cache.
+      # Rebuild the merged-source release candidate before any publish decision.
+      - sw.js
+      - src/prototype/app.js
+      - src/prototype/build-info.js
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# A single actor may write the isolated candidate branch; cancel stale duplicate CI.
+concurrency:
+  group: sfx-phase1-30-replacements-20261116
+  cancel-in-progress: true
+
+jobs:
+  integrated-audio:
+    name: Exact 30-cue render, archive, manifest, browser & release safety
+    if: github.ref == 'refs/heads/audio/sfx-phase1-30-replacements-20261116'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned audio synthesis and local test dependencies
+        run: |
+          npm ci --ignore-scripts
+          python -m pip install --disable-pip-version-check --quiet numpy==2.3.5 scipy==1.17.0
+          node scripts/vendor-pixi.cjs --ensure
+          npx playwright install --with-deps chromium
+      - name: Render exactly the 30 original ID replacements after immutable backup
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f tools/audio/sfx-phase1-rollback.json ]; then
+            python tools/audio/sfx-phase1-master.py --integrate
+            node tools/audio/sfx-phase1-version.cjs
+            node scripts/build.cjs
+          else
+            echo 'Original archive already frozen. Rerender candidate SFX only, preserving exact 30 pre-replacement masters.'
+            python tools/audio/sfx-phase1-master.py --revise
+            node scripts/build.cjs
+          fi
+      - name: Verify real audio source, WAV bytes, original hashes and file budgets
+        run: |
+          python tests/audio-sfx-phase1-quality.test.py > "${RUNNER_TEMP}/sfx-phase1-quality.json"
+          python tests/audio-sfx-phase1-rollback.test.py
+          node scripts/audio-library.cjs check
+          node tests/audio-production.test.cjs
+          node tests/audio-recordings.test.cjs
+          node tests/audio-catalog.test.cjs
+          node scripts/build.cjs --check
+          node tests/docs-release-consistency.test.cjs
+          node scripts/docs-release-consistency.cjs
+      - name: Compare inherited game-stage audio fixtures with exact unmodified main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin main
+          git worktree add --detach "${RUNNER_TEMP}/sfx-baseline-main" FETCH_HEAD
+          for test in tests/enemy-audio.test.cjs tests/audio-stage3-action-audit.test.cjs tests/combat-feedback.test.cjs; do
+            case "${test}" in
+              tests/enemy-audio.test.cjs) known='47:7' ;;
+              tests/audio-stage3-action-audit.test.cjs) known='190:7' ;;
+              tests/combat-feedback.test.cjs) known='7:53' ;;
+            esac
+            name="$(basename "${test}" .test.cjs)"
+            if node "${test}" > "${RUNNER_TEMP}/sfx-branch-${name}.log" 2>&1; then
+              echo "PASS: ${test}"
+              continue
+            fi
+            if (cd "${RUNNER_TEMP}/sfx-baseline-main" && node "${test}") > "${RUNNER_TEMP}/sfx-main-${name}.log" 2>&1; then
+              echo "REGRESSION: SFX candidate fails ${test} where unmodified main passes" >&2
+              cat "${RUNNER_TEMP}/sfx-branch-${name}.log"
+              exit 1
+            fi
+            # Both branch and main must fail at the EXACT pre-existing assertion,
+            # not merely both exit non-zero for unrelated reasons.
+            signature="${test}:${known}"
+            if ! grep -Fq "${signature}" "${RUNNER_TEMP}/sfx-main-${name}.log" ||
+               ! grep -Fq "${signature}" "${RUNNER_TEMP}/sfx-branch-${name}.log"; then
+              echo "Different source failure in ${test}; investigate before release" >&2
+              cat "${RUNNER_TEMP}/sfx-branch-${name}.log"
+              cat "${RUNNER_TEMP}/sfx-main-${name}.log"
+              exit 1
+            fi
+            echo "BASELINE LIMITATION: original and candidate both fail the same existing ${test} at line ${known}; not a candidate SFX regression or a PASS."
+          done
+      - name: Preserve source-validated branch audio before independent browser acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = 'refs/heads/audio/sfx-phase1-30-replacements-20261116'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f assets/audio/effects/*.wav tools/audio/sfx-legacy/dev288/*.wav
+          git add assets/audio/manifest.json tools/audio/sfx-phase1-rollback.json tools/audio/sfx-phase1-metrics.json
+          git add package.json package-lock.json docs/DEVELOPMENT_STATE.md sw.js src/prototype/audio-library.js src/prototype/build-info.js
+          # No normal PR deploys Pages; all branch work and artifacts remain private from live PWA.
+          if ! git diff --cached --quiet; then
+            git commit -m 'audio: stage rollback-safe 30 SFX masters in dev.289 candidate'
+            git push origin HEAD:refs/heads/audio/sfx-phase1-30-replacements-20261116
+          fi
+      - name: Validate existing Sound Library and actual registered 30 new WAVs
+        run: node tests/audio-audition-browser.test.cjs
+      - name: Verify selected browser gameplay audio/recording paths
+        run: node tests/audio-browser.test.cjs
+      - name: Preserve objectively verified audio evidence, never a Pages artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SIBDLP-SFX-phase1-30-originals-and-technical-evidence
+          path: ${{ runner.temp }}/sfx-phase1-quality.json
+          if-no-files-found: warn
+          retention-days: 30
