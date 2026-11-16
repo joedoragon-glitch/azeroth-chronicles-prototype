@@ -232,8 +232,11 @@ for (const succession of [false, true]) {
     );
     c.zone().enemies = [e];
     c.zone();
-    e.aggro = true;
     Object.assign(c.hero, { x: 1450, y: 1700, hp: 1 });
+    // A real opening hit admits the wolf under the normal field-combat rules.
+    // Forcing aggro alone sends an unadmitted enemy back to its home.
+    assert(c.damage(e, 1), 'hero admits the encounter with a deliberate hit');
+    assert(e.aggro, 'wolf stays engaged for the lethal basic');
     c.updateEnemies(0.1);
     assert.equal(c.s.statistics.deaths, 1);
     return c;
