@@ -121,26 +121,31 @@ for (const language of ['en', 'es']) {
   assert.equal(scope.Prototype.navigationState.active, true,
     'unrelated short walk must not hide the existing waypoint');
 
-  // A stationary guide should not repeat full route-finding on a timer.
+  // A meaningful movement is eligible only after the slower timeout.
   game.s.time = startTime + 3;
   frame(100);
-  assert.equal(routeRefreshes, 0, 'standing after an interrupted autopilot does not replan');
-  game.hero.x = startX + 340;
+  assert.equal(routeRefreshes, 1, 'two-second refresh after manual displacement');
+  // Standing thereafter does not repeat the same static route, even over time.
+  game.s.time += 3;
   frame(200);
-  assert.equal(routeRefreshes, 1, '2 seconds and meaningful displacement refresh once');
-  game.hero.x = startX + 800;
+  assert.equal(routeRefreshes, 1, 'standing without new displacement does not replan');
+  game.hero.x = startX + 340;
+  game.s.time += 3;
   frame(300);
-  assert.equal(routeRefreshes, 2, 'substantial subsequent movement refreshes the route');
+  assert.equal(routeRefreshes, 2, 'two-second refresh after another meaningful walk');
+  game.hero.x = startX + 800;
+  frame(400);
+  assert.equal(routeRefreshes, 3, 'substantial new movement refreshes without waiting');
 
   // Finding the actual patrolling monster, rather than reaching the old
   // snapshot waypoint, immediately fulfills this one informant guide.
   Object.assign(boss, { x: game.hero.x + 110, y: game.hero.y + 40 });
   assert(Math.hypot(game.hero.x - target.x, game.hero.y - target.y) > 25,
     'the player did not visit the original landmark');
-  frame(400);
+  frame(500);
   assert.equal(scope.Prototype.trackedWaypoint, null, 'Thornfang found clears the guide');
   assert.equal(scope.Prototype.navigationState.active, false);
-  assert.equal(routeRefreshes, 2, 'the encounter check prevents another route search');
+  assert.equal(routeRefreshes, 3, 'the encounter check prevents another route search');
   assert.equal(game.hero.order, null, 'manual hero control is preserved');
 
 }
