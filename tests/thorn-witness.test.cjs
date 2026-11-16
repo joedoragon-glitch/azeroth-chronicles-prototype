@@ -84,7 +84,7 @@ for (const seed of [0.1, 0.5, 0.9]) {
   assert.equal(restored.zone().npcs.filter((n) => n.id === resident.id).length, 1);
 }
 for (const language of ['en', 'es']) {
-  const { scope, elements } = require('./helpers/production-shell.cjs').shell(language);
+  const { scope, elements, frame } = require('./helpers/production-shell.cjs').shell(language);
   const game = scope.Prototype.game;
   game.hero.level = 2;
   const resident = game.zone().npcs.find((n) => n.thornReport);
@@ -102,6 +102,29 @@ for (const language of ['en', 'es']) {
   assert(tile, 'the reported landmark has an actionable lead');
   tile.click();
   assert.deepEqual(game.hero.path.at(-1), target, 'the route uses the reported area snapshot');
+  assert.equal(scope.Prototype.trackedWaypoint?.id, lead.id);
+  const snapshotQuest = JSON.stringify(game.s.quests);
+  // Walk manually into the actual Thornfang encounter *before* reaching the
+  // scout's old reported patrol point.
+  game.hero.order = null;
+  game.hero.path = [];
+  assert.equal(scope.Prototype.trackedWaypoint?.id, lead.id,
+    'manual input alone need not dismiss an active waypoint');
+  game.s.mercyTime = 0;
+  game.s.thornHeroInitiated = true;
+  game.s.valeFieldAwakened = true;
+  game.engage(boss);
+  assert(boss.aggro, 'Thornfang was genuinely engaged');
+  // Exercise the production app guide maintenance without advancing a
+  // separate AI/boss-combat fixture, whose acceptance belongs elsewhere.
+  const tick = game.tick;
+  game.tick = (dt) => { game.s.time += dt; };
+  try { frame(70); } finally { game.tick = tick; }
+  assert.equal(scope.Prototype.trackedWaypoint, null,
+    'encounter clears only the obsolete Thornfang lead');
+  assert.equal(scope.Prototype.navigationState.active, false);
+  assert.equal(game.hero.order, null, 'hero remains manually controlled');
+  assert.equal(JSON.stringify(game.s.quests), snapshotQuest, 'quest progress untouched');
 
 }
-console.log('PASS #679 truthful, localized Thornfang/Mira clues; stable trail/witness IDs; v4 migration; rescue');
+console.log('PASS #679 truthful, localized Thornfang/Mira clues; stable trail/witness IDs; v4 migration; encounter closes obsolete waypoint');
