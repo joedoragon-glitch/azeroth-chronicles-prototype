@@ -145,21 +145,24 @@ const server = http.createServer((req, res) => {
       }
       await page.screenshot({ path: path.join(out, 'archive-milestones-' + tag + '.png') });
       await page.evaluate(() => (document.querySelector('#status').textContent = ''));
-      // The fixture intentionally suppresses the campaign tick while inspecting
-      // authored notices outside active play. Pump the actual HUD's expiry clock
-      // rather than assuming a live gameplay loop updates the paused title.
       await page.waitForFunction(
-        () => {
-          window.Prototype.updateHUD();
-          return !document.querySelector('#message').classList.contains('visible');
-        },
+        () => !document.querySelector('#message').classList.contains('visible'),
         null,
         { timeout: 15000 },
       );
-      // This browser fixture is still at the title (no campaign started).
-      // Gameplay-only G help intentionally cannot open here. The current
-      // Controls and title Help menus have separate production-shell coverage;
-      // keep this test focused on earned Archive interactions below.
+      await page.keyboard.press('g');
+      assert(
+        (await page.locator('#modal-description').textContent()).includes(
+          'Fallen companions need Barracks',
+        ),
+      );
+      assert((await page.locator('#modal-description').textContent()).includes('Shield Bash'));
+      await page.getByRole('button', { name: 'Combat conditions', exact: true }).click();
+      await page.getByRole('button', { name: 'Slow', exact: true }).click();
+      assert((await page.locator('#modal-description').textContent()).includes('cooldown'));
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
       await page.evaluate(() => {
         const c = Prototype.game;
         c.enter('archive');
