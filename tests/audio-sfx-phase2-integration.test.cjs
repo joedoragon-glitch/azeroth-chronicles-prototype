@@ -9,9 +9,10 @@ const manifest=JSON.parse(fs.readFileSync(path.join(root,'assets/audio/manifest.
 const compiled=require('../src/prototype/audio-library.js');
 validateCatalog(manifest);
 assert.deepEqual(compiled,runtimeCatalog(manifest),'Runtime sound catalog must match exact recorded manifest');
-const ids=['rogue-bell-basic','rogue-bell-emphatic','lifebinder-cold-ring','quest-complete'];
-assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,34);
-assert.equal(Object.keys(manifest.director.events).length,98);
+const ids=['rogue-bell-basic','rogue-bell-emphatic','lifebinder-cold-ring','quest-complete',
+  'charmed-wraith-heritage','barracks-complete'];
+assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,36);
+assert.equal(Object.keys(manifest.director.events).length,99);
 for(const id of ids){
   const a=manifest.assets['sfx-phase2-'+id];
   assert(a && a.kind==='effect' && a.managedBy==='sfx-phase2-pilot-dsp');
@@ -95,4 +96,15 @@ assert.equal(fallbackNotes,notesBeforeQuest,'Quest bookkeeping must not double-c
 a.ctx.currentTime+=.25;
 a.effect({type:'quest',id:'other',automatic:true});
 assert(fallbackNotes>notesBeforeQuest,'Independent later quest notes must keep existing synthesized feedback');
-console.log('PASS Phase 2 draft: four legal recorded routes; 30 old bindings intact; Rogue warm/cold; non-damage boss release; single earned quest payoff');
+a.ctx.currentTime+=.4;
+const beforeHeritage=heard.length,notesBeforeHeritage=fallbackNotes;
+a.effect({type:'spell',actor:'companion',kind:'charmHeritage',species:'wraith'});
+assert.equal(heard.length,beforeHeritage+1,'A genuine Charmed Wraith heritage cast must get exactly one voice');
+assert.equal(heard.at(-1)?.id,'sfx-phase2-charmed-wraith-heritage');
+assert.equal(fallbackNotes,notesBeforeHeritage,'Warm Wraith heritage must replace generic magicCast');
+a.effect({type:'charmHeritage',actor:'companion',species:'wraith'});
+assert.equal(heard.length,beforeHeritage+1,'Paired visual-only heritage must not add a sound');
+a.ctx.currentTime+=.4;
+a.effect({type:'construction',id:'barracks-1'});
+assert.equal(heard.at(-1)?.id,'sfx-phase2-barracks-complete','Actual Barracks completion sound');
+console.log('PASS six actual Phase 2 draft audio routes; 30 Phase 1 bindings; Rogue warm/cold; boss no fake impact; single quest, Charmed heritage and Barracks feedback');

@@ -13,10 +13,11 @@ assert.equal(CUES.length,8);
 assert.deepEqual(CUES,book.cues);
 assert.equal(new Set(CUES.map(c=>c.id)).size,8);
 assert.deepEqual([...byId].sort(),CUES.map(c=>c.id).sort());
-assert.equal(Object.keys(manifest.director.events).length,98);
-const integrated=new Set(['rogue-bell-basic','rogue-bell-emphatic','lifebinder-cold-ring','quest-complete']);
-assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,34,
-  'Original 30 Phase 1 and exactly four Phase 2 draft effects');
+assert.equal(Object.keys(manifest.director.events).length,99);
+const integrated=new Set(['rogue-bell-basic','rogue-bell-emphatic','lifebinder-cold-ring','quest-complete',
+  'charmed-wraith-heritage','barracks-complete']);
+assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,36,
+  'Original 30 Phase 1 and exactly six Phase 2 draft effects');
 const signalHashes=new Set(),rmsValues=new Set();
 for(const cue of CUES){
   const {bytes,metrics}=renderWav(cue);

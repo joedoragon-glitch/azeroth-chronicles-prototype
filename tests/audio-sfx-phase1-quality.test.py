@@ -31,7 +31,8 @@ for key in all_ids:
         else:
             assert current==original,(key,'unrelated event contract changed')
 phase2_ids={'sfx-phase2-rogue-bell-basic','sfx-phase2-rogue-bell-emphatic',
- 'sfx-phase2-lifebinder-cold-ring','sfx-phase2-quest-complete'}
+ 'sfx-phase2-lifebinder-cold-ring','sfx-phase2-quest-complete',
+ 'sfx-phase2-charmed-wraith-heritage','sfx-phase2-barracks-complete'}
 assert set(k for k,v in manifest['assets'].items() if v['kind']=='effect') == all_ids | phase2_ids
 assert len([v for v in manifest['assets'].values() if v['kind']=='music'])==84
 assert len([v for v in manifest['assets'].values() if v['kind']=='ambience'])==34
@@ -113,7 +114,7 @@ c=Counter((s.split('-')[-1] if s not in ['sfx-critical-warning','sfx-hero-steel-
 assert c=={'release':12,'impact':12,'special':6},c
 # A 30-sound count does not replace all 95 event categories; deliberate live/procedural
 # fallbacks remain. Rebinding or adding events is intentionally Phase 2, not this pass.
-assert len(manifest['director']['events'])==98  # Existing 95 + 3 valid Phase 2 keys
+assert len(manifest['director']['events'])==99  # Existing 95 + 4 valid Phase 2 keys
 assert len([a for a in manifest['director']['events'].values() if a])==8
 print(json.dumps({'status':'PASS: 30 original recordings archived, replaced and hashed; '
  'source/render technical gates only, no by-ear or device acceptance',
