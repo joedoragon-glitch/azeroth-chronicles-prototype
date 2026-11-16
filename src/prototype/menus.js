@@ -1668,7 +1668,7 @@
           refresh();
         },
         queued
-          ? 'Queued · tap to cancel. No crowns spent.'
+          ? 'Queued · choose again to cancel. No crowns spent.'
           : (reason === 'No requested companion is still fallen.'
               ? 'No fallen companions.'
               : reason === 'No requested party member is still wounded.'
@@ -1678,7 +1678,7 @@
                 ? 'Recover ' + rosterLabel(target) + ' · '
                 : 'Full health for party. · ') +
                 (g.hero.gold < cost
-                  ? 'Short on crowns? Tap to queue.'
+                  ? 'Short on crowns? Choose this option to queue.'
                   : 'Safe conditions required.'),
         !queued && !!reason,
       );
@@ -1718,12 +1718,12 @@
               refresh();
             },
             queued
-              ? 'Queued #' + (queuedIndex + 1) + ' · tap to cancel. No crowns spent.'
+              ? 'Queued #' + (queuedIndex + 1) + ' · choose again to cancel. No crowns spent.'
               : full
                 ? 'Queue full: upgrade to Full Barracks for unlimited recovery requests.'
                 : reason ||
                   (g.hero.gold < cost
-                    ? 'Short on crowns? Tap to queue.'
+                    ? 'Short on crowns? Choose this option to queue.'
                     : 'Recover now for 40 crowns, or join the existing queue.'),
             !queued && (full || !!reason),
           );
@@ -1981,10 +1981,10 @@
           reopen();
         },
         queued
-          ? 'Queued · tap to cancel. No crowns spent.'
+          ? 'Queued · choose again to cancel. No crowns spent.'
           : reason ||
               (g.hero.gold < price
-                ? 'Short on crowns? Tap to queue.'
+                ? 'Short on crowns? Choose this option to queue.'
                 : barracksId === null
                   ? 'Joins your group; full groups send recruits to reserve.'
                   : 'Joins after training; a full active group sends the recruit to reserve.'),
@@ -2014,7 +2014,7 @@
         (queueName
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
           : 'Choose a recruit') +
-          '. A full group sends recruits to reserve.\nShort on crowns? Tap to queue.' +
+          '. A full group sends recruits to reserve.\nShort on crowns? Choose this option to queue.' +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         [
           ...otherRecruitmentCancellation(b.id, reopen),
@@ -3103,7 +3103,7 @@
       ];
       openMenu(
         getGame().definition().town + ' Captain',
-        'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Tap an available service to queue it.' +
+        'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Choose an available service to queue it.' +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         actions,
         back,
@@ -3429,7 +3429,7 @@
         completed ? 'Completed quests' : 'Side Quests',
         completed
           ? 'Finished quests and rewards.'
-          : 'Tap a quest to track it. Rewards arrive automatically.',
+          : 'Choose a quest to track it. Rewards arrive automatically.',
         [
           ...local.map((q) =>
             action(
