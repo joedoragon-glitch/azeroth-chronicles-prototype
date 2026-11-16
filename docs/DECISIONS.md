@@ -12,6 +12,7 @@ This page collects the owner's recorded design rules and their later amendments 
 - [Companions, Expedition, Barracks, recruitment, pets and labor](#companions)
 - [Hero classes, progression, input and abilities](#heroes)
 - [Combat balance, bosses, enemy AI and Nightmare](#combat)
+- [Pathfinding, collision and performance acceptance for an action RPG](#navigation-quality)
 - [World geography, regions, structures, transport and dungeons](#world)
 - [Narrative, named characters, lore and Archive writing](#narrative)
 - [Visuals, sprite authorship, camera, terrain and presentation](#visuals)
@@ -302,6 +303,21 @@ Dreadmaw deliberately recenters his closing ring on his current position while w
 The current warning follows the same center and gaps used by the resolved closure; keep that readable relationship and existing warning duration, damage, cooldown and terrain rules. This decision accepts the behavior identified as F5 in the dev.142–144 audit; it does not claim that the original code was written with this intention or that every placement is survivable. F5 is closed as accepted behavior, not an outstanding repair. No executable change or new release is required.
 
 <a id="world"></a>
+<a id="navigation-quality"></a>
+## Pathfinding, collision and performance acceptance for an action RPG
+
+### 16 November 2026 — owner-approved fitness-for-purpose standard
+
+**Design intent:** SIBDLP is a **single-player action-adventure RPG**, not a competitive real-time strategy game. Navigation and collision should support responsive, credible play; they are not intended to simulate competition-grade unit positioning or guarantee mathematically optimal routes.
+
+- **Required:** Characters and map guidance respect real impassable terrain and important authored boundaries. Supported reachable destinations, service entrances, quests, transports, bosses and progression remain accessible. No recurring stuck states, softlocks, unjustified teleports, uncontrolled movement, broken companion/escort behavior, or material combat exploits. Save/state integrity, player controls and scripted events remain protected.
+- **Acceptable trade-offs:** A safe route may take different turns, be modestly longer, adjust imperfectly around obstacles, or update guidance after a short bounded delay. An optional visual guide does not need the same waypoint array or shortest path as legacy BFS. Ordinary, recoverable momentary AI imprecision can be tolerated when it does not meaningfully degrade combat or gameplay.
+- **Tests should measure player outcomes:** reachability, collision-safe segments and arrival, responsive frame-time impact, credible combat pressure and escort continuity, cancellation/recovery, regional/saved-game compatibility. Preserve exact route parity or deterministic historical geometry **only where it is a genuine authored mechanic or compatibility contract** (for example authored roads, scripted waypoint order, save-critical destinations), not as a universal test condition.
+- **Do not lower meaningful safety requirements:** This is not permission for wall clipping, unreachable objectives, enemy attacks through barriers, bypassed travel rules, disabled collision, persistent pathfinding failures, unfair boss behavior, or masking a real regression with weaker assertions. A shortcut must be judged against its actual gameplay consumer and tested in representative terrain.
+- **Scope and evidence:** Prefer local, measured changes that remove significant synchronous work with no material player regression. Compare before/after CPU/frame costs **without pretending GitHub runner timings are Chromebook timings**. Do not automatically revisit previously optimized companions, pets, charmed creatures, bosses or other actor AI; they have distinct planning/attack contracts. A broader retrospective audit of old route/collision optimizations is **explicitly deferred to another workstream and requires its own scope decision**. The currently authorized Report #40 repair is limited to optional visual map guidance (issue #886 / draft PR #889), not a general optimization sprint.
+
+This decision supersedes blanket expectations that every new valid route must exactly equal the legacy search output. It does **not** supersede any specific authored-lore, combat, save-integrity or collision-safety requirement. See [engineering acceptance guidance](MECHANIC_DEVELOPMENT.md) and the [map/wayfinding investigation](MAP_WAYFINDING_FOLLOWUP.md).
+
 ## World geography, regions, structures, transport and dungeons
 
 Authored places, occupied societies, routes, arrival/departure points, dungeon entrances, defended sites and geography. Some subsections also touch combat, art or lore; their original full decision text remains here.
