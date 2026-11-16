@@ -97,9 +97,10 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
       text,
       'same story resumes once after disengagement',
     );
-    await page.waitForFunction(() => !document.querySelector('#message .notice-card'), null, {
-      timeout: 7000,
-    });
+    await page.waitForFunction(() => {
+      window.Prototype.updateHUD();
+      return !document.querySelector('#message .notice-card');
+    }, null, { timeout: 7000 });
     await page.evaluate(() => {
       Prototype.game.notice(
         'Trail witness',
