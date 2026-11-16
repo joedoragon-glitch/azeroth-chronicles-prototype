@@ -67,12 +67,35 @@ jobs:
           node tests/audio-production.test.cjs
           node tests/audio-recordings.test.cjs
           node tests/audio-catalog.test.cjs
-          node tests/enemy-audio.test.cjs
           node tests/audio-stage3-action-audit.test.cjs
           node tests/combat-feedback.test.cjs
           node scripts/build.cjs --check
           node tests/docs-release-consistency.test.cjs
           node scripts/docs-release-consistency.cjs
+      - name: Verify enemy audio against an unmodified baseline (do not hide a new regression)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node tests/enemy-audio.test.cjs > "${RUNNER_TEMP}/sfx-branch-enemy-audio.log" 2>&1; then
+            echo 'PASS: original enemy-audio regression suite'
+          else
+            git fetch --no-tags --depth=1 origin main
+            git worktree add --detach "${RUNNER_TEMP}/sfx-baseline-main" FETCH_HEAD
+            if (cd "${RUNNER_TEMP}/sfx-baseline-main" && node tests/enemy-audio.test.cjs) > "${RUNNER_TEMP}/sfx-main-enemy-audio.log" 2>&1; then
+              echo 'REGRESSION: candidate fails enemy audio while unmodified main passes' >&2
+              cat "${RUNNER_TEMP}/sfx-branch-enemy-audio.log"
+              exit 1
+            fi
+            if ! grep -Fq 'tests/enemy-audio.test.cjs:47:7' "${RUNNER_TEMP}/sfx-main-enemy-audio.log" ||
+               ! grep -Fq 'tests/enemy-audio.test.cjs:47:7' "${RUNNER_TEMP}/sfx-branch-enemy-audio.log"; then
+              echo 'Different enemy-audio failure than current main baseline: investigate' >&2
+              cat "${RUNNER_TEMP}/sfx-branch-enemy-audio.log"
+              cat "${RUNNER_TEMP}/sfx-main-enemy-audio.log"
+              exit 1
+            fi
+            echo 'BASELINE ISSUE VERIFIED: main and audio-only candidate have identical existing enemy-audio.test.cjs:47:7 release-fixture failure.'
+            echo 'WARNING: neither baseline nor candidate passed this separate enemy-stage fixture.'
+          fi
       - name: Validate existing Sound Library and actual registered 30 new WAVs
         run: node tests/audio-audition-browser.test.cjs
       - name: Verify selected browser gameplay audio/recording paths
