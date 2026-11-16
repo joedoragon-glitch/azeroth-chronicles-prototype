@@ -93,4 +93,67 @@ for (const form of ['normal', 'true']) {
   assert.equal(c.hero.hp, afterGround,
     'physically directed attacks never bypass blocking terrain');
 }
+// The original #902 audit also established that captain acquisition is not
+// the same distance as an attack footprint. Move that contract here rather
+// than losing it when leaving the unrelated historical F01-F79 suite intact.
+for (const [key, oldRange] of Object.entries({
+  'supply-vale': 420, 'supply-march': 390,
+  'supply-highlands': 430, 'supply-crown': 440,
+  'frontier-overseer': 440,
+})) {
+  const cfg = R.roomCaptains[key];
+  assert(cfg, key + ' native captain profile remains registered');
+  assert(cfg.specialRange > oldRange, key + ' authored acquisition remains expanded');
+  const cone = cfg.attacks.find((a) => a.kind === 'cone');
+  if (cone) assert(
+    (cone.radius || R.bossAreaGeometry.captainDefaultConeRadius) < cfg.specialRange - 8,
+    key + ' close cone must not be mistaken for full acquisition range',
+  );
+}
+
+// Original #902 F39: the Mine ring can only be selected when its actual
+// moving wave can reach the victim, including the baked-in life extension.
+{
+  const g = new C('normal', 'paladin', () => 0.5);
+  const reach = R.combatGeometry.ringSpeed * R.bossAreaGeometry.ringLife;
+  assert(reach > R.combatGeometry.ringSpeed * R.combatGeometry.ringLife,
+    'normalized real ring sweep retains its approved extension');
+  const e = g.bossEnemy(g.boss('mine'), 'normal', { x: 1100, y: 1200 });
+  g.zone().enemies = [e];
+  g.s.party = [];
+  g.line = () => true;
+  e.lastAttackIndex = -1;
+  assert(g.bossAttackWeights(e, { x: e.x + 320, y: e.y })[2] > 0,
+    'Mine wave remains a legal threat inside real moving sweep');
+  assert.equal(g.bossAttackWeights(e, { x: e.x + 430, y: e.y })[2], 0,
+    'Mine wave is not selected beyond the actual moving sweep');
+}
+
+// Original #902 F42: the Highlands captain may place ground area at a
+// distant visible hero, but terrain blocking hero LOS must retain a nearby
+// frontline target rather than projecting an invisible backline hit.
+{
+  const g = new C('normal', 'paladin', () => 0.5);
+  g.enter('supply-highlands');
+  const e = g.zone().enemies.find((u) => u.roomCaptain);
+  assert(e, 'native Highlands captain exists');
+  g.s.party = [];
+  const front = { x: e.x + 90, y: e.y };
+  Object.assign(g.hero, { x: e.x + 360, y: e.y });
+  g.random = () => 0;
+  g.line = () => true;
+  e.lastCaptainAttack = 0;
+  assert(g.startCaptainAttack(e, front), 'visible-hero ground pressure is valid');
+  assert.equal(e.telegraph.kind, 'circle');
+  assert.equal(e.telegraph.x, g.hero.x,
+    'clear LOS permits targeting the distant hero');
+  assert.equal(e.telegraph.radius,
+    R.roomCaptains['supply-highlands'].attacks[1].radius,
+    'native effective area radius is used directly');
+  g.line = (a, b) => b !== g.hero;
+  e.lastCaptainAttack = 0;
+  assert(g.startCaptainAttack(e, front), 'blocked-hero frontline attack remains valid');
+  assert.equal(e.telegraph.x, front.x,
+    'blocked LOS prevents an invisible ground area at the distant hero');
+}
 console.log('PASS v0.9.2 integration: effective boss/captain AoE, both forms, projectile lifetime, PT-007 line of sight');
