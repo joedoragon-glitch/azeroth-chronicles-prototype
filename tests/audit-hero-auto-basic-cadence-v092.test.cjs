@@ -72,7 +72,7 @@ function measure(cls,training,frameMs,slowStacks=0,durationMs=11000) {
     {slow:100,slowStacks},1
   ) : 1;
   const expected=base/recovery;
-  const theoreticalFrame=Math.ceil(expected/(frameMs/1000)-1e-7)*(frameMs/1000);
+  const theoreticalFrame=Math.ceil(expected/dt-1e-7)*(frameMs/1000);
   const result={class:cls,training,frameMs,slowStacks,
     baseSeconds:+base.toFixed(5),
     recoveryFactor:+recovery.toFixed(5),
