@@ -42,8 +42,12 @@ const root = path.resolve(__dirname, '..'),
       launch.args = ['--no-sandbox', '--disable-dev-shm-usage'];
     }
     browser = await pw[engine].launch(launch);
-    for (const entry of ['index.html', 'phone.html']) {
-      const phone = entry === 'phone.html',
+    // phone.html is now a separate safe-area wrapper whose game and Prototype
+    // globals live inside the same-origin phone-game.html iframe. Exercise
+    // the actual game document under mobile viewport/touch instead of trying
+    // to access a non-existent top-level Prototype on the outer frame.
+    for (const entry of ['index.html', 'phone-game.html']) {
+      const phone = entry === 'phone-game.html',
         page = await browser.newPage({
           viewport: phone ? { width: 375, height: 812 } : { width: 1280, height: 800 },
           hasTouch: phone,
