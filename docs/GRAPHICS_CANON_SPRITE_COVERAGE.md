@@ -1,3 +1,5 @@
+> **16 November 2026 shadow-grounding checkpoint (DRAFT, not merged or published):** [Audit #893](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/893) and [candidate #894](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/894) trace current contact shadows to PR #22 and retain the existing procedural Canvas/Pixi ground-treatment contract. Some procedural boss and pet bodies still embedded redundant local ground ovals beneath the renderer-owned two-ellipse treatment; the draft removes those obsolete body shadows only. No body replacement, generated sprite revision, saved-state change or new lighting system is included. Actual regional sprite-footprint, nighttime and device visual acceptance remain open in [the bounded audit handoff](SHADOW_PRESENTATION_AUDIT_20261116.md).
+
 > **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
 
 > **8 November execution checkpoint.** Current Dark Crown integration draft: the Foundry production and shipping fixtures are static equipment. Descriptions of animated labor refer to the superseded provisional draft.
@@ -444,3 +446,7 @@ These four procedural families implement the approved 50-decision register in dr
 | `estate-scaffold` | PROCEDURAL | C04/C05 existing Crypt reclamation and unfinished estate works, using existing timber/stone materials |
 
 See `tools/sprites/design-handoffs/greenwood-flagship-working-scenes.json` for authorial basis, exact runtime identities, scope and unresolved review.
+
+### 16 November 2026 — source-only sprite loader watchdog review (PR #897)
+
+The source-only `src/prototype/sprites.js` change adds a 60-second watchdog for a silently pending image request or `decode()` promise, freeing the bounded decoded-memory reservation, resolving the pending optional warmup and preserving procedural fallback. The sprite catalog, canonical artwork, approved image variants and clips, placements, hero identities, renderer-specific visuals and world geometry were not edited. The **enumerated** sprite-canon evidence is unchanged; only the reviewed `sprites.js` source SHA-256 in `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` was refreshed. The reviewed source-only sprite fingerprint, original sprite-scope test and focused regression passed in PR #897 [run #43867847771](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43867847771); this is not owner device acceptance or a published build.

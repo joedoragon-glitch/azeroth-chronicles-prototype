@@ -1,0 +1,54 @@
+# SIBDLP Sound Library — registered effects and stage-differentiation review (16 Nov 2026)
+
+## Current source and release uncertainty
+
+- PR #880 merged into main on 16 November 2026 at 07:02 UTC as commit 409f0ed671b0ff2563f788bf45ab665e01c05ca6. It replaced 30 production WAV bytes, updated the manifest, and staged the dev.289 service-worker/audio package. All 30 originals remain SHA-frozen in tools/audio/sfx-legacy/dev288.
+- PR #881 is a separate, explicitly NONSHIPPING, older research/A-B branch; its 30 experimental previews and ten extra sketches are NOT the current registered effects. Do not merge it to solve this report.
+- The source and [merged-main Pages CI #43820932176](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43820932176) verify **successful publication of dev.289**. They do **not** verify the owner's particular installed PWA refresh or browser audio cache. A dev.288 client could still present the old 30 and old catalog. Conversely, the current source uses SHA-256 verification when fetching a WAV, so an old asset mistakenly served with a new manifest hash should be rejected, not quietly played as new.
+- The source facts do not prove whether the owner's observed similarities originate from old bytes, new artistic timbre, speaker/level masking, or a combination.
+
+## Source inventory
+
+Exactly 30 **registered recorded effects**: 12 material families (steel, claw, bone, stone, wet, arrow, spectral, ash, holy, arcane, root, dust) with separate release/impact WAVs, plus six standalone cues (critical warning, hero steel swing, hero steel impact, Soldier Power Strike, Holy Cleave, Piercing Volley). The existing 95 event-guide keys have eight nonempty recording-bound categories; the remaining keys deliberately rely on runtime synthesis or silence. The recorder program was original project-owned waveform synthesis, **not a generative AI audio model**. This is not a claim that the separate studio pilots were integrated.
+
+## Independent PCM stage audit
+
+Measured directly from the archived dev.288 and **pre-correction dev.289** WAVs (the table is the audit baseline, not a measurement of the redesigned dev.290 candidates): percentage of total normalized signal energy in the first 40 milliseconds. Earlier/stronger energy means an abrupt impact-like onset; later onset/center means a moving/launching cue. Values are descriptive, not loudness matching or a human hearing assessment.
+
+| Material | Original dev.288 release / impact | Pre-correction dev.289 release / impact |
+| --- | ---: | ---: |
+| Steel | not measured in archive pass | 5% / 72% |
+| Claw | 94% / 97% | 14% / 47% |
+| Bone | not measured in archive pass | 38% / 96% |
+| Stone | **95% / 96%** | **9% / 70%** |
+| Wet | not measured in archive pass | 18% / 76% |
+| Arrow | **96% / 95%** | **41% / 95%** |
+| Spectral | **96% / 95%** | **13% / 65%** |
+| Ash | not measured in archive pass | 8% / 83% |
+| Holy | 94% / 96% | 44% / 73% |
+| Arcane | not measured in archive pass | 16% / 78% |
+| Root | not measured in archive pass | 8% / 89% |
+| Dust | not measured in archive pass | 6% / 92% |
+
+The five audited old pairs also have amplitude-envelope cosine similarity between 0.998 and 1.000, consistent with a common transient template. The new waveform data establish distinct temporal stage structures; in particular, the user's arrow, stone and spectral examples are no longer nearly identical in envelope. The **pre-correction claw and holy** pairs had relatively similar 20-ms-binned energy envelopes (cosine 0.907 / 0.932). This triggered an actual claw/holy redesign in dev.290, not an assertion that the updated sound is now subjectively acceptable. Distinct hashes/timing are necessary but not sufficient for satisfying sound design.
+
+## Narrow branch-only correction
+
+- The **same Game Sound Library** gains a contextual release-versus-impact comparison beneath the selected sound, using two existing game IDs and the existing SHA-checked, tap-initiated, one-shot playback path. It is never offered for a cue without a counterpart. Switching stage clears a restrictive filter rather than playing an invisible or wrong entry.
+- New desktop/phone browser assertions check selection, actual player result, source controls and proper hiding for unrelated sounds. The physical-WAV QA now rejects any of the twelve new pairs whose launch/contact onsets or energy centers collapse together; the test is explicitly **not** a psychoacoustic verdict.
+- The dev.290 candidate re-authors **exactly 10 existing WAVs**: release/impact for claw, stone, arrow, spectral and holy. It changes **only two existing release-event gains** after real browser-mix testing: stone 0.18 → 0.24 and holy 0.30 → 0.53. This leaves the other 20 WAV hashes, all existing effect IDs, 95 event-guide identities, 84 music, 34 environments, impacts, warning priority, game mechanics and v4 saves untouched. The original 30 dev.288 masters and complete per-ID event-level rollback archive remain protected. No Phase 2 recordings or new registrations; dev.290 is unmerged and unpublished.
+
+## Verification and further decision
+
+1. **Done:** [dev.290 staged candidate run #43831827640](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43831827640) **PASS** — actual 30-WAV hashes and 12-pair onset/centroid contract, original 30 archive hashes, selective/full/corrupted-backup rollback, sound registry/runtime contracts, real Chromium desktop/phone Sound Library and gameplay recorded/procedural mixing, and generated PWA/build consistency. The isolated workflow committed the exact verified resulting source as `5412caf5054441867a5865367810db7561b1805c`. Additional focused PR checks on that exact generated code/document head remain separately tracked.
+2. **Partly done:** successful Pages deployment for the *old* dev.289 merge is independently verified (run #43820932176). The current dev.290 review candidate is **not published**. Installed PWA/device uptake of either build remains unverified. The Sound Library now shows the build version and selected effect SHA-256 fingerprint, allowing future actual-device evidence.
+3. **Still needed for aesthetic acceptance:** listen to verified dev.290 release/contact for all twelve families on actual headphones and phone speaker, especially the five redesigned ones; judge timbre and gameplay context rather than relying on PCM metrics. This cannot be certified by an automated browser or source-level review.
+4. **Conditional only:** if a redesigned pair still sounds insufficiently different on a verified build, revise that material specifically; do not expand the file count, dilute the event staging, or claim perceptual success merely from numeric gates. Before any merge or new Pages/PWA update, seek an applicable explicit release decision.
+
+**Independent post-task review:** physical manifest diff against current main confirms only 10 effect SHA changes and only the two expected event-gain updates (stone and holy release); catalog count remains 148, effect IDs remain 30, and event keys remain 95. The first two broader browser runs failed *legitimate* warm/cold gain checks rather than fixture defects; their narrowly targeted corrections now pass on both desktop and phone. Final independent listener assessment and installed-device verification remain **UNVERIFIED**, not silently marked passed. **Status: dev.290 source and browser technical quality passed; owner-device/artistic acceptance and publication remain open.**
+
+## 16 November integration review — owner-authorized merge, not publication
+
+- Reconciled against the unchanged main `409f0ed671b0ff2563f788bf45ab665e01c05ca6`; PR #888 remains a source-only correction to ten WAVs, two registered release gains, and Sound Library listening controls. The separately scoped audio/title lifecycle check [#43832677065](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43832677065) failed because its obsolete test clicked a hidden title heading **before the first-run language welcome was completed**. The actual app's current first-run flow was already covered by other game browser tests. Corrected only `tests/audio-phase9-lifecycle-browser.test.cjs` to choose language, wait for the visible title, then complete the actual Normal/Standard → Choose Hero → Paladin route. Audio gesture and uninterrupted music assertions remain intact. The corrected Chromium check [#43861840494](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43861840494) **PASS** on `3152f4bc...`.
+- The existing `focused-deploy.yml` **automatically publishes a successful main push**, even following a PR merge. The owner authorized a conditional **merge** but did not authorize a separate player-facing Pages/PWA release. Added a narrowly scoped, auditable `[no-pages]` merge-commit marker that preserves the normal focused main validation but skips *both* artifact upload and the deploy job; normal main pushes without this marker retain the previous auto-publish behavior. `tests/pages-publication-guard.test.cjs` protects the two matching conditions. This is a merge safety measure, not an authorization to publish, a completed physical-device acceptance, or a global change to release cadence.
+- Before any merge, recheck the exact final PR head, dedicated PCM/browser audio CI, focused/build tests, title lifecycle, PWA update and Sound Library browser checks. If the conditions are not green, keep PR #888 unmerged and resolve source-level problems. If merged with the explicit no-publish marker, separately confirm GitHub's resulting main workflow **skipped deploy** rather than inferring that from the configuration. Do not report a live dev.290 build.

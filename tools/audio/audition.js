@@ -310,6 +310,15 @@
     if (id.endsWith('-impact') && !id.startsWith('sfx-hero-')) return 'impact';
     return 'special';
   }
+  function effectMaterial(id, entry) {
+    if (entry?.kind !== 'effect') return null;
+    const match = /^sfx-([a-z]+)-(release|impact)$/.exec(id);
+    if (!match) return null;
+    const assets = audio.recordingManifest?.assets || {};
+    const family = match[1];
+    return assets['sfx-' + family + '-release']?.kind === 'effect' &&
+      assets['sfx-' + family + '-impact']?.kind === 'effect' ? family : null;
+  }
   function effectsOnly() {
     return $('kind').value === 'effect' || $('collection').value === 'effects';
   }
@@ -560,7 +569,10 @@
               : 'Original Dark Crown recording — not rebuilt'
             : kindNames[entry.kind] || human(entry.kind),
         entry.bpm ? entry.bpm + ' BPM' : null,
-        entry.duration ? entry.duration.toFixed(1) + ' seconds' : null,
+        entry.duration ? entry.duration.toFixed(2) + ' seconds' : null,
+        entry.kind === 'effect' && /^[a-f0-9]{64}$/.test(entry.sha256 || '')
+          ? 'Audio SHA-256 ' + entry.sha256.slice(0, 12) + '…'
+          : null,
         id,
       ].filter(Boolean);
       for (const part of labels) {
@@ -580,6 +592,13 @@
       card.dataset.selected = String(card.dataset.id === id);
     syncNavigation();
     const pair = pairFor(id);
+    const material = effectMaterial(id, entry);
+    $('effect-stage-compare').hidden = !material;
+    if (material) {
+      $('effect-stage-description').textContent =
+        human(material) + ': release is departure/movement; impact is confirmed contact. ' +
+        'Choose either cue to compare them without a soundtrack or a campaign.';
+    }
     $('record-play').disabled = !entry;
     // Short game effects have no soundtrack stems or music-share route.
     // Do not invite ineffective controls into the focused 30-effect view.
@@ -862,6 +881,21 @@
       playing(soundTitle(id, entry), 'Playing ' + id + ' alone. Press Stop audio to end the loop.');
     }
   }
+  async function playEffectStage(stage) {
+    const selected = $('recording').value;
+    const material = effectMaterial(selected, audio.recordingManifest?.assets?.[selected]);
+    if (!material || !['release', 'impact'].includes(stage))
+      throw Error('Select a paired creature attack effect first.');
+    // Clear a single-stage filter so switching to the opposite stage remains
+    // visible and honest; no second audio player, asset or event registration.
+    $('kind').value = 'effect';
+    $('collection').value = 'all';
+    $('collection').disabled = false;
+    $('effect-stage').value = 'all';
+    $('search').value = '';
+    fillLibrary('sfx-' + material + '-' + stage);
+    return playRecording();
+  }
   async function playPaired() {
     const token = ++action;
     const pair = source === 'diagnostic'
@@ -997,6 +1031,8 @@
     message('Recording link copied. It opens the listening room, not an MP3 download.');
   }));
   $('record-play').addEventListener('click', run(playRecording));
+  $('effect-play-release').addEventListener('click', run(() => playEffectStage('release')));
+  $('effect-play-impact').addEventListener('click', run(() => playEffectStage('impact')));
   $('stem-play').addEventListener('click', run(playPaired));
   $('intensity').addEventListener('input', () => {
     $('intensity-value').textContent = Math.round(Number($('intensity').value) * 100) + '%';

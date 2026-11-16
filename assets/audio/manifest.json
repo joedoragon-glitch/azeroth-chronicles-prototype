@@ -1925,7 +1925,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-claw-release.wav",
       "duration": 0.285,
-      "sha256": "cf6e9d3183d96eecccbcdb8af1028c07441831ca98523c79e12e53fd5adb707b",
+      "sha256": "800a04f0f7621ce87662ae4a1a10decae20fd6391abab88489b6e5df5f3b9f05",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -1944,7 +1944,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-claw-impact.wav",
       "duration": 0.27,
-      "sha256": "183d2e6efafcac50a5de552ae709033581e965d1669070ad898247457c99d0e9",
+      "sha256": "5b191816d0b67b04f1e22f9d2a8e0651b8707f2b88095e68b3403bb6570ac0fc",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -2001,7 +2001,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-stone-release.wav",
       "duration": 0.285,
-      "sha256": "fef095fe9da2a9a8d1809823e34e5ecda9a0bb31e1bf5133aac3e1b0b8660c99",
+      "sha256": "c57fde3593db0b8972c97b57f3fc470b6b1015183ee60b91448db390ddda7513",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -2020,7 +2020,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-stone-impact.wav",
       "duration": 0.27,
-      "sha256": "8f3f0105ffdcff1f489ca8eba7a0a8dc75b55f9cf40505e71ebed7a4c40efc4d",
+      "sha256": "2bcc00f9362fdbb9b45304fb79e3e9a0c350bd159dbb2004e0c8fd7c520a401d",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -2077,7 +2077,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-arrow-release.wav",
       "duration": 0.285,
-      "sha256": "eb123c1988ea05e272ea87287e7eb456abcaf60ce083903e6b99e4c3b6c0ba1d",
+      "sha256": "0e1126820d74beaf3a74962c1f021413e74b44c34523482aa0cc7a81237fae76",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -2096,7 +2096,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-arrow-impact.wav",
       "duration": 0.27,
-      "sha256": "58a7fc0443ce2eccb81e69aea86bd345b2ec361519d91c9fab8f533901588373",
+      "sha256": "59b643849da4975e15c607eae87d93e0aca9bac12f66ce1bcca7d8d053cc1896",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -2115,7 +2115,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-spectral-release.wav",
       "duration": 0.285,
-      "sha256": "e7c2beff7b62e092405b7b4578b9886598139faff70c4bbf1925e57f9e1602a7",
+      "sha256": "4b7d879840e732918e28a63dac15cac911f545ddbb491a67c8724f316896ed17",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -2134,7 +2134,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-spectral-impact.wav",
       "duration": 0.27,
-      "sha256": "b529ce18de70332b319d1d53aca019ed340cd03f3d7d13d635cb1c4d596c5ba5",
+      "sha256": "4e50393b0234dd426dbc4fb8fc47d4b557a7d0c612c742d14bf543fba98034d6",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -2191,7 +2191,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-holy-release.wav",
       "duration": 0.285,
-      "sha256": "919ab97a34c60c85c21078150cea31d680c6b7a52e3ebe4eb64b28795a21180d",
+      "sha256": "bea6babeb1a305b52fd061ad5adaf3d743c2d180def4fde973bb690253c405d2",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -2210,7 +2210,7 @@
       "kind": "effect",
       "src": "./assets/audio/effects/sfx-holy-impact.wav",
       "duration": 0.27,
-      "sha256": "ef2c0e7d1d1d46a409004aa8dcca9048404d85d74e8452fa21c701cb4c26d2f9",
+      "sha256": "0e5bd8bd76d58816c0d3f0b6c89f72400a414c5f4602024a24e379c87cabb6f6",
       "credits": {
         "author": "Original SIBDLP handcrafted hybrid SFX sound design",
         "license": "Original project-owned audio; no third-party samples"
@@ -3270,7 +3270,7 @@
           "when": {
             "material": "stone"
           },
-          "gain": 0.18,
+          "gain": 0.24,
           "minGap": 0.035,
           "bus": "effects"
         },
@@ -3315,7 +3315,7 @@
           "when": {
             "material": "holy"
           },
-          "gain": 0.3,
+          "gain": 0.53,
           "minGap": 0.035,
           "bus": "effects"
         },

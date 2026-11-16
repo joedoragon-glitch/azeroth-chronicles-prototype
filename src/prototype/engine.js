@@ -1283,19 +1283,39 @@
       return n.name + '. ' + parts.join(' ');
     }
     questDestination(id) {
-      const q = this.questDefs().find((q) => q.id === id),
+      const q = [...this.questDefs(), ...this.additionalTutorialDefs()].find((q) => q.id === id),
         state = this.s.quests[id];
       if (!q || state?.paid || state?.done || state?.closedByPeace) return null;
       const z = this.zone(),
         nearest = (list) => list.slice().sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0],
         seen = (id) => !!this.s.discovered[q.region + ':' + id];
+      if (q.kind === 'tutorial-board') {
+        if (this.zoneId === 'side-vale-cellars')
+          return z.npcs.find((n) => n.kind === 'critical-codex') ||
+            z.npcs.find((n) => n.kind === 'exit') || null;
+        if (this.isDungeon())
+          return z.npcs.find((n) => n.kind === 'exit') || null;
+        if (this.definition().id !== 'vale')
+          return z.npcs.find((n) => n.kind === 'transport') || null;
+        if (!state.boardOpened || !state.storyViewed || !state.sideViewed)
+          return z.npcs.find((n) => n.kind === 'quests') || null;
+        return z.npcs.find((n) => n.sideDungeon && n.family === 'side-vale-cellars') || null;
+      }
+      if (q.kind === 'tutorial-gather') {
+        if (this.s.gatheringTarget?.zone === this.zoneId)
+          return z.nodes.find((n) => n.id === this.s.gatheringTarget.id) || null;
+        if (state.gatherStarted)
+          return z.npcs.find((n) => n.kind === 'supplier') || null;
+        return z.buildings.find((b) => b.kind === 'barracks' && b.progress >= 4) || null;
+      }
       if (q.kind === 'barracks') {
-        if (
-          !state.captainBriefed ||
-          (state.recallPracticed && !state.barracksBriefed && !this.hasAnyBarracks())
-        )
+        // Construction already underway supersedes tutorial dialogue,
+        // even if the player built independently before visiting the Captain.
+        if (this.hasAnyBarracks())
+          return nearest(z.buildings.filter((b) => b.kind === 'barracks' && b.progress < 4)) || null;
+        if (!state.captainBriefed || (state.recallPracticed && !state.barracksBriefed))
           return z.npcs.find((n) => n.kind === 'recruiter') || null;
-        return nearest(z.buildings.filter((b) => b.progress < 4)) || null;
+        return null;
       }
       let targetZone = q.region,
         rescue = q.kind === 'rescue' ? q.target : null;
@@ -1380,19 +1400,46 @@
       if (p?.paid)
         return q.kind === 'barracks'
           ? 'Complete · field base established'
-          : 'Complete · reward delivered';
+          : q.tutorial
+            ? 'Complete · lesson learned'
+            : 'Complete · reward delivered';
       if (p?.closedByPeace) return 'Resolved by peace';
       if (p?.done) return 'Complete';
-      if (q.kind === 'barracks' && !p?.captainBriefed)
-        return 'Meet the town Captain to learn about your Soldier and Ranger.';
-      if (q.kind === 'barracks' && !p?.recallPracticed)
-        return 'Try Recall squad to bring your companions back to you.';
+      if (q.kind === 'tutorial-board') {
+        if (!p?.boardOpened) return 'Visit the Greenwood Quest Board to learn about adventures.';
+        if (!p.storyViewed) return 'Open a Main Story objective at the Quest Board.';
+        if (!p.sideViewed) return 'Inspect Side Quests at the Quest Board.';
+        if (!p.mapOpened) return 'Open your map and find Old Orchard Cellars.';
+        if (!p.navigationUsed) return 'Select a destination on the map and choose Navigate.';
+        return 'Explore Old Orchard Cellars and study The Art of Misdirection (+1 critical chance point).';
+      }
+      if (q.kind === 'tutorial-gather') {
+        if (!p?.gatherStarted) return 'Barracks → Operations → Gather resources: dispatch idle companions.';
+        return 'Escort your workers and recover their cargo as crowns at Town Supplies.';
+      }
       if (q.kind === 'barracks') {
-        if (this.hasAnyBarracks())
-          return 'Construction in progress · keep one companion assigned until complete';
-        return p?.barracksBriefed
-          ? 'Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).'
-          : "Continue the Captain's briefing for the next step.";
+        switch (this.tutorialStage()) {
+          case 'captain':
+            return this.hero.class === 'rogue'
+              ? 'Meet the Captain: Rogues Charm monsters rather than hire Soldiers and Rangers.'
+              : 'Meet the town Captain to learn about your Soldier and Ranger.';
+          case 'charm':
+            return this.s.party.some((u) => this.isCharmedCompanion(u))
+              ? 'Recover a fallen Charmed companion or Charm another eligible monster before practicing Recall.'
+              : 'Charm an eligible monster with Rogue automatic attacks; the Rogue begins without companions.';
+          case 'recall':
+            return this.activeLivingParty().length
+              ? 'Try Recall squad to bring your companions back to you.'
+              : 'Recover a fallen companion or activate a resting ally before practicing Recall.';
+          case 'construction':
+            return this.activeLivingParty().some((u) => u.order?.type === 'build')
+              ? 'Construction in progress · keep an eligible companion assigned until complete'
+              : 'Construction paused · assign an available companion at your unfinished Barracks.';
+          case 'barracks':
+            return 'Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).';
+          default:
+            return "Continue the Captain's briefing for the next step.";
+        }
       }
       if (q.kind === 'bundles')
         return (
@@ -2935,7 +2982,9 @@
       )
         return '';
       if (!this.availableLabor().length)
-        return 'An idle active Soldier or Ranger is needed to build. Recall workers or recover a fallen companion first.';
+        return this.hero.class === 'rogue'
+          ? 'An idle active Charmed companion is needed to build. Recall workers or recover a fallen companion first.'
+          : 'An idle active Soldier or Ranger is needed to build. Recall workers or recover a fallen companion first.';
       if (!camp && this.hero.gold < this.barracksBuildCost())
         return 'Not enough crowns to build a Barracks (' + this.barracksBuildCost() + ' needed).';
       return '';
@@ -3153,6 +3202,7 @@
         );
         return true;
       }
+      this.recordGatheringTutorialStep('gatherStarted');
       this.say(
         labor.length +
           ' troop' +
@@ -3589,6 +3639,7 @@
                 def.nameEs + ' · +1 punto porcentual de probabilidad crítica (' + chance + '%)',
             },
           );
+          this.checkTutorialQuests();
           this.event('criticalCodex', { id: side.id, count: learned, name: def.name });
           return true;
         }
@@ -3722,13 +3773,113 @@
     questId(i) {
       return 'quest-' + i;
     }
+    // These are two distinct tutorial quests. Keep the original thirty
+    // regional IDs and questDefs() length unchanged for old v4 campaigns.
+    additionalTutorialDefs() {
+      return [
+        {
+          id: 'quest-tutorial-board', region: 'vale', name: 'The Quest Board',
+          objective: 'Learn Main Story, Side Quests and map navigation; study The Art of Misdirection in Old Orchard Cellars.',
+          gold: 0, xp: 0, index: -1, kind: 'tutorial-board', tutorial: true,
+        },
+        {
+          id: 'quest-tutorial-gather', region: 'vale', name: 'Recover Dark Lord Tribute',
+          objective: 'Dispatch companions to gather tribute and recover crowns from their cargo.',
+          gold: 0, xp: 0, index: -1, kind: 'tutorial-gather', tutorial: true,
+        },
+      ];
+    }
+    activeTutorialQuests() {
+      const original = this.questDefs().find((q) => q.id === 'quest-barracks');
+      const board = this.additionalTutorialDefs()[0];
+      const gather = this.additionalTutorialDefs()[1];
+      return [original, board, gather].filter((q) => {
+        const p = this.s.quests[q.id];
+        return !!p && p.active && !p.paid && !p.closedByPeace;
+      });
+    }
+    tutorialStage() {
+      const p = this.s.quests['quest-barracks'];
+      if (!p || p.paid) return 'complete';
+      // A real construction started without the Captain still advances
+      // guidance; no invented prerequisite blocks a legitimate early build.
+      if (this.hasAnyBarracks()) return 'construction';
+      if (!p.captainBriefed) return 'captain';
+      if (this.hero.class === 'rogue' && !this.activeLivingParty().some((u) => this.isCharmedCompanion(u)))
+        return 'charm';
+      if (!p.recallPracticed) return 'recall';
+      return p.barracksBriefed ? 'barracks' : 'brief-barracks';
+    }
+    completeTutorialQuest(p, id) {
+      if (!p?.active || p.paid) return false;
+      p.done = true;
+      p.paid = true;
+      p.active = false;
+      p.count = 1;
+      // Tutorial learning carries no combat, crown or mastery reward.
+      this.event('questComplete', { id });
+      this.event('quest', { id, automatic: true });
+      return true;
+    }
+    checkTutorialQuests() {
+      const board = this.s.quests['quest-tutorial-board'];
+      if (board?.active && !board.paid &&
+          board.boardOpened && board.storyViewed && board.sideViewed &&
+          board.mapOpened && board.navigationUsed &&
+          this.s.criticalCodices?.['side-vale-cellars'] === true)
+        this.completeTutorialQuest(board, 'quest-tutorial-board');
+      const gather = this.s.quests['quest-tutorial-gather'];
+      if (gather?.active && !gather.paid && gather.gatherStarted && gather.gatherDeposited)
+        this.completeTutorialQuest(gather, 'quest-tutorial-gather');
+    }
+    recordBoardTutorialStep(step) {
+      if (!['boardOpened', 'storyViewed', 'sideViewed', 'mapOpened', 'navigationUsed'].includes(step))
+        return false;
+      if (!this.s.quests['quest-barracks']?.paid) return false;
+      this.initializeQuests();
+      const p = this.s.quests['quest-tutorial-board'];
+      if (p.paid || p[step]) return false;
+      p[step] = true;
+      this.checkTutorialQuests();
+      this.event('quest', { id: 'quest-tutorial-board', tutorialStep: step });
+      return true;
+    }
+    startGatheringTutorial() {
+      if ((this.s.expeditionRank || 1) < 2 || !this.hasCompletedBarracks()) return false;
+      this.initializeQuests();
+      const p = this.s.quests['quest-tutorial-gather'];
+      if (p.paid) return false;
+      const first = !p.active;
+      p.active = true;
+      // s.gathered records collection into cargo, NOT payment. A prior
+      // harvest is legitimate evidence of labor but cannot certify a crown
+      // deposit; only the real deposit payout records gatherDeposited.
+      const prior = Object.values(this.s.gathered || {}).some((v) => v > 0);
+      const pendingCargo = this.s.party.some((u) => u.carry > 0);
+      if (prior || pendingCargo || this.s.party.some((u) => u.order?.type === 'gather'))
+        p.gatherStarted = true;
+      this.checkTutorialQuests();
+      if (first) this.event('quest', { id: 'quest-tutorial-gather', tutorialStep: 'started' });
+      return first;
+    }
+    recordGatheringTutorialStep(step) {
+      const p = this.s.quests['quest-tutorial-gather'];
+      if (!p?.active || p.paid || !['gatherStarted', 'gatherDeposited'].includes(step) || p[step] ||
+          (step === 'gatherDeposited' && !p.gatherStarted))
+        return false;
+      p[step] = true;
+      this.checkTutorialQuests();
+      this.event('quest', { id: 'quest-tutorial-gather', tutorialStep: step });
+      return true;
+    }
     questDefs() {
       const onboarding = {
         id: 'quest-barracks',
         region: 'vale',
         name: 'Your First Company',
-        objective:
-          'Meet the Captain, try Recall squad, then build your first Basic Barracks (free).',
+        objective: this.hero.class === 'rogue'
+          ? 'Meet the Captain, Charm an eligible monster, practice Recall with your companion, then build your first Basic Barracks (free).'
+          : 'Meet the Captain, try Recall squad, then build your first Basic Barracks (free).',
         gold: 0,
         xp: 0,
         index: -1,
@@ -3771,6 +3922,11 @@
         const p = this.s.quests[q.id];
         if (!p.closedByPeace && !p.paid) p.active = true;
       }
+      for (const q of this.additionalTutorialDefs())
+        this.s.quests[q.id] ??= { active: false, count: 0, done: false, paid: false };
+      const board = this.s.quests['quest-tutorial-board'];
+      if (!board.paid && !board.closedByPeace && this.s.quests['quest-barracks']?.paid)
+        board.active = true;
     }
     accept(id) {
       const q = this.questDefs().find((q) => q.id === id);
@@ -3810,6 +3966,10 @@
         }
         if (p.done) this.payQuest(q, p);
       }
+      // The two teaching chapters are deliberately separate from the
+      // thirty regional objectives, and never auto-pay ordinary quest rewards.
+      this.initializeQuests();
+      this.checkTutorialQuests();
     }
     claim(id) {
       const q = this.questDefs().find((q) => q.id === id),

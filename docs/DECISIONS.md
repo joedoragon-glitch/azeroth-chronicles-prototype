@@ -20,6 +20,8 @@ This page collects the owner's recorded design rules and their later amendments 
 
 ## Known supersessions and cross-system dependencies
 
+**12 November 2026 owner-approved v0.9.2 tutorial completion ([#866](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/866)):** Keep `quest-barracks` and its real five stages, with the Rogue's lawful first Charm leading to Recall and genuine Barracks construction. After that quest, a separate tutorial must teach the Greenwood Quest Board, Main Story/Side Quests, map navigation and the real Old Orchard Cellars `The Art of Misdirection` critical Codex without awarding a duplicate book or critical bonus. Once an eligible player first selects **completed Barracks → Operations → Gather resources** at Expedition Rank 2, a separate first-use quest guides finite local tribute gathering and actual deposited crowns; remote Full Barracks Resource Expeditions need truthful bilingual descriptions only, not another guided chapter. Tie the Captain and Quest Board exclamation cues to current teaching stages. Preserve original quest IDs, saves, manual player exploration and combat difficulty. Passive hero basic attacks should not initiate boss/captain encounters by proximity alone; deliberate skills and already-active combat still function. These are approved **design decisions**, not evidence of merged/published implementation, CI success or owner play acceptance. Work continues as unmerged [draft PR #868](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/868).
+
 | Subject | What takes precedence | Earlier material to read with caution |
 | --- | --- | --- |
 | Ringleader burst-defense curve | **20 October**: knee/tail **0.145 / 0.240** | **9 October** reassigned curve **0.250 / 0.375** for ringleaders is superseded; other tiers remain subject to the later accepted rule and source check. |
@@ -391,6 +393,13 @@ The Keeper collected and authored the Archive. Self-history, old-company memorie
 
 <a id="visuals"></a>
 ## Visuals, sprite authorship, camera, terrain and presentation
+
+### 16 November 2026 — adaptive menus and 125% camera (current owner direction)
+
+The owner authorizes a game-wide, player-adjustable **Auto / Compact / Standard** menu density setting: main title and setup screens, every in-game menu/submenu, Barracks roster/services, Keeper Archive books/readings, shops, settings, maps, inventory and recovery/backup dialogs. Persist the preference independently from campaign saves; choose and cache the automatic effective density from actual usable **CSS viewport dimensions and safe-area insets**, updating when presentation geometry changes, not on every game frame. Compact must intelligently redistribute space; it must **not** be a blunt 75% transform that makes type illegible or reduces main touch targets below 44 CSS pixels. Long reading/rosters may scroll. Preserve natural English/Spanish, keyboard, touch and joystick navigation. Improve actual hero class previews through source-bound artwork normalization and a desktop layout that uses its wider space.
+
+The owner also chooses **125% as the new world-camera default**, with 100%, 150% and 175% retained. The new default is only for unconfigured preferences; previously saved explicit per-device screen-mode zoom choices must remain. Camera framing, UI density, Pixi/Canvas pixel density, v4 saves and actual gameplay rules are independent concerns. Review projected warnings, map projection, camera anchors and performance before accepting. Earlier 150% camera decisions below remain dated history, not the new default. This is design approval for a draft, **not** authorization to merge or publish.
+
 
 Rendering-only boundaries, original sprite masters, camera framing, supported layout sizes and visual cues. Old sprite inventory numbers refer to their dated releases.
 

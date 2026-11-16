@@ -1110,7 +1110,7 @@
         }
         for (const [id, q] of Object.entries(s.quests || {}))
           if (
-            !/^(?:quest-(?:[0-9]|[12][0-9])|quest-barracks)$/.test(id) ||
+            !/^(?:quest-(?:[0-9]|[12][0-9])|quest-barracks|quest-tutorial-board|quest-tutorial-gather)$/.test(id) ||
             !q ||
             typeof q.active !== 'boolean' ||
             typeof q.done !== 'boolean' ||
@@ -1120,7 +1120,11 @@
             q.count < 0 ||
             (q.captainBriefed !== undefined && typeof q.captainBriefed !== 'boolean') ||
             (q.recallPracticed !== undefined && typeof q.recallPracticed !== 'boolean') ||
-            (q.barracksBriefed !== undefined && typeof q.barracksBriefed !== 'boolean')
+            (q.barracksBriefed !== undefined && typeof q.barracksBriefed !== 'boolean') ||
+            ['boardOpened', 'storyViewed', 'sideViewed', 'mapOpened', 'navigationUsed',
+              'gatherStarted', 'gatherDeposited'].some(
+              (flag) => q[flag] !== undefined && typeof q[flag] !== 'boolean',
+            )
           )
             throw Error('Invalid quest');
         for (const [id, z] of Object.entries(s.zones)) {

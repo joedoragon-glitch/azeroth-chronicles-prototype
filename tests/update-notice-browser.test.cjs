@@ -135,7 +135,7 @@ const server = http.createServer((req, res) => {
       // never starts gameplay; use the labeled navigation action instead.
       const chooseHero = page.locator('#modal-actions button.menu-primary');
       assert(
-        (await chooseHero.textContent()).includes(phone ? 'Elegir héroe' : 'Choose Hero'),
+        (await chooseHero.textContent()).includes(phone ? 'Elegir personaje' : 'Choose Hero'),
         'new adventure exposes its labeled primary Choose Hero action',
       );
       await chooseHero.click();
