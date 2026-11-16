@@ -1739,10 +1739,10 @@
       }
       companionBasicInterval(u) {
         const profile = this.charmedCompanionProfile(u);
-        // Keep all existing quicker allied attacks, but prevent future Charm
-        // profiles from swinging slower than the native ordinary hostile.
+        // Preserve recruited native profiles independently of hostile melee
+        // tuning. A faster wild goblin does not silently haste its Charmed twin.
         const base = profile
-          ? Math.min(profile.interval || 0.85, R.balance.enemyOrdinaryMeleeBasicInterval)
+          ? Math.min(profile.interval || 0.85, R.balance.companions.charmedBasicIntervalCeiling)
           : 0.85;
         return this.charmedRingleaderCombatTraits(u) && u.hp > 0 &&
           u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold
