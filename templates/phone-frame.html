@@ -47,8 +47,17 @@
         ? { top: physical.right, right: physical.bottom,
             bottom: physical.left, left: physical.top }
         : physical;
-      for (const edge of ['top', 'right', 'bottom', 'left'])
-        gameRoot.style.setProperty('--phone-safe-' + edge, safe[edge] + 'px');
+      let changed = false;
+      for (const edge of ['top', 'right', 'bottom', 'left']) {
+        const next = safe[edge] + 'px';
+        if (gameRoot.style.getPropertyValue('--phone-safe-' + edge) !== next) {
+          gameRoot.style.setProperty('--phone-safe-' + edge, next);
+          changed = true;
+        }
+      }
+      // The iframe does not necessarily resize when only iOS safe insets change.
+      // Update the cached menu-density decision once, not during rendering.
+      if (changed) frame.contentWindow?.dispatchEvent(new Event('phone-safe-area-updated'));
     }
 
     frame.addEventListener('load', syncPhoneSafeArea);

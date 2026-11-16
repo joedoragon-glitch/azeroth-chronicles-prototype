@@ -1241,9 +1241,7 @@ body[data-experience='phone'] #modal-actions output {
     left: calc(50% + (var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)) / 2);
     right: auto;
     height: auto;
-    max-height: calc(
-      100dvh - 16px - var(--phone-safe-top, 0px) - var(--phone-safe-bottom, 0px)
-    );
+    max-height: calc(100dvh - 16px - var(--phone-safe-top, 0px) - var(--phone-safe-bottom, 0px));
     padding: clamp(7px, 1.8vh, 11px);
     transform: translate(-50%, -50%);
   }
@@ -1305,32 +1303,71 @@ body[data-experience='phone'] #modal-actions output {
      into very tall narrow button stacks. Preserve map/Archive special layouts
      and the dedicated 2-column Adventure/Settings indexes. */
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='compact']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-menu-layout='form']):not([data-menu-layout='choices']) {
-    width: min(440px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    #modal[data-dialog-size='compact']:not([data-view='map']):not(
+      [data-view='archive-reading']
+    ):not([data-view='archive-index']):not([data-view='archive-shelf']):not(
+      [data-view='npc-service-catalog']
+    ):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not(
+      [data-menu-layout='form']
+    ):not([data-menu-layout='choices']) {
+    width: min(
+      440px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='regular']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='adventure']):not([data-view='settings']):not([data-menu-layout='form']):not([data-menu-layout='choices']) {
-    width: min(570px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    #modal[data-dialog-size='regular']:not([data-view='map']):not(
+      [data-view='archive-reading']
+    ):not([data-view='archive-index']):not([data-view='archive-shelf']):not(
+      [data-view='npc-service-catalog']
+    ):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not(
+      [data-view='adventure']
+    ):not([data-view='settings']):not([data-menu-layout='form']):not([data-menu-layout='choices']) {
+    width: min(
+      570px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='wide']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='adventure']):not([data-view='settings']):not([data-menu-layout='form']):not([data-menu-layout='choices']) {
-    width: min(680px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    #modal[data-dialog-size='wide']:not([data-view='map']):not([data-view='archive-reading']):not(
+      [data-view='archive-index']
+    ):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not(
+      [data-view='barracks-hub']
+    ):not([data-view='npc-training-hub']):not([data-view='adventure']):not(
+      [data-view='settings']
+    ):not([data-menu-layout='form']):not([data-menu-layout='choices']) {
+    width: min(
+      680px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   /* Title-owned dialogs also respect their actual content density.
      A simple confirmation is not a 740px-wide screen; class choices and
      grouped indexes still get room for comparable two-column options. */
   body[data-experience='phone'].title-active #modal[data-dialog-size='compact'] {
-    width: min(460px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      460px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'].title-active #modal[data-dialog-size='regular'] {
-    width: min(630px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      630px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'].title-active #modal[data-dialog-size='wide'] {
-    width: min(740px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      740px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'].title-active #modal[data-view='class-select'],
   body[data-experience='phone'].title-active #modal[data-view='new-adventure'] {
-    width: min(720px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      720px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
 
   /* Gameplay service hubs: only comparable top-level choices use columns.
@@ -1338,7 +1375,10 @@ body[data-experience='phone'] #modal-actions output {
      must remain one-column, naturally scrollable content. */
   body[data-experience='phone'] #modal[data-view='barracks-hub'],
   body[data-experience='phone'] #modal[data-view='npc-training-hub'] {
-    width: min(620px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      620px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'] #modal[data-view='barracks-hub'] #modal-actions,
   body[data-experience='phone'] #modal[data-view='npc-training-hub'] #modal-actions {
@@ -1350,18 +1390,35 @@ body[data-experience='phone'] #modal-actions output {
     min-width: 0;
     overflow-wrap: break-word;
   }
-  body[data-experience='phone'] #modal[data-view='barracks-hub'] #modal-actions > button:nth-child(n + 5),
-  body[data-experience='phone'] #modal[data-view='npc-training-hub'] #modal-actions > button:nth-child(n + 5) {
+  body[data-experience='phone']
+    #modal[data-view='barracks-hub']
+    #modal-actions
+    > button:nth-child(n + 5),
+  body[data-experience='phone']
+    #modal[data-view='npc-training-hub']
+    #modal-actions
+    > button:nth-child(n + 5) {
     grid-column: 1 / -1;
   }
-  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-dialog-size='compact'] {
-    width: min(440px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  body[data-experience='phone']
+    #modal[data-view='npc-service-catalog'][data-dialog-size='compact'] {
+    width: min(
+      440px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
-  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-dialog-size='regular'] {
-    width: min(540px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  body[data-experience='phone']
+    #modal[data-view='npc-service-catalog'][data-dialog-size='regular'] {
+    width: min(
+      540px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-dialog-size='wide'] {
-    width: min(610px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      610px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'] #modal[data-view='npc-service-catalog'] #modal-actions,
   body[data-experience='phone'] #modal[data-view='archive-index'] #modal-actions,
@@ -1376,7 +1433,10 @@ body[data-experience='phone'] #modal-actions output {
   body[data-experience='phone'] #modal[data-view='archive-index'],
   body[data-experience='phone'] #modal[data-view='archive-shelf'],
   body[data-experience='phone'] #modal[data-view='archive-reading'] {
-    width: min(600px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      600px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
 
   /* In-game hub wayfinding is essential when nested menus share a Back
@@ -1399,7 +1459,10 @@ body[data-experience='phone'] #modal-actions output {
     overflow-wrap: anywhere;
   }
   body[data-experience='phone'] #modal[data-view='title-saves'] #modal-actions .menu-section,
-  body[data-experience='phone'] #modal[data-view='title-saves'] #modal-actions .menu-section-detail {
+  body[data-experience='phone']
+    #modal[data-view='title-saves']
+    #modal-actions
+    .menu-section-detail {
     grid-column: 1 / -1;
   }
   /* Backup downloads are peer actions; recovery and storage are independent
@@ -1412,22 +1475,35 @@ body[data-experience='phone'] #modal-actions output {
      recognizable without redundant vertical section headings. Keep the
      consequence in the Succession description and a clear next-step action. */
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-section,
-  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-primary .detail {
+  body[data-experience='phone']
+    #modal[data-view='new-adventure']
+    #modal-actions
+    .menu-primary
+    .detail {
     display: none;
   }
   /* New Adventure keeps difficulty choices together and a separate, safe
      Succession choice; all sections occupy the full action grid width. */
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-section,
-  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-section-detail {
+  body[data-experience='phone']
+    #modal[data-view='new-adventure']
+    #modal-actions
+    .menu-section-detail {
     grid-column: 1 / -1;
   }
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-primary {
     min-height: 44px;
   }
-  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions button:nth-of-type(3) {
+  body[data-experience='phone']
+    #modal[data-view='new-adventure']
+    #modal-actions
+    button:nth-of-type(3) {
     grid-column: 1 / -1;
   }
-  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-choice-active {
+  body[data-experience='phone']
+    #modal[data-view='new-adventure']
+    #modal-actions
+    .menu-choice-active {
     border-color: var(--menu-violet);
     box-shadow: inset 4px 0 var(--menu-violet);
   }
@@ -1578,7 +1654,10 @@ body[data-experience='phone'] #modal-actions output {
   /* Navigation choices and grouped shop/Barracks services: more width rather
      than larger cards. Explicit full-width warnings stay on their own row. */
   body[data-experience='phone'] #modal[data-menu-layout='choices'] {
-    width: min(700px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      700px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'] #modal[data-menu-layout='choices'] #modal-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1595,7 +1674,10 @@ body[data-experience='phone'] #modal-actions output {
   body[data-experience='phone'] #modal[data-view='npc-service-catalog'],
   body[data-experience='phone'] #modal[data-view='archive-index'],
   body[data-experience='phone'] #modal[data-view='archive-shelf'] {
-    width: min(760px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      760px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'] #modal[data-view='npc-service-catalog'] #modal-actions,
   body[data-experience='phone'] #modal[data-view='archive-index'] #modal-actions,
@@ -1606,7 +1688,10 @@ body[data-experience='phone'] #modal-actions output {
   /* Forms use paired setting cards on roomy landscape devices. Each input,
      file-picker and slider keeps native interaction; sections are full-width. */
   body[data-experience='phone'] #modal[data-menu-layout='form'] {
-    width: min(760px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      760px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'] #modal[data-menu-layout='form'] #modal-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1616,7 +1701,10 @@ body[data-experience='phone'] #modal-actions output {
     min-width: 0;
   }
   body[data-experience='phone'] #modal[data-view='character'] {
-    width: min(690px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      690px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
 
   /* Story answers, help prose, and character reference retain comfortable
@@ -1636,7 +1724,13 @@ body[data-experience='phone'] #modal-actions output {
     body[data-experience='phone'] #modal[data-view='archive-index'] #modal-actions,
     body[data-experience='phone'] #modal[data-view='archive-shelf'] #modal-actions,
     body[data-experience='phone'] #modal[data-menu-layout='form'] #modal-actions,
-    body[data-experience='phone'] #modal[data-menu-layout='choices']:not([data-view='class-select']):not([data-view='new-adventure']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='title-saves']):not([data-view='title-help']):not([data-view='adventure']):not([data-view='settings']) #modal-actions {
+    body[data-experience='phone']
+      #modal[data-menu-layout='choices']:not([data-view='class-select']):not(
+        [data-view='new-adventure']
+      ):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not(
+        [data-view='title-saves']
+      ):not([data-view='title-help']):not([data-view='adventure']):not([data-view='settings'])
+      #modal-actions {
       grid-template-columns: minmax(0, 1fr);
     }
   }
@@ -1660,18 +1754,217 @@ body[data-experience='phone'] #modal-actions output {
 @media (orientation: landscape) and (min-width: 560px) and (max-height: 560px) {
   body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-menu-count='1'],
   body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-menu-count='2'] {
-    width: min(510px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      510px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
-  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-menu-count='1'] #modal-actions,
-  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-menu-count='2'] #modal-actions {
+  body[data-experience='phone']
+    #modal[data-view='npc-service-catalog'][data-menu-count='1']
+    #modal-actions,
+  body[data-experience='phone']
+    #modal[data-view='npc-service-catalog'][data-menu-count='2']
+    #modal-actions {
     grid-template-columns: minmax(0, 1fr);
   }
   body[data-experience='phone'] #modal[data-menu-layout='form'][data-menu-count='1'],
   body[data-experience='phone'] #modal[data-menu-layout='form'][data-menu-count='2'] {
-    width: min(540px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      540px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
   body[data-experience='phone'] #modal[data-menu-layout='form'][data-menu-count='1'] #modal-actions,
-  body[data-experience='phone'] #modal[data-menu-layout='form'][data-menu-count='2'] #modal-actions {
+  body[data-experience='phone']
+    #modal[data-menu-layout='form'][data-menu-count='2']
+    #modal-actions {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* Universal menu-density control. This file loads LAST for both desktop and
+   phone: all menu families share #modal, #modal-content and #modal-actions.
+   The game stores only the player's preference; Platform caches the effective
+   responsive mode until CSS viewport/safe-area geometry actually changes.
+   Never globally scale the DOM: text fields and 44px touch targets stay usable. */
+body[data-menu-density-effective='compact'] #modal {
+  padding: clamp(6px, 1.5dvh, 10px);
+}
+body[data-menu-density-effective='compact'] #modal h2 {
+  font-size: clamp(16px, 2.5dvh + 8px, 19px);
+  line-height: 1.2;
+  margin-bottom: 4px;
+  padding-bottom: 3px;
+}
+body[data-menu-density-effective='compact'] #modal-description {
+  font-size: 13px;
+  line-height: 1.37;
+  margin-bottom: 5px;
+}
+body[data-menu-density-effective='compact'] #modal-actions {
+  gap: 4px 6px;
+}
+body[data-menu-density-effective='compact'] #modal-actions button,
+body[data-menu-density-effective='compact'] #modal-actions .menu-import-picker,
+body[data-menu-density-effective='compact'] #close-button {
+  min-height: 44px;
+  padding: 5px 8px;
+  font-size: 13.5px;
+  line-height: 1.25;
+}
+body[data-menu-density-effective='compact'] #modal-actions .detail,
+body[data-menu-density-effective='compact'] #modal-actions .menu-section-detail {
+  font-size: 12px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+body[data-menu-density-effective='compact'] #modal-actions .menu-setting {
+  gap: 4px 7px;
+  padding: 5px 7px;
+}
+body[data-menu-density-effective='compact'] #modal-actions .menu-setting-label,
+body[data-menu-density-effective='compact'] #modal-actions .menu-section {
+  font-size: 13px;
+  line-height: 1.3;
+  min-height: 0;
+}
+body[data-menu-density-effective='compact'] #modal-actions .menu-setting-input,
+body[data-menu-density-effective='compact'] #modal-actions input[type='text'] {
+  min-height: 44px;
+  font-size: 16px; /* Prevent native Safari zoom on focused fields. */
+}
+body[data-menu-density-effective='compact'] #modal[data-view='archive-reading'] #modal-description,
+body[data-menu-density-effective='compact']
+  #modal[data-view='title-help-reading']
+  #modal-description,
+body[data-menu-density-effective='compact'] #modal[data-view='title-credits'] #modal-description {
+  font-size: 14px;
+  line-height: 1.5;
+}
+/* Compact is denser, not a 75% CSS transform; real taps remain large. */
+body[data-menu-density-effective='compact'] #title-screen nav {
+  gap: clamp(4px, 0.8dvh, 7px);
+}
+body[data-menu-density-effective='compact'] #title-screen nav button,
+body[data-menu-density-effective='compact'] .language-welcome-choices button {
+  min-height: 44px;
+  padding: 6px 9px;
+  font-size: 15px;
+  line-height: 1.2;
+}
+body[data-menu-density-effective='compact']
+  #modal[data-view='class-select']
+  #modal-actions
+  button.class-character-choice {
+  grid-template-columns: 66px minmax(0, 1fr);
+  gap: 8px;
+}
+body[data-menu-density-effective='compact'] #modal[data-view='class-select'] .class-sprite-preview {
+  width: 64px;
+  height: 74px;
+}
+body[data-menu-density-effective='compact']
+  #modal[data-view='class-select']
+  .class-choice-copy
+  .class-growth {
+  padding-top: 3px;
+  margin-top: 3px;
+}
+/* Standard deliberately stays roomy even on short viewports. It may scroll. */
+body[data-menu-density-effective='standard'] #modal {
+  padding: clamp(12px, 2dvh, 18px);
+}
+body[data-menu-density-effective='standard'] #modal h2 {
+  font-size: 20px;
+  margin-bottom: 7px;
+}
+body[data-menu-density-effective='standard'] #modal-description {
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 9px;
+}
+body[data-menu-density-effective='standard'] #modal-actions {
+  gap: 8px;
+}
+body[data-menu-density-effective='standard'] #modal-actions button,
+body[data-menu-density-effective='standard'] #modal-actions .menu-import-picker,
+body[data-menu-density-effective='standard'] #close-button {
+  min-height: 48px;
+  padding: 8px 11px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+body[data-menu-density-effective='standard'] #modal-actions .detail,
+body[data-menu-density-effective='standard'] #modal-actions .menu-section-detail {
+  font-size: 13px;
+  line-height: 1.4;
+}
+body[data-menu-density-effective='standard'] #modal-actions .menu-setting {
+  gap: 7px;
+  padding: 8px 10px;
+}
+body[data-menu-density-effective='standard'] #modal-actions .menu-setting-input,
+body[data-menu-density-effective='standard'] #modal-actions input[type='text'] {
+  min-height: 44px;
+  font-size: 16px;
+}
+body[data-menu-density-effective='standard'] #title-screen nav button,
+body[data-menu-density-effective='standard'] .language-welcome-choices button {
+  min-height: 48px;
+  padding: 9px 12px;
+  font-size: 15px;
+}
+body[data-menu-density-effective='standard']
+  #modal[data-view='class-select']
+  #modal-actions
+  button.class-character-choice {
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
+}
+body[data-menu-density-effective='standard']
+  #modal[data-view='class-select']
+  .class-sprite-preview {
+  width: 76px;
+  height: 88px;
+}
+/* PC class selection makes genuine use of desktop width. Four comparable
+   characters are visible in a two-column grid without four narrow stacked
+   paragraphs; the optional name field spans both columns. */
+@media (min-width: 900px) and (min-height: 560px) {
+  body[data-experience='desktop'] #modal[data-view='class-select'] {
+    width: min(760px, calc(100vw - 48px));
+    max-height: min(90dvh, 810px);
+  }
+  body[data-experience='desktop'] #modal[data-view='class-select'] #modal-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body[data-experience='desktop']
+    #modal[data-view='class-select']
+    #modal-actions
+    > .character-name-field,
+  body[data-experience='desktop'] #modal[data-view='class-select'] #modal-actions > .menu-section,
+  body[data-experience='desktop']
+    #modal[data-view='class-select']
+    #modal-actions
+    > .menu-section-detail {
+    grid-column: 1 / -1;
+  }
+  body[data-experience='desktop']
+    #modal[data-view='class-select']
+    #modal-actions
+    button.class-character-choice {
+    min-width: 0;
+    overflow-wrap: break-word;
+    align-self: stretch;
+  }
+}
+
+/* Title menus are not field interaction panels. Center them on PC, keeping
+   the established left-side position for actual in-game menus. */
+body[data-experience='desktop'].title-active #modal {
+  top: 50%;
+  left: 50%;
+  bottom: auto;
+  right: auto;
+  transform: translate(-50%, -50%);
 }

@@ -117,7 +117,9 @@ for (const language of ['en', 'es']) {
     'redundant headings and status readouts should be absent');
   assert(!e.get('modal').textContent.includes('Choose phone or desktop controls. Your save stays the same.'),
     'unneeded layout explanation should be absent');
-  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 6);
+  // Approved whole-menu density adds one independent setting to this screen.
+  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 7);
+  assert.equal(setting('Menu density', 'Densidad de los menús').value, 'auto');
 
   // On a fresh title screen the Canvas DOM surface is not a failed Pixi world.
   // Migrations must be silent: no technical release announcements to players.

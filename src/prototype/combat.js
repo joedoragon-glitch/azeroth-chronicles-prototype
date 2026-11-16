@@ -104,6 +104,13 @@
         return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
       }
 
+      // Passive basics assist active leader encounters but cannot start them.
+      // Explicit skills retain all existing legal encounter and charge rules.
+      automaticHeroTargetAllowed(e) {
+        if (!e || this.awaitsHeroAttack(e)) return false;
+        return !(e.type === 'boss' || e.captain || e.roomCaptain || e.fieldCaptain) ||
+          !!e.aggro;
+      }
       // The hold receipt identifies enemies already engaged at charge start;
       // it never changes the persistent campaign or save format.
       chargedEncounterProtected(e) {
@@ -758,6 +765,7 @@
           e.neutral ||
           (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
+          (options?.automaticBasic && !this.automaticHeroTargetAllowed(e)) ||
           this.attackResetProtected(e) ||
           !Number.isFinite(amount) ||
           amount <= 0

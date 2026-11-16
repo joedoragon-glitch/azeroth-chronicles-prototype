@@ -2768,6 +2768,10 @@
                 e.hp > 0 &&
                 !e.neutral &&
                 !e.returning &&
+                // Labor defense may pre-empt ordinary visible threats, but
+                // never volunteer the hero for an unengaged boss/captain.
+                (!(e.type === 'boss' || e.captain || e.roomCaptain || e.fieldCaptain) ||
+                  e.aggro) &&
                 dist(u, e) <=
                   Math.max(R.companionJudgment.nearThreatRadius, this.enemyAcquisitionRange(e)) &&
                 (e.aggro || this.enemyRangedLine(e, u)),
