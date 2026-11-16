@@ -49,7 +49,7 @@ game.budgetedCompanionRoute = function* () {
 };
 game.s.time += 3;
 const beforeQuest = JSON.stringify(game.snapshot());
-frame(100);
+frame(50);
 assert.equal(generated,1,'one optional plan starts after meaningful displacement');
 assert(yielded <= 40, 'bounded update does not consume all 110 planner nodes at once');
 assert.deepEqual(scope.Prototype.trackedWaypoint.points, firstGuide,
@@ -57,12 +57,12 @@ assert.deepEqual(scope.Prototype.trackedWaypoint.points, firstGuide,
 const beforeCombat = yielded;
 const actualCombat = game.manaCombatActive;
 game.manaCombatActive = () => true;
-frame(200);
+frame(100);
 assert.equal(yielded,beforeCombat,'combat prevents optional guide planner work');
 game.manaCombatActive = actualCombat;
-for (let t=300;t<2400 && attached===0;t+=100) frame(t);
+for (let t=150;t<700 && attached===0;t+=50) frame(t);
 assert(attached>0,'completed plan reconnects to the real hero with bounded segment tests');
-for (let t=2400;t<4100;t+=100) frame(t);
+for (let t=700;t<1700;t+=50) frame(t);
 let updated = scope.Prototype.trackedWaypoint?.points;
 assert(updated?.length,'completed route remains visible');
 assert(Math.hypot(updated.at(-1).x-destination.x,updated.at(-1).y-destination.y)<1,
@@ -115,22 +115,13 @@ game.budgetedTacticalRoute=function*(){
   return fallbackPath;
 };
 game.s.time += 3;
-const plansBeforeFallback = generated;
-const firstGuideActive = scope.Prototype.navigationState;
-frame(4200);
-console.log('REPORT40_MOVING_DEBUG ' + JSON.stringify({
-  plansBeforeFallback, plansAfterFallback: generated, fallbackCalls,
-  firstGuideActive, afterGuideActive:scope.Prototype.navigationState,
-  distFromOriginal: Math.hypot(game.hero.x-firstOrigin.x,game.hero.y-firstOrigin.y),
-  distanceToSelected: Math.hypot(game.hero.x-destination.x,game.hero.y-destination.y),
-  attached, time:game.s.time,
-}));
+frame(1700);
 assert.equal(fallbackCalls,1,
   'a new displacement starts incremental BFS fallback rather than reusing a stale request');
 Object.assign(game.hero,walkAlong(game.hero,fallbackPath,90));
 assert(!game.blocked(game.hero.x,game.hero.y),
   'player continues moving safely while the search is pending');
-for(let t=4300;t<5700;t+=100) frame(t);
+for(let t=1750;t<2800;t+=50) frame(t);
 assert.equal(fallbackCalls,1,'the pending BFS generator is resumed instead of restarted');
 const fallbackVisible=scope.Prototype.trackedWaypoint?.points;
 assert(fallbackVisible?.length,'fallback leaves usable map guidance');
@@ -151,12 +142,12 @@ game.budgetedCompanionRoute=function*(){
 };
 Object.assign(game.hero,walkAlong(game.hero,fallbackVisible,95));
 game.s.time += 3;
-frame(5800);
+frame(2800);
 assert(cancelledRequests>0,'a fresh optional plan is in flight before cancellation');
 scope.Prototype.cancelNavigation();
 const afterCancel=cancelledRequests;
-frame(5900);
-frame(6000);
+frame(2850);
+frame(2900);
 assert.equal(cancelledRequests,afterCancel,'clearing the waypoint discards in-flight work');
 assert.equal(scope.Prototype.trackedWaypoint,null,'cleared route never reappears');
 assert.equal(game.hero.order,null,'cancellation preserves manual control');
