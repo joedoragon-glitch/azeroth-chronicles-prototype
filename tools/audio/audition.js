@@ -665,6 +665,10 @@
       settlement: !boss && mode === 'settlement' ? 'audition-refuge' : null,
       boss: boss ? { family: boss.id, form: $('form').value, name: boss.name } : null,
       engaged: boss ? 1 : mode === 'combat' ? 4 : 0,
+      // The production director prioritizes nearbyEngaged over engaged. A
+      // standalone combat preview must describe actual nearby combat, not
+      // inherit an empty new-campaign proximity count from audio.describe().
+      nearbyEngaged: boss ? 1 : mode === 'combat' ? 4 : 0,
       situation: boss ? 'boss' : mode === 'combat' ? 'combat' : mode === 'peace' ? 'peace' : mode,
       started: true,
       gameOver: false,
