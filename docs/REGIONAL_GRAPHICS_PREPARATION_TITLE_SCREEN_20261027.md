@@ -1,5 +1,13 @@
 # So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
 
+## 15 November 2026 — Report (40) targeted predictive-work guard (draft PR #876; not shipped)
+
+The owner’s real Chromebook [Report (40) investigation and evidence handoff](REPORT40_CHROMEBOOK_GTA_CUBA_SLOWDOWN_20261115.md) identified that an optional directional predictive task, scheduled while away from combat, could continue preparing procedural identities **after** combat began, if a previously queued `requestAnimationFrame` warm-up batch resumed during a fight. Full current-region static terrain tiles and all admitted content were already loaded before play; those preparation and retention guarantees are preserved.
+
+The separate draft [PR #876](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/876) checks the existing encounter/proximity signals when scheduling and starting predictive work, then **immediately upon each cooperative yield’s resumption** before another optional bake. It counts the scans, eligible scanned identities, newly prepared identities, completed zero-new scans, and mid-scan combat interruptions in the normal graphics status/report. An already running synchronous bake or submitted GPU upload is not preempted mid-operation. Completed scans with no new identities never submit a redundant GPU upload. This adds no continuous timing profiler, save data, or new user testing control.
+
+This targets an **avoidable-work defect**, not an identified cause of Report (40)'s repeating ~200–260-ms unaccounted frame-loop stalls. The original report had no predictive-scan totals, zero procedural cache evictions and zero background lookahead paints. The separate unmerged [combat-aware saving PR #873](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/873) is not bundled here. New code and focused source tests are distinct from CI results, measured Chromebook FPS, main/Pages publication and the custom GTA Cuba build. Preserve the 8 November general-performance phase exit and v0.9.2 functional-completion scope.
+
 ## 5 November 2026 — #783 readback trial REJECTED by paired performance regression
 
 The owner’s dev.257 iPhone Air playtest recorded a 175ms game callback
