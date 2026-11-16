@@ -41,7 +41,7 @@ jobs:
           for (const path of ['src/prototype/app.js', 'src/prototype/input.js']) {
             const bytes = fs.readFileSync(path);
             const hash = crypto.createHash('sha1')
-              .update('blob ' + bytes.length + '\\0').update(bytes).digest('hex');
+              .update('blob ' + bytes.length + String.fromCharCode(0)).update(bytes).digest('hex');
             const entry = JSON.stringify('./' + path) + ':' + JSON.stringify(hash);
             if (!worker.includes(entry)) throw Error('Stale offline worker fingerprint: ' + path);
           }
