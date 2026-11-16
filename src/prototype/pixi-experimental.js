@@ -494,7 +494,13 @@
       approvedGpuPrepared = 0,
       proceduralGpuPrepared = 0,
       gpuPreparationMs = 0,
-      gpuPreparationBatches = 0;
+      gpuPreparationBatches = 0,
+      // Optional outdoor predictions only. Counts are cumulative, never per-frame.
+      predictiveScans = 0,
+      predictiveScannedCandidates = 0,
+      predictivePreparedEntities = 0,
+      predictiveZeroNewScans = 0,
+      predictiveCombatInterruptions = 0;
     let cancelGpuPreparation = null,
       deviceGraphics = null;
     // One portrait-stamped Crown coin texture, reused for every visible drop.
@@ -1032,6 +1038,12 @@
         )
       );
     }
+    // Reuse the established squad/hero threat signals as well as the
+    // scenery preloader's proximity guard. No new combat-state tracking.
+    function predictiveFightActive(current) {
+      return !!current.s.squadEngagement || nearActiveFight(current) ||
+        current.manaCombatActive?.() === true;
+    }
     function canPrepareLookahead(current) {
       if (
         !active ||
@@ -1292,6 +1304,10 @@
       // outdoor actor/scenery record in the active region, or every actor and
       // prop in the bounded dungeon. Keep these bakes across interior visits.
       const dungeon = current.isDungeon() || !!current.supplyRoom?.() || !!current.sideDungeon?.();
+      // Arrival is mandatory and intentionally independent of active combat.
+      // Optional predictive work checks combat at its first entry and after
+      // every cooperative yield before preparing another identity.
+      if (!arrival && predictiveFightActive(current)) return false;
       const fringe = candidates(
         current,
         project,
@@ -1347,6 +1363,7 @@
           }
           return distance(a.point) - distance(b.point);
         });
+      if (!arrival) predictiveScannedCandidates += fringe.length;
       let prepared = 0,
         steps = 0;
       for (const { entity, visual, point, key } of fringe) {
@@ -1377,8 +1394,14 @@
         const cached = ensureProcedural(painted, revision, current, zoom);
         if (!cached) continue;
         prepared++;
-        if (++steps % 2 === 0 && typeof requestAnimationFrame === 'function')
+        if (!arrival) predictivePreparedEntities++;
+        if (++steps % 2 === 0 && typeof requestAnimationFrame === 'function') {
           await new Promise((resolve) => requestAnimationFrame(resolve));
+          if (!arrival && predictiveFightActive(current)) {
+            predictiveCombatInterruptions++;
+            return false;
+          }
+        }
       }
       neighborhoodPrepared += prepared;
       neighborhoodWarmupMs +=
@@ -1398,7 +1421,7 @@
         root.document?.hidden ||
         current.s.mode === 'arena' ||
         current.isDungeon() ||
-        nearActiveFight(current)
+        predictiveFightActive(current)
       )
         return;
       const pose = {
@@ -1427,23 +1450,29 @@
           !active ||
           game() !== current ||
           current.zoneId !== pose.zone ||
-          nearActiveFight(current)
+          predictiveFightActive(current)
         )
           return;
         predictiveRunning = true;
+        predictiveScans++;
+        const preparedBefore = predictivePreparedEntities;
         try {
           const before = new Set(baked.keys());
           if (
             !(await warmNeighborhood(epoch, false, heading)) ||
             epoch !== contextEpoch ||
             current.zoneId !== pose.zone ||
-            nearActiveFight(current)
+            predictiveFightActive(current)
           )
             return;
+          const newCount = predictivePreparedEntities - preparedBefore;
+          if (!newCount) predictiveZeroNewScans++;
+          // A no-new-art scan must never submit a redundant GPU batch.
+          if (!newCount) return;
           const fresh = [...baked]
             .filter(([key]) => !before.has(key))
             .map(([, body]) => body.texture);
-          await prepareGpuTextures(epoch, fresh, 'procedural');
+          if (fresh.length) await prepareGpuTextures(epoch, fresh, 'procedural');
         } catch (_) {
           // Optional idle work must never interrupt play; mandatory visible
           // graphics still use the normal renderer/fallback path.
@@ -2277,6 +2306,11 @@
         proceduralGpuPrepared,
         gpuPreparationMs,
         gpuPreparationBatches,
+        predictiveScans,
+        predictiveScannedCandidates,
+        predictivePreparedEntities,
+        predictiveZeroNewScans,
+        predictiveCombatInterruptions,
         proceduralBudget,
         proceduralTrimAt: trimAt,
         pixelRatio: backingRatio,
