@@ -1,0 +1,38 @@
+name: v0.9.2 nearby basic target retention audit (no deployment)
+
+on:
+  push:
+    branches: [fix/v092-hero-auto-basic-nearby-fallback-20261116]
+
+permissions:
+  contents: read
+
+jobs:
+  combat:
+    name: Native four-class targeting and cooldown regressions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm source and test syntax
+        run: |
+          node --check src/prototype/hero-combat.js
+          node --check tests/v092-hero-auto-basic-target-fallback.test.cjs
+      - name: Focused nearby fallback and historical selection contracts
+        run: |
+          node tests/v092-hero-auto-basic-target-fallback.test.cjs
+          node tests/targeting.test.cjs
+      - name: Skill, rogue and Slow engine regression
+        run: |
+          node tests/hero-skill1-stage1.test.cjs
+          node tests/rogue-hero-phase2.test.cjs
+          node tests/slow-cooldown.test.cjs
+          node tests/hero-skill1-integration.test.cjs
+      - name: Install locked tools and verify build
+        run: |
+          npm ci --ignore-scripts
+          npx prettier --check src/prototype/hero-combat.js tests/v092-hero-auto-basic-target-fallback.test.cjs
+          node scripts/build.cjs --check
