@@ -260,7 +260,7 @@ async function main() {
             window.originalCampaign = g;
             window.painter = PrototypeRenderer.create(opts);
             painter.setOptimizationMode(optimized);
-          } else if (!g.enter('vale')) throw Error('Cannot enter native companion region');
+          }
           if (!g.enter('vale')) throw Error('Cannot enter native companion scene');
           const allyZone = g.zone();
           for (const key of ['props', 'buildings', 'npcs', 'enemies', 'nodes'])
