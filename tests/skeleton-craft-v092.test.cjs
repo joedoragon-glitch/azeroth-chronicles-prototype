@@ -13,9 +13,30 @@ function encounter({ ranged = false, guard = false, elite = false, mode = 'norma
   game.zone().props = [];
   game.s.party = [];
   game.s.time = 30;
+  // Use an actual unobstructed Vale contact lane, not coordinates that may
+  // intersect the river/landscape. Never bypass native LOS or impact checks.
+  const gap = ranged ? 175 : 76;
+  let anchor = null;
+  for (let y = 400; y <= 2700 && !anchor; y += 200) {
+    for (let x = 400; x <= 2700 && !anchor; x += 160) {
+      const from = { x, y }, to = { x: x + gap, y };
+      if (game.blocked(from.x, from.y, 'vale', 15) ||
+          game.blocked(to.x, to.y, 'vale', 15) ||
+          !game.line(from, to) || !game.clearSegment(from, to, 15)) continue;
+      // Melee geometry and Guardian checks also need open nearby positions.
+      if (!ranged && [
+        { x: x + 90, y: y + 55 },
+        { x: x - 110, y },
+        { x: x + 95, y },
+      ].some((p) => game.blocked(p.x, p.y, 'vale', 15) || !game.line(from, p)))
+        continue;
+      anchor = from;
+    }
+  }
+  assert(anchor, 'original Vale map provides a lawful native contact lane');
   const enemy = game.makeEnemy(
     { species: 'skeleton', name: 'Skeleton', level: 4, hp: 10000, damage: 50, gold: 0, xp: 0 },
-    { x: 1400, y: 1700 },
+    anchor,
   );
   Object.assign(enemy, {
     guard, ranged, form: elite ? 'ringleader' : 'normal',
