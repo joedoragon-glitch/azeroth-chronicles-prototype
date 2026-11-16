@@ -265,8 +265,17 @@ def integrate():
     for key in IDS:
         shutil.copyfile(ROOT/effects[key]["src"][2:],BACKUPS/(key+".wav"))
         assert sha(BACKUPS/(key+".wav"))==expected[key]
+    original_binding_map={key:[] for key in IDS}
+    for event,bindings in manifest["director"]["events"].items():
+        for index,binding in enumerate(bindings):
+            if binding["asset"] in original_binding_map:
+                original_binding_map[binding["asset"]].append(dict(
+                    event=event,index=index,binding=binding))
+    assert all(original_binding_map.values()),"Original 30 bindings incomplete"
     archive=dict(schemaVersion=1,origin="SIBDLP dev.288 pre-modernization 30 SFX assets",
                  originalEntries=effects,originalSha256=expected,
+                 originalEventBindings=original_binding_map,
+                 rollbackIncludes="WAV, master manifest entry and exact event playback binding",
                  archiveFolder=str(BACKUPS.relative_to(ROOT)),notPublished=True)
     writejson(ROLLBACK,archive)
     samples=render(ROOT/"assets/audio/effects")
@@ -322,15 +331,29 @@ def restore(ids):
     book=json.loads(ROLLBACK.read_text());manifest=json.loads(MANIFEST.read_text())
     to_restore=IDS if ids=="all" else tuple(ids.split(","))
     assert set(to_restore)<=set(IDS) and to_restore,"Unknown restoration ID(s)"
+    assert len(set(to_restore))==len(to_restore),"Duplicate restoration IDs"
+    assert set(book["originalEventBindings"])==set(IDS),"Original event-level rollback not proven"
+    # Validate EVERY requested archive and active binding before altering files.
+    # A corrupt member of an "all" restore must not leave half-updated assets.
     for key in to_restore:
         original=BACKUPS/(key+".wav")
         assert sha(original)==book["originalSha256"][key],"Frozen original archive hash mismatch"
+        assert book["originalEntries"][key]["sha256"]==book["originalSha256"][key]
+        assert manifest["assets"][key]["src"]==book["originalEntries"][key]["src"]
+        for receipt in book["originalEventBindings"][key]:
+            event=receipt["event"];index=receipt["index"]
+            assert receipt["binding"]["asset"]==key
+            assert manifest["director"]["events"][event][index]["asset"]==key,("Event binding topology changed",key,event)
+    for key in to_restore:
+        original=BACKUPS/(key+".wav")
         live=ROOT/"assets/audio/effects"/(key+".wav")
         shutil.copyfile(original,live)
         manifest["assets"][key]=book["originalEntries"][key]
+        for receipt in book["originalEventBindings"][key]:
+            manifest["director"]["events"][receipt["event"]][receipt["index"]]=receipt["binding"]
         assert sha(live)==manifest["assets"][key]["sha256"]
     writejson(MANIFEST,manifest)
-    print("Restored",len(to_restore),"original SFX (rerun build/version update before publishing)")
+    print("Restored",len(to_restore),"original WAV, authoring metadata AND event gains (rebuild/version before publishing)")
 
 def main():
     p=argparse.ArgumentParser()
