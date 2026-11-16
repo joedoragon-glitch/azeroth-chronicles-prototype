@@ -38,6 +38,18 @@ const server = http.createServer((req, res) => {
   res.setHeader('Content-Length', fs.statSync(file).size);
   fs.createReadStream(file).pipe(res);
 });
+// A restored campaign is title-owned until the real Continue gesture.
+async function resumeLoadedCampaign(page) {
+  await page.locator('#title-continue').click();
+  await page.waitForFunction(
+    () =>
+      window.Prototype.started &&
+      document.querySelector('#title-screen').hidden &&
+      document.querySelector('#scene-loading')?.hidden !== false,
+    null,
+    { timeout: 90000 },
+  );
+}
 (async () => {
   let browser, page;
   try {
@@ -285,12 +297,9 @@ const server = http.createServer((req, res) => {
       assert.equal(await page.locator('#modal-title').textContent(), 'The Keeper’s ledger');
       assert(await page.evaluate(() => Prototype.game.s.keeperEvidence));
       await page.keyboard.press('Escape');
-      await page.evaluate(() => Prototype.save());
+      assert(await page.evaluate(() => Prototype.save()), 'Keeper evidence saves during active play');
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.keeperPact);
-      await page.evaluate(() => {
-        Prototype.game.tick = () => {};
-      });
       assert(
         await page.evaluate(
           () => Prototype.game.s.keeperEvidence && Prototype.game.keeperAvailable(),
@@ -306,6 +315,7 @@ const server = http.createServer((req, res) => {
         return { pact: c.s.keeperPact, evidence: c.s.keeperEvidence };
       });
       assert.deepEqual(restored, { pact: true, evidence: true });
+      await resumeLoadedCampaign(page);
       // A restored campaign remains intentionally inactive at the title;
       // game saves are correctly refused until Continue Adventure is chosen.
       await page.locator('#title-continue').click();
@@ -316,6 +326,8 @@ const server = http.createServer((req, res) => {
       );
       await page.evaluate(() => {
         const c = Prototype.game;
+        if (c.zoneId !== 'archive') c.enter('archive');
+        c.tick = () => {};
         c.s.pending.archive = { kind: 'dungeon', count: 1 };
         c.activatePending();
         Prototype.updateHUD();
@@ -333,7 +345,7 @@ const server = http.createServer((req, res) => {
         ),
         1,
       );
-      await page.evaluate(() => Prototype.save());
+      assert(await page.evaluate(() => Prototype.save()), 'The active TRUE encounter saves');
       await page.reload();
       await page.waitForFunction(
         () => !!window.Prototype && Prototype.game.s.pending.archive?.active,
@@ -342,15 +354,15 @@ const server = http.createServer((req, res) => {
       );
       await page.locator('#title-continue').click();
       await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
-      await page.evaluate(() => {
-        Prototype.game.tick = () => {};
-      });
       assert(
         !(await page.evaluate(() => Prototype.game.keeperAvailable())),
         'Reload preserves escape',
       );
+      await resumeLoadedCampaign(page);
       await page.evaluate(() => {
         const c = Prototype.game;
+        if (c.zoneId !== 'archive') c.enter('archive');
+        c.tick = () => {};
         const boss = c
           .zone()
           .enemies.find((e) => e.family === 'archive' && e.form === 'true' && e.hp > 0);
@@ -359,7 +371,7 @@ const server = http.createServer((req, res) => {
         c.notices.length = 0;
         const n = c.visibleNPCs().find((n) => n.kind === 'keeper');
         Object.assign(c.hero, { x: n.x, y: n.y + 80 });
-        Prototype.save();
+        if (!Prototype.save()) throw Error('TRUE Keeper recapture must save');
         Prototype.updateHUD();
       });
       await page.keyboard.press('f');
@@ -371,6 +383,7 @@ const server = http.createServer((req, res) => {
       await page.keyboard.press('Escape');
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.true.archive);
+      await resumeLoadedCampaign(page);
       await page.locator('#title-continue').click();
       await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
