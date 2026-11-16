@@ -10,6 +10,18 @@
 - **Synthesis constraints:** original project-owned sounds, authored material-specific transient/resonator treatments, no external samples or licensing ambiguity; short mono 48k PCM one-shots; unambiguous physical impact only when contact actually happens, dry release separate from impact; avoid a generic cinematic blast, overlong musical tail, or warning-masking low end. Live boss material/personality accents remain dynamically routed.
 - **Rogue:** approved staff with one suspended oversized spherical **jingle bell**, **not a guitar**. Its hero cues currently originate from procedural `audio-hero.js`, not one of the 30 recorded effects. They remain unchanged in Phase 1 and are a grounded candidate for Phase 2 if an isolated recording actually improves differentiation. Do not silently reassign the Paladin or enemy recordings to Rogue.
 
+## Player-friendly audition in the existing Game Sound Library
+
+The existing library at `tools/audio/index.html` now has a prominent **30 new effects** shortcut. It applies the existing recorded-effects filter, rather than opening another confusing audio player or mixing effects into the music list. A compact action filter exposes **All 30**, **12 creature attack releases**, **12 contact/impact sounds**, or **6 hero/companion/danger specials**. The same existing quick Play and selected sound player lets the owner listen with a tap on iPhone or desktop. Sound labels identify new Phase 1 masters and their creative source. Short WAV duration uses decimal seconds, not misleading 0:00. Irrelevant soundtrack-layer/share controls are hidden while effects are selected. Music, environmental recording, generated sound and scene-mixer browsing remain independent and intact.
+
+**This is isolated recording playback at a standard audition gain**, not proof of final mixing inside combat; actual-game event gains and cold procedural fallbacks are checked separately by the Chromium gameplay audio test.
+
+## Source-accurate fallback mixing and event-level rollback
+
+The first browser mixing audit found four common-creature **release** sounds too quiet relative to the engine's cold procedural sound: steel –4.26 dB, spectral –4.29 dB, arcane –5.13 dB and dust –6.25 dB. Rather than falsely call their levels acceptable or increase all 30 WAV masters, the release-event gains were locally adjusted to **0.29, 0.50, 0.54 and 0.36**, respectively, from 0.18/0.30/0.30/0.18. The browser's full material/stage test measures whether the adjusted results remain within ±4 dB, including boss/personality accents and no-repeat warnings.
+
+The rollback ledger now freezes **34 original event binding entries for all 30 effects**, in addition to their exact original WAV hashes and asset metadata. Selective restore must restore the previous event gain for that one sound, without altering gains for other materials. Restoration preflights the requested archives before replacing any bytes. Source tests verify these conditions; new master/binding identities remain unchanged.
+
 ## Production and fully reversible source state
 
 - Master renderer: `tools/audio/sfx-phase1-master.py`, 12 material-specific release/impact designs plus six individually authored special event designs. Output uses stable per-ID noise seeds. `--integrate` requires that all 30 original files and `sfx-book` registrations are still unmodified; every original file is copied and SHA-256 verified **before** writing a replacement.
