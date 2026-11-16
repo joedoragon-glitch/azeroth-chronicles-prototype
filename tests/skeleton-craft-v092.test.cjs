@@ -235,6 +235,11 @@ test('Charmed Skeletons preserve their normal/earned repertoire without a new sa
     typeId: 'enemy:skeleton:melee', typeName: 'Skeleton', role: 'soldier',
     sourceEnemyId: 'old-skeleton' };
   game.s.party = [u];
+  assert.equal(game.charmedSkeletonCraft(u, enemy, false, false), false,
+    'a copied origin without a matching capture receipt cannot release craft');
+  game.s.charmCaptures ||= {};
+  game.s.charmCaptures[u.id] = { ...u.charmOrigin };
+  assert(game.isCharmedCompanion(u), 'lawfully signed Skeleton identity is accepted');
   assert(game.charmedSkeletonCraft(u, enemy, false, false),
     'same non-slow Mortise geometry is usable while friendly');
   assert.equal(game.s.projectiles.length, 0);
@@ -243,6 +248,9 @@ test('Charmed Skeletons preserve their normal/earned repertoire without a new sa
     typeId: 'enemy:skeleton:ranged', typeName: 'Skeleton Bow Guard', role: 'archer',
     sourceEnemyId: 'old-archer' };
   game.s.party = [r];
+  delete game.s.charmCaptures[u.id];
+  game.s.charmCaptures[r.id] = { ...r.charmOrigin };
+  assert(game.isCharmedCompanion(r));
   assert(game.charmedSkeletonCraft(r, enemy, false, false),
     'Charmed Datum Line creates actual arrows, not remote automatic damage');
   assert.equal(game.s.projectiles.length, 3);
