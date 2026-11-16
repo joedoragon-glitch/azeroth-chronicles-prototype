@@ -44,12 +44,7 @@
         const stillWeakened = (e.weakenUntil || 0) > this.s.time;
         e.weakenUntil = Math.max(
           stillWeakened ? e.weakenUntil : 0,
-          this.s.time +
-            this.criticalHeroValue(
-              criticalReceipt,
-              cfg.duration + steps * cfg.durationStep,
-              'weakenDuration',
-            ),
+          this.s.time + this.criticalHeroValue(criticalReceipt, cfg.duration + steps * cfg.durationStep, 'weakenDuration'),
         );
         e.weakenFraction = Math.max(
           stillWeakened ? e.weakenFraction || 0 : 0,
@@ -134,20 +129,13 @@
                 : { family: enemy.family },
             );
           } else {
-            const recovery = this.criticalHeroValue(
-              criticalReceipt,
-              cfg.enemyRecovery,
-              'cooldownDebt',
-            );
+            const recovery = this.criticalHeroValue(criticalReceipt, cfg.enemyRecovery, 'cooldownDebt');
             enemy.cd = Math.max(enemy.cd || 0, recovery);
             enemy.specialCd = Math.max(enemy.specialCd || 0, recovery);
           }
         } else if (enemy.rangedAim) {
           enemy.rangedAim = null;
-          enemy.cd = Math.max(
-            enemy.cd || 0,
-            this.criticalHeroValue(criticalReceipt, cfg.enemyRecovery, 'cooldownDebt'),
-          );
+          enemy.cd = Math.max(enemy.cd || 0, this.criticalHeroValue(criticalReceipt, cfg.enemyRecovery, 'cooldownDebt'));
         }
         return true;
       }
@@ -182,14 +170,7 @@
       }
       // Ranger ultimates distribute real arrows across a bounded number of
       // enemies rather than recreating the former shared immunity attack.
-      launchHuntArrow(
-        enemy,
-        damage,
-        charged = false,
-        delay = 0,
-        receipt = null,
-        criticalReceipt = null,
-      ) {
+      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null, criticalReceipt = null) {
         const hero = this.hero,
           distance = Math.max(1, dist(hero, enemy));
         this.s.projectiles.push({
@@ -214,18 +195,17 @@
         });
         // A queued delayed Hunt arrow has not left the Ranger yet.
         // Record its launch only when updateProjectiles releases its collider.
-        if (delay <= 0)
-          this.event('projectileLaunch', {
-            actor: 'hero',
-            class: 'ranger',
-            source: 'hero',
-            slot: 8,
-            style: 'arrow',
-            charged,
-            x: hero.x,
-            y: hero.y,
-            target: enemy.id,
-          });
+        if (delay <= 0) this.event('projectileLaunch', {
+          actor: 'hero',
+          class: 'ranger',
+          source: 'hero',
+          slot: 8,
+          style: 'arrow',
+          charged,
+          x: hero.x,
+          y: hero.y,
+          target: enemy.id,
+        });
       }
       huntTargets(target, radius, count) {
         if (!target || target.hp <= 0) return [];
@@ -244,15 +224,7 @@
             .sort((a, b) => dist(a, target) - dist(b, target) || this.idOrder(a, b)),
         ].slice(0, count);
       }
-      castMageChain(
-        target,
-        scale,
-        steps,
-        power,
-        charged = false,
-        receipt = null,
-        criticalReceipt = null,
-      ) {
+      castMageChain(target, scale, steps, power, charged = false, receipt = null, criticalReceipt = null) {
         if (!target) return false;
         const cfg = charged ? R.classUltimates.mage.chargedChain : R.classUltimates.mage.chain;
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
@@ -267,17 +239,10 @@
                 ? cfg.secondaryDamage
                 : cfg.tertiaryDamage || cfg.extraDamage;
           if (
-            this.damage(
-              enemy,
-              this.criticalHeroValue(criticalReceipt, power * coefficient * scale, 'damage'),
-              'hero',
-              {
-                area: true,
-                skillShape: 'area',
-                criticalExecution: criticalReceipt,
-                ...(receipt ? { encountersAtStart: receipt } : {}),
-              },
-            )
+            this.damage(enemy, this.criticalHeroValue(criticalReceipt, power * coefficient * scale, 'damage'), 'hero', {
+              area: true, skillShape: 'area', criticalExecution: criticalReceipt,
+              ...(receipt ? { encountersAtStart: receipt } : {}),
+            })
           ) {
             hits++;
             chain.push({ x: enemy.x, y: enemy.y, target: enemy.id });
@@ -314,15 +279,7 @@
           });
         return true;
       }
-      castHeroUltimate(
-        target,
-        scale,
-        steps,
-        power,
-        charged = false,
-        receipt = null,
-        criticalReceipt = null,
-      ) {
+      castHeroUltimate(target, scale, steps, power, charged = false, receipt = null, criticalReceipt = null) {
         const hero = this.hero;
         const cfg = R.classUltimates[hero.class][charged ? 'charged' : 'normal'];
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
@@ -337,11 +294,7 @@
             for (let n = 0; n < arrowsPerTarget; n++) {
               this.launchHuntArrow(
                 foe,
-                this.criticalHeroValue(
-                  criticalReceipt,
-                  power * cfg.damagePerArrow * scale,
-                  'damage',
-                ),
+                this.criticalHeroValue(criticalReceipt, power * cfg.damagePerArrow * scale, 'damage'),
                 charged,
                 index * 0.04 + n * 0.1,
                 receipt,
@@ -380,47 +333,24 @@
                   ? cfg.primaryDamage
                   : cfg.splashDamage;
             if (
-              !this.damage(
-                foe,
-                this.criticalHeroValue(
-                  hero.class === 'mage' && !charged ? criticalReceipt : null,
-                  power * coefficient * scale,
-                  'damage',
-                ),
-                'hero',
-                {
-                  area: true,
-                  skillShape: 'area',
-                  criticalExecution: criticalReceipt,
-                  ...(receipt ? { encountersAtStart: receipt } : {}),
-                },
-              )
+              !this.damage(foe, this.criticalHeroValue(hero.class === 'mage' && !charged ? criticalReceipt : null, power * coefficient * scale, 'damage'), 'hero', {
+                area: true, skillShape: 'area', criticalExecution: criticalReceipt,
+                ...(receipt ? { encountersAtStart: receipt } : {}),
+              })
             )
               continue;
             if (hero.class === 'mage' && charged)
               this.fractureEnemy(
                 foe,
                 cfg.fracture + steps * cfg.fractureStep,
-                this.criticalHeroValue(
-                  criticalReceipt,
-                  cfg.fractureDuration,
-                  'vulnerabilityDuration',
-                ),
+                this.criticalHeroValue(criticalReceipt, cfg.fractureDuration, 'vulnerabilityDuration'),
               );
             if (hero.class === 'paladin' && charged && cfg.weaken)
               this.weakenEnemy(foe, hero.skills[7]);
             hits++;
           }
           if (hero.class === 'paladin') {
-            hero.hp = Math.min(
-              hero.maxHp,
-              hero.hp +
-                this.criticalHeroValue(
-                  charged ? null : criticalReceipt,
-                  hero.maxHp * cfg.heal,
-                  'healAmount',
-                ),
-            );
+            hero.hp = Math.min(hero.maxHp, hero.hp + this.criticalHeroValue(charged ? null : criticalReceipt, hero.maxHp * cfg.heal, 'healAmount'));
             const living = [
               hero,
               ...this.activeLivingParty().filter(
@@ -428,13 +358,7 @@
               ),
             ];
             for (const ally of living) {
-              const until =
-                this.s.time +
-                this.criticalHeroValue(
-                  charged ? criticalReceipt : null,
-                  cfg.wardDuration + cfg.wardStep * steps,
-                  'wardDuration',
-                );
+              const until = this.s.time + this.criticalHeroValue(charged ? criticalReceipt : null, cfg.wardDuration + cfg.wardStep * steps, 'wardDuration');
               const stillActive = (ally.wardUntil || 0) > this.s.time;
               ally.wardUntil = Math.max(ally.wardUntil || 0, until);
               ally.wardReduction = Math.max(
@@ -484,16 +408,7 @@
           });
         return true;
       }
-      castChargedAdvanced(
-        slot,
-        target,
-        rank,
-        scale,
-        steps,
-        power,
-        encountersAtStart,
-        criticalReceipt = null,
-      ) {
+      castChargedAdvanced(slot, target, rank, scale, steps, power, encountersAtStart, criticalReceipt = null) {
         const cfg = R.advancedCharges?.[slot]?.[this.hero.class];
         if (!cfg) return false;
         const hero = this.hero;
@@ -525,8 +440,7 @@
           : [];
         const deal = (enemy, amount, area = false, piercing = false) =>
           this.damage(enemy, amount, 'hero', {
-            area,
-            skillShape: area ? 'area' : 'single',
+            area, skillShape: area ? 'area' : 'single',
             criticalExecution: criticalReceipt,
             ...(piercing ? { piercing: true } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
@@ -568,19 +482,18 @@
             ...(style === 'arrow' && extra.delay > 0 ? { rangerDelayedLaunch: true } : {}),
           });
           // Do not report a delayed arrow as launched at burst admission.
-          if (!(style === 'arrow' && extra.delay > 0))
-            this.event('projectileLaunch', {
-              actor: 'hero',
-              class: hero.class,
-              source: 'hero',
-              slot,
-              charged: true,
-              style: style === 'beam' ? 'magic' : style,
-              beam: style === 'beam',
-              x: hero.x,
-              y: hero.y,
-              target: enemy.id,
-            });
+          if (!(style === 'arrow' && extra.delay > 0)) this.event('projectileLaunch', {
+            actor: 'hero',
+            class: hero.class,
+            source: 'hero',
+            slot,
+            charged: true,
+            style: style === 'beam' ? 'magic' : style,
+            beam: style === 'beam',
+            x: hero.x,
+            y: hero.y,
+            target: enemy.id,
+          });
         };
         if (slot === 5) {
           let hits = 0;
@@ -588,25 +501,13 @@
             if (hero.class === 'ranger') {
               launch(enemy, power * cfg.damage * scale, 'arrow', {
                 area: true,
-                slow: this.criticalHeroValue(
-                  criticalReceipt,
-                  cfg.slow + cfg.slowStep * steps,
-                  'slowDuration',
-                ),
+                slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
               });
               hits++;
             } else if (deal(enemy, power * cfg.damage * scale, true)) {
-              if (hero.class === 'paladin' && cfg.weaken)
-                this.weakenEnemy(enemy, rank, criticalReceipt);
+              if (hero.class === 'paladin' && cfg.weaken) this.weakenEnemy(enemy, rank, criticalReceipt);
               if (hero.class === 'mage' && enemy.hp > 0)
-                this.shieldPush(
-                  enemy,
-                  this.criticalHeroValue(
-                    criticalReceipt,
-                    cfg.push + cfg.pushStep * steps,
-                    'pushDistance',
-                  ),
-                );
+                this.shieldPush(enemy, this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance'));
               hits++;
             }
           }
@@ -627,26 +528,14 @@
               .enemies.filter((e) => eligible(e, hero, cfg.radius + cfg.radiusStep * steps))
               .sort((a, b) => this.idOrder(a, b))) {
               if (deal(enemy, power * cfg.damage * scale, true)) {
-                if (enemy.hp > 0)
-                  this.shieldPush(
-                    enemy,
-                    this.criticalHeroValue(
-                      criticalReceipt,
-                      cfg.push + cfg.pushStep * steps,
-                      'pushDistance',
-                    ),
-                  );
+                if (enemy.hp > 0) this.shieldPush(enemy, this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance'));
                 hits++;
               }
             }
             pulse('vanguard-impact', hits, start.x, start.y, cfg.radius + cfg.radiusStep * steps);
           } else if (hero.class === 'mage') {
             launch(target, power * cfg.damage * scale, 'beam', {
-              slow: this.criticalHeroValue(
-                criticalReceipt,
-                cfg.slow + cfg.slowStep * steps,
-                'slowDuration',
-              ),
+              slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
             });
             this.event('charged', {
               actor: 'hero',
@@ -663,14 +552,9 @@
                 delay: j * 0.08,
                 rapid: true,
                 chargedBurst: j === cfg.arrows - 1,
-                push:
-                  j === cfg.arrows - 1
-                    ? this.criticalHeroValue(
-                        criticalReceipt,
-                        cfg.push + cfg.pushStep * steps,
-                        'pushDistance',
-                      )
-                    : 0,
+                push: j === cfg.arrows - 1
+                  ? this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance')
+                  : 0,
               });
             this.event('charged', {
               actor: 'hero',
@@ -686,23 +570,11 @@
         }
         if (slot === 7) {
           if (hero.class === 'mage')
-            return this.castMageChain(
-              target,
-              scale,
-              steps,
-              power,
-              true,
-              encountersAtStart,
-              criticalReceipt,
-            );
+            return this.castMageChain(target, scale, steps, power, true, encountersAtStart, criticalReceipt);
           if (hero.class === 'ranger') {
             launch(target, power * cfg.damage * scale, 'arrow', {
               piercing: true,
-              slow: this.criticalHeroValue(
-                criticalReceipt,
-                cfg.slow + cfg.slowStep * steps,
-                'slowDuration',
-              ),
+              slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
             });
           } else {
             let hits = 0;
@@ -716,15 +588,7 @@
           return true;
         }
         if (slot === 8)
-          return this.castHeroUltimate(
-            target,
-            scale,
-            steps,
-            power,
-            true,
-            encountersAtStart,
-            criticalReceipt,
-          );
+          return this.castHeroUltimate(target, scale, steps, power, true, encountersAtStart, criticalReceipt);
         return false;
       }
       nextBasicCombo(targetId) {
@@ -836,10 +700,8 @@
       // skill targeting, locks and skill-approach orders keep their own authority.
       // Explicitly targeted auto calls never redirect to another foe.
       automaticBasicNearbyFallbackAllowed(selected, range, targetId = null) {
-        return (
-          (targetId === null || targetId === undefined) &&
-          (!selected || dist(selected, this.hero) > range)
-        );
+        return (targetId === null || targetId === undefined) &&
+          (!selected || dist(selected, this.hero) > range);
       }
       // Target selection is transient: no changes to campaign saves or difficulty.
       // A held Target locks the current foe even while dodging beyond selection range.
@@ -935,9 +797,8 @@
       }
       heroSkillRange(slot, charged = false) {
         if (this.hero.class === 'rogue')
-          return slot === 1
-            ? this.rogueSkill1Config(charged).range
-            : R.roguePerformances[slot]?.[charged ? 'charged' : 'tap']?.range || 0;
+          return slot === 1 ? this.rogueSkill1Config(charged).range :
+            (R.roguePerformances[slot]?.[charged ? 'charged' : 'tap']?.range || 0);
         if (!implementedHeroCombatClasses.has(this.hero.class)) return 0;
         const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           steps = this.tacticMilestones(this.hero.skills[slot - 1]);
@@ -1033,9 +894,7 @@
           }
           if (
             this.damage(e, f.damage * cfg.damagePerPulse, 'hero', {
-              area: true,
-              skillShape: 'area',
-              criticalExecution: f.criticalExecution,
+              area: true, skillShape: 'area', criticalExecution: f.criticalExecution,
               encountersAtStart: f.encountersAtStart,
             })
           )
@@ -1175,9 +1034,7 @@
               f.hitIds.push(e.id);
               if (
                 this.damage(e, f.damage * R.chargedSkills.first.mage.damage, 'hero', {
-                  area: true,
-                  skillShape: 'area',
-                  criticalExecution: f.criticalExecution,
+                  area: true, skillShape: 'area', criticalExecution: f.criticalExecution,
                   encountersAtStart: f.encountersAtStart,
                 })
               )
@@ -1277,8 +1134,7 @@
             // Check active retreat before damage mutates regroup and threat.
             const retreat = this.hawkRetreatKind(target);
             const landed = this.damage(target, f.damage * cfg.damage, 'hero', {
-              skillShape: 'single',
-              criticalExecution: f.criticalExecution,
+              skillShape: 'single', criticalExecution: f.criticalExecution,
               encountersAtStart: f.encountersAtStart,
             });
             const interrupted =
@@ -1329,24 +1185,16 @@
         if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0) return null;
         const fields = rogueMusicStations.get(this);
         // No active stations means zero party membership or terrain work.
-        if (
-          !fields?.length ||
-          (unit !== this.hero && (unit.active === false || !this.s.party.includes(unit)))
-        )
-          return null;
+        if (!fields?.length ||
+            (unit !== this.hero &&
+              (unit.active === false || !this.s.party.includes(unit)))) return null;
         // Resolve the cheap geometric membership for Rogue and each companion
         // on demand. Entry, exit and exact expiry never await cache refresh.
         let inside = 0;
         for (let i = 0; i < fields.length; i++) {
-          const field = fields[i],
-            dx = unit.x - field.x,
-            dy = unit.y - field.y;
-          if (
-            field.zone === this.zoneId &&
-            field.until > this.s.time &&
-            dx * dx + dy * dy <= field.radius * field.radius
-          )
-            inside |= 1 << i;
+          const field = fields[i], dx = unit.x - field.x, dy = unit.y - field.y;
+          if (field.zone === this.zoneId && field.until > this.s.time &&
+              dx * dx + dy * dy <= field.radius * field.radius) inside |= 1 << i;
         }
         if (!inside) {
           // Leaving a circle drops cached visibility, so re-entry is checked
@@ -1355,21 +1203,15 @@
           return null;
         }
         const cached = rogueStationChecks.get(unit),
-          moved = cached ? (unit.x - cached.x) ** 2 + (unit.y - cached.y) ** 2 : Infinity;
+          moved = cached
+            ? (unit.x - cached.x) ** 2 + (unit.y - cached.y) ** 2 : Infinity;
         // At most 2 fields, 4 Hz for an unmoving actor; walking farther than
         // 24 units triggers an earlier visibility refresh. No extra timer,
         // scan loop, or extra work for companions outside the stations.
-        if (
-          cached &&
-          cached.owner === this &&
-          cached.fields === fields &&
-          cached.zone === this.zoneId &&
-          cached.inside === inside &&
-          this.s.time >= cached.checkedAt &&
-          this.s.time < cached.refreshAt &&
-          moved <= 24 * 24
-        )
-          return cached.effect;
+        if (cached && cached.owner === this && cached.fields === fields &&
+            cached.zone === this.zoneId && cached.inside === inside &&
+            this.s.time >= cached.checkedAt && this.s.time < cached.refreshAt &&
+            moved <= 24 * 24) return cached.effect;
         let selected = null;
         for (let i = 0; i < fields.length; i++) {
           if (!(inside & (1 << i)) || !this.line(fields[i], unit)) continue;
@@ -1381,15 +1223,9 @@
           };
         }
         rogueStationChecks.set(unit, {
-          owner: this,
-          fields,
-          zone: this.zoneId,
-          inside,
-          checkedAt: this.s.time,
-          refreshAt: this.s.time + 0.25,
-          x: unit.x,
-          y: unit.y,
-          effect: selected,
+          owner: this, fields, zone: this.zoneId, inside,
+          checkedAt: this.s.time, refreshAt: this.s.time + 0.25,
+          x: unit.x, y: unit.y, effect: selected,
         });
         return selected;
       }
@@ -1403,30 +1239,23 @@
         // Stable field-list identity makes party-wide sightline caching useful;
         // only create a new list when an old station actually expires.
         let live = fields;
-        if (fields.some((field) => field.zone !== this.zoneId || field.until <= this.s.time)) {
-          live = fields.filter((field) => field.zone === this.zoneId && field.until > this.s.time);
-          if (!live.length) {
-            rogueMusicStations.delete(this);
-            return;
-          }
+        if (fields.some((field) =>
+          field.zone !== this.zoneId || field.until <= this.s.time)) {
+          live = fields.filter((field) =>
+            field.zone === this.zoneId && field.until > this.s.time);
+          if (!live.length) { rogueMusicStations.delete(this); return; }
           rogueMusicStations.set(this, live);
         }
         for (const field of live) {
           if (field.nextPulse > this.s.time) continue;
           field.nextPulse = this.s.time + 0.65;
-          const contacts = this.zone()
-            .enemies.filter(
-              (e) =>
-                e.hp > 0 &&
-                !e.neutral &&
-                !e.returning &&
-                !this.attackResetProtected(e) &&
-                this.tacticalDirectTargetable(e) &&
-                dist(e, field) <= field.radius &&
-                this.line(field, e),
-            )
-            .sort((a, b) => dist(a, field) - dist(b, field) || this.idOrder(a, b))
-            .slice(0, field.cap);
+          const contacts = this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, field) <= field.radius && this.line(field, e))
+            .sort((a,b) => dist(a,field)-dist(b,field) || this.idOrder(a,b))
+            .slice(0,field.cap);
           for (const e of contacts) {
             this.applySlow(e, field.slow);
             if (field.pulseDamage > 0)
@@ -1437,32 +1266,29 @@
       // Read independently timed Wither without altering or persisting its WeakMap.
       rogueEnemyWithered(e) {
         const state = rogueEnemyWithers.get(e);
-        return (
-          this.hero.class === 'rogue' &&
-          e?.hp > 0 &&
+        return this.hero.class === 'rogue' && e?.hp > 0 &&
           state?.zone === this.zoneId &&
-          state.effects.some((effect) => effect.until > this.s.time)
-        );
+          state.effects.some(effect => effect.until > this.s.time);
       }
       rogueEnemyHealingFactor(e) {
         const state = rogueEnemyWithers.get(e);
-        if (this.hero.class !== 'rogue' || state?.zone !== this.zoneId || e?.hp <= 0) return 1;
-        const suppression = state.effects.reduce(
-          (sum, effect) => sum + (effect.until > this.s.time ? effect.antiHeal : 0),
-          0,
-        );
+        if (this.hero.class !== 'rogue' || state?.zone !== this.zoneId || e?.hp <= 0)
+          return 1;
+        const suppression = state.effects.reduce((sum, effect) =>
+          sum + (effect.until > this.s.time ? effect.antiHeal : 0), 0);
         return 1 - Math.min(1, suppression);
       }
       tickRogueEnemyDot(e, dt) {
         const state = rogueEnemyWithers.get(e);
-        if (this.hero.class !== 'rogue' || this.peace || e?.hp <= 0 || state?.zone !== this.zoneId)
-          return false;
+        if (this.hero.class !== 'rogue' || this.peace || e?.hp <= 0 ||
+            state?.zone !== this.zoneId) return false;
         let landed = false;
         for (const effect of state.effects) {
           if (e.hp <= 0) break;
           if (effect.until <= this.s.time - dt || !(effect.remaining > 0)) continue;
           const live = Math.max(0.01, effect.until - (this.s.time - dt)),
-            amount = Math.min(effect.remaining, (effect.remaining * Math.min(dt, live)) / live);
+            amount = Math.min(effect.remaining,
+              effect.remaining * Math.min(dt, live) / live);
           if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true })) continue;
           effect.remaining -= amount;
           landed = true;
@@ -1472,24 +1298,18 @@
       rogueEnemyWeakenFraction(e) {
         const state = rogueEnemyWeakens.get(e);
         if (this.hero.class !== 'rogue' || state?.zone !== this.zoneId) return 0;
-        return state.effects.reduce(
-          (sum, effect) => sum + (effect.until > this.s.time ? effect.fraction : 0),
-          0,
-        );
+        return state.effects.reduce((sum, effect) =>
+          sum + (effect.until > this.s.time ? effect.fraction : 0), 0);
       }
       rogueEnemySilenced(e) {
         const state = rogueEnemySilences.get(e);
-        return (
-          this.hero.class === 'rogue' &&
-          e?.hp > 0 &&
-          state?.zone === this.zoneId &&
-          state.until > this.s.time
-        );
+        return this.hero.class === 'rogue' && e?.hp > 0 &&
+          state?.zone === this.zoneId && state.until > this.s.time;
       }
       applyRogueEnemySilence(e, seconds) {
         const previous = rogueEnemySilences.get(e);
-        const remaining =
-          previous?.zone === this.zoneId ? Math.max(this.s.time, previous.until) : this.s.time;
+        const remaining = previous?.zone === this.zoneId
+          ? Math.max(this.s.time, previous.until) : this.s.time;
         // Silence cannot be 'twice as silent': consecutive legal hush
         // performances append finite disable time without erasing each other.
         rogueEnemySilences.set(e, { zone: this.zoneId, until: remaining + seconds });
@@ -1500,22 +1320,10 @@
       rogueSkill1Config(charged = false, rank = this.hero?.skills[0] || 1) {
         const gained = Math.max(0, Math.min(8, rank) - 1) / 7;
         return charged
-          ? {
-              range: 290,
-              radius: 290,
-              cap: 4,
-              damage: 1.8,
-              allyDamage: +(0.07 + 0.02 * gained).toFixed(6),
-              seconds: 5,
-            }
-          : {
-              range: 225,
-              radius: 225,
-              cap: 2,
-              damage: 1.3,
-              allyDamage: +(0.05 + 0.02 * gained).toFixed(6),
-              seconds: 4,
-            };
+          ? { range: 290, radius: 290, cap: 4, damage: 1.8,
+              allyDamage: +(0.07 + 0.02 * gained).toFixed(6), seconds: 5 }
+          : { range: 225, radius: 225, cap: 2, damage: 1.3,
+              allyDamage: +(0.05 + 0.02 * gained).toFixed(6), seconds: 4 };
       }
       // Rank-resolved Rogue effects are shared by live combat and the Skill
       // Journal. Source values at Rank 1 are untouched. The small increases
@@ -1525,19 +1333,16 @@
         const base = R.roguePerformances[slot]?.[charged ? 'charged' : 'tap'];
         if (!base || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
         if (rank === 1) return base;
-        const p = (rank - 1) / 7,
-          form = { ...base };
+        const p = (rank - 1) / 7, form = { ...base };
         const grow = (key, by) => {
-          if (typeof form[key] === 'number') form[key] = +(form[key] + by * p).toFixed(6);
+          if (typeof form[key] === 'number')
+            form[key] = +(form[key] + by * p).toFixed(6);
         };
         if (slot === 2) {
-          grow('slow', 0.6);
-          grow('seconds', 0.5);
-          grow('move', 0.04);
-          grow('recovery', 0.03);
+          grow('slow', 0.6); grow('seconds', 0.5);
+          grow('move', 0.04); grow('recovery', 0.03);
         } else if (slot === 3) {
-          grow('debt', 0.2);
-          grow('seconds', 1);
+          grow('debt', 0.2); grow('seconds', 1);
           if (charged) grow('silence', 0.3);
         } else if (slot === 4) {
           grow('dotFraction', charged ? 0.007 : 0.005);
@@ -1545,27 +1350,19 @@
           grow('healFraction', charged ? 0.01 : 0.015);
           grow('incomingHealing', 0.02);
         } else if (slot === 5) {
-          grow('slow', 0.15);
-          grow('slowResistance', 0.05);
+          grow('slow', 0.15); grow('slowResistance', 0.05);
           grow('seconds', 0.5);
-          if (charged) {
-            grow('ward', 0.02);
-            grow('pulseDamage', 0.05);
-          }
+          if (charged) { grow('ward', 0.02); grow('pulseDamage', 0.05); }
         } else if (slot === 6) {
           grow('debt', charged ? 0.3 : 0.25);
-          grow('seconds', 0.5);
-          grow('specialRecovery', 0.03);
+          grow('seconds', 0.5); grow('specialRecovery', 0.03);
         } else if (slot === 7) {
-          grow('push', charged ? 10 : 8);
-          grow('weaken', 0.6);
+          grow('push', charged ? 10 : 8); grow('weaken', 0.6);
           grow('weakenFraction', charged ? 0.03 : 0.025);
-          grow('seconds', 0.5);
-          grow('outgoing', 0.02);
+          grow('seconds', 0.5); grow('outgoing', 0.02);
         } else if (slot === 8) {
           // Ultimate's direct hit already gains +15% Rank-1 damage per rank.
-          grow('criticalChance', 0.01);
-          grow('specialDamage', 0.01);
+          grow('criticalChance', 0.01); grow('specialDamage', 0.01);
           grow('seconds', 0.5);
           if (charged) grow('silence', 0.15);
         }
@@ -1575,101 +1372,62 @@
       // living active allies in the same lawful area. Charms never come from
       // manual attacks. The names are revisable independently of these rules.
       castRogueSkill1(targetId = null, charged = false, encountersAtStart = null) {
-        const h = this.hero,
-          rank = h.skills[0],
+        const h = this.hero, rank = h.skills[0],
           form = this.rogueSkill1Config(charged, rank),
           selected = this.selectedHeroTarget(),
           id = targetId ?? selected?.id ?? this.s.heroTarget;
-        if (
-          h.class !== 'rogue' ||
-          this.peace ||
-          h.hp <= 0 ||
-          !rank ||
-          this.s.challenge.pending ||
-          this.s.challenge.gameOver ||
-          this.tacticalScatterState(h) ||
-          h.deathRollHeld ||
-          h.keeperHeld ||
+        if (h.class !== 'rogue' || this.peace || h.hp <= 0 || !rank ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld ||
           (charged && this.partyChargeRecovery(h) > 0) ||
-          this.mageSilenceActive(h) ||
-          !this.skillReady(1, charged)
-        )
-          return false;
-        const eligible = this.zone().enemies.filter(
-            (e) =>
-              e.hp > 0 &&
-              !e.neutral &&
-              !e.returning &&
-              !this.attackResetProtected(e) &&
-              this.tacticalDirectTargetable(e) &&
-              dist(e, h) <= form.range &&
-              this.line(h, e),
-          ),
-          locked = !!selected || (targetId !== null && targetId !== undefined),
-          primary =
-            eligible.find((e) => e.id === id) ||
-            (locked
-              ? null
-              : eligible.sort((a, b) => dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
+          this.mageSilenceActive(h) || !this.skillReady(1, charged)) return false;
+        const eligible = this.zone().enemies.filter((e) =>
+          e.hp > 0 && !e.neutral && !e.returning &&
+          !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
+          dist(e, h) <= form.range && this.line(h, e),
+        ),
+          locked = !!selected || targetId !== null && targetId !== undefined,
+          primary = eligible.find((e) => e.id === id) ||
+            (locked ? null : eligible.sort((a, b) =>
+              dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
         if (!primary) return false; // no hostile, no free buff or cooldown
         // Acquisition already checked this same singer-centered radius and
         // line of sight. Recheck only if future rules separate range/radius.
-        const enemies = eligible
-          .filter(
-            (e) =>
-              e === primary ||
-              form.radius === form.range ||
-              (dist(e, h) <= form.radius && this.line(h, e)),
-          )
-          .sort((a, b) =>
-            a === primary ? -1 : b === primary ? 1 : dist(a, h) - dist(b, h) || this.idOrder(a, b),
-          )
-          .slice(0, form.cap);
-        const allies = this.activeLivingParty().filter(
-          (u) => u.hp > 0 && u.active !== false && dist(u, h) <= form.radius && this.line(h, u),
-        );
+        const enemies = eligible.filter((e) =>
+          e === primary || form.radius === form.range ||
+          (dist(e, h) <= form.radius && this.line(h, e)),
+        ).sort((a, b) => a === primary ? -1 : b === primary ? 1 :
+          dist(a, h) - dist(b, h) || this.idOrder(a, b)).slice(0, form.cap);
+        const allies = this.activeLivingParty().filter((u) =>
+          u.hp > 0 && u.active !== false &&
+          dist(u, h) <= form.radius && this.line(h, u));
         // Recall remains under player/timer control during all offense.
         this.engage(primary);
         h.cd[0] = this.skillCooldown(1, false);
         if (charged) h.chargedCd[0] = this.skillCooldown(1, true);
         this.s.heroTarget = primary.id;
         const criticalReceipt = this.rogueCriticalRelease(charged ? '1-charged' : '1-tap'),
-          amount = this.criticalHeroValue(
-            criticalReceipt,
-            (this.power() + 12) * form.damage * (1 + 0.15 * (rank - 1)),
-            'damage',
-          );
+          amount = this.criticalHeroValue(criticalReceipt,
+            (this.power() + 12) * form.damage * (1 + 0.15 * (rank - 1)), 'damage');
         let hits = 0;
         for (const e of enemies) {
-          if (
-            this.damage(e, amount, 'hero', {
-              area: true,
-              ...(charged && encountersAtStart ? { encountersAtStart } : {}),
-            })
-          )
-            hits++;
+          if (this.damage(e, amount, 'hero', {
+            area: true, ...(charged && encountersAtStart ? { encountersAtStart } : {}),
+          })) hits++;
         }
         // Normal and charged Refrains are independent performances, even
         // for the same actor. Both can combine with critical auto Cadence.
         // Instant songs snapshot legal recipients at cast release.
         for (const u of [h, ...allies])
           this.applyRogueSongBoon(u, 'refrain', {
-            seconds: form.seconds,
-            basicDamage: form.allyDamage,
+            seconds: form.seconds, basicDamage: form.allyDamage,
           });
         this.event('rogueBellSkill1', {
-          actor: 'hero',
-          class: 'rogue',
-          slot: 1,
-          form: charged ? 'charged' : 'tap',
-          audioCue: 'bell-jingle',
+          actor: 'hero', class: 'rogue', slot: 1,
+          form: charged ? 'charged' : 'tap', audioCue: 'bell-jingle',
           instrument: R.rogueHeroFoundation.weapon.instrument,
-          x: h.x,
-          y: h.y,
-          radius: form.radius,
-          target: primary.id,
-          hits,
-          allyCount: allies.length,
+          x: h.x, y: h.y, radius: form.radius,
+          target: primary.id, hits, allyCount: allies.length,
         });
         return true;
       }
@@ -1678,60 +1436,36 @@
       // anchors the performance; enemies and living allies are resolved in
       // the identical circle without coupling the two outcomes. No Charm.
       castRoguePerformance(slot, targetId = null, charged = false) {
-        const h = this.hero,
-          rank = h.skills[slot - 1],
+        const h = this.hero, rank = h.skills[slot - 1],
           form = this.roguePerformanceAtRank(slot, charged, rank),
           selected = this.selectedHeroTarget(),
           id = targetId ?? selected?.id ?? this.s.heroTarget;
-        if (
-          !form ||
-          h.class !== 'rogue' ||
-          h.hp <= 0 ||
-          !rank ||
-          this.peace ||
-          this.s.challenge.pending ||
-          this.s.challenge.gameOver ||
-          this.tacticalScatterState(h) ||
-          h.deathRollHeld ||
-          h.keeperHeld ||
+        if (!form || h.class !== 'rogue' || h.hp <= 0 || !rank || this.peace ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld ||
           (charged && this.partyChargeRecovery(h) > 0) ||
-          this.mageSilenceActive(h) ||
-          !this.skillReady(slot, charged)
-        )
+          this.mageSilenceActive(h) || !this.skillReady(slot, charged))
           return false;
-        const candidates = this.zone().enemies.filter(
-          (e) =>
-            e.hp > 0 &&
-            !e.neutral &&
-            !e.returning &&
-            !this.attackResetProtected(e) &&
-            this.tacticalDirectTargetable(e) &&
-            dist(e, h) <= form.range &&
-            this.line(h, e),
-        );
-        const locked = !!selected || (targetId !== null && targetId !== undefined),
-          primary =
-            candidates.find((e) => e.id === id) ||
-            (locked
-              ? null
-              : candidates.sort((a, b) => dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
+        const candidates = this.zone().enemies.filter((e) =>
+          e.hp > 0 && !e.neutral && !e.returning &&
+          !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
+          dist(e, h) <= form.range && this.line(h, e));
+        const locked = !!selected || targetId !== null && targetId !== undefined,
+          primary = candidates.find((e) => e.id === id) ||
+            (locked ? null : candidates.sort((a, b) =>
+              dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
         if (!primary) return false;
         // One terrain sightline per candidate when the performer footprint
         // equals the legal acquisition range (all current song forms).
-        const enemies = candidates
-          .filter(
-            (e) =>
-              e === primary ||
-              form.radius === form.range ||
-              (dist(e, h) <= form.radius && this.line(h, e)),
-          )
-          .sort((a, b) =>
-            a === primary ? -1 : b === primary ? 1 : dist(a, h) - dist(b, h) || this.idOrder(a, b),
-          )
+        const enemies = candidates.filter((e) =>
+          e === primary || form.radius === form.range ||
+          (dist(e, h) <= form.radius && this.line(h, e)))
+          .sort((a, b) => a === primary ? -1 : b === primary ? 1 :
+            dist(a, h) - dist(b, h) || this.idOrder(a, b))
           .slice(0, form.cap);
-        const allies = this.activeLivingParty().filter(
-          (u) => u.hp > 0 && u.active !== false && dist(u, h) <= form.radius && this.line(h, u),
-        );
+        const allies = this.activeLivingParty().filter((u) =>
+          u.hp > 0 && u.active !== false &&
+          dist(u, h) <= form.radius && this.line(h, u));
         // Recall remains under player/timer control during all offense.
         this.engage(primary);
         h.cd[slot - 1] = this.skillCooldown(slot, false);
@@ -1740,10 +1474,11 @@
         // Exactly one frozen Party-stream receipt for this legal manual cast.
         // Only the authored lever changes; allied and hostile sides never
         // roll separately, and timed effects inherit the committed numbers.
-        const criticalReceipt = this.rogueCriticalRelease(slot + (charged ? '-charged' : '-tap'));
+        const criticalReceipt = this.rogueCriticalRelease(
+          slot + (charged ? '-charged' : '-tap'));
         let effectForm = form;
         if (criticalReceipt?.critical) {
-          const field = {
+          const field = ({
             2: charged ? 'seconds' : 'slow',
             3: charged ? 'silence' : 'debt',
             4: 'healFraction',
@@ -1751,35 +1486,25 @@
             6: charged ? 'seconds' : 'debt',
             7: charged ? 'weaken' : 'push',
             8: charged ? 'silence' : 'damage',
-          }[slot];
+          })[slot];
           if (!field || !Object.prototype.hasOwnProperty.call(form, field))
             throw Error('Missing authored Rogue critical consequence');
           effectForm = {
             ...form,
             [field]: this.criticalHeroValue(
-              criticalReceipt,
-              form[field],
-              criticalReceipt.effect.lever,
-              field === 'ward' ? { max: 0.12 } : {},
-            ),
+              criticalReceipt, form[field], criticalReceipt.effect.lever,
+              field === 'ward' ? { max: 0.12 } : {}),
             ...(slot === 4 ? { criticalMending: true } : {}),
           };
         }
         if (slot === 5) {
-          const current = (rogueMusicStations.get(this) || []).filter(
-            (f) => f.zone === this.zoneId && f.until > this.s.time,
-          );
+          const current = (rogueMusicStations.get(this) || []).filter((f) =>
+            f.zone === this.zoneId && f.until > this.s.time);
           current.push({
-            zone: this.zoneId,
-            x: h.x,
-            y: h.y,
-            radius: effectForm.radius,
-            cap: effectForm.cap,
-            slow: effectForm.slow,
-            resistance: effectForm.slowResistance,
-            ward: effectForm.ward,
-            pulseDamage: effectForm.pulseDamage,
-            until: this.s.time + effectForm.seconds,
+            zone: this.zoneId, x: h.x, y: h.y,
+            radius: effectForm.radius, cap: effectForm.cap, slow: effectForm.slow,
+            resistance: effectForm.slowResistance, ward: effectForm.ward,
+            pulseDamage: effectForm.pulseDamage, until: this.s.time + effectForm.seconds,
             nextPulse: this.s.time,
           });
           rogueMusicStations.set(this, current.slice(-2));
@@ -1792,22 +1517,17 @@
           }
           if (slot === 8) {
             const scale = 1 + 0.15 * (rank - 1);
-            this.damage(e, (this.power() + 12) * effectForm.damage * scale, 'hero', { area: true });
-            if (
-              effectForm.silence &&
-              e.hp > 0 &&
-              e.type !== 'boss' &&
-              !e.captain &&
-              !e.roomCaptain &&
-              !(e.immune > 0)
-            ) {
+            this.damage(e, (this.power() + 12) * effectForm.damage * scale, 'hero',
+              { area: true });
+            if (effectForm.silence && e.hp > 0 && e.type !== 'boss' &&
+                !e.captain && !e.roomCaptain && !(e.immune > 0)) {
               this.applyRogueEnemySilence(e, effectForm.silence);
             }
           }
           if (slot === 4) {
             const prev = rogueEnemyWithers.get(e);
-            const effects =
-              prev?.zone === this.zoneId ? prev.effects.filter((v) => v.until > this.s.time) : [];
+            const effects = prev?.zone === this.zoneId
+              ? prev.effects.filter((v) => v.until > this.s.time) : [];
             effects.push({
               until: this.s.time + effectForm.seconds,
               remaining: Math.min(80, Math.max(3, e.maxHp * effectForm.dotFraction)),
@@ -1824,14 +1544,8 @@
             }
             // Hush blocks new eligible non-boss specials only; it never
             // erases protected boss phases or ordinary basic attacks.
-            if (
-              effectForm.silence &&
-              e.hp > 0 &&
-              e.type !== 'boss' &&
-              !e.captain &&
-              !e.roomCaptain &&
-              !(e.immune > 0)
-            ) {
+            if (effectForm.silence && e.hp > 0 && e.type !== 'boss' &&
+                !e.captain && !e.roomCaptain && !(e.immune > 0)) {
               this.applyRogueEnemySilence(e, effectForm.silence);
             }
           }
@@ -1840,10 +1554,8 @@
             // scripted charge is never overridden.
             if (e.hp > 0) this.shieldPush(e, effectForm.push);
             const earlier = rogueEnemyWeakens.get(e);
-            const effects =
-              earlier?.zone === this.zoneId
-                ? earlier.effects.filter((effect) => effect.until > this.s.time)
-                : [];
+            const effects = earlier?.zone === this.zoneId
+              ? earlier.effects.filter((effect) => effect.until > this.s.time) : [];
             effects.push({
               until: this.s.time + effectForm.weaken,
               fraction: effectForm.weakenFraction,
@@ -1857,42 +1569,27 @@
           if (slot === 6) {
             // Only real, not-ready enemy cooldowns receive finite debt. No
             // fabricated timers or globally delayed boss phase transitions.
-            for (const key of ['cd', 'specialCd', 'summonCd', 'healCd', 'supportHealCd']) {
+            for (const key of ['cd', 'specialCd', 'summonCd',
+              'healCd', 'supportHealCd']) {
               if (Number.isFinite(e[key]) && e[key] > 0)
                 e[key] = Math.min(1e6, e[key] + effectForm.debt);
             }
           }
         }
-        const recipients = slot === 5 ? [] : [...allies, h];
+        const recipients = slot === 5 ? [] : [
+          ...allies,
+          h,
+        ];
         for (const u of recipients)
-          this.applyRogueSongBoon(
-            u,
-            slot === 2
-              ? 'quickstep'
-              : slot === 3
-                ? 'steadyBeat'
-                : slot === 4
-                  ? 'mending'
-                  : slot === 7
-                    ? 'firmFooting'
-                    : slot === 8
-                      ? 'finale'
-                      : 'borrowedTime',
-            effectForm,
-          );
+          this.applyRogueSongBoon(u,
+            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', effectForm);
         this.event('rogueBellPerformance', {
-          actor: 'hero',
-          class: 'rogue',
-          slot,
+          actor: 'hero', class: 'rogue', slot,
           form: charged ? 'charged' : 'tap',
           audioCue: 'bell-jingle',
           instrument: R.rogueHeroFoundation.weapon.instrument,
-          x: h.x,
-          y: h.y,
-          radius: form.radius,
-          target: primary.id,
-          enemies: enemies.length,
-          allies: allies.length,
+          x: h.x, y: h.y, radius: form.radius,
+          target: primary.id, enemies: enemies.length, allies: allies.length,
         });
         return true;
       }
@@ -1903,48 +1600,24 @@
         // Wild Wraiths and Stalkers may be captured ONLY during their lawful
         // night encounter. A captured ally is a party member, not a night
         // spawn, and remains usable after sunrise.
-        const nightSpecies =
-          !!e?.nightOnly && this.night() && (e.species === 'wraith' || e.species === 'stalker');
+        const nightSpecies = !!e?.nightOnly && this.night() &&
+          (e.species === 'wraith' || e.species === 'stalker');
         if (
           this.hero.class !== 'rogue' ||
-          !e ||
-          e.type !== 'mob' ||
-          e.form !== 'normal' ||
-          e.hp <= 0 ||
-          e.neutral ||
-          e.returning ||
-          e.guard ||
-          e.roomGuard ||
-          e.awakenedGuard ||
-          e.captain ||
-          e.roomCaptain ||
-          e.fieldCaptain ||
-          e.summon ||
-          e.owner ||
-          e.reinforcement ||
-          (e.nightOnly && !nightSpecies) ||
-          e.crownTroop ||
-          e.mountedCrownRider ||
-          e.veraEscort ||
-          e.family ||
-          this.s.mode === 'arena' ||
-          this.s.mode === 'developer'
-        )
-          return null;
-        const authored =
-          Campaign.data.species.flat().find((row) => row[0] === e.species) ||
-          (nightSpecies
-            ? [e.species, e.species === 'wraith' ? 'Lantern wraith' : 'Ash stalker']
-            : null);
+          !e || e.type !== 'mob' || e.form !== 'normal' || e.hp <= 0 ||
+          e.neutral || e.returning || e.guard || e.roomGuard ||
+          e.awakenedGuard || e.captain || e.roomCaptain || e.fieldCaptain ||
+          e.summon || e.owner || e.reinforcement || (e.nightOnly && !nightSpecies) ||
+          e.crownTroop || e.mountedCrownRider || e.veraEscort || e.family ||
+          this.s.mode === 'arena' || this.s.mode === 'developer'
+        ) return null;
+        const authored = Campaign.data.species.flat().find((row) => row[0] === e.species) ||
+          (nightSpecies ? [e.species, e.species === 'wraith' ? 'Lantern wraith' : 'Ash stalker'] : null);
         if (!authored) return null;
         const ranged = nightSpecies ? e.species === 'wraith' : e.ranged === true;
         // A runtime flag alone cannot invent an authored monster subtype.
-        if (
-          ranged &&
-          !R.rangedProfiles[e.species] &&
-          !['archer', 'crownguard', ...(nightSpecies ? ['wraith'] : [])].includes(e.species)
-        )
-          return null;
+        if (ranged && !R.rangedProfiles[e.species] &&
+          !['archer', 'crownguard', ...(nightSpecies ? ['wraith'] : [])].includes(e.species)) return null;
         const role = ranged ? 'archer' : 'soldier',
           variant = ranged ? R.rangedProfiles[e.species]?.variant : null;
         return {
@@ -1958,36 +1631,26 @@
       }
       rogueCharmAttempt(primary, beforeHp, attackZone) {
         if (
-          this.hero.class !== 'rogue' ||
-          this.hero.hp <= 0 ||
-          this.peace ||
-          this.s.challenge.pending ||
-          this.s.challenge.gameOver ||
-          this.zoneId !== attackZone ||
-          !primary ||
-          !(beforeHp > primary.hp) ||
-          primary.hp <= 0 ||
-          this.attackResetProtected(primary) ||
-          !this.tacticalDirectTargetable(primary)
-        )
-          return false;
+          this.hero.class !== 'rogue' || this.hero.hp <= 0 || this.peace ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.zoneId !== attackZone || !primary ||
+          !(beforeHp > primary.hp) || primary.hp <= 0 ||
+          this.attackResetProtected(primary) || !this.tacticalDirectTargetable(primary)
+        ) return false;
         const zone = this.zone(),
           index = zone.enemies.findIndex((e) => e === primary),
           profile = this.rogueCharmProfile(primary);
         if (
-          index < 0 ||
-          !profile ||
-          this.s.party.length >= 200 ||
+          index < 0 || !profile || this.s.party.length >= 200 ||
           this.s.party.some((u) => u.charmOrigin?.sourceEnemyId === primary.id) ||
           Object.values(this.s.charmCaptures || {}).some(
             (entry) => entry.sourceEnemyId === primary.id,
           ) ||
           Object.values(this.s.pending).some((p) => p.base?.id === primary.id) ||
-          new Set(
-            this.s.party.filter((u) => u.charmOrigin?.typeId === profile.typeId).map((u) => u.id),
-          ).size >= this.expeditionPartyCap()
-        )
-          return false;
+          new Set(this.s.party.filter(
+            (u) => u.charmOrigin?.typeId === profile.typeId,
+          ).map((u) => u.id)).size >= this.expeditionPartyCap()
+        ) return false;
         // A saved, independent stream: invalid attempts draw nothing, and Charm
         // never disturbs the existing combat/World/Party critical RNG streams.
         const state = Number.isInteger(this.s.rogueCharmRng)
@@ -2036,74 +1699,47 @@
         if (this.s.heroTarget === primary.id) this.s.heroTarget = null;
         this.resetBasicCombo();
         this.event('rogueCharm', {
-          actor: 'hero',
-          companionId: u.id,
-          sourceEnemyId: primary.id,
-          typeId: profile.typeId,
-          active: u.active,
-          x: u.x,
-          y: u.y,
+          actor: 'hero', companionId: u.id, sourceEnemyId: primary.id,
+          typeId: profile.typeId, active: u.active, x: u.x, y: u.y,
         });
-        this.say(
-          u.customName +
-            ' (' +
-            profile.typeName +
-            ') Charmed. ' +
-            (u.active ? 'Joined the group.' : 'Group full; resting in reserve.'),
-        );
+        this.say(u.customName + ' (' + profile.typeName + ') Charmed. ' +
+          (u.active ? 'Joined the group.' : 'Group full; resting in reserve.'));
         return true;
       }
       // Rogue automatic basic: only the surviving primary may try Charm.
       castRogueBasic(targetId = null) {
         const cfg = R.rogueHeroFoundation.basic;
         if (
-          this.hero.class !== 'rogue' ||
-          this.s.mode === 'developer' ||
-          this.peace ||
-          this.hero.hp <= 0 ||
-          !this.hero.skills[0] ||
+          this.hero.class !== 'rogue' || this.s.mode === 'developer' ||
+          this.peace || this.hero.hp <= 0 || !this.hero.skills[0] ||
           (this.hero.basicCd || 0) > 0 ||
-          this.s.challenge.pending ||
-          this.s.challenge.gameOver ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
           this.tacticalScatterState(this.hero) ||
-          this.hero.deathRollHeld ||
-          this.hero.keeperHeld ||
+          this.hero.deathRollHeld || this.hero.keeperHeld ||
           this.hero.order?.type === 'skill-approach'
-        )
-          return false;
+        ) return false;
         const selected = this.selectedHeroTarget(),
           preferred = targetId ?? selected?.id ?? this.basicComboTargetId ?? this.s.heroTarget,
-          eligible = this.zone().enemies.filter(
-            (e) =>
-              e.hp > 0 &&
-              !e.neutral &&
-              !e.returning &&
-              !this.awaitsHeroAttack(e) &&
-              !this.attackResetProtected(e) &&
-              this.tacticalDirectTargetable(e) &&
-              dist(e, this.hero) <= cfg.range &&
-              this.line(this.hero, e),
+          eligible = this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, this.hero) <= cfg.range && this.line(this.hero, e),
           ),
           canCoverNearby = this.automaticBasicNearbyFallbackAllowed(selected, cfg.range, targetId),
-          primary =
-            eligible.find((e) => e.id === preferred) ||
+          primary = eligible.find((e) => e.id === preferred) ||
             (canCoverNearby
-              ? eligible.sort(
-                  (a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b),
-                )[0]
+              ? eligible.sort((a, b) =>
+                dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]
               : null);
         if (!primary) return false;
         // Recall remains under player/timer control during all offense.
         this.engage(primary);
         const combo = this.nextBasicCombo(primary.id),
           rank = this.hero.skills[0],
-          baseDamage =
-            (this.power() + 12) *
-            cfg.primaryMultiplier *
-            (1 + 0.15 * (rank - 1)) *
-            combo.multiplier *
-            (1 +
-              (this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0) +
+          baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
+            (1 + 0.15 * (rank - 1)) * combo.multiplier *
+            (1 + (this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0) +
               (this.rogueSongBoon(this.hero, 'cadence')?.basicDamage || 0));
         this.hero.basicCd = this.basicSkillCooldown();
         const criticalReceipt = this.rogueCriticalRelease('auto'),
@@ -2115,27 +1751,14 @@
         if (landed) {
           const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap,
             radius = combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius;
-          const secondary = this.zone()
-            .enemies.filter(
-              (e) =>
-                e !== primary &&
-                e.hp > 0 &&
-                !e.neutral &&
-                !e.returning &&
-                !this.awaitsHeroAttack(e) &&
-                !this.attackResetProtected(e) &&
-                this.tacticalDirectTargetable(e) &&
-                dist(e, this.hero) <= radius &&
-                this.line(this.hero, e),
-            )
-            .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
+          const secondary = this.zone().enemies.filter((e) =>
+            e !== primary && e.hp > 0 && !e.neutral && !e.returning &&
+            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, this.hero) <= radius && this.line(this.hero, e),
+          ).sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
           for (const e of secondary.slice(0, max))
-            if (
-              this.damage(e, enhancedBasic * cfg.splashMultiplier, 'hero', {
-                area: true,
-                automaticBasic: true,
-              })
-            )
+            if (this.damage(e, enhancedBasic * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
               splashHits++;
         }
         // Critical bell strikes briefly inspire the singer and companions in
@@ -2153,20 +1776,12 @@
         if (landed) this.rogueCharmAttempt(primary, beforePrimaryHp, attackZone);
         // Bell-jingle sound intent remains distinct from actual audio playback.
         this.event('rogueBellBasic', {
-          actor: 'hero',
-          class: 'rogue',
-          slot: 1,
-          automaticBasic: true,
+          actor: 'hero', class: 'rogue', slot: 1, automaticBasic: true,
           instrument: R.rogueHeroFoundation.weapon.instrument,
           audioCue: R.rogueHeroFoundation.weapon.basicCue,
-          x: this.hero.x,
-          y: this.hero.y,
-          target: primary.id,
-          targetX: primary.x,
-          targetY: primary.y,
-          combo: combo.step,
-          landed: !!landed,
-          splashHits,
+          x: this.hero.x, y: this.hero.y,
+          target: primary.id, targetX: primary.x, targetY: primary.y,
+          combo: combo.step, landed: !!landed, splashHits,
           radius: combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius,
         });
         return true;
@@ -2182,11 +1797,9 @@
         // class gate. Later performance families remain unavailable.
         if (this.hero.class === 'rogue') {
           if (slot === 1)
-            return automatic && !charged
-              ? this.castRogueBasic(targetId)
-              : !automatic
-                ? this.castRogueSkill1(targetId, !!charged, encountersAtStart)
-                : false;
+            return automatic && !charged ? this.castRogueBasic(targetId)
+              : !automatic ? this.castRogueSkill1(targetId, !!charged, encountersAtStart)
+              : false;
           return !automatic ? this.castRoguePerformance(slot, targetId, !!charged) : false;
         }
         if (!implementedHeroCombatClasses.has(this.hero.class)) return false;
@@ -2255,7 +1868,8 @@
               !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= range &&
-              (!isCharged && slot === 1 ? this.rangedLine(this.hero, e) : this.line(this.hero, e)),
+              (!isCharged && slot === 1
+                ? this.rangedLine(this.hero, e) : this.line(this.hero, e)),
           ),
           preferredTargetId =
             targetId ??
@@ -2269,8 +1883,7 @@
           // foe is beyond BASIC reach. The selection/lock stays intact for
           // deliberate manual skills; in-range selections still take priority.
           nearbyBasicFallback =
-            automatic &&
-            slot === 1 &&
+            automatic && slot === 1 &&
             this.automaticBasicNearbyFallbackAllowed(selected, range, targetId),
           lockedOut =
             requiresTarget &&
@@ -2390,9 +2003,7 @@
           slot >= 1 && slot <= 8 && this._criticalPartyNative
             ? this._criticalPartyNative.release(
                 this,
-                'hero/' +
-                  this.hero.class +
-                  '/' +
+                'hero/' + this.hero.class + '/' +
                   (automatic ? 'auto' : slot + (isCharged ? '-charged' : '-tap')),
                 'hero',
               )
@@ -2413,8 +2024,7 @@
           targetY: target?.y,
           rank,
         });
-        if (!isCharged && slot === 8)
-          return this.castHeroUltimate(target, scale, steps, power, false, null, criticalReceipt);
+        if (!isCharged && slot === 8) return this.castHeroUltimate(target, scale, steps, power, false, null, criticalReceipt);
         if (!isCharged && slot === 7 && this.hero.class === 'mage')
           return this.castMageChain(target, scale, steps, power, false, null, criticalReceipt);
         if (isCharged && slot >= 5 && slot <= 8)
@@ -2497,7 +2107,7 @@
                 charged: false,
                 skillShape: 'single',
                 ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-                ...(encountersAtStart ? { encountersAtStart } : {}),
+              ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
                 chargedBurst: false,
               });
@@ -2572,7 +2182,9 @@
               angle,
               targetId: target.id,
               damage: criticalReceipt?.critical
-                ? this._criticalPartyNative.enhance(criticalReceipt, (power + 12) * scale, 'damage')
+                ? this._criticalPartyNative.enhance(
+                    criticalReceipt, (power + 12) * scale, 'damage',
+                  )
                 : (power + 12) * scale,
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               encountersAtStart,
@@ -2674,7 +2286,8 @@
                 slow: def.slow || 0,
                 rangerVolleySlow: this.criticalHeroValue(
                   criticalReceipt,
-                  R.heroTactics.ranger.volley.slow + steps * R.heroTactics.ranger.volley.slowStep,
+                  R.heroTactics.ranger.volley.slow +
+                    steps * R.heroTactics.ranger.volley.slowStep,
                   'slowDuration',
                 ),
                 ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
@@ -2682,22 +2295,11 @@
               });
             }
             this.event('chargedArea', {
-              slot,
-              class: 'ranger',
-              actor: 'hero',
-              source: 'hero',
-              effect: def.effect,
-              shape: 'line',
-              projectileVolley: true,
-              x: from.x,
-              y: from.y,
-              fromX: from.x,
-              fromY: from.y,
-              angle,
-              range: def.range || 0,
-              halfWidth: def.halfWidth || 0,
-              hits: 0,
-              arrows: foes.length,
+              slot, class: 'ranger', actor: 'hero', source: 'hero',
+              effect: def.effect, shape: 'line', projectileVolley: true,
+              x: from.x, y: from.y, fromX: from.x, fromY: from.y,
+              angle, range: def.range || 0, halfWidth: def.halfWidth || 0,
+              hits: 0, arrows: foes.length,
             });
             return true;
           }
@@ -2705,24 +2307,14 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (
-              this.damage(e, damage, 'hero', {
-                area: true,
-                encountersAtStart,
-                skillShape: 'area',
-                criticalExecution: criticalReceipt,
-              })
-            ) {
+            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart,
+              skillShape: 'area', criticalExecution: criticalReceipt })) {
               hits++;
               if (def.slow)
-                this.applySlow(
-                  e,
-                  this.criticalHeroValue(
-                    this.hero.class === 'mage' ? criticalReceipt : null,
-                    def.slow,
-                    'slowDuration',
-                  ),
-                );
+                this.applySlow(e, this.criticalHeroValue(
+                  this.hero.class === 'mage' ? criticalReceipt : null,
+                  def.slow, 'slowDuration',
+                ));
               if (this.hero.class === 'paladin') this.weakenEnemy(e, rank, criticalReceipt);
               if (this.hero.class === 'ranger')
                 this.applySlow(
@@ -2778,9 +2370,7 @@
                   : Math.atan2(this.formationHeading?.y || 1, this.formationHeading?.x || 0),
                 reach = cfg.bash.reach + steps * cfg.bash.reachStep,
                 push = this.criticalHeroValue(
-                  criticalReceipt,
-                  cfg.bash.push + steps * cfg.bash.pushStep,
-                  'pushDistance',
+                  criticalReceipt, cfg.bash.push + steps * cfg.bash.pushStep, 'pushDistance',
                 ),
                 delta = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
               let hits = 0;
@@ -2802,12 +2392,8 @@
                     enemy,
                     power * cfg.bash.damage * scale * (elite ? cfg.bash.eliteDamage : 1),
                     'hero',
-                    {
-                      area: true,
-                      encountersAtStart,
-                      skillShape: 'area',
-                      criticalExecution: criticalReceipt,
-                    },
+                    { area: true, encountersAtStart,
+                      skillShape: 'area', criticalExecution: criticalReceipt },
                   )
                 ) {
                   if (enemy.hp > 0) this.shieldPush(enemy, push);
@@ -2831,9 +2417,7 @@
               });
             } else {
               this.hero.shieldStance = this.criticalHeroValue(
-                criticalReceipt,
-                cfg.shield.duration,
-                'wardDuration',
+                criticalReceipt, cfg.shield.duration, 'wardDuration',
               );
               this.hero.shieldRank = rank;
               this.resetBasicCombo();
@@ -2854,13 +2438,9 @@
                 y: this.hero.y,
                 zone: this.zoneId,
                 radius: cfg.radius + steps * cfg.radiusStep,
-                until:
-                  this.s.time +
-                  this.criticalHeroValue(
-                    criticalReceipt,
-                    cfg.duration + steps * cfg.durationStep,
-                    'silenceDuration',
-                  ),
+                until: this.s.time + this.criticalHeroValue(
+                  criticalReceipt, cfg.duration + steps * cfg.durationStep, 'silenceDuration',
+                ),
               };
               this.event('chargedArea', {
                 actor: 'hero',
@@ -2888,9 +2468,7 @@
             }
           } else {
             const amount = this.criticalHeroValue(
-              criticalReceipt,
-              (45 + power * 0.5) * scale,
-              'healAmount',
+              criticalReceipt, (45 + power * 0.5) * scale, 'healAmount',
             );
             if (isCharged) {
               const targets = [this.hero, ...this.activeLivingParty()].filter(
@@ -2938,13 +2516,9 @@
             if (isCharged) {
               const rally = R.heroTactics.ranger.rally,
                 radius = rally.radius + rally.radiusStep * steps,
-                until =
-                  this.s.time +
-                  this.criticalHeroValue(
-                    criticalReceipt,
-                    rally.duration + rally.durationStep * steps,
-                    'hasteDuration',
-                  ),
+                until = this.s.time + this.criticalHeroValue(
+                  criticalReceipt, rally.duration + rally.durationStep * steps, 'hasteDuration',
+                ),
                 movement = rally.movementBonus + rally.movementStep * steps,
                 attackSpeed = rally.attackSpeedBonus + rally.attackSpeedStep * steps;
               let allies = 0;
@@ -2980,8 +2554,7 @@
               });
             } else {
               this.hero.haste = Math.min(
-                6,
-                this.criticalHeroValue(criticalReceipt, 4 + 0.25 * (rank - 1), 'hasteDuration'),
+                6, this.criticalHeroValue(criticalReceipt, 4 + 0.25 * (rank - 1), 'hasteDuration'),
               );
               this.event('spell', {
                 actor: 'hero',
@@ -3020,38 +2593,24 @@
                 this.launchTargetedHeroSkill(enemy, 4, damage, 'holy', {
                   effect: 'judgment',
                   tauntDuration: this.criticalHeroValue(
-                    criticalReceipt,
-                    advanced.taunt + steps * advanced.tauntStep,
-                    'tauntDuration',
+                    criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
                   ),
                   ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 });
                 continue;
               }
-              if (
-                this.damage(enemy, damage, 'hero', {
-                  area: isCharged,
-                  encountersAtStart,
-                  skillShape: isCharged ? 'area' : 'single',
-                  criticalExecution: criticalReceipt,
-                })
-              ) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart,
+                skillShape: isCharged ? 'area' : 'single',
+                criticalExecution: criticalReceipt })) {
                 // Captains and bosses keep their authored scripted specials;
                 // boss basic-target provocation is deliberately short-lived.
                 const tauntDuration =
                   enemy.type === 'boss'
-                    ? Math.min(
-                        2.5,
-                        this.criticalHeroValue(
-                          criticalReceipt,
-                          advanced.taunt + steps * advanced.tauntStep,
-                          'tauntDuration',
-                        ),
-                      )
+                    ? Math.min(2.5, this.criticalHeroValue(
+                        criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
+                      ))
                     : this.criticalHeroValue(
-                        criticalReceipt,
-                        advanced.taunt + steps * advanced.tauntStep,
-                        'tauntDuration',
+                        criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
                       );
                 enemy.tauntUntil = Math.max(enemy.tauntUntil || 0, this.s.time + tauntDuration);
                 hits++;
@@ -3102,28 +2661,21 @@
                   effect: 'arcane-fracture',
                   fractureFraction: advanced.fraction + steps * advanced.fractionStep,
                   fractureDuration: this.criticalHeroValue(
-                    criticalReceipt,
-                    advanced.duration + steps * advanced.durationStep,
+                    criticalReceipt, advanced.duration + steps * advanced.durationStep,
                     'vulnerabilityDuration',
                   ),
                   ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 });
                 continue;
               }
-              if (
-                this.damage(enemy, damage, 'hero', {
-                  area: isCharged,
-                  encountersAtStart,
-                  skillShape: isCharged ? 'area' : 'single',
-                  criticalExecution: criticalReceipt,
-                })
-              ) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart,
+                skillShape: isCharged ? 'area' : 'single',
+                criticalExecution: criticalReceipt })) {
                 this.fractureEnemy(
                   enemy,
                   advanced.fraction + steps * advanced.fractionStep,
                   this.criticalHeroValue(
-                    criticalReceipt,
-                    advanced.duration + steps * advanced.durationStep,
+                    criticalReceipt, advanced.duration + steps * advanced.durationStep,
                     'vulnerabilityDuration',
                   ),
                 );
@@ -3178,7 +2730,9 @@
                 dx: (e.x - this.hero.x) / d,
                 dy: (e.y - this.hero.y) / d,
                 target: e.id,
-                damage: this.criticalHeroValue(criticalReceipt, power * 2.3 * scale, 'damage'),
+                damage: this.criticalHeroValue(
+                  criticalReceipt, power * 2.3 * scale, 'damage',
+                ),
                 source: 'hero',
                 speed: 650,
                 style: 'arrow',
@@ -3188,26 +2742,15 @@
               });
               continue;
             }
-            const landed = this.damage(
-              e,
-              this.criticalHeroValue(
-                this.hero.class !== 'mage' ? criticalReceipt : null,
-                (slot === 7 ? power * 6 : power * 2.3) * scale,
-                'damage',
-              ),
-              'hero',
-              {
-                area: true,
-                skillShape: 'area',
-                criticalExecution: criticalReceipt,
-              },
-            );
+            const landed = this.damage(e, this.criticalHeroValue(
+              this.hero.class !== 'mage' ? criticalReceipt : null,
+              (slot === 7 ? power * 6 : power * 2.3) * scale, 'damage',
+            ), 'hero', {
+              area: true, skillShape: 'area', criticalExecution: criticalReceipt,
+            });
             if (landed) contacts.push({ x: e.x, y: e.y, target: e.id });
             if (landed && this.hero.class === 'mage' && slot === 5 && e.hp > 0)
-              this.shieldPush(
-                e,
-                this.criticalHeroValue(criticalReceipt, 30 + steps * 3, 'pushDistance'),
-              );
+              this.shieldPush(e, this.criticalHeroValue(criticalReceipt, 30 + steps * 3, 'pushDistance'));
           }
           this.event('spell', {
             actor: 'hero',
@@ -3216,7 +2759,8 @@
             slot,
             radius: slot === 5 ? 350 : 500,
             contacts,
-            ...(this.hero.class === 'ranger' && slot === 5 ? { projectileVolley: true } : {}),
+            ...(this.hero.class === 'ranger' && slot === 5
+              ? { projectileVolley: true } : {}),
             x: this.hero.x,
             y: this.hero.y,
           });
@@ -3234,8 +2778,7 @@
             criticalBasicDamage =
               (slot === 1 ||
                 (this.hero.class === 'paladin' && slot === 6) ||
-                (this.hero.class === 'ranger' && slot === 7)) &&
-              criticalReceipt?.critical
+                (this.hero.class === 'ranger' && slot === 7)) && criticalReceipt?.critical
                 ? this._criticalPartyNative.enhance(criticalReceipt, baseDmg, 'damage')
                 : baseDmg,
             dmg = criticalBasicDamage * (comboState?.multiplier || 1);
@@ -3244,11 +2787,9 @@
               target,
               dmg,
               'hero',
-              automatic
-                ? { automaticBasic: true }
-                : slot === 1
-                  ? null
-                  : { skillShape: 'single', criticalExecution: criticalReceipt },
+              automatic ? { automaticBasic: true } :
+                slot === 1 ? null :
+                  { skillShape: 'single', criticalExecution: criticalReceipt },
             );
             if (landed) {
               if (slot === 2) this.weakenEnemy(target, rank, criticalReceipt);
@@ -3302,14 +2843,14 @@
                 source: 'hero',
                 speed: 550,
                 delay: j * 0.12,
-                ...(this.hero.class === 'ranger' && j > 0 ? { rangerDelayedLaunch: true } : {}),
+                ...(this.hero.class === 'ranger' && j > 0
+                  ? { rangerDelayedLaunch: true }
+                  : {}),
                 style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
                 slot,
                 ...(this.hero.class === 'ranger' && slot === 7 ? { piercing: true } : {}),
                 ...(this.hero.class === 'ranger' && slot === 6
-                  ? {
-                      push: this.criticalHeroValue(criticalReceipt, 45 + 5 * steps, 'pushDistance'),
-                    }
+                  ? { push: this.criticalHeroValue(criticalReceipt, 45 + 5 * steps, 'pushDistance') }
                   : {}),
                 effect:
                   this.hero.class === 'mage' && slot === 2
