@@ -1,0 +1,58 @@
+# Temporary non-deploying, branch-scoped validation of the legacy Archive browser suite.
+# Remove this file after recording final Chromium/WebKit evidence.
+name: v0.9.2 Archive browser validation (temporary)
+on:
+  push:
+    branches:
+      - feat/v092-tutorial-quest-chain-20261112
+    paths:
+      - tests/quest-archive-browser.test.cjs
+      - tests/helpers/notice-browser.cjs
+      - .github/workflows/v092-archive-browser-validation.yml
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Run complete legacy Archive browser exercise
+        env:
+          QUEST_BROWSER_ENGINE: ${{ matrix.engine }}
+        run: node tests/quest-archive-browser.test.cjs
+      - name: Preserve failure screenshots and viewports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v092-archive-${{ matrix.engine }}
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  source-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Format and syntax of browser fixture
+        run: |
+          npx prettier --check tests/helpers/notice-browser.cjs tests/quest-archive-browser.test.cjs
+          node --check tests/quest-archive-browser.test.cjs
+          node --check tests/helpers/notice-browser.cjs
+      - name: Offline build identity
+        run: node scripts/build.cjs --check

@@ -156,19 +156,36 @@ const server = http.createServer((req, res) => {
         null,
         { timeout: 15000 },
       );
+      // G is the live, remappable Controls shortcut; technical skill and
+      // combat detail now belongs to the separate X Skill journal.
       await page.keyboard.press('g');
+      assert.equal(await page.locator('#modal-title').textContent(), 'Controls');
+      await page.getByRole('button', { name: 'Customize keyboard', exact: true }).click();
+      assert.equal(await page.locator('#modal-title').textContent(), 'Customize keyboard');
+      await page.getByRole('button', { name: 'Movement and menu keys', exact: true }).click();
       assert(
-        (await page.locator('#modal-description').textContent()).includes(
-          'Fallen companions need Barracks',
-        ),
+        await page.getByRole('button', { name: /Confirm \/ interact · F/ }).count(),
+        'the real interaction binding remains visible in Controls',
       );
-      assert((await page.locator('#modal-description').textContent()).includes('Shield Bash'));
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
+      await page.keyboard.press('Escape');
+      assert(await page.locator('#modal').isHidden(), 'Controls return to live gameplay');
+      await page.keyboard.press('x');
+      assert.equal(await page.locator('#modal-title').textContent(), 'Skill journal');
+      await page.getByRole('button', { name: /^Skill 1 ·/ }).click();
+      assert(
+        (await page.locator('#modal-description').textContent()).length > 50,
+        'a learned skill has a real technical description',
+      );
+      await page.keyboard.press('Escape');
       await page.getByRole('button', { name: 'Combat conditions', exact: true }).click();
       await page.getByRole('button', { name: 'Slow', exact: true }).click();
       assert((await page.locator('#modal-description').textContent()).includes('cooldown'));
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
       await page.keyboard.press('Escape');
+      assert(await page.locator('#modal').isHidden(), 'journal Back restores field input');
       await page.evaluate(() => {
         const c = Prototype.game;
         c.enter('archive');
