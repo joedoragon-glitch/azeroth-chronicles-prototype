@@ -573,7 +573,9 @@
                       : a.kind === 'volley'
                         ? 0.22
                         : 1.1,
-                radius: a.kind === 'volley' ? R.bossCadence.specialRange : a.radius,
+                radius: a.kind === 'volley'
+                  ? a.volleyReach || R.attacks.crypt[1].volleyReach
+                  : a.radius,
                 source: e,
               });
             } else if (a.kind === 'ring' && a.dreadMechanic === 'closure') {
