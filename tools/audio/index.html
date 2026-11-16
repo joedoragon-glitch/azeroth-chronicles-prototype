@@ -144,6 +144,14 @@
             <button type="button" id="copy-recording-link">Copy listening-room link</button>
             <button type="button" id="stem-play" disabled>Play with paired layer</button>
           </div>
+          <div id="effect-stage-compare" class="paired-control" hidden>
+            <p id="effect-stage-description" class="hint">Compare this material’s attack departure with its contact.</p>
+            <div class="action-line">
+              <button type="button" id="effect-play-release">Play release · launch</button>
+              <button type="button" id="effect-play-impact">Play impact · contact</button>
+            </div>
+            <p class="hint">These are the two currently registered game WAVs, not the historical backups. Each plays alone at the same listening-room gain; real combat adds other layers.</p>
+          </div>
           <div id="paired-controls" class="paired-control">
             <label for="intensity">Paired-layer volume <output id="intensity-value" for="intensity">35%</output>
               <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.35" disabled />

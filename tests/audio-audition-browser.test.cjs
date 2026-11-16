@@ -158,7 +158,32 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(() =>
           document.querySelector('#now-playing').textContent.includes('Critical Warning'));
         assert((await page.locator('#message').textContent()).includes('Short effects finish on their own'));
+        assert.equal(await page.locator('#effect-stage-compare').isVisible(), false,
+          'Warning/special cues have no fictitious release/impact counterpart');
+        // Exact in-game IDs must provide unmistakable launch/contact selection,
+        // even when the visitor started with a one-stage-only filter.
+        await page.locator('#effect-stage').selectOption('release');
+        await page.locator('#recording').selectOption('sfx-arrow-release');
+        assert.equal(await page.locator('#effect-stage-compare').isVisible(), true);
+        await press('#effect-play-impact');
+        await page.waitForFunction(() =>
+          document.querySelector('#now-playing').textContent.includes('Arrow Impact'));
+        assert.equal(await page.locator('#recording').inputValue(), 'sfx-arrow-impact');
+        assert.equal(await page.locator('#effect-stage').inputValue(), 'all');
+        assert.equal(await page.locator('#kind').inputValue(), 'effect');
+        assert((await page.locator('#message').textContent()).includes('sfx-arrow-impact'));
+        await press('#effect-play-release');
+        await page.waitForFunction(() =>
+          document.querySelector('#now-playing').textContent.includes('Arrow Release'));
+        assert.equal(await page.locator('#recording').inputValue(), 'sfx-arrow-release');
+        for (const family of ['stone', 'spectral', 'claw', 'holy']) {
+          await page.locator('#recording').selectOption('sfx-' + family + '-impact');
+          assert.equal(await page.locator('#effect-stage-compare').isVisible(), true);
+          assert((await page.locator('#effect-stage-description').textContent())
+            .toLowerCase().includes(family));
+        }
         await page.locator('#kind').selectOption('music');
+        assert.equal(await page.locator('#effect-stage-compare').isVisible(), false);
         assert.equal(await page.locator('#effect-filters').isVisible(), false);
         await page.locator('#kind').selectOption('ambience');
         assert.equal(await page.locator('#recording option').count(), 34);

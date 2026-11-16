@@ -1,0 +1,106 @@
+# Branch-only corrective sound-design review. Never deploy or merge.
+name: SFX launch vs contact Sound Library audit (NO deploy)
+on:
+  push:
+    branches:
+      - audio/sfx-stage-differentiation-audit-20261116
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sfx-stage-contrast-review-20261116
+  cancel-in-progress: true
+
+jobs:
+  verified-stage-contrast:
+    name: Regenerate approved source candidates, test physical WAV and browser
+    if: github.ref == 'refs/heads/audio/sfx-stage-differentiation-audit-20261116'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install locked browser, WAV and source tools
+        run: |
+          npm ci --ignore-scripts
+          python -m pip install --disable-pip-version-check --quiet numpy==2.3.5 scipy==1.17.0
+          node scripts/vendor-pixi.cjs --ensure
+          npx playwright install --with-deps chromium
+      - name: Render exactly the existing 30 identities without touching immutable originals
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          entries=json.loads(Path('assets/audio/manifest.json').read_text())['assets']
+          m={k:v['sha256'] for k,v in entries.items() if v['kind']=='effect'}
+          assert len(m)==30
+          Path('/tmp/sfx-contrast-before.json').write_text(json.dumps(m))
+          PY
+          python tools/audio/sfx-phase1-master.py --revise
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          before=json.loads(Path('/tmp/sfx-contrast-before.json').read_text())
+          active=json.loads(Path('assets/audio/manifest.json').read_text())['assets']
+          archive=json.loads(Path('tools/audio/sfx-phase1-rollback.json').read_text())
+          changed={k for k in before if before[k]!=active[k]['sha256']}
+          expected={f'sfx-{m}-{stage}' for m in ('arrow','stone','spectral','claw','holy') for stage in ('release','impact')}
+          assert changed in (set(),expected),(changed,expected)
+          assert len(before)==len(archive['originalSha256'])==30
+          for key,original in archive['originalSha256'].items():
+              archived=Path('tools/audio/sfx-legacy/dev288')/(key+'.wav')
+              assert hashlib.sha256(archived.read_bytes()).hexdigest()==original,key
+          print('Stage revision: changed',len(changed),'of 30 files; retained all 30 exact historic WAVs')
+          PY
+          node scripts/build.cjs
+      - name: Validate recorded WAV hashes, mastering, material pairs and exact audio routing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tests/audio-sfx-phase1-quality.test.py > "${RUNNER_TEMP}/sfx-stage-signal-report.json"
+          python tests/audio-sfx-phase1-rollback.test.py
+          node scripts/audio-library.cjs check
+          node tests/audio-production.test.cjs
+          node tests/audio-recordings.test.cjs
+          node tests/audio-catalog.test.cjs
+          node tests/audition.test.cjs
+          node tests/docs-release-consistency.test.cjs
+          node scripts/build.cjs --check
+      - name: Test the exact live Game Sound Library in Chromium desktop and phone
+        run: node tests/audio-audition-browser.test.cjs
+      - name: Validate game audio events and cold recorded fallback in desktop and phone
+        run: node tests/audio-browser.test.cjs
+      - name: Commit only the resulting reproducible isolated candidate, never publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = 'refs/heads/audio/sfx-stage-differentiation-audit-20261116'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/audio/effects/sfx-{arrow,stone,spectral,claw,holy}-{release,impact}.wav
+          git add assets/audio/manifest.json tools/audio/sfx-phase1-metrics.json
+          git add sw.js src/prototype/audio-library.js src/prototype/build-info.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'audio: stage five distinct launch/contact families with reproducible dev290 package'
+            git push origin HEAD:refs/heads/audio/sfx-stage-differentiation-audit-20261116
+          fi
+      - name: Archive real physical-signal evidence for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFX-stage-contrast-source-evidence
+          path: ${{ runner.temp }}/sfx-stage-signal-report.json
+          if-no-files-found: warn
+          retention-days: 30
