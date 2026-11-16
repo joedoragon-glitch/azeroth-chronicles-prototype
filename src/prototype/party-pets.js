@@ -220,7 +220,9 @@
               this.companionAttackDamage(u) * def.multiplier * damageMastery,
               'damage',
             ),
-            speed: R.balance.friendlyProjectiles.skillSpeed,
+            speed: R.projectileFlight.companion.petSkill[u.petFamily] || R.projectileFlight.companion.petSkill.fallback,
+            life: R.balance.friendlyProjectiles.lifeSeconds * R.balance.friendlyProjectiles.skillSpeed /
+              (R.projectileFlight.companion.petSkill[u.petFamily] || R.projectileFlight.companion.petSkill.fallback),
             slow: this.petCriticalConsequence(criticalReceipt,
               def.slow ? Math.min(2.5, def.slow + slowMastery) : 0, 'slowDuration'),
             petSkillSlot: slot,
@@ -435,7 +437,9 @@
               'damage',
             ),
             source: u.id,
-            speed: 450,
+            speed: R.projectileFlight.companion.petBasic[u.petFamily] || R.projectileFlight.companion.petBasic.fallback,
+            life: R.balance.friendlyProjectiles.lifeSeconds * 450 /
+              (R.projectileFlight.companion.petBasic[u.petFamily] || R.projectileFlight.companion.petBasic.fallback),
             style: 'pet',
             petFamily: u.petFamily,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
@@ -551,7 +555,9 @@
               'damage',
             ),
             source: u.id,
-            speed: 450,
+            speed: R.projectileFlight.companion.petBasic[u.petFamily] || R.projectileFlight.companion.petBasic.fallback,
+            life: R.balance.friendlyProjectiles.lifeSeconds * 450 /
+              (R.projectileFlight.companion.petBasic[u.petFamily] || R.projectileFlight.companion.petBasic.fallback),
             style: 'pet',
             petFamily: u.petFamily,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
