@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/prototype/app.js'
       - 'src/prototype/input.js'
+      - 'sw.js'
       - 'tests/gta-cuba-menu-joystick.test.cjs'
       - '.github/workflows/gta-cuba-menu-joystick.yml'
   push:
@@ -28,5 +29,21 @@ jobs:
           node --check src/prototype/input.js
           node --check src/prototype/app.js
           node --check tests/gta-cuba-menu-joystick.test.cjs
+          node --check sw.js
       - name: Menu input and unchanged field controls
         run: node tests/gta-cuba-menu-joystick.test.cjs
+      - name: Offline worker fingerprints match committed controls
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          const worker = fs.readFileSync('sw.js', 'utf8');
+          for (const path of ['src/prototype/app.js', 'src/prototype/input.js']) {
+            const bytes = fs.readFileSync(path);
+            const hash = crypto.createHash('sha1')
+              .update('blob ' + bytes.length + '\\0').update(bytes).digest('hex');
+            const entry = JSON.stringify('./' + path) + ':' + JSON.stringify(hash);
+            if (!worker.includes(entry)) throw Error('Stale offline worker fingerprint: ' + path);
+          }
+          console.log('PASS edition worker fingerprints are source-exact');
+          NODE
