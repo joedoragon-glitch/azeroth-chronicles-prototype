@@ -28,7 +28,7 @@ def restore(root,selection,expect_good=True):
     else: assert process.returncode!=0,process.stdout
 with tempfile.TemporaryDirectory() as temp:
     p=stage(temp)
-    chosen=ids[7]
+    chosen='sfx-arcane-release' # one of the four corrected playback gains
     original=json.loads((p/'assets/audio/manifest.json').read_text())
     restore(p,chosen)
     after=json.loads((p/'assets/audio/manifest.json').read_text())
@@ -36,11 +36,17 @@ with tempfile.TemporaryDirectory() as temp:
         expected=rollback['originalSha256'][key] if key==chosen else original['assets'][key]['sha256']
         assert sha(p/'assets/audio/effects'/f'{key}.wav')==expected
         assert after['assets'][key]==(rollback['originalEntries'][key] if key==chosen else original['assets'][key])
+        for receipt in rollback['originalEventBindings'][key]:
+            event=receipt['event'];i=receipt['index']
+            expected_binding=(receipt['binding'] if key==chosen else original['director']['events'][event][i])
+            assert after['director']['events'][event][i]==expected_binding
     restore(p,'all')
     final=json.loads((p/'assets/audio/manifest.json').read_text())
     for key in ids:
         assert final['assets'][key]==rollback['originalEntries'][key]
         assert sha(p/'assets/audio/effects'/f'{key}.wav')==rollback['originalSha256'][key]
+        for receipt in rollback['originalEventBindings'][key]:
+            assert final['director']['events'][receipt['event']][receipt['index']]==receipt['binding']
 with tempfile.TemporaryDirectory() as temp:
     p=stage(temp)
     key=ids[3]
@@ -50,4 +56,6 @@ with tempfile.TemporaryDirectory() as temp:
     manifest=json.loads((p/'assets/audio/manifest.json').read_text())
     assert manifest['assets'][key]['sha256']!=rollback['originalSha256'][key]
     assert sha(p/'assets/audio/effects'/f'{key}.wav')==manifest['assets'][key]['sha256']
-print('PASS: complete 30-ID rollback, one-ID rollback, unchanged other IDs, and corrupt-backup failure')
+    for receipt in rollback['originalEventBindings'][key]:
+        assert manifest['director']['events'][receipt['event']][receipt['index']]['asset']==key
+print('PASS: 30-ID and selective WAV/manifest/playback-gain rollback; unaffected bindings intact; corrupt backup blocked')
