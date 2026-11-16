@@ -317,6 +317,12 @@ const groups = [
     ],
   },
   {
+    // The Phase 2 SFX authored WAV generator and observation-only selector
+    // require their own concrete regression test, never architecture fallback.
+    match: /^tools\/audio\/sfx-phase2-pilot(?:-routes)?\.cjs$/,
+    tests: [TEST + 'audio-sfx-phase2-pilot.test.cjs'],
+  },
+  {
     // The four-source importer updates actual game sound registration,
     // provenance, 19 location routes and generated offline references.
     // Every future change to this one-off source must retain real tests.
