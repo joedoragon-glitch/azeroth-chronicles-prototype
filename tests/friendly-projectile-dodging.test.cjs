@@ -33,8 +33,7 @@ for (const cls of ['mage', 'ranger'])
     [1, false],
     [2, false],
     [6, false],
-    // Charged Skill 1 is Mage's timed wide area beam or Ranger's Hawk:
-    // neither uses the physical projectile array (tested by hero-skill1).
+    [1, true],
     [6, true],
     ...(cls === 'ranger'
       ? [
@@ -44,37 +43,19 @@ for (const cls of ['mage', 'ranger'])
       : []),
   ])
     for (const dodge of [false, true]) {
-      // Ranger multi-arrow skills release later shafts from the live bow and
-      // re-aim at their actual departure; moving before those releases is
-      // NOT a physical dodge. That exact contract and post-release misses
-      // have separate coverage in hero-postcast-visuals.test.cjs.
-      const deferredRangerVolley = cls === 'ranger' &&
-        ((slot === 1 && !charged) || (slot === 2 && !charged) ||
-          (slot === 6 && charged) || (slot === 8 && !charged));
-      if (dodge && deferredRangerVolley) continue;
       const { g, e } = arena(cls);
       assert(g.cast(slot, e.id, charged), cls + ' ' + slot + ' admission');
-      assert(g.s.projectiles.length,
-        cls + ' slot ' + slot + (charged ? ' charged' : ' tap') + ' produces physical flight');
+      assert(g.s.projectiles.length, 'cast produces actual flight');
       const cooldown = g.hero.cd[slot - 1],
         hp = e.hp;
       const directions = g.s.projectiles.map((p) => [p.dx, p.dy]);
       if (dodge) e.y += 180;
       g.updateProjectiles(0.05);
-      const actualDirections = g.s.projectiles.map((p) => [p.dx, p.dy]);
-      if (cls === 'mage' && slot === 1 && !charged && dodge) {
-        // Native Mage Skill 1 is the sole bounded-homing exception, not an
-        // unrestricted retargeting license for ordinary projectile flight.
-        assert.equal(actualDirections.length, 1);
-        const start = Math.atan2(directions[0][1], directions[0][0]),
-          now = Math.atan2(actualDirections[0][1], actualDirections[0][0]),
-          turn = Math.abs(Math.atan2(Math.sin(now - start), Math.cos(now - start)));
-        assert(turn > 0 && turn <= 1.6 * 0.05 + 1e-9,
-          'Mage Skill 1 may steer only within its native per-update bound');
-      } else {
-        assert.deepEqual(actualDirections, directions,
-          'all other launched projectiles retain their original direction');
-      }
+      assert.deepEqual(
+        g.s.projectiles.map((p) => [p.dx, p.dy]),
+        directions,
+        'launch direction never tracks movement',
+      );
       fly(g);
       assert.equal(
         e.hp < hp,
@@ -88,35 +69,6 @@ for (const cls of ['mage', 'ranger'])
       assert.equal(g.hero.cd[slot - 1], cooldown, 'miss keeps cast cooldown');
       assert.equal(g.s.projectiles.length, 0, 'hits and misses terminate');
     }
-// A charged shot can physically meet a defender but be stopped by Skill Block.
-// It retains a landed:false projectile receipt, not a triumphant extra burst.
-{
-  const { g, e } = arena('ranger');
-  assert(g.cast(6, e.id, true), 'charged Ranger volley is legally released');
-  assert(g.s.projectiles.some((p) => p.source === 'hero' && p.charged),
-    'real charged projectiles are in flight');
-  const hp = e.hp;
-  let stopped = 0;
-  g.skillBlocks = () => { stopped++; return true; };
-  fly(g);
-  assert(stopped > 0, 'the real projectile contacted the Skill Block resolver');
-  assert.equal(e.hp, hp, 'blocked charged arrows deal no HP damage');
-  const impacts = g.effects.filter((effect) =>
-    effect.type === 'projectileImpact' && effect.actor === 'hero');
-  assert(impacts.length > 0 && impacts.every((effect) => effect.landed === false),
-    'blocked physical contact still communicates unsuccessful projectile impact');
-  assert(!g.effects.some((effect) => effect.type === 'chargedImpact'),
-    'blocked charged attacks must not announce a successful charged burst');
-}
-{
-  const { g, e } = arena('mage');
-  const hp = e.hp;
-  assert(g.cast(6, e.id, true), 'charged Mage focused projectile is legally released');
-  fly(g);
-  assert(e.hp < hp, 'unchallenged charged projectile reaches its target');
-  assert(g.effects.some((effect) => effect.type === 'chargedImpact'),
-    'a genuinely landed charged shot preserves its existing burst');
-}
 // Actual companion Triple Shot and normal/Recall covering arrows use the same flight.
 for (const mode of ['triple', 'basic', 'recall'])
   for (const dodge of [false, true]) {
