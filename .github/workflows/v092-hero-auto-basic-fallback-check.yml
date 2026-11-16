@@ -59,12 +59,24 @@ jobs:
           npx prettier --write src/prototype/hero-combat.js tests/v092-hero-auto-basic-target-fallback.test.cjs
           npx prettier --check src/prototype/hero-combat.js tests/v092-hero-auto-basic-target-fallback.test.cjs
           git diff --check
+          node scripts/build.cjs
           node scripts/build.cjs --check
-      - name: Commit formatting only to isolated review branch
+          git diff --check
+      - name: Commit formatting and matching offline worker fingerprint to isolated review branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/prototype/hero-combat.js tests/v092-hero-auto-basic-target-fallback.test.cjs
+          git add src/prototype/hero-combat.js tests/v092-hero-auto-basic-target-fallback.test.cjs sw.js
+          unexpected=$(git diff --name-only | grep -Ev '^(src/prototype/hero-combat.js|tests/v092-hero-auto-basic-target-fallback.test.cjs|sw.js)
+          if ! git diff --cached --quiet; then
+            git commit -m "build(combat): format auto fallback and synchronize PWA fingerprint [skip ci]"
+            git push origin HEAD:refs/heads/fix/v092-hero-auto-basic-nearby-fallback-20261116
+          fi
+ || true)
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected generated source changes: $unexpected"
+            exit 1
+          fi
           if ! git diff --cached --quiet; then
             git commit -m "style(combat): format hero fallback source and native test [skip ci]"
             git push origin HEAD:refs/heads/fix/v092-hero-auto-basic-nearby-fallback-20261116
