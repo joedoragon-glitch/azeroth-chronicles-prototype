@@ -49,6 +49,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Audio Foundation](AUDIO_FOUNDATION.md)** — **Reference.** Reference structure or catalog for audio, with its original assumptions and scope.
 - **[Audio Playback](AUDIO_PLAYBACK.md)** — **Maintained guide.** Current audio engine, mixers, production scenes and standalone listening-room behavior.
 - **[Audio Sound Pass](AUDIO_SOUND_PASS.md)** — **Design reference.** Artistic identities of the soundtrack's 83 music cues and guidance for future composition.
+- **[SFX Phase 2 Post-task Design Audit](AUDIO_SFX_PHASE2_POST_TASK_DESIGN_AUDIT_20261116.md)** — **Independent design QA and execution gates.** Source-reproduced findings, repairs of P1/P2/P3 routing and attribution, creative acceptance rubric, candidate pilot order and known test/device limits.
 - **[SFX Phase 2 Design Handoff](AUDIO_SFX_PHASE2_DESIGN_HANDOFF_20261116.md)** — **Design-only current handoff.** Source-reconciled Phase 2 decisions, boundaries and sound-family production gates across all three priorities.
 - **[SFX Phase 2 P1 Heroes, Companions, Pets and Charmed](AUDIO_SFX_PHASE2_P1_HERO_COMPANION_PETS_CHARMS_20261116.md)** — **Design-only current assessment.** Four playable classes, Soldier/Archer, all 11 TRUE pets and authenticated Charmed species.
 - **[SFX Phase 2 P2 Bosses and Distinctive Enemies](AUDIO_SFX_PHASE2_P2_BOSSES_ENEMIES_20261116.md)** — **Design-only current assessment.** Eleven bosses, five captains and twelve species, differentiated against existing recorded enemy materials.
