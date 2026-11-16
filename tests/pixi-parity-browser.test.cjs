@@ -210,6 +210,44 @@ async function main() {
           z.props = [
             { id: 'parity-sheep', structure: 'pasture-sheep', x: 1040, y: 1000, decorative: true },
           ];
+        // #893: reproduce the other four original ambient wildlife families
+        // without touching their painter, movement model, or shared ground.
+        // Compare both real renderers after seven presentation seconds; the
+        // parent habitat's shadow belongs at its world coordinate by design.
+        const wildlifeRegion = {
+          'wildlife-poultry': ['vale', 'poultry-yard'],
+          'wildlife-pen': ['crown', 'animal-pen'],
+          'wildlife-pups': ['crown', 'pup-nest'],
+          'wildlife-mire': ['march', 'mire-nests'],
+        }[name];
+        if (wildlifeRegion) {
+          const [wildRegion, structure] = wildlifeRegion;
+          if (!Campaign.rules.ambientLife?.[structure])
+            throw Error('Missing native ambient-wildlife family: ' + structure);
+          if (!g.enter(wildRegion)) throw Error('Cannot enter native wildlife region: ' + wildRegion);
+          const habitat = g.zone();
+          habitat.props = [];
+          habitat.buildings = [];
+          habitat.npcs = [];
+          habitat.enemies = [];
+          g.s.party = [];
+          g.s.loot = [];
+          g.s.projectiles = [];
+          g.s.clock = 245;
+          g.s.time = 100;
+          Object.assign(g.hero, { x: 1000, y: 1000, path: [], order: null });
+          const entity = {
+            id: structure === 'mire-nests' ? 'mire-nests' : 'parity-' + structure,
+            structure: structure === 'mire-nests' ? undefined : structure,
+            x: 1040, y: 1000, r: 0, decorative: true,
+          };
+          if (structure === 'mire-nests') {
+            entity.kind = 'landmark';
+            habitat.npcs = [entity];
+          } else {
+            habitat.props = [entity];
+          }
+        }
         if (name === 'lamp') {
           g.s.clock = 480;
           z.props = [
