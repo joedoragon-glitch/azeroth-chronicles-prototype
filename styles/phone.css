@@ -1741,7 +1741,7 @@ body[data-menu-density-effective='compact'] #title-screen nav button,
 body[data-menu-density-effective='compact'] .language-welcome-choices button {
   min-height: 44px;
   padding: 6px 9px;
-  font-size: 13.5px;
+  font-size: 15px;
   line-height: 1.2;
 }
 body[data-menu-density-effective='compact'] #modal[data-view='class-select'] #modal-actions button.class-character-choice {
