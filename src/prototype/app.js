@@ -23,6 +23,14 @@
   // New Game and Succession; v4 storage keys and original classes stay intact.
   Campaign.enableRoguePlaytest();
   const optimizationKey = 'azeroth-optimization-mode-v1';
+  // Separate device-local setting. Never becomes a v4 campaign field.
+  const combatSaveKey = 'sibdlp-combat-saves-v1';
+  let combatSavePreference = 'off';
+  try {
+    const saved = localStorage.getItem(combatSaveKey);
+    if (saved === 'off' || saved === 'on') combatSavePreference = saved;
+    else if (localStorage.getItem('azeroth-fps-v1') === '60') combatSavePreference = 'on';
+  } catch (_) {}
   const graphicsGuard =
     typeof AzerothRendererSwitchGuard === 'undefined' ? null : AzerothRendererSwitchGuard;
   const performanceBaselineKey = 'azeroth-pixi-settings-baseline-v1';
@@ -1001,6 +1009,9 @@
       'Elige la disposición y los controles de movimiento.',
     'Tap reachable ground to move.': 'Toca terreno accesible para moverte.',
     'Optimization Mode': 'Modo de optimización',
+    'Save during combat': 'Guardar durante el combate',
+    'Every 5s + milestones. Saving during fights may stutter on slower devices. Choosing 60 FPS enables this.':
+      'Cada 5 s y al alcanzar hitos. Guardar durante el combate puede causar tirones en dispositivos lentos. Elegir 60 FPS activa esta opción.',
     'Atmospheric particles': 'Partículas ambientales',
     'Active draw target': 'Objetivo de dibujo activo',
     'Effective density': 'Densidad efectiva', 
@@ -1934,7 +1945,7 @@
     // Another tab can activate a new worker without consent from this player.
     // Keep playing until this tab's player explicitly chooses to refresh.
     if (appControllerChangedDuringPlay) {
-      if (started && !save()) {
+      if (started && !save('safety', true)) {
         status('Saving failed. Export your run before closing.');
         return;
       }
@@ -1976,7 +1987,7 @@
           check();
         });
       if (appRegistration.waiting) {
-        if (started && !save()) return;
+        if (started && !save('safety', true)) return;
         activationPause = paused;
         paused = true;
         clearInput();
@@ -2239,10 +2250,39 @@
   function persistProfile() {
     return persistence.saveProfile(profile);
   }
-  function save() {
+  // Tiny bounded session-only timing ledger. No per-frame profiling or storage.
+  const saveDiagnostics = {
+    completed: 0, failed: 0,
+    skippedCombat: { periodic: 0, milestone: 0, action: 0 },
+    totalSaveMs: 0, maxSaveMs: 0, lastSaveMs: null, recent: [],
+  };
+  function combatSaveBlocked() {
+    // The squad flag is maintained by the engine; the remaining checks are
+    // evaluated only on save attempts, not on every animation callback.
+    return !!game.s.squadEngagement || game.manaCombatActive() ||
+      game.s.projectiles.some((p) => p.source === 'enemy');
+  }
+  function save(reason = 'action', essential = false) {
     if (!started) return false;
+    if (!essential && combatSavePreference === 'off' && combatSaveBlocked()) {
+      if (Object.hasOwn(saveDiagnostics.skippedCombat, reason))
+        saveDiagnostics.skippedCombat[reason]++;
+      return false;
+    }
+    const began = performance.now();
     const saved = persistence.save(game, profile);
     if (saved) backupAdvisor.due(game.s.mode, game.hero.level);
+    const ms = Math.round((performance.now() - began) * 10) / 10;
+    if (saved) saveDiagnostics.completed++;
+    else saveDiagnostics.failed++;
+    saveDiagnostics.totalSaveMs = Math.round((saveDiagnostics.totalSaveMs + ms) * 10) / 10;
+    saveDiagnostics.maxSaveMs = Math.max(saveDiagnostics.maxSaveMs, ms);
+    saveDiagnostics.lastSaveMs = ms;
+    saveDiagnostics.recent.push({
+      reason, ms, success: !!saved, zone: game.zoneId,
+      gameSeconds: Math.round(game.s.time * 10) / 10,
+    });
+    if (saveDiagnostics.recent.length > 8) saveDiagnostics.recent.shift();
     return saved;
   }
   // Live game shell only. Standalone Campaign fixtures remain independent.
@@ -4391,7 +4431,7 @@
       // create the entered zone or update quest/discovery state.
       if (menu) closeMenu();
       transitionLoadingText(label || destination, 'paint');
-      if (!save()) status('Saving failed. Export your run before closing.');
+      if (!save('safety', true)) status('Saving failed. Export your run before closing.');
       // Native enter() has now built the real dungeon and placed the hero and
       // nearby enemies. Warm the close-range encounter artwork *after* that
       // authoritative step while the clock is stopped and the screen covered.
@@ -4726,7 +4766,7 @@
     } catch (_) { /* Embedded/locked history: keep native navigation. */ }
   }
   function returnToTitleScreen() {
-    if (!started || !writerGuard.canWrite() || !save()) {
+    if (!started || !writerGuard.canWrite() || !save('safety', true)) {
       status('Saving failed. Export your run before closing.');
       return;
     }
@@ -6138,6 +6178,13 @@
             ...pixiGame.status(),
           },
           frameProfile: frameProfile.report(),
+          saveDiagnostics: {
+            ...saveDiagnostics,
+            skippedCombat: { ...saveDiagnostics.skippedCombat },
+            recent: saveDiagnostics.recent.slice(),
+            combatSavesEnabled: combatSavePreference === 'on',
+            note: 'Only actual full saves are timed; skipped combat saves are counted. Bounded session-only data, no per-frame profiling.',
+          },
           rendererDiagnostics: rendererRecordingReport(),
           startupDiagnostics: startup?.report() || null,
           diagnosticContinuity: {
@@ -6491,12 +6538,29 @@
         choices(frameRates),
         (value) => {
           fps.select(value);
+          // Choosing 60 FPS explicitly opts into combat saves. The separate
+          // switch remains an override for fast devices that still stutter.
+          if (value === '60') {
+            combatSavePreference = 'on';
+            try { localStorage.setItem(combatSaveKey, 'on'); } catch (_) {}
+          }
           frameSkip.suspend();
           runtime.reset();
           frameProfile.reset();
           performancePage();
         },
         'Controls when the game draws. Displayed FPS can be lower. Simulation timing is independent.',
+      ),
+      menuControls.toggle(
+        tr('Save during combat'),
+        combatSavePreference === 'on',
+        (enabled) => {
+          combatSavePreference = enabled ? 'on' : 'off';
+          try { localStorage.setItem(combatSaveKey, combatSavePreference); } catch (_) {}
+          performancePage();
+        },
+        tr('Every 5s + milestones. Saving during fights may stutter on slower devices. Choosing 60 FPS enables this.'),
+        false,
       ),
       menuControls.toggle(
         'Adaptive frame skip',
@@ -9135,7 +9199,7 @@
     notePlaytestLifecycle('window-blur');
     focused = false;
     clearInput();
-    if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
+    if (save('safety', true) && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
   });
   addEventListener('focus', () => {
@@ -9165,7 +9229,7 @@
       // A hidden browser may lose its GPU context and require expensive
       // texture reconstruction. Never resume simulation directly into it.
       const wasPlaying = started;
-      const saved = save();
+      const saved = save('safety', true);
       if (saved && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
       if (wasPlaying) {
@@ -9213,7 +9277,7 @@
     notePlaytestLifecycle('pagehide', { persisted: event?.persisted === true });
     clearInput();
     if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
-    if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
+    if (save('safety', true) && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
     writerGuard.release();
   });
@@ -10217,7 +10281,7 @@
           game.partyDiagnosticsRecoveryAction('refuge-return-attempt');
           if (game.emergencyReturnToSafety()) {
             e.phase = 2;
-            if (save()) restartGuard.arm(game);
+            if (save('safety', true)) restartGuard.arm(game);
             frameSkip.suspend();
             status('Critical slowdown persists: returned to your recovery point without a defeat.');
           }
@@ -10552,14 +10616,8 @@
       saveTimer += dt;
       if (saveTimer >= 5) {
         saveTimer = 0;
-        // Keep periodic serialization off the combat path. Milestone,
-        // death and recovery saves remain immediate and independent.
-        if (
-          !game.s.squadEngagement &&
-          !game.manaCombatActive() &&
-          !game.s.projectiles.some((p) => p.source === 'enemy')
-        )
-          save();
+        // Retain the five-second cadence without queuing missed saves.
+        save('periodic');
       }
     }
     const eventAt = stageTimes ? performance.now() : 0;
@@ -10608,8 +10666,11 @@
           'gameOver',
         ].includes(e.type),
       )
-    )
-      save();
+    ) {
+      // Death and game-over writes are required for recovery integrity.
+      const essential = events.some((e) => e.type === 'death' || e.type === 'gameOver');
+      save('milestone', essential);
+    }
     if (events.some((e) => e.type === 'peace')) ending();
     if (game.s.phase === 'awakening' && !game.s.awakeningAck && !menu) awakeningMenu();
     if (game.s.challenge.pending && !gateDismissed && menu?.title !== 'Choose your successor')
@@ -10937,7 +10998,7 @@
           appControllerChangedDuringPlay = true;
           notePlaytestLifecycle('service-worker-controller-change-deferred');
           refreshUpdateNotice();
-          if (!save()) status('Saving failed. Export your run before closing.');
+          if (!save('safety', true)) status('Saving failed. Export your run before closing.');
           return;
         }
         // An explicit user installation, or startup gate, permits one coherent reload.
@@ -10945,7 +11006,7 @@
         appControllerReloaded = true;
         startupEvent('update-reload-requested', { reason: 'service-worker-controller-change' });
         notePlaytestLifecycle('service-worker-controller-change');
-        if (started && writerGuard.canWrite() && !save()) {
+        if (started && writerGuard.canWrite() && !save('safety', true)) {
           appControllerReloaded = false;
           appReloadRequested = false;
           status('Saving failed. Export your run before closing.');
