@@ -1728,8 +1728,10 @@
           ),
           canCoverNearby = this.automaticBasicNearbyFallbackAllowed(selected, cfg.range, targetId),
           primary = eligible.find((e) => e.id === preferred) ||
-            (canCoverNearby ? eligible.sort((a, b) =>
-              dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
+            (canCoverNearby
+              ? eligible.sort((a, b) =>
+                dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]
+              : null);
         if (!primary) return false;
         // Recall remains under player/timer control during all offense.
         this.engage(primary);
