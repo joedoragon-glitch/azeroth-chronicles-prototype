@@ -1805,7 +1805,6 @@
     titleImportNotice = false,
     titleEpoch = 0,
     titleWarmup = null,
-    titleSkipGraphics = null,
     sceneTransition = null,
     sceneTransitionEpoch = 0,
     started = false,
@@ -4255,7 +4254,11 @@
         });
       // A first-use WebGL exception must not strand the player behind loading.
       try {
-        graphicsController.revert();
+        graphicsController.webglFailed({
+          type: 'render-exception',
+          stage: 'first-scene',
+          message: String(error?.message || error),
+        });
         renderer.setRenderLayer('full');
         renderer.draw();
         if (titleLoading)
@@ -4300,12 +4303,17 @@
     }
     if (!ticket.painted && drawReadyScene()) {
       ticket.painted = true;
-      const gpuWarmup = ticket.skipped ? null : prepareGpuForArrival();
+      const gpuWarmup = prepareGpuForArrival();
       if (gpuWarmup) {
         ticket.gpuPreparing = true;
-        void Promise.race([gpuWarmup, ticket.skipPromise.then(() => false)]).then((ready) => {
+        void gpuWarmup.then((ready) => {
           if (sceneTransition?.token !== token) return;
-          if (!ready) graphicsController.revert();
+          if (!ready)
+            graphicsController.webglFailed({
+              type: 'arrival-preparation-failed',
+              stage: 'arrival-upload',
+              message: 'The GPU arrival scene could not be prepared',
+            });
           ticket.gpuPreparing = false;
           requestAnimationFrame(() => revealSceneTransition(token));
         });
@@ -4319,10 +4327,10 @@
       transitionLoadingText('', 'paint');
       $('scene-loading-text').textContent =
         language === 'es'
-          ? 'No se pudo dibujar la llegada. Intenta de nuevo con Canvas.'
-          : 'Arrival could not be drawn. Retry with Canvas.';
+          ? 'No se pudo dibujar la llegada. Intenta de nuevo.'
+          : 'Arrival could not be drawn. Retry loading.';
       $('scene-loading-retry').textContent =
-        language === 'es' ? 'Reintentar con Canvas' : 'Retry with Canvas';
+        language === 'es' ? 'Reintentar carga' : 'Retry loading';
       ticket.drawFailed = true;
       $('scene-loading-retry').hidden = false;
       $('scene-loading-retry').focus?.({ preventScroll: true });
@@ -4351,23 +4359,9 @@
     const token = ++sceneTransitionEpoch;
     const campaign = game;
     rendererEvent('arrival-start', destination);
-    let resolveSkip;
-    const skipPromise = new Promise((resolve) => {
-      resolveSkip = resolve;
-    });
-    sceneTransition = {
-      token,
-      campaign,
-      destination,
-      committed: false,
-      skipped: false,
-      skipPromise,
-      resolveSkip,
-    };
+    sceneTransition = { token, campaign, destination, committed: false };
     $('scene-loading').hidden = false;
-    $('scene-loading-retry').hidden = false;
-    $('scene-loading-retry').textContent =
-      language === 'es' ? 'Continuar con Canvas' : 'Continue with Canvas';
+    $('scene-loading-retry').hidden = true;
     transitionLoadingText(label || destination, 'warm');
     clearInput();
     audio.setPaused(true);
@@ -4403,12 +4397,12 @@
       // nearby enemies. Warm the close-range encounter artwork *after* that
       // authoritative step while the clock is stopped and the screen covered.
       // Never spend an unbounded period trying to complete optional atlas art.
-      const encounterWarmup = sceneTransition.skipped ? null : warmScene(destination, true);
+      const encounterWarmup = warmScene(destination, true);
       const reveal = () => {
         if (sceneTransition?.token !== token) return;
         requestAnimationFrame(() => revealSceneTransition(token));
       };
-      if (encounterWarmup) void Promise.race([encounterWarmup, skipPromise]).then(reveal, reveal);
+      if (encounterWarmup) void encounterWarmup.then(reveal, reveal);
       else reveal();
     };
     // Dungeon entries are combat-critical: do not wait on an optional atlas,
@@ -4417,7 +4411,7 @@
     // the opaque interlude is removed. No artificial combat grace period.
     const critical = combatCriticalArrival(destination);
     const pending = critical ? null : warmScene(destination);
-    if (pending) void Promise.race([pending, skipPromise]).then(proceed, proceed);
+    if (pending) void pending.then(proceed, proceed);
     else proceed();
     return true;
   }
@@ -4493,9 +4487,6 @@
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
       $(id).disabled = startupUpdatePending || titleLoading;
-    titleCanvasContinue.hidden = !titleLoading || !!titleSkipGraphics?.skipped;
-    titleCanvasContinue.textContent =
-      language === 'es' ? 'Continuar con Canvas' : 'Continue with Canvas';
     if (!titleLoading) {
       $('title-loading').hidden = true;
       $('title-loading').textContent = '';
@@ -4506,8 +4497,6 @@
     if (started || titleLoading) notePlaytestLifecycle('return-to-title', { reason });
     titleBackupNotice = null;
     ++titleEpoch;
-    titleSkipGraphics?.resolve(false);
-    titleSkipGraphics = null;
     titleLoading = false;
     cancelSceneTransition();
     started = false;
@@ -4559,13 +4548,8 @@
     // First-scene resources belong to this explicit entry, not idle title.
     if (typeof PrototypeMaterials !== 'undefined') void PrototypeMaterials.load();
     titleWarmup = warmScene(game.zoneId, true);
-    let resolveSkip;
-    const skipPromise = new Promise((resolve) => {
-      resolveSkip = resolve;
-    });
-    titleSkipGraphics = { skipped: false, resolve: resolveSkip };
-    const waitOrSkip = (pending, onSettled) =>
-      pending ? void Promise.race([pending, skipPromise]).then(onSettled, onSettled) : onSettled();
+    const awaitWarmup = (pending, onSettled) =>
+      pending ? void pending.then(onSettled, onSettled) : onSettled();
     $('title-loading').hidden = false;
     $('title-loading').textContent =
       language === 'es' ? 'Preparando la primera escena…' : 'Preparing first scene…';
@@ -4579,7 +4563,7 @@
         refreshTitleScreen();
         return;
       }
-      startupEvent('sprites-settled', { zone: game.zoneId, skipped: !!titleSkipGraphics?.skipped });
+      startupEvent('sprites-settled', { zone: game.zoneId, skipped: false });
       startupEvent('save-recovery-start');
       // Only Continue authorizes abnormal-session recovery.
       recoverLoadedSession();
@@ -4640,8 +4624,6 @@
           return;
         }
         titleLoading = false;
-        titleSkipGraphics = null;
-        titleCanvasContinue.hidden = true;
         started = true;
         lastBlockedBackAt = 0;
         armBrowserBackGuard();
@@ -4682,12 +4664,17 @@
             return;
           }
           startupEvent('arrival-start', startupGraphics());
-          const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
+          const gpuWarmup = prepareGpuForArrival();
           if (gpuWarmup)
-            void Promise.race([gpuWarmup, skipPromise.then(() => false)]).then((ready) => {
+            void gpuWarmup.then((ready) => {
               if (epoch !== titleEpoch) return;
               startupEvent('arrival-settled', { ready: ready === true, ...startupGraphics() });
-              if (!ready) graphicsController.revert();
+              if (!ready)
+                graphicsController.webglFailed({
+                  type: 'arrival-preparation-failed',
+                  stage: 'arrival-upload',
+                  message: 'The GPU arrival scene could not be prepared',
+                });
               requestAnimationFrame(finish);
             });
           else {
@@ -4700,7 +4687,6 @@
         // all behind the SAME title loading surface. New Game shares this path.
         const gpuState = graphicsController.status();
         const shouldRestorePixi =
-          !titleSkipGraphics?.skipped &&
           (previousRendererChoice.renderer === 'webgl2' || gpuState.recoveryPending) &&
           !gpuState.recoveryPaused &&
           gpuState.phase === 'canvas' &&
@@ -4715,13 +4701,13 @@
             startupEvent('gpu-settled', { ready: ready === true, ...startupGraphics() });
           showReadyFrame();
         };
-        void Promise.race([restoration, skipPromise]).then(observedReadyFrame, observedReadyFrame);
+        void restoration.then(observedReadyFrame, observedReadyFrame);
       };
       // Recovering an unclean save can change the spawn after title warmup.
-      const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
-      waitOrSkip(actual, paint);
+      const actual = warmScene(game.zoneId, true);
+      awaitWarmup(actual, paint);
     };
-    waitOrSkip(titleWarmup, reveal);
+    awaitWarmup(titleWarmup, reveal);
   }
   // Protect accidental Safari Back swipes; repeat Back within three seconds to leave.
   let backGuardArmed = false, lastBlockedBackAt = 0;
@@ -10880,23 +10866,6 @@
   );
   languageWelcome.append(welcomeCard);
   document.body.append(languageWelcome);
-  const titleCanvasContinue = document.createElement('button');
-  titleCanvasContinue.type = 'button';
-  titleCanvasContinue.hidden = true;
-  titleCanvasContinue.style.cssText =
-    'position:fixed;bottom:max(16px,env(safe-area-inset-bottom));' +
-    'left:50%;transform:translateX(-50%);z-index:12;' +
-    'min-height:44px;padding:10px 18px;' +
-    'border:1px solid #dfc78f;border-radius:8px;background:#385c4b;' +
-    'color:#fff4d8;font:600 14px sans-serif;cursor:pointer';
-  titleScreen.append(titleCanvasContinue);
-  titleCanvasContinue.onclick = () => {
-    if (!titleLoading || !titleSkipGraphics) return;
-    titleSkipGraphics.skipped = true;
-    graphicsController.revert();
-    titleSkipGraphics.resolve(false);
-    titleCanvasContinue.hidden = true;
-  };
   $('title-continue').onclick = enterPreparedScene;
   $('title-new').onclick = newGameMenu;
   $('title-saves').onclick = titleSaveMenu;
@@ -10905,13 +10874,11 @@
   $('scene-loading-retry').onclick = () => {
     const ticket = sceneTransition;
     if (!ticket) return;
-    ticket.skipped = true;
-    graphicsController.revert();
-    ticket.resolveSkip?.(false);
+    // Only an actual failed draw exposes this neutral retry. Automatic
+    // WebGL-to-Canvas recovery already ran; never re-commit gameplay.
+    if (!ticket.drawFailed) return;
     $('scene-loading-retry').hidden = true;
-    // Awaiting preflight, decoded art or GPU upload is released by skipPromise.
-    // If a draw actually failed, try drawing the committed scene with Canvas.
-    if (ticket.drawFailed) requestAnimationFrame(() => revealSceneTransition(ticket.token));
+    requestAnimationFrame(() => revealSceneTransition(ticket.token));
   };
   updateHUD();
   setLanguage(language, false);

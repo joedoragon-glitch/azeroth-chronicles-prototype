@@ -169,15 +169,18 @@ function openForwardTravel(app) {
       'preparation does not move the saved hero to another location');
   }
 
-  // A slow or stalled resource must not be treated as an expired stopwatch.
-  // The player can explicitly select Canvas instead of waiting indefinitely.
+  // A slow resource stays covered until it settles; no manual Canvas choice
+  // may appear or silently mutate an uncommitted journey.
   {
     const app = shell('en');
     const game = app.scope.Prototype.game;
     const origin = game.zoneId;
+    let resolveWarm, warmCalls = 0;
     app.scope.PrototypeSprites = {
       definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero' } : null,
-      warm: () => new Promise(() => {}), // intentionally never resolves
+      warm: () => ++warmCalls === 1
+        ? new Promise((resolve) => { resolveWarm = resolve; })
+        : Promise.resolve(),
       advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
     };
     openForwardTravel(app).click();
@@ -185,20 +188,23 @@ function openForwardTravel(app) {
     app.frame(12000);
     assert.equal(game.zoneId, origin,
       'no wall-clock budget prematurely commits a still-preparing trip');
-    const canvas = app.elements.get('scene-loading-retry');
-    assert.equal(canvas.hidden, false, 'manual Canvas bypass is offered');
-    canvas.click();
+    assert.equal(app.elements.get('scene-loading-retry').hidden, true,
+      'no renderer-selection control appears for a merely slow preflight');
+    resolveWarm();
     await flush();
     assert.notEqual(game.zoneId, origin,
-      'Canvas bypass completes the authorized trip without waiting for stalled art');
+      'the real travel commits only after its preflight settles');
     app.frame(12100);
     assert.equal(app.scope.Prototype.sceneLoading, false);
   }
   {
     const app = shell('en', 'ranger', { stayOnTitle: true });
+    let resolveWarm, warmCalls = 0;
     app.scope.PrototypeSprites = {
       definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero' } : null,
-      warm: () => new Promise(() => {}), // intentionally never resolves
+      warm: () => ++warmCalls === 1
+        ? new Promise((resolve) => { resolveWarm = resolve; })
+        : Promise.resolve(),
       advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
     };
     app.elements.get('title-continue').click();
@@ -206,14 +212,14 @@ function openForwardTravel(app) {
     app.frame(12000);
     assert.equal(app.scope.Prototype.started, false,
       'Continue waits for readiness without a forced timeout');
-    const button = app.elements.get('title-screen').children.find(
-      (item) => item.textContent === 'Continue with Canvas');
-    assert(button && !button.hidden, 'Continue offers an optional Canvas bypass');
-    button.click();
+    assert(!app.elements.get('title-screen').children.some(
+      (item) => /Continue with Canvas/.test(item.textContent)),
+    'title loading has no manual renderer escape');
+    resolveWarm();
     await flush();
     app.frame(12100);
     assert.equal(app.scope.Prototype.started, true,
-      'explicit Canvas choice releases the pending first scene');
+      'the actual saved first scene starts when preflight settles');
   }
 
   // A page hidden during pending preflight cancels the COMMIT, even if images finish later.
@@ -338,8 +344,8 @@ function openForwardTravel(app) {
   }
 
   // A first-draw failure never exposes the previous scene or ticks combat.
-  // The dedicated retry becomes keyboard-accessible and reveals Canvas only
-  // after an actual successful paint of the already committed destination.
+  // Automatic fallback runs first; a neutral retry is available only when
+  // even the Canvas safety draw fails, without re-committing the destination.
   {
     const app = shell('en');
     const game = app.scope.Prototype.game;
@@ -354,6 +360,7 @@ function openForwardTravel(app) {
     app.frame(100);
     assert.equal(app.scope.Prototype.sceneLoading, true);
     assert.equal(app.elements.get('scene-loading-retry').hidden, false);
+    assert.equal(app.elements.get('scene-loading-retry').textContent, 'Retry loading');
     const saved = JSON.stringify(game.snapshot());
     broken = false;
     app.elements.get('scene-loading-retry').click();

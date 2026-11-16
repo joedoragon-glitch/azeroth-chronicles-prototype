@@ -3,6 +3,10 @@
   'use strict';
 
   const DEFAULT_MANIFEST = './assets/sprites/manifest.json';
+  // Each individual image load/decode must eventually settle. Stalled optional
+  // artwork uses the existing procedural fallback; it must not block saving,
+  // Continue Adventure, or a committed destination indefinitely.
+  const IMAGE_STALL_MS = 60_000;
   // Exact owner selections from the numbered sprite/procedural review.
   // Keep registered originals intact; only these regional bodies use fallback.
   const proceduralProps = new Set([
@@ -283,9 +287,11 @@
       counters.peakConcurrent = Math.max(counters.peakConcurrent, decoding);
       const img = new root.Image();
       let finished = false;
+      let stallTimer = null;
       const done = (ok) => {
         if (finished) return;
         finished = true;
+        if (stallTimer !== null) root.clearTimeout?.(stallTimer);
         reserved -= size;
         decoding--;
         loading.delete(job.id);
@@ -317,6 +323,11 @@
         } else job.resolve(null);
         pump();
       };
+      // A hung request or decode() can occupy one of the two loading slots
+      // forever. Guard the *individual resource*, never the whole scene or
+      // the GPU: slow progress in other assets keeps its normal time budget.
+      if (typeof root.setTimeout === 'function')
+        stallTimer = root.setTimeout(() => done(false), IMAGE_STALL_MS);
       img.decoding = 'async';
       img.onload = () => {
         try {
