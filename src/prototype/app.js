@@ -7439,7 +7439,8 @@
       order: game.hero.order,
       autopilot: true,
       origin: { x: game.hero.x, y: game.hero.y },
-      next: 0,
+      // The initial path was just computed; do not repeat it on the next frame.
+      next: game.s.time + 2,
     };
     cancelNavigationButton.hidden = !visibleNavigationRoute();
   }
