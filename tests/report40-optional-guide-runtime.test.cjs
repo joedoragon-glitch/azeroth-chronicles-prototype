@@ -95,8 +95,16 @@ const walkAlong=(start,path,distance)=>{
 };
 const pathBeforeFallback=game.route(game.hero,destination);
 assert(pathBeforeFallback.length,'existing route remains reachable');
-Object.assign(game.hero,walkAlong(game.hero,pathBeforeFallback,90));
+const firstOrigin={x:game.hero.x,y:game.hero.y};
+const movedFar=[120,170,240,320].map(d=>walkAlong(firstOrigin,pathBeforeFallback,d))
+  .find(point=>Math.hypot(point.x-firstOrigin.x,point.y-firstOrigin.y)>105 &&
+    Math.hypot(point.x-destination.x,point.y-destination.y)>60);
+assert(movedFar,'authored route provides meaningful displacement for a second reroute');
+Object.assign(game.hero,movedFar);
 assert(!game.blocked(game.hero.x,game.hero.y),'moving hero remains on legal terrain');
+assert(!game.s.squadEngagement && !game.manaCombatActive() &&
+  !game.s.projectiles.some(p=>p.source==='enemy'),
+  'test positions remain out of combat, where optional route work is eligible');
 const fallbackPath=game.route(game.hero,destination);
 assert(fallbackPath.length,'safe fallback path exists from new origin');
 let fallbackCalls=0;
@@ -108,7 +116,8 @@ game.budgetedTacticalRoute=function*(){
 };
 game.s.time += 3;
 frame(4200);
-assert.equal(fallbackCalls,1,'A* failure starts incremental BFS fallback');
+assert.equal(fallbackCalls,1,
+  'a new displacement starts incremental BFS fallback rather than reusing a stale request');
 Object.assign(game.hero,walkAlong(game.hero,fallbackPath,90));
 assert(!game.blocked(game.hero.x,game.hero.y),
   'player continues moving safely while the search is pending');
