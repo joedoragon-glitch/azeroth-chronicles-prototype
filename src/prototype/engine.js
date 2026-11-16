@@ -470,7 +470,7 @@
       if (!cfg || !e || e.neutral || e.hp <= 0) return null;
       if (e.type === 'boss') return cfg.bosses[e.family] || null;
       if (e.captain || e.roomCaptain) return cfg.captains[e.captainProfile] || null;
-      return e.ranged ? cfg.species[e.species] || null : null;
+      return e.ranged ? this.monsterSkillTitle(cfg.species[e.species] || null, e) : null;
     }
     enemyHealMultiplier(e) {
       // Mirror the damage *escalation layers* that apply to this actor, not
@@ -6249,6 +6249,44 @@
       }
       return false;
     }
+    // Player-facing skill titles preserve the mechanic's original source
+    // profile and stable v4 actor identity. A zone alone does not establish
+    // employment: only actual posts/units may inherit a commander's trade.
+    monsterSkillTitle(sourceName, actor) {
+      const choice = R.tacticalFoundation.skillLoreTitles?.[sourceName];
+      if (!choice || !actor) return sourceName;
+      const [title, scope] = choice,
+        sourceZone = actor.charmOrigin?.sourceZone || this.zoneId,
+        pack = String(actor.pack || ''),
+        species = actor.charmOrigin?.species || actor.species;
+      if (scope === 'skeleton') return species === 'skeleton' ? title : sourceName;
+      if (scope === 'habitat') return title;
+      if (scope === 'vale-salvage')
+        return sourceZone === 'supply-vale' && actor.roomGuard && species === 'goblin'
+          ? title : sourceName;
+      if (scope === 'mine-warden')
+        return sourceZone === 'mine' && actor.guard && species === 'ogre'
+          ? title : sourceName;
+      if (scope === 'frontier-soldier')
+        return species === 'orc' &&
+          ((sourceZone === 'warlord' && actor.guard) ||
+            pack === 'frontier-overseer' || pack.startsWith('frontier-occupation-'))
+          ? title : sourceName;
+      if (scope === 'ridge-payroll')
+        return species === 'archer' &&
+          ((sourceZone === 'supply-highlands' && actor.roomGuard) ||
+            pack.startsWith('ridge-payroll-'))
+          ? title : sourceName;
+      if (scope === 'cindermaw-ministry')
+        return species === 'ashbeast' &&
+          ((sourceZone === 'cindermaw' && actor.guard) ||
+            pack.startsWith('cindermaw-ministry-'))
+          ? title : sourceName;
+      if (scope === 'crown-drill')
+        return species === 'crownguard' && (actor.crownTroop || sourceZone === 'crown' ||
+          sourceZone === 'citadel') ? title : sourceName;
+      return sourceName;
+    }
     // Tactical one-action repertoire: each species keeps its basic maneuver;
     // elite signatures are authored for the species AND its actual combat role.
     tacticalRogueMove(e, fallback, fromRegroupAnchor = false) {
@@ -6355,6 +6393,7 @@
           profile.radius ||
           (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80) *
             R.balance.enemySpecialReachMultiplier;
+      const displayName = this.monsterSkillTitle(profile.name, e);
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
@@ -6368,7 +6407,7 @@
           tier === 'ringleader',
         anonymousCast: !!(isSignature && profile.anonymousCast),
         kind: profile.style === 'slab' ? 'line' : effect === 'sweep' ? 'cone' : 'circle',
-        name: profile.name,
+        name: displayName,
         style: profile.style || null,
         effect,
         coefficient: profile.coefficient,
@@ -6411,11 +6450,11 @@
         'warning',
         e.telegraph.anonymousCast
           ? { family: e.family, rogue: true, anonymousCast: true }
-          : { family: e.family, rogue: true, name: profile.name },
+          : { family: e.family, rogue: true, name: displayName },
       );
       this.event('rogueMove', {
         actor: e.id,
-        name: profile.name,
+        name: displayName,
         style: effect || profile.style,
         signature: isSignature,
       });
