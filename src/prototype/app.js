@@ -56,27 +56,29 @@
       return false;
     }
   }
-  // The edition uses its own keys even if a local operator serves both games on one origin.
-  const editionStorage = {
-    getItem: (key) => localStorage.getItem('gta-cuba:' + key),
-    setItem: (key, value) => localStorage.setItem('gta-cuba:' + key, value),
-    removeItem: (key) => localStorage.removeItem('gta-cuba:' + key),
+  // The retired mode's old saves are intentionally not migrated. The new
+  // developer layout has independent storage and must never alter main saves.
+  const layoutPrefix = 'developer-alternate-layout:';
+  const layoutStorage = {
+    getItem: (key) => localStorage.getItem(layoutPrefix + key),
+    setItem: (key, value) => localStorage.setItem(layoutPrefix + key, value),
+    removeItem: (key) => localStorage.removeItem(layoutPrefix + key),
   };
-  applyPerformanceBaseline(editionStorage);
+  applyPerformanceBaseline(layoutStorage);
   let optimizationPreference = 'auto';
   try {
-    const saved = editionStorage.getItem(optimizationKey);
+    const saved = layoutStorage.getItem(optimizationKey);
     if (['off', 'auto', 'on'].includes(saved)) optimizationPreference = saved;
   } catch (_) {}
   // Runtime state is distinct from the stored preference and never a save field.
   let optimizationMode = optimizationPreference === 'on';
 
-  // Presentation-only community localization; campaign IDs and names never change.
+  // Presentation-only alternate-layout localization; campaign IDs and names never change.
   const languageKey = 'azeroth-display-language-v1';
   let language = 'en';
   let firstLanguageChoice = true;
   try {
-    const savedLanguage = editionStorage.getItem(languageKey);
+    const savedLanguage = layoutStorage.getItem(languageKey);
     firstLanguageChoice = savedLanguage !== 'en' && savedLanguage !== 'es';
     language = savedLanguage === 'es' ? 'es' : 'en';
   } catch (_) {}
@@ -1796,7 +1798,7 @@
     if (persist) {
       firstLanguageChoice = false;
       try {
-        editionStorage.setItem(languageKey, language);
+        layoutStorage.setItem(languageKey, language);
       } catch (_) {}
     }
     $('menu-button').firstChild.textContent = language === 'es' ? '☰ Menú ' : '☰ Menu ';
@@ -1812,17 +1814,17 @@
 
   const writerGuard = PrototypePersistence.createWriterGuard({
     locks: navigator.locks,
-    lockName: 'gta-cuba-campaign-writer-v1',
+    lockName: 'developer-alternate-layout-campaign-writer-v1',
     required: location.protocol === 'https:',
   });
   const persistence = PrototypePersistence.create({
-    storage: editionStorage,
+    storage: layoutStorage,
     Campaign,
     status,
     canWrite: writerGuard.canWrite,
   });
   const restartGuard = PrototypePersistence.createRestartGuard({
-    storage: editionStorage,
+    storage: layoutStorage,
     Campaign,
     canWrite: writerGuard.canWrite,
   });
@@ -2454,18 +2456,18 @@
   const frameProfile = PrototypeRuntime.createFrameProfile();
   // #783: disabled outside explicit renderer capture; ordinary draws remain untimed.
   let rendererDiagnosticActive = false;
-  const fps = PrototypeRuntime.createFrameRate(editionStorage);
-  const frameSkip = PrototypeRuntime.createFrameSkip(editionStorage);
-  const renderResolution = PrototypeRuntime.createResolution(editionStorage);
+  const fps = PrototypeRuntime.createFrameRate(layoutStorage);
+  const frameSkip = PrototypeRuntime.createFrameSkip(layoutStorage);
+  const renderResolution = PrototypeRuntime.createResolution(layoutStorage);
   const pixiResolution = PrototypeRuntime.createResolution(
-    editionStorage,
+    layoutStorage,
     'azeroth-pixi-resolution-v1',
     renderResolution.preference,
   );
   const pixiQualityKey = 'azeroth-pixi-quality-v1';
   const pixiQuality = { preset: false, particles: true };
   try {
-    const saved = JSON.parse(editionStorage.getItem(pixiQualityKey));
+    const saved = JSON.parse(layoutStorage.getItem(pixiQualityKey));
     if (typeof saved?.preset === 'boolean') pixiQuality.preset = saved.preset;
     if (typeof saved?.particles === 'boolean') pixiQuality.particles = saved.particles;
   } catch (_) {}
@@ -2476,7 +2478,7 @@
   }
   function applyPixiQuality() {
     try {
-      editionStorage.setItem(pixiQualityKey, JSON.stringify(pixiQuality));
+      layoutStorage.setItem(pixiQualityKey, JSON.stringify(pixiQuality));
     } catch (_) {}
     if (!canvasQualityBeforePixi) return;
     resize('pixi-quality');
@@ -2720,11 +2722,11 @@
     visibilityChanged() {},
   };
   const previousRendererChoice = graphicsGuard
-    ? graphicsGuard.startupChoice(editionStorage)
+    ? graphicsGuard.startupChoice(layoutStorage)
     : { renderer: 'canvas2d' };
   graphicsController = graphicsGuard
     ? graphicsGuard.create({
-        storage: editionStorage,
+        storage: layoutStorage,
         startupDecision: previousRendererChoice,
         prepareWebGL: () => {
           canvasQualityBeforePixi = {
@@ -3933,7 +3935,7 @@
     }
     menu?.back();
   };
-  const backupAdvisor = PrototypePersistence.createBackupAdvisor({ storage: editionStorage });
+  const backupAdvisor = PrototypePersistence.createBackupAdvisor({ storage: layoutStorage });
   let titleBackupNotice = null;
   let storageProtectionState = 'unknown';
   const storageApi = navigator.storage;
@@ -5422,7 +5424,7 @@
   }
   function readPlaytestJournal() {
     try {
-      const bytes = editionStorage.getItem(playtestJournalKey);
+      const bytes = layoutStorage.getItem(playtestJournalKey);
       if (!bytes || bytes.length > 180000) return blankPlaytestJournal();
       const data = JSON.parse(bytes);
       if (data?.version !== 1 || !Number.isFinite(data.updatedAt) ||
@@ -5497,7 +5499,7 @@
         playtestJournal.frameHistory.shift();
         bytes = JSON.stringify(playtestJournal);
       }
-      if (bytes.length <= 130000) editionStorage.setItem(playtestJournalKey, bytes);
+      if (bytes.length <= 130000) layoutStorage.setItem(playtestJournalKey, bytes);
     } catch (_) {
       // Diagnostic storage is best effort; never interrupt gameplay or saves.
     }
@@ -6339,7 +6341,7 @@
                 if (!['off', 'auto', 'on'].includes(value)) return;
                 optimizationPreference = value;
                 try {
-                  editionStorage.setItem(optimizationKey, value);
+                  layoutStorage.setItem(optimizationKey, value);
                 } catch (_) {}
                 autoOptimization.reset();
                 // Critical recovery remains mandatory even with preference Off.

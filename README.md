@@ -1,6 +1,6 @@
 # So I Became the Dark Lord's Problem
 
-> **Repository variant notice:** This `mod/gta-cuba-edition` code is an **experimental player-feedback control edition**, not the standard public game. The original game's design, default controls and official links belong to `main`. This variant has its own [developer handoff and one-way update policy](docs/GTA_CUBA_EDITION_HANDOFF.md). The edition has not undergone gameplay, regression or real-device tests. The general sections below describe the shared campaign baseline unless a variant-specific section explicitly overrides them.
+> **Developer-only alternate layout:** This branch preserves a separate experimental control layout originally informed by anonymous user feedback. It is no longer a public edition. The official game and its default controls remain on `main`. See [the developer layout contract](docs/DEVELOPER_ALTERNATE_LAYOUT.md).
 
 An original, offline-capable fantasy RPG about becoming a serious inconvenience to the Dark Lord. Explore five regions, rescue specialists, build a companion expedition, and make your way through ten settlements and five main dungeons.
 
@@ -14,7 +14,7 @@ The playable Community Snapshot is still receiving updates. **For the current co
 
 ## Play
 
-The two links above open the **standard public game**, not this experimental edition. The GTA Cuba Edition currently has a separate [desktop link](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/?experience=desktop) and [phone link](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/phone.html?experience=phone). Both edition pages share the same underlying campaign and special-control rules, with different input layouts. This is still a browser/PWA game, not a native app. Its controller and save isolation are explained in the [handoff](docs/GTA_CUBA_EDITION_HANDOFF.md).
+The links above open the **standard public game**. The alternate layout is not distributed on GitHub Pages; it may be run from this developer branch on localhost for private tests. Its storage, controls and launch procedure are documented in the [developer layout contract](docs/DEVELOPER_ALTERNATE_LAYOUT.md).
 
 On the title screen:
 
@@ -36,9 +36,9 @@ The game includes an original contextual soundtrack, authored regional spaces, b
 
 Greenwood has a working mill and pond, cultivated orchards, a separate decorative fruit cellar and woodland routes. **Scornfang's Treasury** is distinct from the occupied **Old Orchard Cellars**.
 
-## Controls — experimental GTA Cuba Edition
+## Controls — developer alternate layout
 
-**These edition-only controls are deliberate player-feedback accommodations, not proposals for the public game.** The original game on `main` retains its independent default controls, configurable presets, regular skill actions and normal mouse/touch interaction. For the source-of-truth customization and future update/approval rules, read [GTA Cuba Edition handoff](docs/GTA_CUBA_EDITION_HANDOFF.md).
+**These controls are limited to the local developer alternate layout and are not proposals for the public game.** The original game on `main` retains independent defaults, presets, skills and mouse/touch interaction. See [the developer layout contract](docs/DEVELOPER_ALTERNATE_LAYOUT.md).
 
 | Action | Edition desktop | Edition phone |
 | --- | --- | --- |
@@ -56,7 +56,7 @@ Mouse and direct touchscreen **menu selection** are blocked in this edition; on 
 
 Skills **5–8 are still learned and trained individually** through the original instructors: Orin teaches 5–6, Lyss 7 and Tovan 8. They do not appear as four extra action buttons. Once learned, Skill 5 follows 1, 6 follows 2, 7 follows 3, and 8 follows 4 in the matching normal or charged form, **only after the primary succeeds and when the secondary's own conditions allow it**. Each follow-up uses its own rank but starts no extra cooldown or resource cost. Automatic basics never trigger these follow-ups; they require actual hero movement. The skill journal, trainer preview and first-time Rank 1 learning message in the draft update explain these mechanics in English and Spanish. See the handoff for detailed edge cases and source ownership.
 
-**Distribution:** The official links at the top of this README are for the standard game, **not this variant**. The experimental edition is served separately at [desktop](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/?experience=desktop) and [phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/phone.html?experience=phone). Do not replace the standard links or silently merge the variant branch into `main`.
+**Distribution:** This layout is retired from public release. Do not publish the old alternate-layout URLs or merge these controls into the public game. Developers use a local checkout of this branch.
 
 ## Saves, updates and diagnostics
 
@@ -78,7 +78,7 @@ For the distinction between implemented, tested, merged, published and *device-v
 
 **Startup safety feedback (Issue #841 candidate; not yet released):** If a previous WebGL2 startup was interrupted or repeated failures paused recovery, Canvas stays playable and the game explains the hold in English/Spanish. **Retry PixiJS WebGL2** deliberately starts the existing 15-second Keep/Revert trial; **Use Canvas 2D** saves the backup choice. Reloading never silently clears a hold. Reports retain the startup decision, hold code and bounded first/latest recorded renderer errors. Older holds without error evidence remain explicitly unknown.
 
-**Availability:** The underlying PixiJS-default source derives from the official release, but this edition is published by the branch-specific `fixed-controls-pages.yml` workflow, not a merge to `main`. That workflow stages the edition under `tools/webgl-pilot/play/` alongside a rebuilt package of the verified official release. A player may still load an older installed PWA until its cached update is applied. Check [Development state](docs/DEVELOPMENT_STATE.md) and the version exported under **Screen and performance** before assuming your device has the rollout. Performance-report counters are diagnostic measurements, **not proof of visible frames per second on a Chromebook or phone**. Rendering resolution, optimization and frame-skip controls remain available.
+**Availability:** This developer branch has no public GitHub Pages publisher. Run it locally with the commands below; its version and functionality are not evidence of the live official game's release. The mode's old public URLs are retired.
 
 The **published soundtrack now includes 65 newly authored songs** (regional/area, interior, combat/boss/TRUE, title, defeat and Finale arrangements), retaining all 18 original Dark Crown music recordings. The title music is designed to start after the browser's first permitted interaction and return when the Main Menu reappears. The owner reported silence in both situations; the [focused sound patch #751](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/751) addresses the audio lifecycle, pending device verification. Opening Adventure or Settings during gameplay pauses the simulation **without stopping the current location music**. Continue/New Game prepares the right location score without waiting for a movement or skill action when audio is available; browsers cannot play unmuted audio before an initial gesture. The soundtrack changes with travel, settlements, night and combat. The separate [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) lets you preview game scenes and explore the current registered catalog (83 music cues, 34 environmental beds and 30 sound effects) without starting or changing a campaign. The library includes the 65 new recordings and protected Crown references. The 131-recording soundtrack rollout was browser/offline-tested in [dev.248](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242212837); the subsequent [environmental expansion #744](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/744) added 16 recordings, bringing the dev.250 catalog to **147**. It also offers production briefs; optional mixing and diagnostics are under Advanced listening tools. The [current sound design and audio production guide](docs/AUDIO_PLAYBACK.md) covers the live catalog, mix and creative workflow; the [soundtrack and sound-identity guide](docs/AUDIO_SOUND_PASS.md) preserves the creative intentions behind all current cue families, with the original v0.8.90 version retained in Git history.
 
@@ -99,7 +99,7 @@ For a scoped change, run the **affected focused tests** and relevant build check
 node scripts/build.cjs --check --site
 ```
 
-Official-game pull requests use [focused checks](.github/workflows/focused-deploy.yml), and its comprehensive workflow requires explicit owner approval. **For the experimental edition, the owner waived testing and manual/device playthroughs at its initial release.** Do not treat that waiver as applying to `main`. A push to `mod/gta-cuba-edition` triggers the edition's **own GitHub Pages publishing workflow** and must not occur without its applicable release authorization. The current update is being prepared on a separate PR branch; neither edition is published by editing this README. Work on a feature branch, preserve existing saves and assets, and do not merge or deploy without current authorization. Use the [engineering change workflow](docs/MECHANIC_DEVELOPMENT.md) for approved gameplay, audio, UI and other changes: source ownership, focused tests, lifecycle checks, documentation, recoverable handoffs and explicit release authorization.
+Official-game pull requests use [focused checks](.github/workflows/focused-deploy.yml), and comprehensive certification requires owner authorization. This alternate layout is retained solely for local developer tests, without a public publication workflow. Its original experimental release had a waived playtest requirement; this is not evidence of current device acceptance and does not waive main-game verification. Never merge or publish this branch without a separate owner decision.
 
 ## Project documentation
 

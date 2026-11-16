@@ -1,16 +1,16 @@
-name: GTA Cuba menu joystick regression (no deployment)
+name: Developer alternate layout menu joystick regression (no deployment)
 
 on:
   pull_request:
-    branches: [mod/gta-cuba-edition]
+    branches: [developer/alternate-control-layout]
     paths:
       - 'src/prototype/app.js'
       - 'src/prototype/input.js'
       - 'sw.js'
-      - 'tests/gta-cuba-menu-joystick.test.cjs'
-      - '.github/workflows/gta-cuba-menu-joystick.yml'
+      - 'tests/alternate-layout-menu-joystick.test.cjs'
+      - '.github/workflows/alternate-layout-menu-joystick.yml'
   push:
-    branches: [fix/gta-cuba-precise-menu-joystick-20261116]
+    branches: [developer/alternate-control-layout]
 
 permissions:
   contents: read
@@ -28,10 +28,10 @@ jobs:
         run: |
           node --check src/prototype/input.js
           node --check src/prototype/app.js
-          node --check tests/gta-cuba-menu-joystick.test.cjs
+          node --check tests/alternate-layout-menu-joystick.test.cjs
           node --check sw.js
       - name: Menu input and unchanged field controls
-        run: node tests/gta-cuba-menu-joystick.test.cjs
+        run: node tests/alternate-layout-menu-joystick.test.cjs
       - name: Offline worker fingerprints match committed controls
         run: |
           node <<'NODE'

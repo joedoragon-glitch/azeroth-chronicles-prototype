@@ -46,4 +46,4 @@ assert.equal(controls.preferences.touchMove, false);
 assert.equal(controls.actionFor('KeyF'), 'confirm');
 assert.equal(controls.actionFor('KeyS'), 'down');
 assert.equal(Input.floatingJoystickVector({ x: 0, y: 0 }, { x: 42, y: 0 }, 42).x, 1);
-console.log('PASS GTA Cuba menu joystick intent, hold timing, recentering, and unchanged field input');
+console.log('PASS alternate layout menu joystick intent, hold timing, recentering, and unchanged field input');

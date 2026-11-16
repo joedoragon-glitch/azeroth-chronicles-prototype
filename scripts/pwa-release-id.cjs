@@ -11,9 +11,9 @@ const validCommit = (value) => /^[a-f0-9]{40}$/.test(value || '');
 function stampWorker(source, commit, version) {
   if (!validCommit(commit)) throw Error('A complete Git commit SHA is required for PWA release stamping');
   if (typeof version !== 'string' || !version) throw Error('Package version required');
-  const original = 'const CACHE_VERSION = ' + JSON.stringify('gta-cuba-app-v' + version) + ';';
+  const original = 'const CACHE_VERSION = ' + JSON.stringify('developer-alternate-layout-app-v' + version) + ';';
   const revision = 'const CACHE_VERSION = ' +
-    JSON.stringify('gta-cuba-app-v' + version + '-release-' + commit.slice(0, 12)) + ';';
+    JSON.stringify('developer-alternate-layout-app-v' + version + '-release-' + commit.slice(0, 12)) + ';';
   if (!source.includes(original))
     throw Error('Unexpected generated service worker cache version; refuse an unsafe release');
   // Only the published worker changes; the checked-in generated worker remains

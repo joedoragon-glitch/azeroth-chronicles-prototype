@@ -1,9 +1,9 @@
 /* Presentation selection uses input capabilities, never a narrow-window phone guess. */
 (function (root) {
   'use strict';
-  const preferenceKey = 'gta-cuba:azeroth-screen-v1';
+  const preferenceKey = 'developer-alternate-layout:azeroth-screen-v1';
   // Preserve comparison preferences for rollback; finalized framing starts at 150%.
-  const cameraPreferenceKey = 'gta-cuba:azeroth-camera-v2';
+  const cameraPreferenceKey = 'developer-alternate-layout:azeroth-camera-v2';
   const defaultCameraZoom = 1.5;
   const cameraScales = [1, 1.5, 1.75];
   function resolve({ requested = 'auto', fine = false, coarse = false }) {
