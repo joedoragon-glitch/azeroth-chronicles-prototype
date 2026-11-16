@@ -91,10 +91,11 @@
     ],
     crypt: [
       attack('cone', 1, 1, { push: 45 }),
-      attack('volley', 1.2, 1.4, { normalShotInterval: 0.55, trueShotInterval: 0.28 }),
+      attack('volley', 1.2, 1.4, { normalShotInterval: 0.55, trueShotInterval: 0.28, volleyReach: 780 }),
       attack('summon', 1.6, 1.4, { species: 'crownguard', ranged: false, attendant: true }),
       attack('circle', 1.6, 1.4, {
         count: 4,
+        patchRadius: 86.4,
         paired: true,
         pairWarning: 0.85,
         persistent: true,
@@ -104,7 +105,7 @@
         slowOnly: true,
         coefficient: 0,
         waveSpeed: 360,
-        waveLife: 1.2,
+        waveLife: 1.44,
         slowDuration: 2,
       }),
       attack('circle', 0.8, 1.1, {
@@ -143,7 +144,7 @@
     ],
     warlord: [
       attack('cone', 1.2, 1.5, { combo: true }),
-      attack('circle', 1.8, 1.5, { count: 6 }),
+      attack('circle', 1.8, 1.5, { count: 6, patchRadius: 86.4 }),
       attack('summon', 1.8, 1.5, { species: 'orc', ranged: false }),
       attack('line', 1.6, 2.5, { charge: true, coefficient: 1.4 }),
     ],
@@ -154,7 +155,7 @@
       attack('summon', 2, 1.6, { species: 'ashbeast', ranged: false }),
     ],
     citadel: [
-      attack('canister', 1.6, 3, { coefficient: 1 }),
+      attack('canister', 1.6, 3, { coefficient: 1, radius: 432 }),
       attack('formation', 1.8, 1.6, { coefficient: 0 }),
       attack('pattern-charge', 1.8, 2.5, { charge: true, coefficient: 1 }),
       attack('checkerboard', 2, 1.5, { coefficient: 0 }),
@@ -164,8 +165,8 @@
       attack('ring', 1.4, 1.2, {
         cinderMechanic: 'cordon',
         coefficient: 0.6,
-        initialRadius: 250,
-        finalRadius: 155,
+        initialRadius: 300,
+        finalRadius: 186,
         width: 24,
         gapWidth: 1.15,
         cordonLife: 3.2,
@@ -197,8 +198,8 @@
       attack('circle', 1.2, 1.3, {
         cinderMechanic: 'seals',
         coefficient: 0.7,
-        radius: 54,
-        sealOrbit: 145,
+        radius: 64.8,
+        sealOrbit: 174,
         count: 7,
         sequential: true,
         stageWarning: 0.7,
@@ -206,7 +207,7 @@
       attack('circle', 1.2, 1.35, {
         cinderMechanic: 'equalisation',
         coefficient: 1.15,
-        radius: 68,
+        radius: 81.6,
         allyRange: 360,
       }),
       attack('circle', 1.25, 1.6, {
@@ -224,7 +225,7 @@
         delegationLife: 14,
         finisherWarning: 1.1,
         finisherCoefficient: 1.7,
-        finisherRadius: 55,
+        finisherRadius: 66,
       }),
       attack('summon', 1.8, 1.5, { species: 'ashbeast', ranged: false }),
     ],
@@ -6069,9 +6070,9 @@
           coefficient: 0.9,
           radius: 78,
           count: 2,
-          orbit: 70,
+          orbit: 84,
           fixedRadius: true,
-          minimumSeparation: 75,
+          minimumSeparation: 90,
         },
         {
           name: 'Transhumance',
@@ -6082,7 +6083,7 @@
           recovery: 1.1,
           coefficient: 0.85,
           radius: 66.24,
-          legLength: 170,
+          legLength: 204,
           speed: 340,
           charge: true,
           lengthFactors: [1, 0.8, 0.6],
@@ -6123,16 +6124,16 @@
           recovery: 1.1,
           coefficient: 0.23,
           radius: 204,
-          initialRadius: 170,
-          finalRadius: 110,
+          initialRadius: 204,
+          finalRadius: 132,
           width: 17,
           gapWidth: 1.15,
           duration: 3.2,
-          finalBlastRadius: 85,
+          finalBlastRadius: 102,
           finalCoefficient: 0.95,
           fixedRadius: true,
           centerSearchRadius: 60,
-          allowedRadii: [170, 145, 120, 100, 90],
+          allowedRadii: [204, 174, 144, 120, 108],
           finalRadiusFactor: 0.6,
           finalBlastFactor: 0.5,
           tickInterval: 0.4,
@@ -6161,13 +6162,13 @@
           coefficient: 0.7,
           radius: 66,
           count: 3,
-          orbit: 100,
+          orbit: 120,
           vaporLife: 2,
           vaporCoefficient: 0.12,
           fixedRadius: true,
           persistent: true,
           vaporTick: 0.55,
-          minimumSeparation: 75,
+          minimumSeparation: 90,
         },
       ],
     },
@@ -7871,47 +7872,8 @@
     }),
   });
 
-  // Expand enemy-owned offensive geometry once, before runtime consumers read it.
-  // Heroes, pets, healing, timers, angles and damage coefficients retain their own tables.
-  function expandedEnemyGeometry(value, preserveAuthoredRadius = false) {
-    const dimensions = new Set([
-      'radius',
-      'initialRadius',
-      'finalRadius',
-      'finalBlastRadius',
-      'finisherRadius',
-      'sealOrbit',
-      'approachRadius',
-      'legLength',
-      'orbit',
-      'minimumSeparation',
-    ]);
-    if (Array.isArray(value)) return value.map((entry) => expandedEnemyGeometry(entry, preserveAuthoredRadius));
-    if (!value || typeof value !== 'object') return value;
-    return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [
-        key,
-        dimensions.has(key) && !(preserveAuthoredRadius && key === 'radius') && typeof item === 'number'
-          ? item * balance.enemySpecialReachMultiplier
-          : key === 'allowedRadii'
-            ? item.map((r) => r * balance.enemySpecialReachMultiplier)
-            : expandedEnemyGeometry(item, preserveAuthoredRadius),
-      ]),
-    );
-  }
-  const expandedCaptains = Object.fromEntries(
-    Object.entries(roomCaptains).map(([id, profile]) => [
-      id,
-      {
-        ...profile,
-        specialRange: profile.specialRange,
-        attacks:
-          id === 'supply-crown'
-            ? expandedEnemyGeometry(profile.attacks, true)
-            : profile.attacks,
-      },
-    ]),
-  );
+  // Specialized boss and Crown captain footprints are final authored world units.
+  // No hidden second enemy special reach expansion is applied here.
   const R = {
     meleeReachTuning,
     meleeReach,
@@ -7993,7 +7955,7 @@
     trueBossSummons,
     ringleaderScaling,
     nightEnemyCombat,
-    roomCaptains: expandedCaptains,
+    roomCaptains,
     manaBalance,
     dungeonTrapTuning,
     dungeonReinforcement,
@@ -8160,21 +8122,7 @@
     dungeonTraps,
     forests,
     resourceDepositCounts,
-    attacks: {
-      ...attacks,
-      cindermaw: attacks.cindermaw.map((plan) =>
-        plan.cinderMechanic === 'protection'
-          ? plan
-          : plan.cinderMechanic === 'delegation'
-            ? { ...plan, finisherRadius: plan.finisherRadius * balance.enemySpecialReachMultiplier }
-            : expandedEnemyGeometry(plan),
-      ),
-      crypt: attacks.crypt.map((plan) =>
-        plan.slowOnly
-          ? { ...plan, waveLife: plan.waveLife * balance.enemySpecialReachMultiplier }
-          : plan,
-      ),
-    },
+    attacks,
     sites,
     quests,
     barriers,
