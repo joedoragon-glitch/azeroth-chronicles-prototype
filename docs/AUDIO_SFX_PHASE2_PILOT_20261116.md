@@ -1,6 +1,6 @@
 # SFX Phase 2 — original eight-cue pilot, source-routing proof and deferred listening
 
-**State:** isolated **actual audio production candidates**, **not integrated into game**. Date 16 November 2026. Main reviewed at `409f0ed671b0ff2563f788bf45ab665e01c05ca6`. Source-grounded design authority is draft PR #887 and its independent post-task audit. Source and game sound effects remain unchanged; no merge, publication, PWA update or player-facing acceptance.
+**State:** isolated **actual audio production candidates**, **not integrated into game**. Date 16 November 2026. Originally authored against `main@409f0ed671b0ff2563f788bf45ab665e01c05ca6`; reconciled against the **newer main dev.290 at `37ef6b0f86d91e2cc9af92c3660c757855200d33`**, including separately merged Phase 1 material-stage corrections and native shadow fixes. Neither background change registers a Phase 2 WAV. Source-grounded design authority is draft PR #887 and its independent post-task audit. Source and game sound effects remain unchanged; no merge, publication, PWA update or player-facing acceptance.
 
 ## Pilot outputs and why these are the first controlled auditions
 

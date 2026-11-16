@@ -317,8 +317,7 @@ const groups = [
     ],
   },
   {
-    // The Phase 2 SFX authored WAV generator and observation-only selector
-    // require their own concrete regression test, never architecture fallback.
+    // Source-owned Phase 2 SFX preview recipe and real event observation mapping.
     match: /^tools\/audio\/sfx-phase2-pilot(?:-routes)?\.cjs$/,
     tests: [TEST + 'audio-sfx-phase2-pilot.test.cjs'],
   },
