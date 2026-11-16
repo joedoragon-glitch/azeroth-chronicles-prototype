@@ -19,6 +19,11 @@ on:
 permissions:
   contents: write
 
+# A single actor may write the isolated candidate branch; cancel stale duplicate CI.
+concurrency:
+  group: sfx-phase1-30-replacements-20261116
+  cancel-in-progress: true
+
 jobs:
   integrated-audio:
     name: Exact 30-cue render, archive, manifest, browser & release safety
