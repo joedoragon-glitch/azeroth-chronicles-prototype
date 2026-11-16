@@ -1,5 +1,7 @@
 # So I Became the Dark Lord's Problem
 
+> **Repository variant notice:** This `mod/gta-cuba-edition` code is an **experimental player-feedback control edition**, not the standard public game. The original game's design, default controls and official links belong to `main`. This variant has its own [developer handoff and one-way update policy](docs/GTA_CUBA_EDITION_HANDOFF.md). The edition has not undergone gameplay, regression or real-device tests. The general sections below describe the shared campaign baseline unless a variant-specific section explicitly overrides them.
+
 An original, offline-capable fantasy RPG about becoming a serious inconvenience to the Dark Lord. Explore five regions, rescue specialists, build a companion expedition, and make your way through ten settlements and five main dungeons.
 
 **[Play in your browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** · **[Play on your phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** · **[Guía completa del juego en español](GUIA_EN_ESPANOL.md)**
@@ -34,29 +36,25 @@ The game includes an original contextual soundtrack, authored regional spaces, b
 
 Greenwood has a working mill and pond, cultivated orchards, a separate decorative fruit cellar and woodland routes. **Scornfang's Treasury** is distinct from the occupied **Old Orchard Cellars**.
 
-## Controls
+## Controls — experimental GTA Cuba Edition
 
-These are **default** desktop bindings. Movement, interaction, menu/back, combat, and utility keys can all be changed under **Settings → Controls → Customize keyboard → Movement and menu keys** (or the other key groups). Escape remains a safety fallback for opening and leaving menus; Enter remains available for confirmation. On phone, use the on-screen buttons and joystick or tap a reachable destination.
+**These edition-only controls are deliberate player-feedback accommodations, not proposals for the public game.** The original game on `main` retains its independent default controls, configurable presets, regular skill actions and normal mouse/touch interaction. For the source-of-truth customization and future update/approval rules, read [GTA Cuba Edition handoff](docs/GTA_CUBA_EDITION_HANDOFF.md).
 
-On desktop, a prompt shows the current **Interact** key and the nearby NPC, object, or resource it will act on. It follows your binding if you change it.
-
-| Action | Desktop / Chromebook | Phone |
+| Action | Edition desktop | Edition phone |
 | --- | --- | --- |
-| Move | W / A / S / D | Left joystick or tap-to-move |
-| Interact / confirm | F | Interact / tap |
-| Skills 1–5 | J / K / L / U / I | Skill buttons |
-| Skills 6–8 | Space / O / N | Skill buttons |
-| Charged skill | Hold the skill for about 0.65 seconds | Hold its button |
-| Change target | E | Target button |
-| Recall companions | Backtick key (or Q with default bindings) | Recall button |
-| Squad doctrine | Tab (when available) | Contextual Squad button |
-| Companion Heal (Ranger, Charmed ranged healer, eligible pet) | H | Heal button |
-| Map / talents / skill reference | Z / C / X | Adventure menu |
-| Pause / help / back | P (or V) / G / Esc | Menu |
+| Move / choose menu item | WASD | Fixed left joystick |
+| Confirm / interact | F **or Enter** (same field interaction) | Dedicated Confirm beside joystick |
+| Menu / back | Esc | On-screen Back row |
+| Skills 1–4 | Number keys 1–4 | Four buttons arranged in an arc around the left joystick |
+| Learned skills 5–8 | Triggered alongside their learned 1–4 partners under edition rules | Same paired behavior |
+| Target / recall / squad | E / Q / Tab | Buttons on right |
+| Companion Heal | R; desktop left-click on the game world | Heal farther right of the joystick arc |
+| Map / talents / skill reference | Z / C / X | Menus navigated by joystick |
+| Pause / help | V / G | Menu |
 
-Tap **Target** to cycle eligible enemies; hold it for roughly **0.55 seconds** to lock the current target for the encounter. **Recall** is a five-second defensive regroup: the button shows ON and remaining seconds; press it again to cancel. Both automatic and manually activated hero attacks leave Recall alone. The five seconds count active game time, so pausing does not consume them. Companion labor cannot be newly assigned during the brief Recall hold. Menu selection follows the movement keys; F, Enter or Space confirms. Skills can be queued while cooling down. The Classic number-key preset and a mirrored left-hand preset are available in Controls.
+Mouse and direct touchscreen selection of game menus are deliberately blocked in this edition; the phone joystick and Confirm control navigate title, New Game and in-game menus. Native name entry and file pickers still operate as needed. Click-to-move and tap-to-move are disabled in this variant. Basic auto-attacks require actual hero movement; manual skills remain usable while stationary. Slots 5–8 retain their existing instructor/learning prerequisites and are triggered in pairs (1→5, 2→6, 3→7, 4→8) when appropriate. Read the handoff for pairing/cooldown/target details.
 
-On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. Controls can be customized under **Settings → Controls**; basic play instructions and report/profiling explanations live in **Help & Credits**. The **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** gives additional guidance.
+**Distribution:** The official links at the top of this README are for the standard game, **not this variant**. The experimental edition is served separately at [desktop](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/?experience=desktop) and [phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/phone.html?experience=phone). Do not replace the standard links or silently merge the variant branch into `main`.
 
 ## Saves, updates and diagnostics
 
