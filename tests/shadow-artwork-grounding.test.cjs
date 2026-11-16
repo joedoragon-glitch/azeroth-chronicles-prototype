@@ -153,6 +153,15 @@ for (const [structure, rx, ry] of [
 // Source+real-scene #893: 37/768 atlas pixels of trunk at foot pivot,
  // compared with a ~57px scaled default contact on Frontier trees.
  // Keep the approved asset-safe tree scale while avoiding a dark disc.
+// Low registered scrub/dry shrubs also reuse the original littlePlant
+// dim, compact contact instead of the generic dark 22×6 prop ellipses.
+for (const structure of ['dry-scrub', 'dead-shrub', 'heather']) {
+  const contact = ground('prop', { structure });
+  assert.deepEqual([contact.rx, contact.ry, contact.shadowOpacity], [7, 2, 5 / 16],
+    structure + ' uses existing measured understory footprint');
+}
+assert.equal(ground('prop', { structure: 'alpine-scrub' }).rx, 22,
+  'Unreviewed alpine brush remains unchanged');
 const thinTrunk = ground('prop', { structure: 'dead-tree' });
 assert(Math.abs(thinTrunk.rx - 13) < 1e-8 &&
   Math.abs(thinTrunk.ry - 4.55) < 1e-8 && thinTrunk.shadowOpacity === 1,
@@ -177,6 +186,8 @@ assert.equal(ground('hero').shadowOpacity, 4 / 16, 'full nighttime has subdued c
 assert.equal(ground('prop', { structure: 'roadside-lantern' }).shadowOpacity, 4 / 16,
   'narrow lamp retains the same night attenuation as regular geometry');
 assert.equal(ground('prop', { structure: 'wildflowers' }).shadowOpacity, 1 / 16);
+assert.equal(ground('prop', { structure: 'dead-shrub' }).shadowOpacity, 1 / 16,
+  'Crown low shrub retains the original quantized night fade');
 dungeon = true;
 assert.equal(ground('hero').shadowOpacity, 1, 'existing dungeon illumination policy is unchanged');
 assert.equal(ground('prop', { greenwoodField: true }).shadowOpacity, 0);

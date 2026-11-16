@@ -1126,7 +1126,12 @@
         (e.kind === 'landmark' && String(e.id || '').startsWith('bridge-')) ||
         /^(?:furrow-plot|garden|meadow|floor|paving|rune|path|road|ash-patch)$/.test(structure));
       const littlePlant = e.greenwoodNature === 'understory' ||
-        /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure);
+        /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure) ||
+        // #893: original low-vegetation PNGs are 16–23 logical pixels wide.
+        // Their default 44px contact is an opaque-looking ground puddle in
+        // Frontier/Crown art. Reuse existing 7×2 dim understory treatment;
+        // do not change surrounding rocks, trees, buildings, or the light model.
+        ['dry-scrub', 'dead-shrub', 'heather'].includes(structure);
       if (littlePlant) { rx = 7; ry = 2; }
       // #893 registered dead-tree master: only ~9 logical px across the
       // visible trunk at its 75%-height foot pivot (37/768 atlas px at
