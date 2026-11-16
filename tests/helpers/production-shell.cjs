@@ -113,7 +113,9 @@ function shell(language, heroClass = 'paladin', options = {}) {
     },
     setTimeout() {},
     clearTimeout() {},
-    setInterval(fn, ms) { options.onInterval?.(fn, ms); },
+    setInterval(fn, ms) {
+      options.onInterval?.(fn, ms);
+    },
     Blob,
     URL: { createObjectURL: () => '', revokeObjectURL() {} },
     confirm: () => true,
