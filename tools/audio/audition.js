@@ -476,6 +476,7 @@
   function fillLibrary(previousId) {
     const manifest = audio.recordingManifest;
     if (!manifest) return;
+    syncEffectFilters();
     if ($('kind').value === 'generated') return renderGenerated();
     $('library-grid').hidden = false;
     $('recorded-panel').hidden = false;
