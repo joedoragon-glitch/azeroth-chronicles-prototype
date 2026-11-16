@@ -2340,6 +2340,92 @@
         });
         return true;
       }
+      // Charmed Skeletons keep the same *repertoire*, not an invented new
+      // paid fourth slot: within an eligible native/earned elite slot, an
+      // alternating activation uses the corresponding estate craft technique.
+      // Mastery and original native/signature abilities remain obtainable.
+      charmedSkeletonCraft(u, target, elite, charged) {
+        if (!u?.charmOrigin || u.charmOrigin.species !== 'skeleton' ||
+            !target || target.hp <= 0 || !this.tacticalDirectTargetable(target) ||
+            !this.line(u, target)) return false;
+        const ranged = u.type === 'archer',
+          role = ranged ? 'ranged' : 'melee',
+          craft = R.tacticalFoundation.skeletonCraftSkills[role][elite ? 'ringleader' : 'ordinary'],
+          budget = R.balance.companions.charmedSkills,
+          receipt = this._criticalPartyNative?.enabled
+            ? this._criticalPartyNative.release(
+                this, elite ? 'charm/rogue/signature' : 'charm/rogue/basic', u.id)
+            : null,
+          baseline = this.troopCriticalDamage(receipt,
+            this.rogueCompanionSpecialDamage(u, this.companionAttackDamage(u) *
+              (elite ? budget.signatureDamageMultiplier : budget.basicDamageMultiplier) *
+              (1 + this.companionMasteryTier(u) *
+                R.balance.companions.mastery.nativeDamagePerTier))),
+          distance = Math.max(1, dist(u, target));
+        if (distance > this.companionCombatReach(u) + 20) return false;
+        const dx = (target.x - u.x) / distance,
+          dy = (target.y - u.y) / distance,
+          angle = Math.atan2(dy, dx),
+          side = u.id.endsWith('0') || u.id.endsWith('2') || u.id.endsWith('4') ||
+            u.id.endsWith('6') || u.id.endsWith('8') ? 1 : -1;
+        if (ranged) {
+          const flight = this.charmedProjectileFlight(u),
+            bolts = !elite
+              ? [[angle, 0.38, 0], [angle, 0.38, 0.27], [angle, 0.38, 0.54]]
+              : charged
+                ? [[angle, 0.85, 0], [angle + side * 0.32, 0.85, craft.flankDelay]]
+                : [[angle - 0.045, 0.72, 0], [angle + 0.045, 0.72, 0]];
+          for (const [bearing, coefficient, delay] of bolts)
+            this.s.projectiles.push({
+              id: 'projectile-' + this.s.nextId++,
+              x: u.x, y: u.y,
+              dx: Math.cos(bearing), dy: Math.sin(bearing),
+              target: target.id, source: u.id,
+              damage: baseline * coefficient, slow: 0,
+              skillShape: 'single',
+              ...(receipt ? { criticalExecution: receipt } : {}),
+              ...flight, delay,
+            });
+          this.event('projectileLaunch', {
+            actor: 'companion', role: 'archer', source: u.id, style: 'arrow',
+            x: u.x, y: u.y, target: target.id,
+          });
+          return true;
+        }
+        const strikes = !elite
+          ? [angle]
+          : charged
+            ? [angle - side * 0.2, angle + side * 1.1]
+            : [angle - side * 0.32, angle + side * 0.34];
+        let contact = false;
+        const previous = this.developerCompanionBeginDirect(u, craft.name);
+        for (const [index, bearing] of strikes.entries()) {
+          const length = elite ? (charged ? 150 : 124) : 90,
+            end = {
+              x: u.x + Math.cos(bearing) * length,
+              y: u.y + Math.sin(bearing) * length,
+            },
+            notch = {
+              x: end.x - Math.sin(bearing) * 65 * side,
+              y: end.y + Math.cos(bearing) * 65 * side,
+            };
+          for (const enemy of this.zone().enemies.filter((e) => e.hp > 0 &&
+            !e.neutral && !e.returning && this.tacticalDirectTargetable(e) &&
+            this.line(u, e) &&
+            (this.distanceToSegment(e, u, end) <= (elite ? 30 : 24) ||
+              (!elite && this.distanceToSegment(e, end, notch) <= 24)))) {
+            const amount = baseline * (elite
+              ? charged ? craft.chargedCoefficient : craft.coefficient
+              : craft.coefficient);
+            if (this.damage(enemy, amount, u.id, {
+              area: true, skillShape: 'area', criticalExecution: receipt,
+            })) contact = true;
+          }
+          if (!elite || index === strikes.length - 1) break;
+        }
+        this.developerCompanionEndDirect(previous);
+        return contact;
+      }
       charmedCompanionSkill(u, target) {
         if (!this.isCharmedCompanion(u) ||
             (this.hero.class !== 'rogue' && !u.charmRingleaderTrained) ||
@@ -2407,6 +2493,29 @@
         const profile = elite ? signature : ordinary;
         const slot = elite ? 2 : 1;
         const skillTitle = this.monsterSkillTitle(profile.name, u);
+        const turns = this._charmedSkeletonTurns ||= new WeakMap(),
+          record = turns.get(u) || { basic: 0, elite: 0 },
+          key = elite ? 'elite' : 'basic',
+          usesCraft = species === 'skeleton' && record[key] % 2 === 1,
+          chargedCraft = elite && record[key] % 4 === 3;
+        if (usesCraft && this.charmedSkeletonCraft(u, target, elite, chargedCraft)) {
+          u[elite ? 'skill2Cd' : 'skill1Cd'] =
+            elite ? cfg.signatureCooldown : cfg.basicCooldown;
+          u.skillGlobalCd = cfg.globalCooldown;
+          u.cd = Math.max(u.cd, 0.35);
+          team[key] = this.s.time +
+            (elite ? cfg.eliteSquadSpacing : cfg.basicSquadSpacing);
+          record[key]++;
+          turns.set(u, record);
+          this.event('companionSkill', {
+            source: u.id, unitType: u.type,
+            skill: R.tacticalFoundation.skeletonCraftSkills[
+              ranged ? 'ranged' : 'melee'
+            ][elite ? 'ringleader' : 'ordinary'].name,
+            targetId: target.id, slot,
+          });
+          return true;
+        }
         // Native Ringleaders have both a species basic and a separate
         // signature. Slot 2 never replaces, disables or consumes Slot 1.
         // Skill 1 is single-target; skill 2 is max two actual contacts.
@@ -2524,6 +2633,10 @@
           source: u.id, unitType: u.type,
           skill: skillTitle, targetId: target.id, slot,
         });
+        if (species === 'skeleton') {
+          record[key]++;
+          turns.set(u, record);
+        }
         return true;
       }
       companionTrySkill(u, target) {
