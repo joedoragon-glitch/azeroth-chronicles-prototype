@@ -143,15 +143,18 @@ for (const [structure, rx, ry] of [
   ['inspection-marker', 8, 3],
   ['checkpoint-standard', 8, 3],
 ]) {
-  const contact = ground('prop', { structure });
-  assert.deepEqual([contact.rx, contact.ry, contact.shadowOpacity], [rx, ry, 1],
-    structure + ' measured narrow-foot shadow');
+  const visual = painter.presentEntity({ id: 'ground-narrow-post', x: 200, y: 200, structure }, 'prop');
+  const contact = painter.groundPresentation(visual);
+  const scale = (Visuals.featureScale(visual) || 1) > 1 ? visual.visualScale || 1 : 1;
+  assert(Math.abs(contact.rx - rx * scale) < 1e-7, structure + ' scaled post radius');
+  assert(Math.abs(contact.ry - ry * scale) < 1e-7, structure + ' scaled post depth');
+  assert.equal(contact.shadowOpacity, 1, structure + ' daylight shadow strength');
 }
 assert.deepEqual([ground('prop', { structure: 'rope-coil' }).rx,
   ground('prop', { structure: 'rope-coil' }).ry], [22, 6],
   'ordinary coil and structures retain their original grounding policy');
-const scaledPost = ground('prop', { structure: 'checkpoint-standard', visualScale: 1.3 });
-assert.equal(scaledPost.rx, 10.4, 'narrow post still respects original visualScale');
+assert.equal(ground('prop', { structure: 'checkpoint-standard' }).rx, 10.8,
+  'the original checkpoint-standard 135% visual scale is retained');
 assert.equal(ground('prop', { greenwoodWall: true }).shadowOpacity, 0);
 assert.equal(ground('prop', { greenwoodField: true }).shadowOpacity, 0);
 assert.equal(ground('prop', { greenwoodFacility: 'thorn-work' }).shadowOpacity, 0);
