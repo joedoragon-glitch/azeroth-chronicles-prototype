@@ -8,16 +8,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     documentEvents = {},
     storage = options.storage || new Map();
   let nextFrame;
-  // Headless shell has no painter. Canvas readback must still honor the
-  // browser's ImageData shape, with transparent pixels from the no-op artist.
-  const ctx = new Proxy(
-    {
-      getImageData(_x, _y, width, height) {
-        return { data: new Uint8ClampedArray(width * height * 4), width, height };
-      },
-    },
-    { get: (o, k) => o[k] || (() => {}) },
-  );
+  const ctx = new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
   function el() {
     const classes = new Set(),
       attributes = new Map();
@@ -111,11 +102,9 @@ function shell(language, heroClass = 'paladin', options = {}) {
     requestAnimationFrame(fn) {
       nextFrame = fn;
     },
-    setTimeout() {},
-    clearTimeout() {},
-    setInterval(fn, ms) {
-      options.onInterval?.(fn, ms);
-    },
+    setTimeout(fn, ms) { return options.onTimeout?.(fn, ms); },
+    clearTimeout(id) { options.onClearTimeout?.(id); },
+    setInterval(fn, ms) { options.onInterval?.(fn, ms); },
     Blob,
     URL: { createObjectURL: () => '', revokeObjectURL() {} },
     confirm: () => true,
@@ -149,6 +138,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     const runtime = scope.PrototypeRuntime;
     scope.PrototypeRuntime = { ...runtime, create: () => runtime.create(options.now) };
   }
+  if (options.Date) scope.Date = options.Date;
   if (options.pixi) scope.PrototypePixiExperimental = options.pixi;
   if (options.graphicsGuard) scope.AzerothRendererSwitchGuard = options.graphicsGuard;
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
