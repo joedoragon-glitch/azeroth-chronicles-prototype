@@ -1128,6 +1128,20 @@
       const littlePlant = e.greenwoodNature === 'understory' ||
         /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure);
       if (littlePlant) { rx = 7; ry = 2; }
+      // #893 measured the actual local alpha at the physical foot anchor.
+      // These narrow poles were inheriting the general 44 px prop ellipse
+      // despite only ~6-16 px of painted base. In real Marches daylight
+      // screenshots that produced detached dark puddles beneath lanterns.
+      // Keep the simple canonical ellipses; do not touch tree canopies,
+      // building foundations, light glows, or combat rings.
+      if (e.renderKind === 'prop') {
+        if (structure === 'roadside-lantern') { rx = 7; ry = 2.5; }
+        else if (structure === 'grave-lamp') { rx = 9; ry = 3; }
+        else if ([
+          'banner', 'crown-banner', 'royal-flight-standard',
+          'tax-post', 'inspection-marker', 'checkpoint-standard',
+        ].includes(structure)) { rx = 8; ry = 3; }
+      }
       // The farmyard painter now supplies small contact at actual posts and
       // timbers. Generic entity-sized bubbles would double those contacts.
       const selfGrounded = String(e.greenwoodFacility || '').startsWith('thorn-');
