@@ -7399,28 +7399,39 @@
   function* resumableWaypointPath(destination, origin) {
     const choice = yield* game.budgetedNavigationTarget(destination, origin);
     if (!choice) return { choice: null, origin };
-    // The player may keep walking while BFS runs. Reattach the COMPLETE
-    // collision-checked tail to the live hero; never publish a stale start.
-    // All checks use the native radius-15 terrain rule and are themselves
-    // yielded. If no legal connection exists, retry from the new position.
+    const path = choice.path;
+    // Validate the static tail FIRST. Validating a long tail after checking
+    // the hero's first leg would make that first check stale mid-walk.
+    const tailSafe = Array(path.length);
+    let valid = !(yield { kind: 'blocked',
+      args: [path.at(-1).x, path.at(-1).y, game.zoneId, 15] });
+    tailSafe[path.length - 1] = valid;
+    for (let i = path.length - 2; i >= 0; i--) {
+      if (valid) valid = yield* game.budgetedRouteSegment(path[i], path[i + 1]);
+      tailSafe[i] = valid;
+    }
+    if (!valid && !tailSafe.some(Boolean)) return { retry: true };
+    // Validate the connection from the LIVE hero position only at the very
+    // end; a moving player cannot be represented by the original BFS origin.
+    // Prefer close safe waypoint tails, and discard a candidate if the hero
+    // moved too much while that particular connection was being checked.
     for (let attempt = 0; attempt < 3; attempt++) {
-      const current = { x: game.hero.x, y: game.hero.y };
-      for (let i = choice.path.length - 1; i >= 0; i--) {
-        const path = choice.path.slice(i);
-        let from = current, valid = true;
-        for (const next of path) {
-          if (!(yield* game.budgetedRouteSegment(from, next))) {
-            valid = false;
-            break;
-          }
-          from = next;
-        }
-        if (valid) {
-          if (Math.hypot(game.hero.x - current.x, game.hero.y - current.y) <= 20)
-            return { choice: { point: choice.point, path }, origin: current };
-          break; // The hero moved during validation: check the live origin.
+      const near = { x: game.hero.x, y: game.hero.y };
+      const candidates = path.map((point, i) => ({
+        i, distance: Math.hypot(point.x - near.x, point.y - near.y),
+      })).filter(({ i }) => tailSafe[i])
+        .sort((a, b) => a.distance - b.distance);
+      let moved = false;
+      for (const { i } of candidates) {
+        const at = { x: game.hero.x, y: game.hero.y };
+        if (yield* game.budgetedRouteSegment(at, path[i])) {
+          if (Math.hypot(game.hero.x - at.x, game.hero.y - at.y) <= 20)
+            return { choice: { point: choice.point, path: path.slice(i) }, origin: at };
+          moved = true;
+          break;
         }
       }
+      if (!moved) break; // All available tails are blocked, not just stale.
     }
     return { retry: true };
   }
