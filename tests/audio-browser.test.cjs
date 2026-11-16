@@ -80,7 +80,7 @@ const root = path.resolve(__dirname, '..'),
           { cause: error },
         );
       }
-      await page.waitForFunction(() => Prototype.audio.environmentVoice?.id === 'env-woodland-day');
+      await page.waitForFunction(() => Prototype.audio.environmentVoice?.id === 'study-vale-day-727');
       assert(await page.evaluate(() => Prototype.audio.noise === null));
       await page.waitForTimeout(120);
       const before = await page.evaluate(() => ({
