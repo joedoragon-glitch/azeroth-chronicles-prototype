@@ -313,6 +313,7 @@ async function main() {
         const shadowSite = /^shadow-(vale|march|highlands|frontier|crown|archive)-(day|dusk|night|interior)-(paladin|mage|ranger|rogue)$/.exec(name);
         if (shadowSite) {
           const [, region, phase, heroClass] = shadowSite;
+          if (heroClass === 'rogue' && !Campaign.classes.rogue) Campaign.enableRoguePlaytest();
           window.g = new Campaign('normal', heroClass, () => 0.73);
           window.originalCampaign = g;
           if (!g.enter(region)) throw Error('Native shadow audit site unavailable: ' + region);
