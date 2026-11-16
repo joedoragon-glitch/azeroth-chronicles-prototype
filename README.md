@@ -1,5 +1,7 @@
 # So I Became the Dark Lord's Problem
 
+> **Repository variant notice:** This `mod/gta-cuba-edition` code is an **experimental player-feedback control edition**, not the standard public game. The original game's design, default controls and official links belong to `main`. This variant has its own [developer handoff and one-way update policy](docs/GTA_CUBA_EDITION_HANDOFF.md). The edition has not undergone gameplay, regression or real-device tests. The general sections below describe the shared campaign baseline unless a variant-specific section explicitly overrides them.
+
 An original, offline-capable fantasy RPG about becoming a serious inconvenience to the Dark Lord. Explore five regions, rescue specialists, build a companion expedition, and make your way through ten settlements and five main dungeons.
 
 **[Play in your browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** · **[Play on your phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** · **[Guía completa del juego en español](GUIA_EN_ESPANOL.md)**
@@ -12,7 +14,7 @@ The playable Community Snapshot is still receiving updates. **For the current co
 
 ## Play
 
-Use the **[browser / Chromebook game](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** for keyboard and mouse, or the **[phone/PWA version](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** for touch controls. Both run the same campaign with different screen layouts. The phone version can be installed through its browser when supported; it is not a native Android or iOS app.
+The two links above open the **standard public game**, not this experimental edition. The GTA Cuba Edition currently has a separate [desktop link](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/?experience=desktop) and [phone link](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/phone.html?experience=phone). Both edition pages share the same underlying campaign and special-control rules, with different input layouts. This is still a browser/PWA game, not a native app. Its controller and save isolation are explained in the [handoff](docs/GTA_CUBA_EDITION_HANDOFF.md).
 
 On the title screen:
 
@@ -28,35 +30,33 @@ Recruit and recover companions, rescue instructors and craftspeople, establish a
 
 At a **completed Barracks → Company**, select **Manage active group** or **Charmed monsters** and **Inspect** an individual to review their HP, personal Mastery, status and **Abilities & mastery**, without accidentally resting or activating them. The **Boss pet collection** also shows owned pets' abilities. Cumulative Mastery tiers unlock at **4 / 10 / 18** points earned from genuine achievements. After rescuing **Orin** in Ironroot Highlands, his service—also available through **Barracks → Rescued specialists**—lets you choose a *particular* Charmed creature for a one-time **100-crown** Ringleader upgrade; review the before/after stats before confirming payment. See [Development state](docs/DEVELOPMENT_STATE.md) for verified publication and device-test status.
 
-Combat is **cooldown-based**, not mana-based. Skills have a normal tap action and, where applicable, a stronger charged action. Automatic basic attacks continue separately. **Rogue** uses her own musical combat actions and can Charm eligible foes into companions; she is playable, but her extended phone, audio, boss and performance acceptance remains unfinished. For exact effects and cooldowns, use **Adventure → Hero skills** in the running game rather than an old balance table.
+Combat is **cooldown-based**, not mana-based. Skills 1–4 have normal and charged actions. Learned Skills 5–8 follow their corresponding skill (1→5, 2→6, 3→7, 4→8) in the same form, using their own ranks when the primary action succeeds and their conditions allow it. They are not four extra buttons or separate cooldown activations. Automatic basic attacks are distinct and require actual hero movement in this edition. **Rogue** uses her own musical combat actions and can Charm eligible foes into companions; she is playable, but her extended phone, audio, boss and performance acceptance remains unfinished. For exact effects and cooldowns, use **Adventure → Hero skills** in the running game rather than an old balance table.
 
 The game includes an original contextual soundtrack, authored regional spaces, boss encounters, procedural character art and optional illustrated assets. It is a single-player experience; **there is no playable co-op or cloud save synchronization**.
 
 Greenwood has a working mill and pond, cultivated orchards, a separate decorative fruit cellar and woodland routes. **Scornfang's Treasury** is distinct from the occupied **Old Orchard Cellars**.
 
-## Controls
+## Controls — experimental GTA Cuba Edition
 
-These are **default** desktop bindings. Movement, interaction, menu/back, combat, and utility keys can all be changed under **Settings → Controls → Customize keyboard → Movement and menu keys** (or the other key groups). Escape remains a safety fallback for opening and leaving menus; Enter remains available for confirmation. On phone, use the on-screen buttons and joystick or tap a reachable destination.
+**These edition-only controls are deliberate player-feedback accommodations, not proposals for the public game.** The original game on `main` retains its independent default controls, configurable presets, regular skill actions and normal mouse/touch interaction. For the source-of-truth customization and future update/approval rules, read [GTA Cuba Edition handoff](docs/GTA_CUBA_EDITION_HANDOFF.md).
 
-On desktop, a prompt shows the current **Interact** key and the nearby NPC, object, or resource it will act on. It follows your binding if you change it.
-
-| Action | Desktop / Chromebook | Phone |
+| Action | Edition desktop | Edition phone |
 | --- | --- | --- |
-| Move | W / A / S / D | Left joystick or tap-to-move |
-| Interact / confirm | F | Interact / tap |
-| Skills 1–5 | J / K / L / U / I | Skill buttons |
-| Skills 6–8 | Space / O / N | Skill buttons |
-| Charged skill | Hold the skill for about 0.65 seconds | Hold its button |
-| Change target | E | Target button |
-| Recall companions | Backtick key (or Q with default bindings) | Recall button |
-| Squad doctrine | Tab (when available) | Contextual Squad button |
-| Companion Heal (Ranger, Charmed ranged healer, eligible pet) | H | Heal button |
-| Map / talents / skill reference | Z / C / X | Adventure menu |
-| Pause / help / back | P (or V) / G / Esc | Menu |
+| Move / choose menu item | WASD | Fixed left joystick |
+| Confirm / interact | F **or Enter** (same field interaction) | Dedicated Confirm beside joystick |
+| Menu / back | Esc | On-screen Back row |
+| Skills 1–4 | Number keys 1–4 | Four buttons arranged in an arc around the left joystick |
+| Learned skills 5–8 | Triggered alongside their learned 1–4 partners under edition rules | Same paired behavior |
+| Target / recall / squad | E / Q / Tab | Buttons on right |
+| Companion Heal | R; desktop left-click on the game world | Heal farther right of the joystick arc |
+| Map / talents / skill reference | Z / C / X | Menus navigated by joystick |
+| Pause / help | V / G | Menu |
 
-Tap **Target** to cycle eligible enemies; hold it for roughly **0.55 seconds** to lock the current target for the encounter. **Recall** is a five-second defensive regroup: the button shows ON and remaining seconds; press it again to cancel. Both automatic and manually activated hero attacks leave Recall alone. The five seconds count active game time, so pausing does not consume them. Companion labor cannot be newly assigned during the brief Recall hold. Menu selection follows the movement keys; F, Enter or Space confirms. Skills can be queued while cooling down. The Classic number-key preset and a mirrored left-hand preset are available in Controls.
+Mouse and direct touchscreen **menu selection** are blocked in this edition; on the phone, use the joystick to highlight an option and Confirm to choose it, including on the title and New Game screens. Native name entry and file pickers remain available, and real field controls (skill buttons, Heal, targeting and joystick) still respond to touch. Click-to-move and tap-to-move are disabled. On desktop, left-clicking the world instead requests Heal from an **eligible** companion; it is not a general click-to-interact command.
 
-On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. Controls can be customized under **Settings → Controls**; basic play instructions and report/profiling explanations live in **Help & Credits**. The **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** gives additional guidance.
+Skills **5–8 are still learned and trained individually** through the original instructors: Orin teaches 5–6, Lyss 7 and Tovan 8. They do not appear as four extra action buttons. Once learned, Skill 5 follows 1, 6 follows 2, 7 follows 3, and 8 follows 4 in the matching normal or charged form, **only after the primary succeeds and when the secondary's own conditions allow it**. Each follow-up uses its own rank but starts no extra cooldown or resource cost. Automatic basics never trigger these follow-ups; they require actual hero movement. The skill journal, trainer preview and first-time Rank 1 learning message in the draft update explain these mechanics in English and Spanish. See the handoff for detailed edge cases and source ownership.
+
+**Distribution:** The official links at the top of this README are for the standard game, **not this variant**. The experimental edition is served separately at [desktop](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/?experience=desktop) and [phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/webgl-pilot/play/phone.html?experience=phone). Do not replace the standard links or silently merge the variant branch into `main`.
 
 ## Saves, updates and diagnostics
 
@@ -78,7 +78,7 @@ For the distinction between implemented, tested, merged, published and *device-v
 
 **Startup safety feedback (Issue #841 candidate; not yet released):** If a previous WebGL2 startup was interrupted or repeated failures paused recovery, Canvas stays playable and the game explains the hold in English/Spanish. **Retry PixiJS WebGL2** deliberately starts the existing 15-second Keep/Revert trial; **Use Canvas 2D** saves the backup choice. Reloading never silently clears a hold. Reports retain the startup decision, hold code and bounded first/latest recorded renderer errors. Older holds without error evidence remain explicitly unknown.
 
-**Availability:** This is the PixiJS-default source for PR #574. Publication requires a successful merged-`main` GitHub Pages workflow; an installed PWA may retain its previous renderer/version until it updates. Check [Development state](docs/DEVELOPMENT_STATE.md) and the version exported under **Screen and performance** before assuming your device has the rollout. Performance-report counters are diagnostic measurements, **not proof of visible frames per second on a Chromebook or phone**. Rendering resolution, optimization and frame-skip controls remain available.
+**Availability:** The underlying PixiJS-default source derives from the official release, but this edition is published by the branch-specific `fixed-controls-pages.yml` workflow, not a merge to `main`. That workflow stages the edition under `tools/webgl-pilot/play/` alongside a rebuilt package of the verified official release. A player may still load an older installed PWA until its cached update is applied. Check [Development state](docs/DEVELOPMENT_STATE.md) and the version exported under **Screen and performance** before assuming your device has the rollout. Performance-report counters are diagnostic measurements, **not proof of visible frames per second on a Chromebook or phone**. Rendering resolution, optimization and frame-skip controls remain available.
 
 The **published soundtrack now includes 65 newly authored songs** (regional/area, interior, combat/boss/TRUE, title, defeat and Finale arrangements), retaining all 18 original Dark Crown music recordings. The title music is designed to start after the browser's first permitted interaction and return when the Main Menu reappears. The owner reported silence in both situations; the [focused sound patch #751](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/751) addresses the audio lifecycle, pending device verification. Opening Adventure or Settings during gameplay pauses the simulation **without stopping the current location music**. Continue/New Game prepares the right location score without waiting for a movement or skill action when audio is available; browsers cannot play unmuted audio before an initial gesture. The soundtrack changes with travel, settlements, night and combat. The separate [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) lets you preview game scenes and explore the current registered catalog (83 music cues, 34 environmental beds and 30 sound effects) without starting or changing a campaign. The library includes the 65 new recordings and protected Crown references. The 131-recording soundtrack rollout was browser/offline-tested in [dev.248](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242212837); the subsequent [environmental expansion #744](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/744) added 16 recordings, bringing the dev.250 catalog to **147**. It also offers production briefs; optional mixing and diagnostics are under Advanced listening tools. The [current sound design and audio production guide](docs/AUDIO_PLAYBACK.md) covers the live catalog, mix and creative workflow; the [soundtrack and sound-identity guide](docs/AUDIO_SOUND_PASS.md) preserves the creative intentions behind all current cue families, with the original v0.8.90 version retained in Git history.
 
@@ -99,7 +99,7 @@ For a scoped change, run the **affected focused tests** and relevant build check
 node scripts/build.cjs --check --site
 ```
 
-Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml); the [comprehensive browser/game workflow](.github/workflows/pages.yml) is **manual and requires explicit owner approval**. A successful push to `main` can trigger GitHub Pages publication. Work on a feature branch, preserve existing saves and assets, and do not merge or deploy without current authorization. Use the [engineering change workflow](docs/MECHANIC_DEVELOPMENT.md) for approved gameplay, audio, UI and other changes: source ownership, focused tests, lifecycle checks, documentation, recoverable handoffs and explicit release authorization.
+Official-game pull requests use [focused checks](.github/workflows/focused-deploy.yml), and its comprehensive workflow requires explicit owner approval. **For the experimental edition, the owner waived testing and manual/device playthroughs at its initial release.** Do not treat that waiver as applying to `main`. A push to `mod/gta-cuba-edition` triggers the edition's **own GitHub Pages publishing workflow** and must not occur without its applicable release authorization. The current update is being prepared on a separate PR branch; neither edition is published by editing this README. Work on a feature branch, preserve existing saves and assets, and do not merge or deploy without current authorization. Use the [engineering change workflow](docs/MECHANIC_DEVELOPMENT.md) for approved gameplay, audio, UI and other changes: source ownership, focused tests, lifecycle checks, documentation, recoverable handoffs and explicit release authorization.
 
 ## Project documentation
 

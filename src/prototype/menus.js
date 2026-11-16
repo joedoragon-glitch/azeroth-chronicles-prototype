@@ -745,7 +745,39 @@
       return SkillReference.card(getGame(), slot);
     }
     function pairedSkillHint(slot) {
-      return slot > 4 ? 'Paired with skill ' + (slot - 4) : 'Activates learned skill ' + (slot + 4);
+      const es = getLanguage() === 'es';
+      if (slot > 4)
+        return es ? 'Se activa con la habilidad ' + (slot - 4)
+          : 'Activates with Skill ' + (slot - 4);
+      const partner = slot + 4;
+      return getGame().hero.skills[partner - 1] > 0
+        ? es ? 'También activa la habilidad ' + partner : 'Also activates Skill ' + partner
+        : es ? 'La habilidad ' + partner + ' se aprende más adelante'
+          : 'Skill ' + partner + ' can be learned later';
+    }
+    // Source mechanics are in HeroCombat.cast; keep the player-facing lesson
+    // about paired skills in the instructor and skill-reference flow.
+    function pairedSkillExplanation(slot) {
+      const first = slot > 4 ? slot - 4 : slot, second = first + 4,
+        learned = getGame().hero.skills[second - 1] > 0,
+        es = getLanguage() === 'es';
+      if (!learned)
+        return es
+          ? 'Cuando aprendas la habilidad ' + second +
+            ', acompañará a la ' + first +
+            ' en su versión normal o cargada. No tendrá botón propio.'
+          : 'Once you learn Skill ' + second +
+            ', it will follow Skill ' + first +
+            ' in the normal or charged form without its own button.';
+      return es
+        ? 'La habilidad ' + second + ' acompaña a la ' + first +
+          ': no tiene botón propio. Al usar la ' + first +
+          ', se intenta activar la ' + second +
+          ' en la misma versión, normal o cargada. La segunda usa su propio rango y solo actúa si la primera se ejecuta y se cumplen sus condiciones. No inicia otra recuperación.'
+        : 'Skill ' + second + ' follows Skill ' + first +
+          ' without its own button. Using Skill ' + first +
+          ' attempts the matching normal or charged form of Skill ' + second +
+          '. The second effect uses its own rank and requires a successful first release and valid conditions. It starts no separate cooldown.';
     }
     function skillSections(info) {
       return (info.auto ? [info.auto, info.tap, info.charge] : [info.tap, info.charge]).map(
@@ -768,10 +800,9 @@
             info.rank +
             (info.rank === 8 ? ' · Maximum rank' : '') +
             ' · ' + pairedSkillHint(slot) +
-            (slot > 4 ? ' · Paired effects use their own rank.' : '') +
             (slot === 1 ? ' · Self-taught from Rank 1; rescued specialists refine it.' : ''),
           sections: skillSections(info),
-          note: info.note,
+          note: pairedSkillExplanation(slot) + (info.note ? '\n' + info.note : ''),
         },
         [
           ...(info.rank < 8
@@ -802,6 +833,12 @@
             {
               title: 'Controls',
               text: 'Charged starts both recovery timers: short Tap and longer Charged. Tap returns after its own cooldown, even while Charged is still recovering. Tapping does not restart the charged lock. Charged needs both timers ready. On cooldown, tap to queue normal or briefly hold to queue charged. A strong hit can interrupt preparation.',
+            },
+            {
+              title: getLanguage() === 'es' ? 'Habilidades vinculadas' : 'Paired skills',
+              text: getLanguage() === 'es'
+                ? 'Las habilidades 5–8 se aprenden y mejoran con los instructores de siempre. No tienen botón propio: la 5 acompaña a la 1, la 6 a la 2, la 7 a la 3 y la 8 a la 4. La segunda usa su propio rango y la misma versión, normal o cargada. Solo actúa si la primera se ejecuta y la situación lo permite. No consume recursos ni inicia otra recuperación.'
+                : 'Learn and improve Skills 5–8 with the usual instructors. They have no separate buttons: 5 follows 1, 6 follows 2, 7 follows 3, and 8 follows 4. Each follow-up uses its own rank and the matching normal or charged form. It only takes effect after a successful first release when its conditions allow. It spends no additional resources and starts no separate cooldown.',
             },
             {
               title: 'Reading effects',
@@ -851,11 +888,12 @@
                 text: block.rows.length ? '' : 'No change at this rank.',
               }))
             : skillSections(info),
-          note: rank
+          note: (rank
             ? 'Only changed effects are shown. Cooldowns stay the same.'
             : slot === 2 && !g.companionSecondSkillUnlocked()
               ? 'Also unlocks advanced Soldier/Ranger and pet skills, plus Charmed monster elite traits.'
-              : info.note,
+              : info.note || '') +
+            (slot > 4 ? '\n' + pairedSkillExplanation(slot) : ''),
         },
         previewOnly
           ? []
@@ -874,7 +912,23 @@
                   const learned = rank
                     ? current.upgrade(slot, instructor.family)
                     : current.learn(slot, instructor.family);
-                  if (learned) back();
+                  if (learned && !rank && slot >= 5 && slot <= 8) {
+                    // Show this explanation once, on learning Rank 1; not on
+                    // subsequent rank upgrades or ordinary menu navigation.
+                    const first = slot - 4, es = getLanguage() === 'es';
+                    openMenu(
+                      es ? 'Habilidad ' + slot + ' aprendida' : 'Skill ' + slot + ' learned',
+                      es
+                        ? 'La habilidad ' + slot + ' ahora acompaña a la ' + first +
+                          '. Pulsa ' + first +
+                          ' o su botón para usar ambas; mantén pulsado para las versiones cargadas. La segunda usa su propio rango y solo actúa si la primera se ejecuta y se cumplen sus condiciones. No necesita otro botón ni inicia otra recuperación.'
+                        : 'Skill ' + slot + ' now follows Skill ' + first +
+                          '. Press ' + first +
+                          ' or use its button to release both; hold for their charged forms. The follow-up uses its own rank and only takes effect after a successful first release when its conditions allow. It needs no other button and starts no separate cooldown.',
+                      [action(es ? 'Seguir entrenando' : 'Keep training', back)],
+                      back,
+                    );
+                  } else if (learned) back();
                   else skillUpgrade(slot, back, instructor);
                 },
                 !ready
@@ -1622,7 +1676,7 @@
           refresh();
         },
         queued
-          ? 'Queued · tap to cancel. No crowns spent.'
+          ? 'Queued · choose again to cancel. No crowns spent.'
           : (reason === 'No requested companion is still fallen.'
               ? 'No fallen companions.'
               : reason === 'No requested party member is still wounded.'
@@ -1632,7 +1686,7 @@
                 ? 'Recover ' + rosterLabel(target) + ' · '
                 : 'Full health for party. · ') +
                 (g.hero.gold < cost
-                  ? 'Short on crowns? Tap to queue.'
+                  ? 'Short on crowns? Choose this option to queue.'
                   : 'Safe conditions required.'),
         !queued && !!reason,
       );
@@ -1672,12 +1726,12 @@
               refresh();
             },
             queued
-              ? 'Queued #' + (queuedIndex + 1) + ' · tap to cancel. No crowns spent.'
+              ? 'Queued #' + (queuedIndex + 1) + ' · choose again to cancel. No crowns spent.'
               : full
                 ? 'Queue full: upgrade to Full Barracks for unlimited recovery requests.'
                 : reason ||
                   (g.hero.gold < cost
-                    ? 'Short on crowns? Tap to queue.'
+                    ? 'Short on crowns? Choose this option to queue.'
                     : 'Recover now for 40 crowns, or join the existing queue.'),
             !queued && (full || !!reason),
           );
@@ -1935,10 +1989,10 @@
           reopen();
         },
         queued
-          ? 'Queued · tap to cancel. No crowns spent.'
+          ? 'Queued · choose again to cancel. No crowns spent.'
           : reason ||
               (g.hero.gold < price
-                ? 'Short on crowns? Tap to queue.'
+                ? 'Short on crowns? Choose this option to queue.'
                 : barracksId === null
                   ? 'Joins your group; full groups send recruits to reserve.'
                   : 'Joins after training; a full active group sends the recruit to reserve.'),
@@ -1968,7 +2022,7 @@
         (queueName
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
           : 'Choose a recruit') +
-          '. A full group sends recruits to reserve.\nShort on crowns? Tap to queue.' +
+          '. A full group sends recruits to reserve.\nShort on crowns? Choose this option to queue.' +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         [
           ...otherRecruitmentCancellation(b.id, reopen),
@@ -3057,7 +3111,7 @@
       ];
       openMenu(
         getGame().definition().town + ' Captain',
-        'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Tap an available service to queue it.' +
+        'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Choose an available service to queue it.' +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         actions,
         back,
@@ -3383,7 +3437,7 @@
         completed ? 'Completed quests' : 'Side Quests',
         completed
           ? 'Finished quests and rewards.'
-          : 'Tap a quest to track it. Rewards arrive automatically.',
+          : 'Choose a quest to track it. Rewards arrive automatically.',
         [
           ...local.map((q) =>
             action(
