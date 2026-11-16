@@ -2375,6 +2375,13 @@
     gatheringGuideRequest = null,
     suspendedGatheringGuide = null,
     recallPractice = null;
+  // Bounded, in-session route-refresh costs. These only time actual guide
+  // path calculations; no new per-frame profiler and no saved-campaign fields.
+  const waypointPathDiagnostics = {
+    map: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null },
+    quest: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null },
+    thornAutoCleared: 0,
+  };
   const cancelNavigationButton = document.createElement('button');
   cancelNavigationButton.id = 'cancel-navigation-button';
   cancelNavigationButton.type = 'button';
@@ -6013,6 +6020,12 @@
             ...pixiGame.status(),
           },
           frameProfile: frameProfile.report(),
+          waypointPathDiagnostics: {
+            map: { ...waypointPathDiagnostics.map },
+            quest: { ...waypointPathDiagnostics.quest },
+            thornAutoCleared: waypointPathDiagnostics.thornAutoCleared,
+            note: 'Only actual app-owned waypoint/quest route refreshes; not companion or enemy planning, nor initial map selection. Times are JS elapsed milliseconds, not a diagnosis of original Report (40).',
+          },
           rendererDiagnostics: rendererRecordingReport(),
           startupDiagnostics: startup?.report() || null,
           diagnosticContinuity: {
@@ -7026,7 +7039,7 @@
     if (n.thornReport) {
       const lead = game.thornWitnessLead();
       openMenu(n.name, game.thornReport(true, lead), lead
-        ? [action('Follow this lead', () => storyNavigate(lead, lead.name), lead.name)]
+        ? [action('Follow this lead', () => storyNavigate(lead, lead.name, null, 'thorn-witness'), lead.name)]
         : []);
       return;
     }
@@ -7238,6 +7251,21 @@
     );
   }
 
+  function measuredWaypointPath(kind, destination) {
+    const at = performance.now();
+    try {
+      return game.navigationTarget(destination);
+    } finally {
+      const elapsed = Math.max(0, performance.now() - at);
+      const measure = waypointPathDiagnostics[kind];
+      measure.calls++;
+      measure.totalMs += elapsed;
+      if (elapsed > measure.maxMs) {
+        measure.maxMs = elapsed;
+        measure.maxAtGameTime = Number(game.s.time.toFixed(2));
+      }
+    }
+  }
   function clearWaypoint() {
     if (navigationGuide?.autopilot && game.hero.order === navigationGuide.order) {
       game.hero.order = null;
@@ -7252,7 +7280,7 @@
     questGuide = null;
     cancelNavigationButton.hidden = true;
   }
-  function startNavigation(destination, label, choice) {
+  function startNavigation(destination, label, choice, purpose = null) {
     if (game.hero.order?.type !== 'move') return;
     // Only this explicitly selected map journey has automatic-travel priority.
     // A targeted but out-of-range skill must not replace it with a chase order.
@@ -7279,12 +7307,21 @@
       destination,
       label,
       point: choice.point,
+      // Only the informant's lead has an encounter-completion condition.
+      // Keep a runtime-only boss reference: no per-frame enemy enumeration,
+      // new campaign flag or persistence schema change.
+      purpose,
+      encounterActor: purpose === 'thorn-witness'
+        ? game.zone().enemies.find((enemy) =>
+            enemy.family === 'thorn' && enemy.type === 'boss' && !enemy.neutral) || null
+        : null,
       // Own a stable guidance copy; movement consumes/mutates hero.path.
       route: choice.path.map((point) => ({ x: point.x, y: point.y })),
       order: game.hero.order,
       autopilot: true,
       origin: { x: game.hero.x, y: game.hero.y },
-      next: 0,
+      // The initial path was just computed; do not repeat it on the next frame.
+      next: game.s.time + 2,
     };
     cancelNavigationButton.hidden = !visibleNavigationRoute();
   }
@@ -7303,6 +7340,37 @@
       cancelNavigationButton.hidden = true;
       return;
     }
+    // A witness lead is satisfied when Thornfang is actually found, not only
+    // on reaching the patrol leg he occupied when the informant was consulted.
+    if (guide.purpose === 'thorn-witness') {
+      const thorn = guide.encounterActor;
+      if (
+        game.s.keys.thorn ||
+        game.s.rescued.thorn ||
+        (thorn && (thorn.hp <= 0 || thorn.aggro ||
+          Math.hypot(thorn.x - game.hero.x, thorn.y - game.hero.y) <= 220))
+      ) {
+        // Cancel ONLY the outstanding route owned by this witness waypoint.
+        // Skill orders, quest/gathering progress and the squad are unaffected.
+        if (guide.autopilot && game.hero.order === guide.order) {
+          game.hero.order = null;
+          game.hero.path = [];
+        }
+        navigationGuide = null;
+        cancelNavigationButton.hidden = true;
+        waypointPathDiagnostics.thornAutoCleared++;
+        const gathering = suspendedGatheringGuide;
+        suspendedGatheringGuide = null;
+        if (gathering && gathering === game.s.gatheringTarget) {
+          gatheringGuideRequest = null;
+          updateQuestGuide(true);
+        }
+        status(language === 'es'
+          ? 'Thornfang encontrado. Ruta del informante terminada.'
+          : 'Thornfang found. Informant waypoint cleared.');
+        return;
+      }
+    }
     if (navigationArrived(guide)) {
       navigationGuide = null;
       cancelNavigationButton.hidden = true;
@@ -7318,15 +7386,17 @@
     }
     if (guide.autopilot && game.hero.order !== guide.order) guide.autopilot = false;
     if (guide.autopilot) return; // Follow the live hero route without new plans.
-    if (
-      !force &&
-      game.s.time < guide.next &&
-      Math.hypot(game.hero.x - guide.origin.x, game.hero.y - guide.origin.y) < 100
-    )
-      return;
-    guide.next = game.s.time + 1;
+    // The manual hero can move ~300 units/sec. A 100-unit replan threshold
+    // could request ~3 routes/sec. Allow one replan after substantial travel,
+    // or a slower refresh after 2 seconds of meaningful displacement.
+    const displaced = Math.hypot(
+      game.hero.x - guide.origin.x, game.hero.y - guide.origin.y,
+    );
+    if (!force && displaced < 450 &&
+        (game.s.time < guide.next || displaced < 75)) return;
+    guide.next = game.s.time + 2;
     guide.origin = { x: game.hero.x, y: game.hero.y };
-    const choice = game.navigationTarget(guide.destination);
+    const choice = measuredWaypointPath('map', guide.destination);
     guide.route = choice ? choice.path : [];
   }
   function updateQuestGuide(force = false) {
@@ -7367,7 +7437,7 @@
     )
       questGuide.route.shift();
     if (!force && questGuide.zone === game.zoneId && game.s.time < questGuide.next) return;
-    questGuide.next = game.s.time + 1;
+    questGuide.next = game.s.time + 2;
     const target =
       questGuide.kind === 'gathering'
         ? questGuide.sourceZone === game.zoneId &&
@@ -7392,7 +7462,7 @@
       Math.hypot(target.x - questGuide.target.x, target.y - questGuide.target.y) > 60;
     const displaced =
       questGuide.origin &&
-      Math.hypot(game.hero.x - questGuide.origin.x, game.hero.y - questGuide.origin.y) > 100;
+      Math.hypot(game.hero.x - questGuide.origin.x, game.hero.y - questGuide.origin.y) > 250;
     if (
       !force &&
       !moved &&
@@ -7403,7 +7473,7 @@
       questGuide.target?.id === target.id
     )
       return;
-    const choice = game.navigationTarget(target);
+    const choice = measuredWaypointPath('quest', target);
     questGuide.zone = game.zoneId;
     questGuide.target = { id: target.id, x: target.x, y: target.y };
     questGuide.origin = { x: game.hero.x, y: game.hero.y };
@@ -7412,7 +7482,7 @@
         ? choice.path
         : [];
   }
-  function storyNavigate(destination, label, questId = null) {
+  function storyNavigate(destination, label, questId = null, purpose = null) {
     if (questId) {
       closeMenu();
       clearWaypoint();
@@ -7444,7 +7514,7 @@
     }
     closeMenu();
     if (PrototypeInput.requestMove(game, choice)) {
-      startNavigation(destination, label, { point: choice, path: game.hero.path });
+      startNavigation(destination, label, { point: choice, path: game.hero.path }, purpose);
       status('Following path to ' + label + '.');
     } else status('Route unavailable. Try again nearby.');
   }
