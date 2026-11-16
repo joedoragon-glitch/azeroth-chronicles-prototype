@@ -745,7 +745,15 @@
       return SkillReference.card(getGame(), slot);
     }
     function pairedSkillHint(slot) {
-      return slot > 4 ? 'Paired with skill ' + (slot - 4) : 'Activates learned skill ' + (slot + 4);
+      const es = getLanguage() === 'es';
+      if (slot > 4)
+        return es ? 'Se activa con la habilidad ' + (slot - 4)
+          : 'Activates with Skill ' + (slot - 4);
+      const partner = slot + 4;
+      return getGame().hero.skills[partner - 1] > 0
+        ? es ? 'También activa la habilidad ' + partner : 'Also activates Skill ' + partner
+        : es ? 'La habilidad ' + partner + ' se aprende más adelante'
+          : 'Skill ' + partner + ' can be learned later';
     }
     // Source mechanics are in HeroCombat.cast; keep the player-facing lesson
     // about paired skills in the instructor and skill-reference flow.
