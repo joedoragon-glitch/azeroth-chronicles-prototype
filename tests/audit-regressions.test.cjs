@@ -6,10 +6,11 @@ const kill=(c,e)=>{e.heroParticipated=true;e.hp=0;c.kill(e);};
 function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 test('F01 normal-normal-TRUE cycle uses the five-second remote transition and leaves one normal field boss',()=>{const c=fresh(),e=boss(c);c.zone().enemies=[e];kill(c,e);c.updateEnemies(121);kill(c,e);c.updateElites(4.9);assert(!c.zone().enemies.some(x=>x.form==='true'&&x.hp>0));c.updateElites(.2);const t=c.zone().enemies.find(x=>x.form==='true'&&x.hp>0);assert(t);kill(c,t);c.updateEnemies(121);assert.equal(c.zone().enemies.filter(x=>x.hp>0&&!x.summon).length,1);});
 test('F02 obstructed boss ground circles land, directed shapes stay wall-blocked, and reset remains bounded',()=>{
-  const c=fresh(),e=boss(c);c.s.party=[];c.zone().enemies=[e];
+  const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1100,y:1000});c.s.party=[];c.zone().enemies=[e];
   Object.assign(e,{x:1100,y:1000,home:{x:1100,y:1000}});
   Object.assign(c.hero,{x:1300,y:1000});
-  c.zone().props.push({x:1100,y:930,r:45},{x:1100,y:1070,r:45},{x:1030,y:1000,r:45});
+  c.zone().props.push({x:1100,y:930,r:45},{x:1100,y:1070,r:45},{x:1030,y:1000,r:45},{x:1190,y:1000,r:34});
+  assert(!c.line(e,c.hero),'terrain blocks physically directed casts');
   c.engage(e);
   const area={x:1300,y:1000,fromX:1100,fromY:1000,angle:0,radius:400,coefficient:1};
   const hp=c.hero.hp;
@@ -103,7 +104,7 @@ test('F37 all normal and TRUE boss families preserve warnings while gaining mode
           assert.equal(e.cinderCordon.radius,plan.initialRadius);
           assert(Number.isFinite(e.cinderCordon.gapAngle)&&Number.isFinite(e.cinderCordon.nextGap));
           assert.notEqual(e.cinderCordon.gapAngle,e.cinderCordon.nextGap);
-        }else assert.equal(c.s.hazards.at(-1).life,plan.slowOnly?plan.waveLife:shape.ringLife,def.id+' '+form+' actual expanding ring duration');
+        }else { assert(c.s.hazards.length,def.id+' '+form+' / index '+i+' ring must release a hazard'); assert.equal(c.s.hazards.at(-1).life,plan.slowOnly?plan.waveLife:shape.ringLife,def.id+' '+form+' actual expanding ring duration'); }
       }
       if(a.count>1&&kind==='circle'&&!a.cinderMechanic){
         assert.equal(c.attackPatches(a)[0].radius, (def.id==='crypt'&&i===3)||(def.id==='warlord'&&i===1)?72*R.balance.enemySpecialReachMultiplier:shape.multiCircleRadius,def.id+' '+form+' multi-target reach');
