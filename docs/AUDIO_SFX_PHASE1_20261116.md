@@ -18,7 +18,7 @@
 - Original `tools/audio/render-sfx.py` checks `managedBy` and therefore should **skip** the new masters, whose manifest manager is `sfx-phase1-original-hybrid`. Old synth recipes remain available; no prior song or environment music is touched.
 - `tools/audio/sfx-phase1-metrics.json` stores exact rendered hashes and objective peaks/RMS; `tests/audio-sfx-phase1-quality.test.py` checks physical WAV format, finite samples, edges, spectral conditions, retained original hashes and catalog/stage identity. **Numerical tests do not certify ear-level quality.**
 
-## Professional quality gate and evidence limits
+**Adversarial sound-production closeout:** [30-master critical review, measured first-pass gain error and controlled revision](AUDIO_SFX_PHASE1_CRITICAL_REVIEW_20261116.md). Current-level measurements are per-original RMS references, not a universal loudness increase.\n\n## Professional quality gate and evidence limits
 
 The game's `docs/AUDIO_SOUND_PASS.md` and `docs/AUDIO_AUTHORING.md` require intentional distinct creative identity, critical rather than self-affirming checks, sane source provenance, no identical “one template for everything,” short readable attacks, and explicit separation of technical/sound-as-heard acceptance. The first ten-preview study was **revised after finding an overly low-frequency arrow hit and excess bell ringing**, and that initial study is preserved separately (tracked by issue #877). The first 10 are **not** automatically canonical replacements of the 30.
 
