@@ -1,10 +1,63 @@
 # SIBDLP v0.9.2 — Monster skill lore, combat pilot and owner ballot handoff
 
-**Latest owner direction and submitted 29-name responses: 15 November 2026. This is the current coordination entrypoint for issues [#870](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/870) and documentation-only draft [PR #871](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/871).** It summarizes the extended owner conversation; it is **not** confirmation that combat expansion is implemented or that any alternative name has been accepted.
+**Latest owner voting decision: 16 November 2026 (second-round complete); initial 29-answer submission: 15 November 2026. This is the current coordination entrypoint for issues [#870](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/870) and documentation-only draft [PR #871](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/871).** It summarizes the extended owner conversation; it is **not** confirmation that combat expansion is implemented or that any alternative name has been accepted.
 
-**Read in this order for a new chat/work session:** this handoff → the [complete source-audited naming document](MONSTER_SKILL_LORE_IDENTITY_V092_20261113.md), **especially its final section “Revised 29-name ballot — 14 November 2026”** → [issue #870](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/870) and its comments → current source, newest branches and relevant tests → the owner's actual returned ballot. Earlier proposal tables and discussion in the same document are *historical*, not active answer keys.
+**Read in this order for a new chat/work session:** the **final 29-name map in this handoff** → the [source-audited naming inventory](MONSTER_SKILL_LORE_IDENTITY_V092_20261113.md) → [issue #870](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/870) and draft PR #871 → current source, newest branches and tests. The 14 November 29-option questionnaire, 15 November provisional 23+6 answers, and six-option second-round ballot are **historical voting evidence**, not unanswered questions.
 
-## OWNER RESPONSES RECEIVED — 15 November 2026 (latest; supersedes "awaiting answers" below)
+## ALL 29 OWNER-PREFERRED ENGLISH NAMES — 16 November 2026 (authoritative voting record)
+
+**The owner has now submitted the second-round #16–21 votes. All 29 naming questions have an explicit owner selection; there is NO pending six-question revote.** Preserve spelling/capitalization and the distinction between author-preferred names and actual shipped labels. There is no authorization to modify source, translate or publish merely from ballot completion. Four (#7–10) describe proposed, **unimplemented** skills, not existing game abilities. One (#12) has a material semantics concern: `Immobilization` currently applies only movement **Slow**, not full immobilization. Role-specific identity and idiomatic Spanish remain integration checks; do not silently introduce new boss service relations or effects.
+
+### Final numbered name map (supersedes the 23+6 provisional state below)
+
+| # | Current actor / established role | Existing game name or proposed slot | Owner's selected English name | Combat / implementation notes |
+| ---: | --- | --- | --- | --- |
+| 1 | Skeleton ordinary melee | `Bone Hook` | **Counterpressure** | Existing tactical move; shove |
+| 2 | Skeleton ordinary ranged | `Bowguard Withdrawal` | **Protective Setback** | Existing tactical move; withdrawal |
+| 3 | Skeleton ranged support | `Bonebind` | **Binding Renewal** | Existing support; ally heal |
+| 4 | Skeleton melee Ringleader | `Ossuary Rattle` | **Lateral Buckling** | Existing warned sweep/push |
+| 5 | Skeleton ranged Ringleader | `Bone Archer Pinning Volley` | **Temporary Restraint** | Existing area Slow; **not** a projectile volley or root |
+| 6 | Lantern Wraith melee Ringleader | `Graveveil Retreat` | **Afterimage** | Existing hinder/reposition; not a spawned decoy |
+| 7 | Skeleton ordinary melee NEW | `Not implemented` | **Mortise Cut** | **Proposed** proactive sword move; no implemented action |
+| 8 | Skeleton ordinary ranged NEW | `Not implemented` | **Datum Line** | **Proposed** real aimed projectile; no implemented action |
+| 9 | Skeleton melee Ringleader NEW | `Not implemented` | **Double Shear** | **Proposed** one normal/charged melee skill; no implemented action |
+| 10 | Skeleton ranged Ringleader NEW | `Not implemented` | **Resection** | **Proposed** one normal/charged projectile skill; no implemented action |
+| 11 | Scornfang Goblin melee Ringleader | `Gang Boss Smoke Trick` | **Fugitive Dust** | Existing hindrance/pivot; use actual Scornfang unit provenance |
+| 12 | Scornfang Goblin ranged Ringleader | `Slingmaster Split Screen` | **Immobilization** | **Semantic hold**: code applies Slow, not full immobilization; no mechanic change |
+| 13 | Mireling melee Ringleader | `Broodbank Coil` | **Backwater Effect** | Existing area Slow |
+| 14 | Mireling ranged Ringleader | `Broodspit Barrage` | **Sediment Trap** | Existing area Slow; no physical volley implied |
+| 15 | Independent Reed Beast ranged Ringleader | `Reedbank Mudscreen` | **Liquefaction** | Existing area Slow; no invented Archive allegiance |
+| 16 | Garun Mine Ogre warden melee | `Rockside Slam` | **Pillar Punching** | **Second-round #16**; existing melee shove, mining-pillar terminology |
+| 17 | Garun Mine Ogre melee Ringleader | `Boulderhand Sweep` | **Rockburst** | **Second-round #17**; existing warned area sweep/push, **no actual rockburst/explosion generated** |
+| 18 | Garun Mine Ogre ranged Ringleader | `Stone Thrower Denial` | **Ground Control** | **Second-round #18**; existing warned area Slow, **no hard root or new mine supports** |
+| 19 | Ashen Warlord Orc soldier melee | `Battle Shove` | **Right-of-Way** | **Second-round #19**; existing close shove, checkpoint / road priority |
+| 20 | Ashen Warlord Orc melee Ringleader | `Warband Shoulder Drive` | **Force Projection** | **Second-round #20**; existing warned sweep/push, **no extra troops or projectiles** |
+| 21 | Ashen Warlord Orc ranged Ringleader | `Axe Thrower Crossfire` | **Defile Control** | **Second-round #21**; existing warned area Slow, **no terrain choke or projectiles** |
+| 22 | Ridge/Crag contracted archer ranged | `Disengaging Shot` | **Hedged Exit** | Existing defensive withdrawal; verify actual employer |
+| 23 | Ridge/Crag contracted archer melee Ringleader | `Bow Captain Shoulder Break` | **Setoff** | Existing close scatter; verify actual employer |
+| 24 | Ridge/Crag contracted archer ranged Ringleader | `Veteran Archer Denial Shot` | **Stop-Loss Order** | Existing hindrance/reposition; verify actual employer |
+| 25 | Cindermaw Ministry Ash Beast melee Ringleader | `Ashmane Backlash` | **Compulsory Evacuation** | Existing scatter; require actual Ministry assignment |
+| 26 | Cindermaw Ministry Ash Beast ranged Ringleader | `Cinder Spitter Smokecloud` | **Protective Separation** | Existing hinder/reposition; require actual Ministry assignment |
+| 27 | Veyra Crown soldier melee | `Shield Reposition` | **Subcision** | Existing shove; army + cosmetology doctrine |
+| 28 | Veyra Crown soldier ranged | `Shielded Backstep` | **Countermarch** | Existing withdrawal; formal army movement |
+| 29 | Veyra Crown soldier ranged Ringleader | `Crown Volley Screen` | **Precision Sectioning** | Existing area Slow; no independent physical volley |
+
+### Six final second-round votes — explicit supersessions
+
+The owner's second-round answer (16 November 2026 local) explicitly selected **#16 Pillar Punching, #17 Rockburst, #18 Ground Control, #19 Right-of-Way, #20 Force Projection, #21 Defile Control**, with **no further comments**. These choices **replace**, rather than supplement as extra skill slots, the earlier four superseded first-round radio picks (`Lateral Thrust`, `Torsional Buckling`, `Falsework`, `Compulsory Removal`) and resolve former blank answers for #20–21. These old picks remain in the historical response table below solely to explain the sequence. They are **not candidate names to implement**.
+
+**Why these six match the source:** `src/prototype/rules.js::tacticalFoundation.rogueMoves.species.ogre/orc` gives #16/#19 a melee `style: 'shove'`; `rogueRingleaderSignatures.melee.ogre/orc` gives #17/#20 warned `effect: 'sweep'` with displacement; `rogueRingleaderSignatures.ranged.ogre/orc` gives #18/#21 warned `effect: 'bind'`, implemented as a **timed Slow** in `src/prototype/engine.js`. They do **not** trigger independent explosions, rock debris, persistent mine structures, spawned units, hard roots, or physical arrow/axe/stone volleys. **Rockburst** is a genuine dynamic ground-failure concept and a strong attack-like metaphor, but this acceptance is for its *title*, not authorization to implement a literal seismic burst. **Ground Control** and **Defile Control** communicate controlling a worksite/chokepoint; the effects stay area hinder/Slow.
+
+**Actual organizational ties:** Garun the Firstborn, architect/engineer and Colossus Mine boss, is responsible for his **Mine Ogre wardens** and structural supports. Ridge Tyrant (Master of Coin) and Crag Tyrant (Treasury captain) coordinate regional accounts and labor, but this does **not** make them the Ogres' direct commanders. Ashen Warlord is Frontier military governor over organized Orc warbands; **Cinder Warlord** is the roaming inspection/enforcement captain. Their movement-control/traffic terminology fits documented field duties. Same-species wild/independent units must not inherit institutional names based only on species or location.
+
+### Meaning of approval and remaining work
+
+- **Authorial naming selections:** All 29 English options are now accounted for. These are owner preferences about *names* only; where a title would misdescribe an effect or suggest unsupported employment, document the discrepancy rather than invent mechanics or a service relationship. In particular, #12 **Immobilization** needs a naming-versus-Slow resolution before player-facing implementation.
+- **Original Greenwood gameplay scope:** Four proposed skeleton proactive skills (#7–10), Ringleader normal/charged two-form execution, and appropriate Guardian participation are still **design only**, not source changes or tested gameplay. Existing ordinary/Ringleader native Rogue skills and Charmed heritage are separate preexisting mechanics.
+- **Safe implementation:** verify actual actor-post provenance before conditional names; existing `tacticalRogueMove` selects mostly by species/role. Preserve separate hostile cast labels, friendly Charmed names, fixtures, warning geometry, cooldowns, save v4 identities, bilingual EN/ES, four heroes, Normal/Nightmare, relevant source tests and renderer safety. No owner approval to update this code, merge #871, publish Pages or PWA, or contact testers.
+- **Status:** owner decision-record documentation complete; **0 gameplay files modified, 0 runtime tests claimed**. Only draft docs PR #871 and issue #870 are changed by this follow-up.
+
+## HISTORICAL first-round 29 answers (15 November 2026; 23 preferred + 6 then unresolved, superseded above)
 
 **The owner submitted one consolidated 29-question answer message plus written feedback for #16–21. Result: 23 owner-preferred names and 6 unresolved names requiring *four replacement alternatives each*. This ledger controls over all older initial-29 and revised-29 candidate ballots.** The owner did **not** authorize code implementation, source renames, mechanical rebalance, PR merging, publication, or selecting the remaining six on their behalf. Treat these preferences as owner-authored names, **subject to accurate mechanics, post provenance, EN/ES naming, final presentation and future integration consent**.
 
@@ -89,7 +142,7 @@ The next single-message questionnaire must cover **only #16–21**, with Previou
 | Existing skeleton/Ringleader/Charmed mechanics | **Source inspected on main** | Source paths and existing names known; no new gameplay playback, full campaign, cross-device or current-save acceptance claimed by this workstream |
 | 12-species and boss/captain nomenclature inventory | **Documented audit** | Existing names and chain-of-command risks inventoried in PR #871; recommendations are proposals, not bulk production rename instructions |
 | Revised **29 questions × four alternatives** | **Present in chat + recorded in PR #871** | The owner has requested a navigable single-message Previous/Next questionnaire with a per-question comment area and a final consolidated Send action |
-| Owner's actual selections and written comments | **Submitted and recorded above** | 23 current preferences and 6 requested replacements; do not lose freeform overrides |
+| Owner's actual selections and written comments | **All 29 owner selections received** | Current final map is above; old 23+6 and replacement ballot are historical snapshots |
 | GitHub [draft PR #871](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/871) | **Docs-only, unmerged and not published** | Contains naming audit and index; this handoff is an additional documentation change in the same PR |
 | Current baseline | Inspected **`main@66cbf47d251ba3213a61f21e5a3eb1abf57f26df`** | Must be refreshed at next work session, not assumed eternally current |
 | Conflicting ongoing branches | **#864** save continuity and **#868** tutorial both unmerged at this checkpoint | Both edit important engine files; coordinate and rebase carefully before any combat implementation |
@@ -147,7 +200,7 @@ Existing `rules.js` defines **12 species' conditional Rogue tactical moves** and
 
 **Important questionnaire correction:** Original question 6 proposed a distinct Skeleton Guardian ranged move, but current precedence uses the skeleton ranged native profile rather than a guardian-specific variant; **that was not a real independent skill slot**. The revised 29th-set ballot replaces Q6 with the **existing independent Lantern Wraith melee Ringleader signature**. Original Q15 incorrectly assumed a Reed Beast was an Archive servant; revised Q15 uses its **independent wetland territory and soil rheology**, not an invented master. The previous *first* 29-question ballot and all old generic/anatomical names are **obsolete**.
 
-## Original 29-question questionnaire — historical first-round answer key (votes above supersede unanswered status)
+## Original 29-question questionnaire — historical first-round answer key (final 29 votes above supersede this section)
 
 **Authoritative 29-question A/B/C/D answer matrix:** see **[Revised 29-name ballot — 14 November 2026](MONSTER_SKILL_LORE_IDENTITY_V092_20261113.md#revised-29-name-ballot--14-november-2026-supersedes-earlier-unreviewed-names)**. That table lists, in order, all 29 actors, existing/proposed abilities and the exact four alternatives and story/effect rationale that appeared in the owner's latest single-message questionnaire. **Do not substitute the earlier matrix or generate an independent alternate ballot without owner instruction.**
 
@@ -171,6 +224,6 @@ When the owner submits:
 
 ## Checkpoint for the successor
 
-**The owner has submitted the 29-answer ballot.** Do not repeat it, select the remaining six by default, or resume a speculative global rename. Present only the six revised #16–21 questions above, and reconcile their later answers with the recorded preferences and per-question comments. Keep the naming humor grounded in **the genuine professional term + convincing attack** double meaning, always balanced against the creature's actual boss, captain, post and independent cultural identity.
+**Both the 29-answer ballot and the subsequent six-question revote are submitted.** Do not ask either set again or resume a speculative global rename. Use the authoritative final 29-name map above and reconcile the #12 meaning/Slow discrepancy, actual faction/post provenance, Spanish labels and later implementation boundaries before doing any code work. Keep the naming humor grounded in **the genuine professional term + convincing attack** double meaning, always balanced against the creature's actual boss, captain, post and independent cultural identity.
 
 This workstream's immediate deliverable is **accurate documentation and clean handoff**, not playable new skills. Any future chat should verify live repo/PR state before claiming otherwise.
