@@ -1847,6 +1847,7 @@
     buttons = [],
     keys = {},
     joy = { x: 0, y: 0 },
+    menuJoy = { x: 0, y: 0 },
     last = performance.now(),
     saveTimer = 0,
     hudTimer = 0,
@@ -1869,9 +1870,7 @@
     statusContext = null,
     pointer = null,
     joystickTouchId = null,
-    joystickStart = null,
-    menuJoyDirection = 0,
-    menuJoyRepeatAt = 0;
+    joystickStart = null;
   profile = persistence.loadProfile(profile);
   const audio = new PrototypeAudio(profile.audio);
   audio.setOptimizationMode(optimizationMode);
@@ -1924,6 +1923,7 @@
   const platform = PrototypePlatform.init(window);
   audio.setMixProfile(platform.mode === 'phone' ? 'phone' : 'reference');
   const input = PrototypeInput.create();
+  const menuJoystick = PrototypeInput.createMenuJoystickNavigator();
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
   document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
   document.body.setAttribute('data-hud-style', input.preferences.hudStyle);
@@ -3119,8 +3119,8 @@
     openMenu(
       'Controls',
       language === 'es'
-        ? 'Muévete con WASD y recorre los menús con esas mismas teclas. F o Enter confirma e interactúa; Esc vuelve atrás. En el teléfono, usa la palanca izquierda para moverte y elegir opciones, y Confirmar para aceptarlas. Las cuatro habilidades usan las teclas o botones 1–4; mantén pulsado para cargar. Cuando aprendes las habilidades 5–8, acompañan a 1–4. No se usan el ratón ni los toques directos para elegir opciones, y no puedes moverte tocando el terreno. En computadora, el clic izquierdo en el campo solicita curación a un compañero disponible.'
-        : 'Move and navigate menus with WASD. F or Enter confirms and interacts; Esc goes back. On a phone, use the left joystick to move and choose options, then Confirm to select. Use keys or buttons 1–4 for skills; hold to charge. Once learned, Skills 5–8 follow Skills 1–4. Menu options cannot be selected by clicking or tapping them, and tapping the ground does not move you. On desktop, left-clicking the field requests healing from an available companion.',
+        ? 'Muévete con WASD y recorre los menús con esas mismas teclas. F o Enter confirma e interactúa; Esc vuelve atrás. En el teléfono, usa la palanca izquierda para moverte y elegir opciones, y Confirmar para aceptarlas. En los menús, inclina la palanca para avanzar una opción, mantenla inclinada para recorrer la lista y vuelve al centro antes de cambiar de dirección. Las cuatro habilidades usan las teclas o botones 1–4; mantén pulsado para cargar. Cuando aprendes las habilidades 5–8, acompañan a 1–4. No se usan el ratón ni los toques directos para elegir opciones, y no puedes moverte tocando el terreno. En computadora, el clic izquierdo en el campo solicita curación a un compañero disponible.'
+        : 'Move and navigate menus with WASD. F or Enter confirms and interacts; Esc goes back. On a phone, use the left joystick to move and choose options, then Confirm to select. In menus, tilt once per choice, hold to scroll, and recenter before changing direction. Use keys or buttons 1–4 for skills; hold to charge. Once learned, Skills 5–8 follow Skills 1–4. Menu options cannot be selected by clicking or tapping them, and tapping the ground does not move you. On desktop, left-clicking the field requests healing from an available companion.',
       [],
       back,
     );
@@ -3190,7 +3190,8 @@
     joystickTouchId = null;
     joystickStart = null;
     joy = { x: 0, y: 0 };
-    menuJoyDirection = menuJoyRepeatAt = 0;
+    menuJoy = { x: 0, y: 0 };
+    menuJoystick.reset();
     $('stick').style.transform = '';
   }
   function clearInput(preserveNavigation = true) {
@@ -7870,6 +7871,8 @@
     choices[(from + direction + choices.length) % choices.length].focus({ preventScroll: true });
   }
   function confirmMenuChoice() {
+    // A held stick cannot advance another row while Confirm is being pressed.
+    menuJoystick.reset(Math.hypot(menuJoy.x, menuJoy.y) > 0.32);
     const hasModal = menu && !sceneTransition && gpuTrialPanel.hidden;
     const choices = hasModal ? buttons : shellChoices();
     const choice = hasModal
@@ -8791,7 +8794,16 @@
       dy = (e.clientY - r.top - r.height / 2) / (r.width * 0.4),
       n = Math.max(1, Math.hypot(dx, dy));
     joy = Math.hypot(dx, dy) < 0.16 ? { x: 0, y: 0 } : { x: dx / n, y: dy / n };
-    $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
+    // Menu gestures are relative to where the thumb landed, not the fixed
+    // stick center. Touching an edge cannot move selection on its own.
+    menuJoy = PrototypeInput.menuJoystickDragVector(
+      joystickStart || { x: e.clientX, y: e.clientY },
+      { x: e.clientX, y: e.clientY },
+      r.width,
+    );
+    const menuActive = menu || !started || sceneTransition || !gpuTrialPanel.hidden;
+    const visual = menuActive ? menuJoy : joy;
+    $('stick').style.transform = 'translate(' + visual.x * 24 + 'px,' + visual.y * 24 + 'px)';
     advanceMenuJoystick(performance.now());
   }
   joystick.onpointerdown = (e) => {
@@ -10077,13 +10089,8 @@
   }
   function advanceMenuJoystick(now) {
     if (document.hidden || !(menu || !started || sceneTransition || !gpuTrialPanel.hidden)) return;
-    const axis = Math.abs(joy.y) >= Math.abs(joy.x) ? joy.y : joy.x;
-    const direction = Math.abs(axis) > 0.4 ? Math.sign(axis) : 0;
-    if (direction && (direction !== menuJoyDirection || now >= menuJoyRepeatAt)) {
-      moveMenuChoice(direction);
-      menuJoyRepeatAt = now + 300;
-    }
-    menuJoyDirection = direction;
+    const direction = menuJoystick.step(menuJoy, now);
+    if (direction) moveMenuChoice(direction);
   }
   function frame(now) {
     advanceMenuJoystick(now);
