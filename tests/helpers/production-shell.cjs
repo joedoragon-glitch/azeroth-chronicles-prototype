@@ -106,7 +106,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     clearTimeout() {},
     setInterval(fn, ms) { options.onInterval?.(fn, ms); },
     Blob,
-    URL: { createObjectURL: () => '', revokeObjectURL() {} },
+    URL: options.URL || { createObjectURL: () => '', revokeObjectURL() {} },
     confirm: () => true,
   };
   for (const [name, file] of Object.entries({

@@ -7,7 +7,8 @@ const storage = new Map([
   ['azeroth-v4-normal', originalOfficial],
   ['alternate-layout:azeroth-display-language-v1', 'en'],
 ]);
-const a = shell('en', 'paladin', { storage, seedSave: false, stayOnTitle: true });
+const browser = { location: { protocol: 'http:', hostname: 'localhost', href: 'http://localhost/index.html', search: '' }, URL: Object.assign(class TestURL extends URL {}, { createObjectURL: () => '', revokeObjectURL() {} }) };
+const a = shell('en', 'paladin', { ...browser, storage, seedSave: false, stayOnTitle: true });
 assert.equal(a.scope.Prototype.started, false);
 a.elements.get('title-new').click();
 const action = (name) => {
@@ -25,7 +26,7 @@ a.scope.Prototype.game.hero.gold = 432;
 assert.equal(a.scope.Prototype.save(), true, 'New layout run must be able to save progress');
 const saved = Campaign.restore(JSON.parse(storage.get(key)));
 assert.equal(saved.hero.gold, 432);
-const b = shell('en', 'paladin', { storage, seedSave: false, stayOnTitle: true });
+const b = shell('en', 'paladin', { ...browser, storage, seedSave: false, stayOnTitle: true });
 assert.equal(b.scope.Prototype.game.hero.gold, 432, 'Fresh launch must load the layout save');
 assert.equal(b.elements.get('title-continue').disabled, false, 'Fresh layout save can be continued');
 assert.equal(storage.get('azeroth-v4-normal'), originalOfficial);
