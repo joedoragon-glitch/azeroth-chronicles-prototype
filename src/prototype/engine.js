@@ -5083,7 +5083,7 @@
             if (x.plan.kind === 'summon')
               return summonCfg && owned < (summonCfg.cap || 3) && (e.summonCd || 0) <= 0;
             if (x.plan.kind === 'cone')
-              return d <= (x.plan.radius || 145) * R.bossCadence.areaRangeMultiplier + 25;
+              return d <= (x.plan.radius || R.bossAreaGeometry.captainDefaultConeRadius) + 25;
             return true;
           }),
         available = eligible.filter((x) => x.index !== e.lastCaptainAttack),
@@ -5151,10 +5151,10 @@
           fromY: e.y,
           angle,
           ...center,
-          radius:
-            (plan.radius || (plan.kind === 'cone' ? 145 : 85)) *
-            (plan.fixedRadius ? 1 : R.bossCadence.areaRangeMultiplier) *
-            (plan.captainRadiusMultiplier || 1),
+          radius: plan.radius ||
+            (plan.kind === 'cone'
+              ? R.bossAreaGeometry.captainDefaultConeRadius
+              : R.bossAreaGeometry.captainDefaultOtherRadius),
           sequence: [],
         };
       if (plan.tracking) {
@@ -6326,7 +6326,7 @@
                 ...basic,
                 name: e.ranged ? 'Crown Direwolf Archer Dash' : 'Crown Direwolf Lance Dash',
                 style: 'dash',
-                radius: 165 * R.balance.enemySpecialReachMultiplier,
+                radius: R.enemyRogueGeometry.mountedCrownRiderDashRadius,
               }
             : basic,
         coveringRetreat = ['extended', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase),
@@ -6342,9 +6342,11 @@
               ? threat
               : closeTargets[0]
             : threat,
-        maxRange =
-          (e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340) *
-          R.balance.enemySpecialReachMultiplier;
+        maxRange = e.type === 'boss'
+          ? R.enemyRogueGeometry.acquisition.boss
+          : e.captain || e.roomCaptain
+            ? R.enemyRogueGeometry.acquisition.captain
+            : R.enemyRogueGeometry.acquisition.other;
       if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
       if (profile.style === 'withdraw' && this.hawkRetreatLocked(e, 'withdraw')) return false;
       const effect = isSignature ? profile.effect : null,
@@ -6353,8 +6355,11 @@
           profile.warning || (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : 0.75),
         radius =
           profile.radius ||
-          (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80) *
-            R.balance.enemySpecialReachMultiplier;
+          (e.type === 'boss'
+            ? R.enemyRogueGeometry.fallbackRadius.boss
+            : e.captain || e.roomCaptain
+              ? R.enemyRogueGeometry.fallbackRadius.captain
+              : R.enemyRogueGeometry.fallbackRadius.other);
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
@@ -6375,7 +6380,7 @@
         targetId: target === this.hero ? 'hero' : target.id,
         fromX:
           profile.style === 'slab'
-            ? target.x - (target.x >= e.x ? 60 : -60) * R.balance.enemySpecialReachMultiplier
+            ? target.x - (target.x >= e.x ? 1 : -1) * R.enemyRogueGeometry.slabWarningFromOffset
             : e.x,
         fromY: profile.style === 'slab' ? target.y : e.y,
         angle:
@@ -6386,7 +6391,7 @@
             : Math.atan2(target.y - e.y, target.x - e.x),
         x:
           profile.style === 'slab'
-            ? target.x + (target.x >= e.x ? 100 : -100) * R.balance.enemySpecialReachMultiplier
+            ? target.x + (target.x >= e.x ? 1 : -1) * R.enemyRogueGeometry.slabWarningToOffset
             : centered
               ? e.x
               : target.x,
@@ -7855,7 +7860,7 @@
           d <
             (e.species === 'wraith'
               ? R.nightEnemyCombat.wraith.radius
-              : 360 * R.balance.enemySpecialReachMultiplier) &&
+              : R.nightEnemyCombat.stalker.approachRange) &&
           this.startNightSkill(e, target)
         ) {
           opportunity = true;

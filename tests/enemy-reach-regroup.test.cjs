@@ -89,6 +89,45 @@ assert.equal(R.bossCadence.specialRange, 720);
 for (const profile of Object.values(R.roomCaptains))
   if (profile.specialRange) assert(profile.specialRange >= 480);
 assert.equal(R.nightEnemyCombat.wraith.radius, 252);
+assert.equal(R.nightEnemyCombat.stalker.radius, 93.6);
+assert.equal(R.nightEnemyCombat.stalker.approachRange, 432);
+assert.deepEqual(R.enemyRogueGeometry.acquisition, { boss: 600, captain: 528, other: 408 });
+assert.deepEqual(R.enemyRogueGeometry.fallbackRadius, { boss: 126, captain: 114, other: 96 });
+assert.equal(R.enemyRogueGeometry.mountedCrownRiderDashRadius, 198);
+// Independent fixed footprints from the reviewed pre-normalization 20% reach policy.
+// A named signature's AREA is not its selection/acquisition distance.
+const expectedRingleader = {
+  melee: {
+    wolf:144, goblin:138, skeleton:162, wraith:150, stalker:150, mireling:150,
+    reedbeast:162, archer:126, crownguard:168, ashbeast:174, orc:168, ogre:198,
+  },
+  ranged: {
+    wolf:174, goblin:168, skeleton:174, wraith:180, stalker:180, mireling:174,
+    reedbeast:174, archer:180, crownguard:186, ashbeast:186, orc:174, ogre:192,
+  },
+};
+const expectedElite = {
+  captains: {
+    'supply-vale':138, 'supply-march':150, 'supply-highlands':144,
+    'supply-crown':192, 'frontier-overseer':162,
+  },
+  bosses: {
+    thorn:198, crypt:144, mire:174, archive:168, ridge:162, mine:234,
+    warlord:186, abyss:246, citadel:180, cindermaw:1440, darklord:210,
+  },
+};
+for (const [group, rows] of Object.entries(expectedRingleader))
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(R.tacticalFoundation.rogueRingleaderSignatures[group])
+      .map(([species, attack]) => [species, attack.radius])),
+    rows, group + ' exactly preserves twelve effective Rogue signature footprints',
+  );
+for (const [group, rows] of Object.entries(expectedElite))
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(R.tacticalFoundation.rogueSignatures[group])
+      .map(([id, attack]) => [id, attack.radius])),
+    rows, group + ' exactly preserves owner-approved defensive signature reach',
+  );
 {
   const { g, add } = scene();
   const e = add(300, { aggro: true });

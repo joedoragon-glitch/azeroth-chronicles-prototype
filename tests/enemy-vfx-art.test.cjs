@@ -71,8 +71,7 @@ const ring = FX.warningShapes({ kind: 'ring', fromX: 0, fromY: 0 }, [])[0],
 assert.equal(
   max,
   C.rules.combatGeometry.ringSpeed *
-    C.rules.combatGeometry.ringLife *
-    C.rules.bossCadence.areaRangeMultiplier +
+    C.rules.bossAreaGeometry.ringLife +
     C.rules.combatGeometry.ringHalfWidth,
 );
 // Death, travel, same-zone reentry and old event delivery cannot retain decoration.
