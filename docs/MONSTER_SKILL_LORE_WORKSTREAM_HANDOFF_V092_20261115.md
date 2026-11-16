@@ -52,6 +52,20 @@ The owner's second-round answer (16 November 2026 local) explicitly selected **#
 
 **Actual organizational ties:** Garun the Firstborn, architect/engineer and Colossus Mine boss, is responsible for his **Mine Ogre wardens** and structural supports. Ridge Tyrant (Master of Coin) and Crag Tyrant (Treasury captain) coordinate regional accounts and labor, but this does **not** make them the Ogres' direct commanders. Ashen Warlord is Frontier military governor over organized Orc warbands; **Cinder Warlord** is the roaming inspection/enforcement captain. Their movement-control/traffic terminology fits documented field duties. Same-species wild/independent units must not inherit institutional names based only on species or location.
 
+### Owner follow-up — Goblin Ringleader #12 (16 November 2026)
+
+**Keep `Immobilization` as the owner's current chosen name.** The owner explicitly accepted the term despite the distinction between a complete root and a movement reduction, noting that substantial slowing is practically a form of immobilizing. This is an **authorial choice**, not permission to alter the ability's `bind` behavior, invent a hard root or hide the true effect from players. The source currently defines `rogueRingleaderSignatures.ranged.goblin` (`Slingmaster Split Screen`) as a warned radius-140 `bind` with `slowSeconds: 2.7`, realized by `engine.js` as timed **Slow** on hit. The descriptive text/UI should explain that it **slows movement** even if the display title remains `Immobilization`.
+
+The owner requested **three optional Scornfang/contaminated-site remediation alternatives** and may choose to rename later; **none supersedes `Immobilization` without a later explicit choice**:
+
+1. **Migration Control** — an authentic remediation *objective*: restricting contaminant migration. Double meaning: restraining fleeing enemies without requiring a hard root.
+2. **In Situ Stabilization** — a genuine named remediation method that reduces the mobility of contamination where it lies. Double meaning: hindering opponents in the marked area, rather than freezing them.
+3. **Permeability Reduction** — an authentic consequence/design objective of solidification barriers and treatment matrices. Double meaning: the enemy has difficulty passing through an affected area, without introducing a collision-bearing wall.
+
+References: [EPA Superfund groundwater migration and containment](https://www.epa.gov/superfund/how-superfund-addresses-groundwater-contamination), [Federal Remediation Technologies Roundtable, Solidification/Stabilization](https://www.frtr.gov/matrix/Solidification-and-Stabilization/), [EPA remediation technology descriptions](https://www.epa.gov/remedytech/remediation-technology-descriptions-cleaning-contaminated-sites). These sources ground the **professional concepts**, not a claim the game actually changes permeability, soils or environmental hazards.
+
+**Status:** Option review only; **current owner name remains `Immobilization`**, no renaming, source changes, combat rebalancing, EN/ES deployment, save change, merge or publication.
+
 ### Meaning of approval and remaining work
 
 - **Authorial naming selections:** All 29 English options are now accounted for. These are owner preferences about *names* only; where a title would misdescribe an effect or suggest unsupported employment, document the discrepancy rather than invent mechanics or a service relationship. In particular, #12 **Immobilization** needs a naming-versus-Slow resolution before player-facing implementation.
