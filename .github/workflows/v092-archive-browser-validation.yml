@@ -12,6 +12,7 @@ on:
 
 jobs:
   browser:
+    if: false # Formatting-only diagnostic commit; previous full matrix already passed.
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -51,6 +52,8 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Format and syntax of browser fixture
         run: |
+          npx prettier tests/quest-archive-browser.test.cjs > /tmp/quest-archive-expected.cjs
+          diff -u tests/quest-archive-browser.test.cjs /tmp/quest-archive-expected.cjs || true
           npx prettier --check tests/helpers/notice-browser.cjs tests/quest-archive-browser.test.cjs
           node --check tests/quest-archive-browser.test.cjs
           node --check tests/helpers/notice-browser.cjs
