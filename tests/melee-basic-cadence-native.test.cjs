@@ -12,8 +12,8 @@ assert.equal(R.balance.enemyOrdinaryMeleeBasicInterval, 0.8);
 assert.equal(R.balance.enemyCaptainMeleeBasicInterval, 0.75);
 assert.equal(R.bossCadence.basicCooldown, 0.75, 'boss basic recovery unchanged');
 assert.equal(R.balance.companions.petBasicInterval, 0.85, 'pet cadence unchanged');
-assert.equal(R.balance.companions.charmedBasicIntervalCeiling, 1.4,
-  'existing Charmed ceiling no longer follows hostile melee tuning');
+assert.equal(R.balance.companions.charmedMeleeBasicIntervalCeiling, 0.8,
+  'owner-approved Charmed melee baseline matches the ordinary hostile');
 
 function scene(attrs = {}, clock = 100, gap = 50) {
   const g = new Campaign('normal', 'paladin', () => 0.9);
