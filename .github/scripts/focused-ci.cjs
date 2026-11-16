@@ -324,7 +324,7 @@ const groups = [
   },
   {
     // Source-owned Phase 2 SFX preview recipe and real event observation mapping.
-    match: /^tools\/audio\/sfx-phase2-pilot(?:-routes)?\.cjs$/,
+    match: /^tools\/audio\/sfx-phase2-pilot(?:(?:-routes)?\.cjs|\.json)$/,
     tests: [TEST + 'audio-sfx-phase2-pilot.test.cjs'],
   },
   {

@@ -30,7 +30,10 @@ a.mixScene='world';
 a.configureRecordings(manifest);
 const heard=[];
 const warm=new Set(ids.map(id=>'sfx-phase2-'+id));
-a.recordingAssets={touch(id){return warm.has(id)?{buffer:{}}:null}};
+a.recordingAssets={
+  pending:new Map(), // Match production asset-loader contract; not an empty fake.
+  touch(id){return warm.has(id)?{buffer:{}}:null;}
+};
 a.createRecording=(id,item,assets,options)=>{
   heard.push({id,options});
   return {id};
