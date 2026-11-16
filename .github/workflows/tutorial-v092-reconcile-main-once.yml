@@ -6,7 +6,7 @@ permissions:
   contents: write
 jobs:
   reconcile:
-    if: github.event.head_commit.message == 'test(tutorial): prepare guarded main reconciliation'
+    if: "github.event.head_commit.message == 'fix(ci): enable guarded main reconciliation'"
     runs-on: ubuntu-latest
     timeout-minutes: 22
     steps:
