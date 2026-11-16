@@ -219,10 +219,18 @@ for (const [key, oldRange] of Object.entries({
     'Warlord warning shows all six actual pads');
 
   e = enemy('crypt');
-  a = game.buildBossAttack(e, 3, game.hero, true).first;
+  const groundwork = game.buildBossAttack(e, 3, game.hero, true);
+  a = groundwork.first;
   pads = game.attackPatches(a);
-  assert.equal(pads.length, 4, 'Crypt Groundwork retains four original pads');
-  assert(pads.every((p) => Math.abs(p.radius - 86.4) < 1e-8));
+  const nextPads = game.attackPatches(groundwork.sequence[0]);
+  assert.equal(pads.length, 2, 'Crypt Groundwork warns two pads in its first beat');
+  assert.equal(nextPads.length, 2, 'second warned beat retains the other two pads');
+  assert([...pads, ...nextPads].every((p) => Math.abs(p.radius - 86.4) < 1e-8),
+    'each of four sequential pads retains its original 86.4-unit impact radius');
+  assert.equal(FX.warningShapes(a, pads).length, 2,
+    'the first warning displays only the first pair');
+  assert.equal(FX.warningShapes(groundwork.sequence[0], nextPads).length, 2,
+    'the subsequent warning displays only its own two pads');
   const otherFamily = { ...a, family: 'cindermaw', arenaPatches: undefined,
     groundworkMarks: undefined };
   assert(game.attackPatches(otherFamily).every(
