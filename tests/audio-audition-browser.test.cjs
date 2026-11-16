@@ -126,9 +126,9 @@ const root = path.resolve(__dirname, '..'),
         assert.equal(await page.locator('#shared-listening').isVisible(), false);
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
         assert.equal(await page.locator('#boss option').count(), 12);
-        assert.equal(await page.locator('#recording option').count(), 147);
+        assert.equal(await page.locator('#recording option').count(), 148);
         assert.equal(await page.locator('#library-grid .sound-card').count(), 24);
-        assert((await page.locator('#result-count').textContent()).includes('147 matching'));
+        assert((await page.locator('#result-count').textContent()).includes('148 matching'));
         await page.locator('#kind').selectOption('ambience');
         assert.equal(await page.locator('#recording option').count(), 34);
         assert.equal(await page.locator('#library-grid .sound-card').count(), 24);
@@ -142,13 +142,17 @@ const root = path.resolve(__dirname, '..'),
         assert((await page.locator('#generated-grid .sound-card').count()) > 35);
         assert.equal(await page.locator('#recorded-panel').isVisible(), false);
         await page.locator('#kind').selectOption('music');
-        assert.equal(await page.locator('#recording option').count(), 83);
+        assert.equal(await page.locator('#recording option').count(), 84);
         await page.locator('#collection').selectOption('dark-crown');
         assert.equal(await page.locator('#recording option').count(), 18);
         await page.locator('#collection').selectOption('new-score');
         assert.equal(await page.locator('#recording option').count(), 65);
+        await page.locator('#collection').selectOption('approved-derived');
+        assert.equal(await page.locator('#recording option').count(), 1);
+        assert.equal(await page.locator('#recording').inputValue(), 'millhaven-chamber');
+        assert.equal(await page.evaluate(() => AudioAudition.collectionFor?.('millhaven-chamber', AudioAudition.audio.recordingManifest.assets['millhaven-chamber']) || 'not-exported'), 'not-exported');
         await press('#reset-library');
-        assert((await page.locator('#catalog-count').textContent()).includes('147 registered'));
+        assert((await page.locator('#catalog-count').textContent()).includes('148 registered'));
         assert.equal(await page.locator('#advanced').getAttribute('open'), null);
         await page.locator('#advanced').evaluate((el) => { el.open = true; });
         await page.locator('#source').selectOption('diagnostic');
@@ -226,7 +230,7 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(
           () =>
             AudioAudition.audio.recordingManifest &&
-            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 147,
+            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 148,
         );
         // Both previous Treasury gaps must play their selected modern bed
         // *in the normal standalone Sound Library scene mixer*, alongside
@@ -275,7 +279,7 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#guide-event').selectOption('');
 
         if (!phone) {
-          console.log('Audition browser: decoding all 147 production recordings');
+          console.log('Audition browser: decoding all 148 production recordings');
           const decoded = await page.evaluate(async () => {
             const a = AudioAudition.audio,
               output = [];
