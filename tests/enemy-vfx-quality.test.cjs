@@ -82,7 +82,7 @@ function fresh() {
   ranged.updateEnemies(0.001);
   const shot = ranged.s.projectiles[0];
   assert(shot);
-  assert.equal(shot.life, C.rules.projectileFlight.ordinaryDistance.goblin / C.rules.rangedProfiles.goblin.shotSpeed);
+  assert.equal(shot.life, 2.5 / C.rules.rangedEnemyCombat.projectileMultiplier);
   A.projectile(ctx, screen, shot, ranged);
   assert.equal(calls.at(-1).elapsedMs, 0);
   ranged.updateProjectiles(0.05);
