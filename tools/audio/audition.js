@@ -406,8 +406,12 @@
     await playRecording();
   }
   function renderCards() {
-    $('library-grid').replaceChildren(...visibleRecordings.slice(0, visibleLimit).map(cardFor));
-    $('show-more').hidden = visibleLimit >= visibleRecordings.length;
+    // This focused category has only 30 short sounds: show every card on the
+    // first visit. Don't make users discover the final six via "Show more".
+    // Large music/ambience catalogs retain their progressive-loading limit.
+    const limit = effectsOnly() ? Math.max(30, visibleLimit) : visibleLimit;
+    $('library-grid').replaceChildren(...visibleRecordings.slice(0, limit).map(cardFor));
+    $('show-more').hidden = limit >= visibleRecordings.length;
   }
   function renderGenerated() {
     const query = $('search').value.trim().toLowerCase();
