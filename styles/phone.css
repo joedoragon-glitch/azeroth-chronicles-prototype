@@ -1830,3 +1830,13 @@ body[data-menu-density-effective='standard'] #modal[data-view='class-select'] .c
     align-self: stretch;
   }
 }
+
+/* Title menus are not field interaction panels. Center them on PC, keeping
+   the established left-side position for actual in-game menus. */
+body[data-experience='desktop'].title-active #modal {
+  top: 50%;
+  left: 50%;
+  bottom: auto;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
