@@ -1195,7 +1195,7 @@
     "src/prototype/rules.js": "006cb41261639b8514ccd5180c9505fafd7d9b445f5592ce6ceb1c7fbf90c84b",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "81372d435839d065fe917a8e69ed8d2e30e65d33e9a9233fb95d0809d5c93a9a",
-    "src/prototype/renderer.js": "6a34d80ec2801848205334120fb3713602d3511ba894ba2463e37fbab5df62b7",
+    "src/prototype/renderer.js": "ee228d3f62825f13676c1e1ab10c4828c80c1e1bce5883d61212e8b4b323b431",
     "src/prototype/greenwood-landscape.js": "fb15806bcb55d8b54a93476348b22554e5c0fc38ef04a83cfe0941a9c3f1744c",
     "src/prototype/dark-crown-landscape.js": "8f4b1a6aca5daa3ac260703f6542c60fa074933b83603ba6f009d365533ad381"
   },
