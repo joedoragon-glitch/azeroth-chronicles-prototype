@@ -1853,7 +1853,9 @@
     statusContext = null,
     pointer = null,
     joystickTouchId = null,
-    joystickStart = null;
+    joystickStart = null,
+    menuJoyDirection = 0,
+    menuJoyRepeatAt = 0;
   profile = persistence.loadProfile(profile);
   const audio = new PrototypeAudio(profile.audio);
   audio.setOptimizationMode(optimizationMode);
@@ -1919,7 +1921,9 @@
     appUpdateBusy = false,
     startupUpdatePending = true,
     startupUpdateNotice = null;
-  let hadServiceWorkerController = !!navigator.serviceWorker?.controller;
+  const editionWorker = new URL('./sw.js', location.href).href;
+  const hasEditionController = () => navigator.serviceWorker?.controller?.scriptURL === editionWorker;
+  let hadServiceWorkerController = hasEditionController();
   function refreshUpdateNotice() {
     appUpdateReady = !!appRegistration?.waiting || appControllerChangedDuringPlay;
     const button = $('update-button');
@@ -2115,7 +2119,11 @@
       const reg = await startupBound(
         serviceWorker
           .getRegistration('./')
-          .then((existing) => existing || serviceWorker.register('./sw.js')),
+          .then((existing) =>
+            existing?.scope === new URL('./', location.href).href
+              ? existing
+              : serviceWorker.register('./sw.js'),
+          ),
         12000,
       );
       if (!reg) {
@@ -2132,7 +2140,7 @@
 
       // A fully downloaded waiting update also works offline. Otherwise do
       // one explicit freshness check, before any menu or game-scene preparation.
-      if (!reg.waiting && serviceWorker.controller) {
+      if (!reg.waiting && hasEditionController()) {
         if (!(await startupNetworkAvailable())) startupUpdateNotice = 'offline';
         else {
           // A rejected or timed-out check is not an update: keep the complete
@@ -2155,7 +2163,7 @@
       } else if (navigator.onLine === false && !reg.waiting) {
         startupUpdateNotice = 'offline';
       }
-      if (reg.waiting && serviceWorker.controller) {
+      if (reg.waiting && hasEditionController()) {
         startupUpdateText('Applying update…', 'Aplicando actualización…');
         appReloadRequested = true;
         // controllerchange performs the one silent reload required to load
@@ -3151,6 +3159,7 @@
     joystickTouchId = null;
     joystickStart = null;
     joy = { x: 0, y: 0 };
+    menuJoyDirection = menuJoyRepeatAt = 0;
     $('stick').style.transform = '';
   }
   function clearInput(preserveNavigation = true) {
@@ -3788,21 +3797,7 @@
       onDone: back,
     });
   }
-  // A touch outside the dialog dismisses it and cannot activate the world or
-  // a HUD control beneath it. Intro, successor and game-over choices are mandatory.
   let outsidePointerId = null;
-  function dismissOutside() {
-    if (!menu || (started && (game.s.challenge.pending || game.s.challenge.gameOver))) return;
-    if (game.peace && game.s.finalRestCompleted && !game.s.endingAck) {
-      game.s.endingAck = true;
-      save();
-    }
-    if (menu.title === 'The Dungeons Awaken' && !game.s.awakeningAck) {
-      game.s.awakeningAck = true;
-      save();
-    }
-    closeMenu();
-  }
   function blockMenuPointer(event) {
     const target = event.target;
     // The OS text editor is needed for optional names and text exports.
@@ -3895,7 +3890,6 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       outsidePointerId = null;
-      dismissOutside();
     },
     true,
   );
@@ -4949,7 +4943,9 @@
     try {
       persistence.writeCandidate(candidate);
     } catch (_) {
-      status('Saving failed. Export your run before closing.');
+      const message = tr('Saving failed. Export your run before closing.');
+      if (menu) $('modal-description').textContent = message;
+      status(message);
       return;
     }
     restartGuard.clean();
@@ -5230,17 +5226,21 @@
               );
               return;
             }
-            const exists = persistence.exists(mode);
-            if (
-              exists &&
-              !confirm(
-                language === 'es'
-                  ? '¿Reemplazar la partida ' + mode + '? Expórtala antes si quieres conservarla.'
-                  : 'Replace the existing ' + mode + ' run? Export it first to keep it.',
-              )
-            )
-              return;
-            start(mode, id, succession, heroName);
+            const begin = () => start(mode, id, succession, heroName);
+            if (!persistence.exists(mode)) return begin();
+
+            const es = language === 'es';
+            openMenu(
+              es ? '¿Reemplazar la partida?' : 'Replace saved adventure?',
+              es
+                ? 'Ya existe una partida de esta dificultad. Exporta una copia si quieres conservarla.'
+                : 'There is already a save for this difficulty. Export a backup if you want to keep it.',
+              [action(es ? 'Reemplazar y comenzar' : 'Replace and start', begin)],
+              () => {
+                chooseClass(mode, succession);
+                $('character-name').value = rawName;
+              },
+            );
           },
           heroClassDetail(id) + (classGrowthLine(id) ? '\n' + classGrowthLine(id) : ''),
           false,
@@ -6051,13 +6051,16 @@
   }
   let newAdventureMode = 'normal';
   let newAdventureSuccession = false;
+  let newAdventureReturn = null;
   function newAdventureBack() {
+    if (newAdventureReturn) return newAdventureReturn();
     if (started) openMain();
     else showTitleScreen();
   }
-  function newGameMenu(preferredMode = 'normal', preserveChoice = false) {
+  function newGameMenu(preferredMode = 'normal', preserveChoice = false, back = null) {
     const es = language === 'es';
     if (!preserveChoice) {
+      newAdventureReturn = back;
       newAdventureMode =
         preferredMode === 'nightmare' && profile.nightmareUnlocked ? 'nightmare' : 'normal';
       newAdventureSuccession = false;
@@ -6595,6 +6598,9 @@
           : []),
         performanceAction('Screen and performance', platformMenu),
         performanceAction('Playtest tools', playtestTools),
+        action(language === 'es' ? 'Nueva partida' : 'New Game', () =>
+          newGameMenu('normal', false, systemMenu),
+        ),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
         action('Language · ' + (language === 'es' ? 'Español' : 'English'), () =>
@@ -8685,7 +8691,6 @@
     if (actionId?.startsWith('skill')) releaseCharge(Number(actionId.slice(5)), 'keyboard');
   });
   const joystick = $('joystick');
-  let menuJoyTime = 0;
   function joyUpdate(e) {
     const r = joystick.getBoundingClientRect(),
       dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
@@ -8693,6 +8698,7 @@
       n = Math.max(1, Math.hypot(dx, dy));
     joy = Math.hypot(dx, dy) < 0.16 ? { x: 0, y: 0 } : { x: dx / n, y: dy / n };
     $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
+    advanceMenuJoystick(performance.now());
   }
   joystick.onpointerdown = (e) => {
     if (e.pointerType === 'mouse') return;
@@ -9974,7 +9980,18 @@
       eventKinds: eventTypes,
     };
   }
+  function advanceMenuJoystick(now) {
+    if (document.hidden || !(menu || !started || sceneTransition || !gpuTrialPanel.hidden)) return;
+    const axis = Math.abs(joy.y) >= Math.abs(joy.x) ? joy.y : joy.x;
+    const direction = Math.abs(axis) > 0.4 ? Math.sign(axis) : 0;
+    if (direction && (direction !== menuJoyDirection || now >= menuJoyRepeatAt)) {
+      moveMenuChoice(direction);
+      menuJoyRepeatAt = now + 300;
+    }
+    menuJoyDirection = direction;
+  }
   function frame(now) {
+    advanceMenuJoystick(now);
     if (!started || sceneTransition) {
       // Idle title runs its music director without simulating a campaign.
       if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)
@@ -10069,14 +10086,6 @@
     syncPartyChargeClock();
     if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !simulating);
     if (simulating) progressTargetPress();
-    if (menu || !started || sceneTransition || !gpuTrialPanel.hidden) {
-      menuJoyTime -= dt;
-      const axis = Math.abs(joy.y) >= Math.abs(joy.x) ? joy.y : joy.x;
-      if (Math.abs(axis) > 0.4 && menuJoyTime <= 0) {
-        moveMenuChoice(axis > 0 ? 1 : -1);
-        menuJoyTime = 0.3;
-      }
-    }
     const stageTimes = !frozen
       ? {
           simulationMs: 0,
@@ -10517,7 +10526,7 @@
     titleCanvasContinue.hidden = true;
   };
   $('title-continue').onclick = enterPreparedScene;
-  $('title-new').onclick = newGameMenu;
+  $('title-new').onclick = () => newGameMenu();
   $('title-saves').onclick = titleSaveMenu;
   $('title-settings').onclick = systemMenu;
   $('title-help').onclick = titleHelpMenu;
@@ -10612,7 +10621,7 @@
   });
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (appControllerReloaded) return;
+      if (appControllerReloaded || !hasEditionController()) return;
       if (hadServiceWorkerController) {
         if ((started || titleLoading) && !appReloadRequested) {
           // Another tab may have activated an update. Do not throw this run away.

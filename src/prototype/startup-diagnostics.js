@@ -1,7 +1,7 @@
 /* Bounded, device-local startup evidence. Never owns campaign or recovery policy. */
 (function (root) {
   'use strict';
-  const KEY = 'sibdlp-startup-history-v1';
+  const KEY = 'gta-cuba:sibdlp-startup-history-v1';
   const MAX_ATTEMPTS = 3,
     MAX_EVENTS = 48,
     MAX_BYTES = 32768,
