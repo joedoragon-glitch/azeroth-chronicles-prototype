@@ -136,6 +136,18 @@ test('Datum Line is timed physical pressure along one locked survey bearing', ()
   const [first, second, third] = game.s.projectiles;
   assert.equal(first.delay, 0);
   assert(second.delay > 0 && third.delay > second.delay);
+  // Remain valid with the existing multiplier and PR #899's future explicit
+  // arrow speed. No undefined multiplier, NaN speed, or enlarged reach.
+  const R = Campaign.rules, flight = R.projectileFlight,
+    expectedSpeed = flight
+      ? (R.rangedProfiles.skeleton?.shotSpeed ?? flight.ordinaryDefault.arrow)
+      : (enemy.shotSpeed || 260) * R.rangedEnemyCombat.projectileMultiplier,
+    expectedLife = flight
+      ? (flight.ordinaryDistance.skeleton ?? 650) / expectedSpeed
+      : 2.5 / R.rangedEnemyCombat.projectileMultiplier;
+  assert(game.s.projectiles.every((p) =>
+    p.speed === expectedSpeed && p.life === expectedLife &&
+    Number.isFinite(p.speed) && Number.isFinite(p.life) && p.life > 0));
   assert(first.dx === second.dx && second.dx === third.dx);
   assert(game.s.projectiles.every((p) =>
     p.source === 'enemy' && p.style === 'arrow' && p.slow === 0));
