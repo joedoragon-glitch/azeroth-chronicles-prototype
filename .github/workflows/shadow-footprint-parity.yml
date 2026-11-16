@@ -10,6 +10,7 @@ on:
       - 'tests/shadow-procedural-footprints.test.cjs'
       - 'tests/shadow-artwork-grounding.test.cjs'
       - 'src/prototype/visuals.js'
+      - 'src/prototype/renderer.js'
       - 'sw.js'
       - 'tests/pixi-parity-browser.test.cjs'
       - 'docs/SHADOW_PRESENTATION_AUDIT_20261116.md'
@@ -21,11 +22,18 @@ on:
       - 'tests/shadow-procedural-footprints.test.cjs'
       - 'tests/shadow-artwork-grounding.test.cjs'
       - 'src/prototype/visuals.js'
+      - 'src/prototype/renderer.js'
       - 'sw.js'
       - 'tests/pixi-parity-browser.test.cjs'
       - 'docs/SHADOW_PRESENTATION_AUDIT_20261116.md'
       - 'docs/GRAPHICS_CANON_SPRITE_COVERAGE.md'
       - '.github/workflows/shadow-footprint-parity.yml'
+
+# An audit source push and its PR validation need only the newest evidence.
+# Do not queue redundant expensive GPU matrices from outdated commits.
+concurrency:
+  group: shadow-893-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
