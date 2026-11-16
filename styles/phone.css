@@ -1675,3 +1675,158 @@ body[data-experience='phone'] #modal-actions output {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Universal menu-density control. This file loads LAST for both desktop and
+   phone: all menu families share #modal, #modal-content and #modal-actions.
+   The game stores only the player's preference; Platform caches the effective
+   responsive mode until CSS viewport/safe-area geometry actually changes.
+   Never globally scale the DOM: text fields and 44px touch targets stay usable. */
+body[data-menu-density-effective='compact'] #modal {
+  padding: clamp(6px, 1.5dvh, 10px);
+}
+body[data-menu-density-effective='compact'] #modal h2 {
+  font-size: clamp(16px, 2.5dvh + 8px, 19px);
+  line-height: 1.2;
+  margin-bottom: 4px;
+  padding-bottom: 3px;
+}
+body[data-menu-density-effective='compact'] #modal-description {
+  font-size: 13px;
+  line-height: 1.37;
+  margin-bottom: 5px;
+}
+body[data-menu-density-effective='compact'] #modal-actions {
+  gap: 4px 6px;
+}
+body[data-menu-density-effective='compact'] #modal-actions button,
+body[data-menu-density-effective='compact'] #modal-actions .menu-import-picker,
+body[data-menu-density-effective='compact'] #close-button {
+  min-height: 44px;
+  padding: 5px 8px;
+  font-size: 13.5px;
+  line-height: 1.25;
+}
+body[data-menu-density-effective='compact'] #modal-actions .detail,
+body[data-menu-density-effective='compact'] #modal-actions .menu-section-detail {
+  font-size: 12px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+body[data-menu-density-effective='compact'] #modal-actions .menu-setting {
+  gap: 4px 7px;
+  padding: 5px 7px;
+}
+body[data-menu-density-effective='compact'] #modal-actions .menu-setting-label,
+body[data-menu-density-effective='compact'] #modal-actions .menu-section {
+  font-size: 13px;
+  line-height: 1.3;
+  min-height: 0;
+}
+body[data-menu-density-effective='compact'] #modal-actions .menu-setting-input,
+body[data-menu-density-effective='compact'] #modal-actions input[type='text'] {
+  min-height: 44px;
+  font-size: 16px; /* Prevent native Safari zoom on focused fields. */
+}
+body[data-menu-density-effective='compact'] #modal[data-view='archive-reading'] #modal-description,
+body[data-menu-density-effective='compact'] #modal[data-view='title-help-reading'] #modal-description,
+body[data-menu-density-effective='compact'] #modal[data-view='title-credits'] #modal-description {
+  font-size: 14px;
+  line-height: 1.5;
+}
+/* Compact is denser, not a 75% CSS transform; real taps remain large. */
+body[data-menu-density-effective='compact'] #title-screen nav {
+  gap: clamp(4px, 0.8dvh, 7px);
+}
+body[data-menu-density-effective='compact'] #title-screen nav button,
+body[data-menu-density-effective='compact'] .language-welcome-choices button {
+  min-height: 44px;
+  padding: 6px 9px;
+  font-size: 13.5px;
+  line-height: 1.2;
+}
+body[data-menu-density-effective='compact'] #modal[data-view='class-select'] #modal-actions button.class-character-choice {
+  grid-template-columns: 66px minmax(0, 1fr);
+  gap: 8px;
+}
+body[data-menu-density-effective='compact'] #modal[data-view='class-select'] .class-sprite-preview {
+  width: 64px;
+  height: 74px;
+}
+body[data-menu-density-effective='compact'] #modal[data-view='class-select'] .class-choice-copy .class-growth {
+  padding-top: 3px;
+  margin-top: 3px;
+}
+/* Standard deliberately stays roomy even on short viewports. It may scroll. */
+body[data-menu-density-effective='standard'] #modal {
+  padding: clamp(12px, 2dvh, 18px);
+}
+body[data-menu-density-effective='standard'] #modal h2 {
+  font-size: 20px;
+  margin-bottom: 7px;
+}
+body[data-menu-density-effective='standard'] #modal-description {
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 9px;
+}
+body[data-menu-density-effective='standard'] #modal-actions {
+  gap: 8px;
+}
+body[data-menu-density-effective='standard'] #modal-actions button,
+body[data-menu-density-effective='standard'] #modal-actions .menu-import-picker,
+body[data-menu-density-effective='standard'] #close-button {
+  min-height: 48px;
+  padding: 8px 11px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+body[data-menu-density-effective='standard'] #modal-actions .detail,
+body[data-menu-density-effective='standard'] #modal-actions .menu-section-detail {
+  font-size: 13px;
+  line-height: 1.4;
+}
+body[data-menu-density-effective='standard'] #modal-actions .menu-setting {
+  gap: 7px;
+  padding: 8px 10px;
+}
+body[data-menu-density-effective='standard'] #modal-actions .menu-setting-input,
+body[data-menu-density-effective='standard'] #modal-actions input[type='text'] {
+  min-height: 44px;
+  font-size: 16px;
+}
+body[data-menu-density-effective='standard'] #title-screen nav button,
+body[data-menu-density-effective='standard'] .language-welcome-choices button {
+  min-height: 48px;
+  padding: 9px 12px;
+  font-size: 15px;
+}
+body[data-menu-density-effective='standard'] #modal[data-view='class-select'] #modal-actions button.class-character-choice {
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: 12px;
+}
+body[data-menu-density-effective='standard'] #modal[data-view='class-select'] .class-sprite-preview {
+  width: 76px;
+  height: 88px;
+}
+/* PC class selection makes genuine use of desktop width. Four comparable
+   characters are visible in a two-column grid without four narrow stacked
+   paragraphs; the optional name field spans both columns. */
+@media (min-width: 900px) and (min-height: 560px) {
+  body[data-experience='desktop'] #modal[data-view='class-select'] {
+    width: min(760px, calc(100vw - 48px));
+    max-height: min(90dvh, 810px);
+  }
+  body[data-experience='desktop'] #modal[data-view='class-select'] #modal-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body[data-experience='desktop'] #modal[data-view='class-select'] #modal-actions > .character-name-field,
+  body[data-experience='desktop'] #modal[data-view='class-select'] #modal-actions > .menu-section,
+  body[data-experience='desktop'] #modal[data-view='class-select'] #modal-actions > .menu-section-detail {
+    grid-column: 1 / -1;
+  }
+  body[data-experience='desktop'] #modal[data-view='class-select'] #modal-actions button.class-character-choice {
+    min-width: 0;
+    overflow-wrap: break-word;
+    align-self: stretch;
+  }
+}
