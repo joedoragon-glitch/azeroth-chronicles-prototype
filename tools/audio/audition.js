@@ -304,6 +304,19 @@
       if (bindings.some((rule) => rule.asset === id)) uses.push('Event · ' + human(event));
     return [...new Set(uses)];
   }
+  function effectStage(id, entry) {
+    if (entry?.kind !== 'effect') return null;
+    if (id.endsWith('-release')) return 'release';
+    if (id.endsWith('-impact') && !id.startsWith('sfx-hero-')) return 'impact';
+    return 'special';
+  }
+  function effectsOnly() {
+    return $('kind').value === 'effect' || $('collection').value === 'effects';
+  }
+  function syncEffectFilters() {
+    $('effect-filters').hidden = !effectsOnly();
+    if (!effectsOnly()) $('effect-stage').value = 'all';
+  }
   function collectionFor(id, entry) {
     if (entry.kind === 'ambience') return 'environment';
     if (entry.kind === 'effect') return 'effects';
@@ -314,7 +327,13 @@
   }
   function labelFor(id, entry) {
     if (entry.kind === 'ambience') return 'Environment';
-    if (entry.kind === 'effect') return 'Recorded effect';
+    if (entry.kind === 'effect') {
+      const stage = effectStage(id, entry);
+      return entry.managedBy === 'sfx-phase1-original-hybrid'
+        ? { release: 'New · attack release', impact: 'New · attack contact',
+            special: 'New · special / warning' }[stage]
+        : 'Recorded effect';
+    }
     if (collectionFor(id, entry) === 'dark-crown') return 'Preserved original';
     if (collectionFor(id, entry) === 'approved-derived') return 'Owner-approved theme arrangement';
     if (id.endsWith('-true')) return 'TRUE boss layer';
@@ -337,7 +356,9 @@
     duration.className = 'duration';
     if (Number.isFinite(entry.duration)) {
       const seconds = Math.round(entry.duration);
-      duration.textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
+      duration.textContent = entry.kind === 'effect'
+        ? entry.duration.toFixed(2) + 's'
+        : Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
     }
     top.append(label, duration);
     const title = document.createElement('button');
@@ -459,7 +480,9 @@
     $('library-grid').hidden = false;
     $('recorded-panel').hidden = false;
     $('generated-panel').hidden = true;
+    syncEffectFilters();
     const kind = $('kind').value, collection = $('collection').value;
+    const stage = $('effect-stage').value;
     const query = $('search').value.trim().toLowerCase();
     const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [],
       legacy: [], approved: [], ambience: [], effect: [] };
@@ -467,6 +490,7 @@
     for (const [id, entry] of Object.entries(manifest.assets)) {
       if (kind !== 'all' && entry.kind !== kind) continue;
       if (collection !== 'all' && collectionFor(id, entry) !== collection) continue;
+      if (effectsOnly() && stage !== 'all' && effectStage(id, entry) !== stage) continue;
       const uses = usageFor(id, manifest);
       if (query && !(id + ' ' + soundTitle(id, entry) + ' ' + uses.join(' ') +
         ' ' + (entry.generationGuide || '')).toLowerCase().includes(query)) continue;
@@ -501,8 +525,10 @@
     ]) group(label, bucket[key], target);
     if (!target.options.length) target.add(option('No recordings match this filter', ''));
     if (selected && [...target.options].some((o) => o.value === selected)) target.value = selected;
-    $('result-count').textContent = visibleRecordings.length + ' matching recordings · ' +
-      Object.keys(manifest.assets).length + ' total registered';
+    $('result-count').textContent = effectsOnly()
+      ? visibleRecordings.length + ' new recorded effects · 30 total in Phase 1'
+      : visibleRecordings.length + ' matching recordings · ' +
+        Object.keys(manifest.assets).length + ' total registered';
     renderCards();
     showRecording();
   }
@@ -518,6 +544,8 @@
       const details = document.createElement('div');
       const labels = [
         source === 'diagnostic' ? 'Engineering test recording'
+          : entry.kind === 'effect' && entry.managedBy === 'sfx-phase1-original-hybrid'
+            ? 'New Phase 1 original sound effect · replaces previous game recording'
           : entry.kind === 'music'
             ? entry.creationMethod === 'authored-recorded-source-score'
               ? 'Phase 3–6 recorded-source composition'
@@ -576,6 +604,8 @@
           ? 'Original preserved Dark Crown music: tools/audio/score-book.json; renderer: render-score.py.'
         : entry?.managedBy === 'environment-book'
           ? 'Original environment recipe: tools/audio/environment-book.json; renderer: render-environment.py.'
+          : entry?.managedBy === 'sfx-phase1-original-hybrid'
+            ? 'New Phase 1 original effect master: tools/audio/sfx-phase1-master.py; previous game master is SHA-frozen for rollback. This is a solo recording, not the full game mix.'
           : entry?.managedBy === 'sfx-book'
             ? 'Original effect recipe: tools/audio/sfx-book.json; renderer: render-sfx.py.'
             : entry?.creationMethod === 'imported-recording'
@@ -882,14 +912,30 @@
     syncScene();
   });
   $('form').addEventListener('change', syncScene);
+  $('nav-effects').addEventListener('click', () => {
+    $('kind').value = 'effect';
+    $('collection').value = 'all';
+    $('collection').disabled = false;
+    $('effect-stage').value = 'all';
+    $('search').value = '';
+    $('sort').value = 'catalog';
+    visibleLimit = 24;
+    fillLibrary();
+  });
+  $('effect-stage').addEventListener('change', () => {
+    visibleLimit = 24;
+    fillLibrary();
+  });
   $('kind').addEventListener('change', () => {
     $('collection').value = 'all';
     $('collection').disabled = $('kind').value === 'generated';
+    $('effect-stage').value = 'all';
     visibleLimit = 24;
     fillLibrary();
   });
   $('collection').addEventListener('change', () => {
     if ($('collection').value !== 'all') $('kind').value = 'all';
+    $('effect-stage').value = 'all';
     visibleLimit = 24;
     fillLibrary();
   });
@@ -900,6 +946,7 @@
   $('next').addEventListener('click', run(() => navigateRecording(1)));
   $('reset-library').addEventListener('click', () => {
     $('kind').value = 'all';
+    $('effect-stage').value = 'all';
     $('collection').value = 'all';
     $('collection').disabled = false;
     $('sort').value = 'catalog';
