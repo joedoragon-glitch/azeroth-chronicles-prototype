@@ -7,6 +7,9 @@ on:
       - 'audit/shadow-footprints-parity-*'
     paths:
       - 'tests/shadow-registered-footprints.test.cjs'
+      - 'tests/shadow-artwork-grounding.test.cjs'
+      - 'src/prototype/visuals.js'
+      - 'sw.js'
       - 'tests/pixi-parity-browser.test.cjs'
       - 'docs/SHADOW_PRESENTATION_AUDIT_20261116.md'
       - 'docs/GRAPHICS_CANON_SPRITE_COVERAGE.md'
@@ -14,6 +17,9 @@ on:
   pull_request:
     paths:
       - 'tests/shadow-registered-footprints.test.cjs'
+      - 'tests/shadow-artwork-grounding.test.cjs'
+      - 'src/prototype/visuals.js'
+      - 'sw.js'
       - 'tests/pixi-parity-browser.test.cjs'
       - 'docs/SHADOW_PRESENTATION_AUDIT_20261116.md'
       - 'docs/GRAPHICS_CANON_SPRITE_COVERAGE.md'
