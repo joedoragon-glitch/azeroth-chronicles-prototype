@@ -1,5 +1,8 @@
 # v0.9.2 area-of-effect geometry — first normalization slice (16 Nov 2026) 
 
+> **Post-#908 verification update (16 November 2026):** PR #908 was merged and published to the live development build at `main@985c3e802abec3e6cef01cebb6ee788f4d772b15` (`0.9.1+snapshot.dev.291`). Its exact post-merge focused CI / Pages run [#43891686645](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43891686645) passed. The original #902 remains separately open but its selected source was reconciled into #908; do not re-merge that stale branch. The earlier note about #908 being unpublished is a *historical prepublication checkpoint*, not the current status. New specialized AoE work below is **a separate unmerged candidate** against dev.291.
+
+
 > **Combined-release integration note (PR #908, 16 November 2026, unpublished):** Reconciled with projectile speed PR #899. Scornfang's already-authored 600-unit/s tracking volley retains its pre-normalization actual **1.68-second** life (PR #899 authored 1.4 seconds, formerly scaled ×1.2 at runtime). The earlier pre-#899 source used 400-speed shots and an effective 2.52-second life. Do not restore that obsolete lifetime when combining these PRs; verify the effective flight budget and warning semantics in exact integrated CI. This note is integration evidence, not a change to #902's standalone historical checkpoint.
 
 **Workstream:** [#896](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/896). **Candidate branch:** `audit/aoe-effective-geometry-v092-20261116`, based on `main@37ef6b0f86d91e2cc9af92c3660c757855200d33` (dev.290). **Status:** first source implementation only, pending exact-head focused checks, browser/renderer validation and independent review. **No balance retuning, merge or Pages/PWA release approved.**
@@ -71,3 +74,37 @@ The next narrow commit series removes the global 1.2 expansion of `nightEnemyCom
 First stage focused run [#43868222598](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/43868222598) finished **failure**. Of 39 selected suites, three reported failures: `tests/audit-regressions.test.cjs` (multiple cases, including historically stale initial boss fixtures and non-AoE assertions), `tests/enemy-vfx-events.test.cjs` (release assertion previously lacked a boss ID), and `tests/sprite-scope.test.cjs` (expected source SHA256 fingerprint drift from `rules.js` content changes). Numerous related focused checks passed (native per-family warnings, ring projection, Canvas draw purity, companion/Soldier/Archer skills, Rogue repertoire, v4 restore), but this run **is not an acceptance PASS**. The new stage commits include better fixture diagnostics and a real native boss for F02, without waiving other original failures. Once all source edits are complete, review the *final* source fingerprint against the same sprite scope, update the **current** evidence only (preserving history), run relevant suites and inspect all failures on the exact PR head.
 
 Concurrent open PR #900 also edits `rules.js`, `engine.js`, `boss-combat.js`, `combat.js` and sprite evidence. Its added Skeleton skill identities/lore are outside this AoE workstream; **reconcile both branches before any integration**, do not force one over the other. The latest verified `main` advanced since PR #902 began. Stage 3 will audit specialized Cindermaw/Citadel/Dreadmaw and remaining dynamic/off-target spatial rules, then validate the four hero classes, two troop roles, eleven pets and legitimate Charmed inheritance without changing approved player skills.
+
+## Stage 3 — specialized boss and Dreadmaw final geometry after published dev.291
+
+**Candidate:** `audit/v092-special-boss-aoe-effective-20261116`, branched from published `985c3e802abec3e6cef01cebb6ee788f4d772b15`. This is a tightly scoped **no-balance-change** successor to the first two stages integrated by #908. #896 remains the owning wider audit. It does not amend campaign/endings, save v4 schema, player skills, projectile *speed*, audio, sprite identity, cast preparation/recovery or class abilities.
+
+The final vestiges of `enemySpecialReachMultiplier: 1.2` in the boss runtime are represented directly by the following already-effective geometry (world units unless time noted):
+
+| Attack/owner | Final authored area/geometry | Previous effective calculation |
+| --- | --- | --- |
+| Cindermaw cordon | initial radius **300**, final radius **186** | 250×1.2, 155×1.2 |
+| Cindermaw seven seals | blast radius **64.8**, orbit **174** | 54×1.2, 145×1.2 |
+| Cindermaw Equalisation | radius **81.6** | 68×1.2 |
+| Cindermaw delegation finisher | radius **66** | 55×1.2 |
+| Cindermaw Protection / Delegation defense | radii **320 / 360** | Explicit exceptions: **not** scaled |
+| Dreadmaw fracture | orbit **84**, separation **90** | 70×1.2, 75×1.2 |
+| Dreadmaw rush | leg length **204** | 170×1.2 |
+| Dreadmaw closure | initial radius **204**, final radius **132**, final blast **102** | 170×1.2, 110×1.2, 85×1.2 |
+| Dreadmaw selectable closure radii | **204, 174, 144, 120, 108** | Each previously multiplied ×1.2 |
+| Dreadmaw steam | orbit **120**, separation **90** | 100×1.2, 75×1.2 |
+| Crypt slow-only wave | lifetime **1.44 seconds** at existing 360-unit/s speed | 1.2×1.2 |
+| Crypt Groundwork / Warlord barrage | pad radius **86.4** each | 72×1.2 |
+| Warlord six-pad centers | X offsets **−264, 0, 264**; Y rows **−120, 150** | Earlier offsets scaled individually ×1.2 |
+| Citadel nine-fragment canister | warned reach **432** | 360×1.2 |
+| Crypt three-arrow volley | physical travel **780**, shared with warning | 260×2.5×1.2, equivalently 650×1.2 |
+
+The Crypt volley’s physical **speed** remains owned by the approved #899 projectile-flight tuning; the shot *lifetime* is calculated as final travel `780 / authored speed`. No projectile should travel farther than its warned corridor from this normalization. The six Warlord pad centers and Crypt four-pad sizes flow through `attackPatches`, shared by damage and `warningShapes`. The pad metadata now applies only to the authored boss or captain family, guarding against a transferred radius leaking to unrelated attacks.
+
+`expandedEnemyGeometry` and `expandedCaptains` are no longer needed by the game rule export after these final explicit values. The historic `balance.enemySpecialReachMultiplier` field may remain for old explanatory/tests provenance, but **gameplay is no longer intended to multiply by it at release or warning time**.
+
+**Confirmed dev.291 companion-avoidance discrepancy, corrected in this candidate:** `party.js:companionDangerShapes` previously treated a Crypt three-arrow volley as a **720-unit cone**, reusing the boss's generic acquisition reach despite the **780-unit actual arrow travel and public warning**. It now uses the same authored `volleyReach:780` as the missile and projected cue. Attack damage, speed, lifetime, collision and the player's warning are unchanged; companions may now correctly avoid the outer 60-unit threatened fringe. This is a **narrow behavioral correction** to defensive AI, unlike the purely value-preserving geometry cleanup, and requires a real native regression on the final PR head.
+
+New acceptance assertions extend the original `tests/v092-aoe-geometry-integration.test.cjs` (exact specialized values, native six-pad centers, multi-circle isolation, physical volley reach and warnings, Citadel nine lanes). Preserve the other dedicated Cindermaw/Dreadmaw/TRUE and Pixi/Canvas suites and review any failure instead of rewriting behavior to satisfy an invalid fixture. Passing source-level CI cannot replace physical-device or earned player progression acceptance.
+
+**Known still-unverified AoE topics:** Mobile elite Rogue actor-bar versus damage footprint, release-relative slab marks (prior 72/120 warning offsets vs 60/100 impact offsets), very wide Cindermaw Broodscreen Roar, dynamic hazards and ticks, all four hero classes’ legal rank/cap and projectile shapes, Soldier/Archer, 11 pets and Charmed inheritance. These remain categorized under #896, not silently accepted by this structural change.

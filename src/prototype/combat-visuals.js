@@ -129,13 +129,13 @@
                     Math.cos(angle) *
                       (a.tracking
                         ? a.shotSpeed * a.shotLife
-                        : 650 * R.balance.enemySpecialReachMultiplier),
+                        : (a.volleyReach || R.attacks.crypt[1].volleyReach)),
                   y:
                     from.y +
                     Math.sin(angle) *
                       (a.tracking
                         ? a.shotSpeed * a.shotLife
-                        : 650 * R.balance.enemySpecialReachMultiplier),
+                        : (a.volleyReach || R.attacks.crypt[1].volleyReach)),
                 }
               : { x: a.x + side.x * offset, y: a.y + side.y * offset },
           width =

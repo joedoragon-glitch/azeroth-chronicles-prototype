@@ -156,4 +156,106 @@ for (const [key, oldRange] of Object.entries({
   assert.equal(e.telegraph.x, front.x,
     'blocked LOS prevents an invisible ground area at the distant hero');
 }
+
+// Stage 3: these are the effective dev.291 shapes, not new balance choices.
+// Each value used to be expanded by 1.2 when the combat rules were exported.
+{
+  const moves = R.attacks.cindermaw;
+  assert.deepEqual(
+    { initial: moves[0].initialRadius, final: moves[0].finalRadius,
+      seals: moves[3].radius, sealOrbit: moves[3].sealOrbit,
+      equalisation: moves[4].radius, finisher: moves[5].finisherRadius,
+      protection: moves[2].radius, delegation: moves[5].radius },
+    { initial: 300, final: 186, seals: 64.8, sealOrbit: 174,
+      equalisation: 81.6, finisher: 66, protection: 320, delegation: 360 },
+    'Cindermaw retains all previously effective areas, including two unscaled defensive radii',
+  );
+
+  const movesD = R.roomCaptains['supply-crown'].attacks;
+  assert.deepEqual(
+    { fractureOrbit: movesD[0].orbit, fractureSeparation: movesD[0].minimumSeparation,
+      rushLeg: movesD[1].legLength, closureInitial: movesD[4].initialRadius,
+      closureFinal: movesD[4].finalRadius, closureBlast: movesD[4].finalBlastRadius,
+      closureChoices: movesD[4].allowedRadii, steamOrbit: movesD[6].orbit,
+      steamSeparation: movesD[6].minimumSeparation },
+    { fractureOrbit: 84, fractureSeparation: 90, rushLeg: 204,
+      closureInitial: 204, closureFinal: 132, closureBlast: 102,
+      closureChoices: [204, 174, 144, 120, 108],
+      steamOrbit: 120, steamSeparation: 90 },
+    'Dreadmaw dynamic ring, orbit, spread and explosion sizes remain identical',
+  );
+  assert.equal(R.attacks.crypt[4].waveLife, 1.44,
+    'Crypt slow-only ring lifetime stays expanded');
+  assert.equal(R.attacks.crypt[3].patchRadius, 86.4);
+  assert.equal(R.attacks.warlord[1].patchRadius, 86.4);
+  assert.equal(R.attacks.crypt[1].volleyReach, 780,
+    'the bow-volley warning and flying arrows share their effective reach');
+  assert.equal(R.attacks.citadel[0].radius, 432);
+}
+
+// Native marks and launch trajectories consume the authored values; neither
+// warning geometry nor attack construction may add the old multiplier again.
+{
+  const FX = require('../src/prototype/combat-visuals.js');
+  const game = new C('normal', 'paladin', () => 0.5);
+  game.zone().props = [];
+  game.s.party = [];
+  Object.assign(game.hero, { x: 1250, y: 1000, hp: 100000, maxHp: 100000 });
+  const enemy = (family) => {
+    const e = game.bossEnemy(game.boss(family), 'normal', { x: 1100, y: 1000 });
+    game.zone().enemies = [e];
+    return e;
+  };
+  let e = enemy('warlord');
+  let a = game.buildBossAttack(e, 1, game.hero, true).first;
+  let pads = game.attackPatches(a);
+  assert.equal(pads.length, 6, 'Warlord retains six separate damaging artillery pads');
+  assert.deepEqual(pads.map((p) => [p.x - a.x, p.y - a.y]), [
+    [-264, -120], [0, -120], [264, -120],
+    [-264, 150], [0, 150], [264, 150],
+  ], 'Warlord pad centers still match the historical reach expansion');
+  assert(pads.every((p) => Math.abs(p.radius - 86.4) < 1e-8));
+  assert.equal(FX.warningShapes(a, pads).length, pads.length,
+    'Warlord warning shows all six actual pads');
+
+  e = enemy('crypt');
+  const groundwork = game.buildBossAttack(e, 3, game.hero, true);
+  a = groundwork.first;
+  pads = game.attackPatches(a);
+  const nextPads = game.attackPatches(groundwork.sequence[0]);
+  assert.equal(pads.length, 2, 'Crypt Groundwork warns two pads in its first beat');
+  assert.equal(nextPads.length, 2, 'second warned beat retains the other two pads');
+  assert([...pads, ...nextPads].every((p) => Math.abs(p.radius - 86.4) < 1e-8),
+    'each of four sequential pads retains its original 86.4-unit impact radius');
+  assert.equal(FX.warningShapes(a, pads).length, 2,
+    'the first warning displays only the first pair');
+  assert.equal(FX.warningShapes(groundwork.sequence[0], nextPads).length, 2,
+    'the subsequent warning displays only its own two pads');
+  const otherFamily = { ...a, family: 'cindermaw', arenaPatches: undefined,
+    groundworkMarks: undefined };
+  assert(game.attackPatches(otherFamily).every(
+    (p) => p.radius === R.bossAreaGeometry.multiCircleRadius),
+    'Crypt-specific patch radius never contaminates another boss family');
+
+  a = game.buildBossAttack(e, 1, game.hero, true).first;
+  e.telegraph = a;
+  const danger = game.companionDangerShapes();
+  assert(danger.some((shape) => shape.shape === 'cone' && shape.source === e &&
+    shape.radius === R.attacks.crypt[1].volleyReach),
+    'companion danger assessment must cover the entire warned missile flight');
+  game.s.projectiles = [];
+  game.resolveAttack(e);
+  assert.equal(game.s.projectiles.length, 3, 'Crypt fires three physical projectiles');
+  for (const p of game.s.projectiles)
+    close(p.speed * p.life, R.attacks.crypt[1].volleyReach,
+      'real arrow travel equals the range projected by its warning');
+  assert.equal(FX.warningShapes(a, []).length, 3, 'all three lanes are warned');
+
+  e = enemy('citadel');
+  a = game.buildBossAttack(e, 0, game.hero, true).first;
+  assert.equal(a.radius, 432, 'Citadel canister uses authored reach');
+  assert.equal(FX.warningShapes(a, []).length, 9,
+    'Citadel displays all nine canister lanes at the same reach');
+}
+
 console.log('PASS v0.9.2 integration: effective boss/captain AoE, both forms, projectile lifetime, PT-007 line of sight');

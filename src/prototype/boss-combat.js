@@ -1660,7 +1660,7 @@
         if (e.family === 'citadel') {
           if (index === 0) {
             a.kind = 'canister';
-            a.radius = 360 * R.balance.enemySpecialReachMultiplier;
+            a.radius = plan.radius;
             a.opening = 0;
           }
           if (index === 1) {
@@ -1861,7 +1861,7 @@
             ...a,
             x: mark.x,
             y: mark.y,
-            radius: 72 * R.balance.enemySpecialReachMultiplier,
+            radius: a.patchRadius || R.attacks.crypt[3].patchRadius,
           }));
         }
         if (
@@ -1872,19 +1872,20 @@
           !a.captainSkill
         ) {
           // Spread Warlord artillery around the target with dodgeable lanes.
+          // Final pad-center offsets after the historical 1.2× expansion.
           const offsets = [
-            [-220, -100],
-            [0, -100],
-            [220, -100],
-            [-220, 125],
-            [0, 125],
-            [220, 125],
+            [-264, -120],
+            [0, -120],
+            [264, -120],
+            [-264, 150],
+            [0, 150],
+            [264, 150],
           ];
           return offsets.map(([dx, dy]) => ({
             ...a,
-            x: a.x + dx * R.balance.enemySpecialReachMultiplier,
-            y: a.y + dy * R.balance.enemySpecialReachMultiplier,
-            radius: 72 * R.balance.enemySpecialReachMultiplier,
+            x: a.x + dx,
+            y: a.y + dy,
+            radius: a.patchRadius || R.attacks.warlord[1].patchRadius,
           }));
         }
         if (a.captainSpread) {
@@ -1916,7 +1917,7 @@
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
           y: a.y + (i % 2) * 100,
-          radius: a.patchRadius ||
+          radius: (a.captainSkill && a.patchRadius) ||
             (a.count > 1 ? R.bossAreaGeometry.multiCircleRadius : a.radius),
         }));
       }
@@ -2571,7 +2572,7 @@
               dx: Math.cos(a.angle + delta),
               dy: Math.sin(a.angle + delta),
               speed: volleySpeed,
-              life: (260 * 2.5 * R.balance.enemySpecialReachMultiplier) / volleySpeed,
+              life: (a.volleyReach || R.attacks.crypt[1].volleyReach) / volleySpeed,
               damage: this.worldBossEffect(a, this.weakenedEnemyDamage(e), 'damage'),
               ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
               manaDrain: a.manaDrain || 0,
