@@ -1,6 +1,6 @@
 {
   "status": "SOURCE/RENDER TECHNICAL CHECK; UNHEARD",
-  "qualityRevision": "v2 reference-RMS balanced after adversarial gain audit",
+  "qualityRevision": "v3 owner-reported stage differentiation (5 material families), reference-RMS preserved",
   "retainedIds": 30,
   "origin": "dev288",
   "cues": {
@@ -23,18 +23,18 @@
       "duration": 0.27
     },
     "sfx-claw-release": {
-      "sha256": "cf6e9d3183d96eecccbcdb8af1028c07441831ca98523c79e12e53fd5adb707b",
+      "sha256": "800a04f0f7621ce87662ae4a1a10decae20fd6391abab88489b6e5df5f3b9f05",
       "guide": "Animal tear & scrape. unpitched scratch entering range. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.21436,
+      "peak": 0.21185,
       "rms": 0.03079,
       "referenceRms": 0.029327,
       "rmsRatio": 1.05,
       "duration": 0.285
     },
     "sfx-claw-impact": {
-      "sha256": "183d2e6efafcac50a5de552ae709033581e965d1669070ad898247457c99d0e9",
+      "sha256": "5b191816d0b67b04f1e22f9d2a8e0651b8707f2b88095e68b3403bb6570ac0fc",
       "guide": "Animal tear & scrape. contact tear with short ripping drag. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.32073,
+      "peak": 0.38866,
       "rms": 0.03871,
       "referenceRms": 0.03519,
       "rmsRatio": 1.1,
@@ -59,18 +59,18 @@
       "duration": 0.27
     },
     "sfx-stone-release": {
-      "sha256": "fef095fe9da2a9a8d1809823e34e5ecda9a0bb31e1bf5133aac3e1b0b8660c99",
+      "sha256": "c57fde3593db0b8972c97b57f3fc470b6b1015183ee60b91448db390ddda7513",
       "guide": "Dense mineral mass. weight shift with falling grit. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.18076,
+      "peak": 0.16542,
       "rms": 0.03164,
       "referenceRms": 0.030131,
       "rmsRatio": 1.05,
       "duration": 0.285
     },
     "sfx-stone-impact": {
-      "sha256": "8f3f0105ffdcff1f489ca8eba7a0a8dc75b55f9cf40505e71ebed7a4c40efc4d",
+      "sha256": "2bcc00f9362fdbb9b45304fb79e3e9a0c350bd159dbb2004e0c8fd7c520a401d",
       "guide": "Dense mineral mass. solid mineral contact and quick gravel. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.28868,
+      "peak": 0.31602,
       "rms": 0.03688,
       "referenceRms": 0.033527,
       "rmsRatio": 1.1,
@@ -95,36 +95,36 @@
       "duration": 0.27
     },
     "sfx-arrow-release": {
-      "sha256": "eb123c1988ea05e272ea87287e7eb456abcaf60ce083903e6b99e4c3b6c0ba1d",
+      "sha256": "0e1126820d74beaf3a74962c1f021413e74b44c34523482aa0cc7a81237fae76",
       "guide": "Bowstring & wooden shaft. single string snap and aerodynamic departure. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.2455,
+      "peak": 0.1956,
       "rms": 0.03464,
       "referenceRms": 0.032991,
       "rmsRatio": 1.05,
       "duration": 0.285
     },
     "sfx-arrow-impact": {
-      "sha256": "58a7fc0443ce2eccb81e69aea86bd345b2ec361519d91c9fab8f533901588373",
+      "sha256": "59b643849da4975e15c607eae87d93e0aca9bac12f66ce1bcca7d8d053cc1896",
       "guide": "Bowstring & wooden shaft. crisp target contact and shaft ring. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.4,
-      "rms": 0.03233,
+      "peak": 0.37811,
+      "rms": 0.03372,
       "referenceRms": 0.030656,
-      "rmsRatio": 1.0546,
+      "rmsRatio": 1.1,
       "duration": 0.27
     },
     "sfx-spectral-release": {
-      "sha256": "e7c2beff7b62e092405b7b4578b9886598139faff70c4bbf1925e57f9e1602a7",
+      "sha256": "4b7d879840e732918e28a63dac15cac911f545ddbb491a67c8724f316896ed17",
       "guide": "Unstable ghostly presence. ascending airy supernatural motion. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.1696,
+      "peak": 0.18304,
       "rms": 0.03551,
       "referenceRms": 0.033822,
       "rmsRatio": 1.05,
       "duration": 0.285
     },
     "sfx-spectral-impact": {
-      "sha256": "b529ce18de70332b319d1d53aca019ed340cd03f3d7d13d635cb1c4d596c5ba5",
+      "sha256": "4e50393b0234dd426dbc4fb8fc47d4b557a7d0c612c742d14bf543fba98034d6",
       "guide": "Unstable ghostly presence. reversed contour on spiritual collision. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.25659,
+      "peak": 0.30173,
       "rms": 0.03404,
       "referenceRms": 0.030942,
       "rmsRatio": 1.1,
@@ -149,21 +149,21 @@
       "duration": 0.27
     },
     "sfx-holy-release": {
-      "sha256": "919ab97a34c60c85c21078150cea31d680c6b7a52e3ebe4eb64b28795a21180d",
+      "sha256": "bea6babeb1a305b52fd061ad5adaf3d743c2d180def4fde973bb690253c405d2",
       "guide": "Restrained luminous magic. short rising harmonic radiance. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.15582,
+      "peak": 0.19037,
       "rms": 0.03238,
       "referenceRms": 0.030842,
       "rmsRatio": 1.05,
       "duration": 0.285
     },
     "sfx-holy-impact": {
-      "sha256": "ef2c0e7d1d1d46a409004aa8dcca9048404d85d74e8452fa21c701cb4c26d2f9",
+      "sha256": "0e5bd8bd76d58816c0d3f0b6c89f72400a414c5f4602024a24e379c87cabb6f6",
       "guide": "Restrained luminous magic. bright consecrated contact, no choir. Short mono event; no voice, musical bed, generic boom or delayed contact.",
-      "peak": 0.34537,
-      "rms": 0.03584,
+      "peak": 0.4,
+      "rms": 0.03023,
       "referenceRms": 0.032581,
-      "rmsRatio": 1.1,
+      "rmsRatio": 0.9277,
       "duration": 0.27
     },
     "sfx-arcane-release": {
