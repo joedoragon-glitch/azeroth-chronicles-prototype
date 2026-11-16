@@ -228,39 +228,80 @@ test('Resection changes from converging double shot to charged flank interdictio
 });
 
 test('Charmed Skeletons preserve their normal/earned repertoire without a new saved slot', () => {
-  const { game, enemy } = encounter();
-  game.hero.class = 'rogue';
-  const u = game.unit('soldier', enemy.x + 35, enemy.y);
-  u.charmOrigin = { species: 'skeleton', sourceZone: 'vale',
-    typeId: 'enemy:skeleton:melee', typeName: 'Skeleton', role: 'soldier',
-    sourceEnemyId: 'old-skeleton' };
-  game.s.party = [u];
-  assert.equal(game.charmedSkeletonCraft(u, enemy, false, false), false,
-    'a copied origin without a matching capture receipt cannot release craft');
-  game.s.charmCaptures ||= {};
-  game.s.charmCaptures[u.id] = { ...u.charmOrigin };
-  assert(game.isCharmedCompanion(u), 'lawfully signed Skeleton identity is accepted');
-  assert(game.charmedSkeletonCraft(u, enemy, false, false),
-    'same non-slow Mortise geometry is usable while friendly');
-  assert.equal(game.s.projectiles.length, 0);
-  const r = game.unit('archer', enemy.x + 50, enemy.y);
-  r.charmOrigin = { species: 'skeleton', sourceZone: 'vale',
-    typeId: 'enemy:skeleton:ranged', typeName: 'Skeleton Bow Guard', role: 'archer',
-    sourceEnemyId: 'old-archer' };
-  game.s.party = [r];
-  delete game.s.charmCaptures[u.id];
-  game.s.charmCaptures[r.id] = { ...r.charmOrigin };
-  assert(game.isCharmedCompanion(r));
-  assert(game.charmedSkeletonCraft(r, enemy, false, false),
-    'Charmed Datum Line creates actual arrows, not remote automatic damage');
-  assert.equal(game.s.projectiles.length, 3);
-  assert(game.s.projectiles.every((p) => p.source === r.id && p.target === enemy.id));
-  const snapshot = game.snapshot();
-  Campaign.validate(snapshot);
-  assert(!JSON.stringify(snapshot).includes('_charmedSkeletonTurns'));
-  assert(!JSON.stringify(snapshot).includes('_skeletonCraftTurns'));
-});
+  // Use real Rogue capture admission and signed v4 provenance; merely setting
+  // charmOrigin on a hired Soldier/Archer is not a lawful Charmed companion.
+  const R = Campaign.rules, oldClass = Campaign.classes.rogue,
+    oldTalents = Campaign.talentProfiles.rogue;
+  Campaign.classes.rogue = { ...R.rogueHeroFoundation.stats, icon: '🔔' };
+  Campaign.talentProfiles.rogue = { ...R.rogueHeroFoundation.talents };
+  try {
+    const game = new Campaign('normal', 'rogue', () => 0.9);
+    game.s.party = [];
+    game.s.mercyTime = 0;
+    game.s.valeFieldAwakened = true;
+    game.zone().props = [];
+    game.zone().buildings = [];
+    Object.assign(game.hero, { x: 500, y: 500, order: null });
+    game.hero.gold = 10000;
+    const capture = (ranged) => {
+      const source = game.makeEnemy(
+        { species: 'skeleton', name: 'Skeleton', level: 1, hp: 10000,
+          damage: 0, gold: 0, xp: 0 },
+        { x: 585, y: 500 },
+      );
+      source.ranged = ranged;
+      source.aggro = true;
+      source.returning = false;
+      game.zone().enemies = [source];
+      game.hero.basicCd = 0;
+      game.s.rogueCharmRng = 12345;
+      const before = game.s.party.length;
+      assert.equal(game.cast(1, source.id, false, null, true), true,
+        'original Rogue skill admits authentic Skeleton capture');
+      assert.equal(game.s.party.length, before + 1);
+      const ally = game.s.party.at(-1);
+      assert(game.isCharmedCompanion(ally),
+        'real capture writes a matching native provenance receipt');
+      return ally;
+    };
+    const targetNear = (ally, offset) => {
+      const enemy = game.makeEnemy(
+        { species: 'skeleton', name: 'Skeleton', level: 4, hp: 10000,
+          damage: 50, gold: 0, xp: 0 },
+        { x: ally.x + offset, y: ally.y },
+      );
+      enemy.aggro = true;
+      game.zone().enemies = [enemy];
+      assert(game.line(ally, enemy), 'Charmed craft uses native line of sight');
+      return enemy;
+    };
+    const melee = capture(false), enemy = targetNear(melee, 35);
+    const receipt = game.s.charmCaptures[melee.id];
+    delete game.s.charmCaptures[melee.id];
+    assert.equal(game.charmedSkeletonCraft(melee, enemy, false, false), false,
+      'a missing capture receipt cannot unlock friendly estate craft');
+    game.s.charmCaptures[melee.id] = receipt;
+    assert(game.charmedSkeletonCraft(melee, enemy, false, false),
+      'genuinely Charmed Skeleton can perform Mortise contact');
+    assert.equal(game.s.projectiles.length, 0);
 
+    const ranged = capture(true), rangedTarget = targetNear(ranged, 50);
+    assert(game.charmedSkeletonCraft(ranged, rangedTarget, false, false),
+      'lawfully Charmed Skeleton Bow Guard can launch Datum arrows');
+    assert.equal(game.s.projectiles.length, 3);
+    assert(game.s.projectiles.every((p) =>
+      p.source === ranged.id && p.target === rangedTarget.id));
+    const snapshot = game.snapshot();
+    Campaign.validate(snapshot);
+    assert(!JSON.stringify(snapshot).includes('_charmedSkeletonTurns'));
+    assert(!JSON.stringify(snapshot).includes('_skeletonCraftTurns'));
+  } finally {
+    if (oldClass === undefined) delete Campaign.classes.rogue;
+    else Campaign.classes.rogue = oldClass;
+    if (oldTalents === undefined) delete Campaign.talentProfiles.rogue;
+    else Campaign.talentProfiles.rogue = oldTalents;
+  }
+});
 test('Suppressed, summoned and out-of-range actors cannot start new craft actions', () => {
   for (const mode of ['normal', 'nightmare']) {
     const { game, enemy } = encounter({ mode });
