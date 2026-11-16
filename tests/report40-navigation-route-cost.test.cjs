@@ -73,5 +73,58 @@ console.log('REPORT40_NAVIGATION_ROUTE_COST ' + JSON.stringify({
   samples: rows,
   evidence: 'native Node on GitHub runner, not physical Chromebook; report 40 did not record route durations',
 }));
+// A/B candidate: memoize exact blocked(x,y,zone,radius,terrainOnly)
+// answers ONLY within one synchronous navigationTarget call. No world state
+// may change during that call. This is test-local to assess whether terrain
+// probe repetition, rather than graph traversal, dominates route CPU time.
+// It does NOT persist collision decisions across frames or mutate scene data.
+const baselinePaths = [];
+for (const [x, y] of samples) {
+  Object.assign(g.hero, { x, y });
+  baselinePaths.push(g.navigationTarget({
+    id:'thorn-lead-4', x:goal[0], y:goal[1],
+  })?.path ?? null);
+}
+const memoRows = [];
+const countedBlocked = g.blocked;
+for (let i=0; i<samples.length; i++) {
+  const [x,y] = samples[i];
+  Object.assign(g.hero, { x, y });
+  const cache = new Map();
+  let hits = 0, misses = 0;
+  g.blocked = function (...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) { hits++; return cache.get(key); }
+    misses++;
+    const result = countedBlocked.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+  try {
+    const t = performance.now();
+    const result = g.navigationTarget({ id:'thorn-lead-4', x:goal[0], y:goal[1] });
+    const durationMs = performance.now()-t;
+    assert.deepEqual(result?.path ?? null, baselinePaths[i],
+      'per-call exact collision memo must preserve original route and waypoints');
+    memoRows.push({
+      from: [x,y], durationMs: +durationMs.toFixed(2),
+      cacheHits: hits, cacheMisses: misses, cacheSize: cache.size,
+      savedBlockedFraction: +(hits/Math.max(1,hits+misses)).toFixed(3),
+    });
+  } finally {
+    g.blocked = countedBlocked;
+  }
+}
+const memoDuration = memoRows.map(x=>x.durationMs).sort((a,b)=>a-b);
+console.log('REPORT40_NAVIGATION_MEMO_AB ' + JSON.stringify({
+  nativeMedianMs: calls[Math.floor(calls.length/2)],
+  memoMedianMs: memoDuration[Math.floor(memoDuration.length/2)],
+  memoFastestMs: memoDuration[0],
+  memoSlowestMs: memoDuration.at(-1),
+  samples: memoRows,
+  routeParity: 'exact paths across all seven source-derived samples',
+  scope: 'test-only synchronous per-route; never cached across gameplay frames',
+}));
+
 delete g.route; delete g.clearSegment; delete g.blocked;
 console.log('PASS reconstructed native Greenwood witness navigation route-cost attribution');
