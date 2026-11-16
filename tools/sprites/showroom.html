@@ -8,7 +8,131 @@
     <script src="showroom.js" defer></script>
   </head>
   <body>
-    <main>
+    <main id="library-root" class="library-shell">
+      <header class="library-intro">
+        <div class="library-topbar">
+          <a class="library-back" href="../../index.html">← Back to game</a>
+          <label class="library-language">Language / Idioma
+            <select id="asset-language" aria-label="Language / Idioma">
+              <option value="en">English</option><option value="es">Español</option>
+            </select>
+          </label>
+        </div>
+        <p class="library-eyebrow">So I Became the Dark Lord's Problem · Art reference</p>
+        <h1>Sprite Showroom</h1>
+        <p class="library-lede">The game’s visual artwork, in one place. Browse current procedural drawings, registered sprites and preserved review states without opening an adventure.</p>
+        <p id="library-count" class="library-intro-status" role="status">Loading artwork catalog…</p>
+      </header>
+      <div class="library-collection" role="group" aria-label="Artwork collection">
+        <span class="library-collection-title">Explore</span>
+        <button type="button" data-collection="current" aria-pressed="true">Current game artwork</button>
+        <button type="button" data-collection="dated" aria-pressed="false">Historical reviews</button>
+        <button type="button" data-collection="all" aria-pressed="false">All entries</button>
+        <p id="collection-explain" class="library-context">Current artwork is selected from today's game code. Historical reviews are dated references, not proof that a drawing still appears in the campaign.</p>
+      </div>
+      <section class="library-controls" aria-label="Find artwork">
+        <label class="library-search">Search artwork
+          <input id="asset-query" type="search" placeholder="Find Paladin, orchard, ferry, material…" autocomplete="off" />
+        </label>
+        <label>Category <select id="asset-group"><option value="">All categories</option></select></label>
+        <label id="asset-subcategory-wrap" hidden>Within category
+          <select id="asset-subcategory"><option value="">Every kind</option></select>
+        </label>
+        <label>Region <select id="asset-region"><option value="">Every region</option></select></label>
+        <label id="asset-area-wrap" hidden>Area or dungeon
+          <select id="asset-area"><option value="">Every area</option></select>
+        </label>
+        <label>In-game appearance
+          <select id="asset-kind">
+            <option value="">All appearances</option>
+            <option value="raster">Uses a sprite</option>
+            <option value="procedural">Procedural drawing</option>
+            <option value="retained">Procedural + retained sprite</option>
+          </select>
+        </label>
+      </section>
+      <details class="library-help">
+        <summary>How to browse and compare artwork</summary>
+        <p><strong>Current artwork</strong> is the default. Pick a category, region, or appearance, then narrow further only if needed. The search also recognizes exact asset IDs, artwork types, tags, and area names.</p>
+        <p><strong>Game selection</strong> uses the renderer's current choice for the selected state. <strong>Procedural</strong> shows the code-drawn version, even where a sprite normally takes precedence. <strong>Sprite</strong> shows a registered or retained image, when one exists. <strong>Compare</strong> puts both side by side.</p>
+        <p><strong>Studio close-up</strong> enlarges the art for inspection; 100%, 150%, and 200% are zoom settings for isolated artwork, not proof of its appearance inside a full game scene. Day/night adds a study tint; it does not reproduce every environmental light or Pixi effect.</p>
+        <p>Open <strong>How this artwork is defined</strong> to see the actual renderer input, documented design decisions, source files and matching code lines. The showroom is read-only. Copy a link or note to discuss an asset without changing the game.</p>
+      </details>
+      <div class="library-layout">
+        <section class="library-browser" aria-labelledby="browse-heading">
+          <div class="library-browse-header">
+            <div><h2 id="browse-heading">Browse artwork</h2><p id="asset-results" role="status">Loading…</p></div>
+            <button id="asset-reset" type="button" class="library-quiet">Clear filters</button>
+          </div>
+          <div id="asset-grid" class="library-grid" role="list" aria-label="Visual asset catalog"></div>
+          <button id="asset-more" type="button" class="library-more" hidden>Show more artwork</button>
+          <p class="library-footnote">Historical reference fixtures are dated. Their current previews use today’s drawing code but do not independently prove that a campaign scene still contains that exact state.</p>
+        </section>
+        <section id="asset-inspector" class="library-inspector" aria-label="Selected asset inspection">
+          <p class="library-eyebrow">Selected artwork</p>
+          <h2 id="asset-title">Choose an asset</h2>
+          <p id="asset-selection" class="library-selection">The current renderer choice for this state appears here.</p>
+          <div id="asset-tags" class="library-tags" aria-label="Artwork tags"></div>
+          <div id="asset-view-buttons" class="library-tabs" role="group" aria-label="Artwork views">
+            <button type="button" data-view="current" aria-pressed="true">Game selection</button>
+            <button type="button" data-view="procedural" aria-pressed="false">Procedural</button>
+            <button type="button" data-view="raster" aria-pressed="false">Sprite</button>
+            <button type="button" data-view="compare" aria-pressed="false">Compare</button>
+          </div>
+          <div id="asset-preview-grid" class="library-preview-grid">
+            <figure class="library-stage">
+              <canvas id="asset-preview" width="720" height="510" role="img" aria-label="Selected artwork"></canvas>
+              <figcaption id="asset-caption">Current game artwork</figcaption>
+            </figure>
+            <figure class="library-stage" id="asset-secondary-frame" hidden>
+              <canvas id="asset-secondary" width="720" height="510" role="img" aria-label="Comparison artwork"></canvas>
+              <figcaption id="asset-secondary-caption">Alternative artwork</figcaption>
+            </figure>
+          </div>
+          <p id="asset-preview-note" class="library-preview-note" role="status">This is an isolated asset preview—not a complete in-world screenshot.</p>
+          <p id="asset-view-help" class="library-view-help">Select Game selection to see what the renderer uses. Other views reveal the code drawing and any retained sprite.</p>
+          <div class="library-detail-controls">
+            <label>Appearance or state <select id="asset-state"></select></label>
+            <label>Sprite revision <select id="asset-revision"></select></label>
+            <label>Studio lighting <select id="asset-light"><option value="day">Day</option><option value="night">Night</option></select></label>
+            <label>View scale <select id="asset-scale"><option value="close" selected>Studio close-up</option><option value="1">100% game</option><option value="1.5">150% game</option><option value="2">200% game</option></select></label>
+          </div>
+          <div class="library-actions">
+            <button type="button" id="asset-prev">← Previous</button>
+            <button type="button" id="asset-next">Next →</button>
+            <button type="button" id="asset-copy" class="library-primary">Copy asset link</button>
+          </div>
+          <details class="library-details library-source-details" id="asset-source-details">
+            <summary>How this artwork is defined — code and design</summary>
+            <p class="library-source-explanation">The exact current renderer input appears below. Historical design notes are dated evidence, not necessarily the newest artistic decision. Source excerpts come directly from this site's game code.</p>
+            <div id="asset-design-description"></div>
+            <h3>Exact renderer input</h3>
+            <p class="library-source-explanation">These are the actual fields supplied to the code drawing for the selected inspection state. They are not a generated description.</p>
+            <pre id="asset-definition" tabindex="0"></pre>
+            <h3>Current drawing code</h3>
+            <p class="library-source-explanation">Choose a source module to read matching code lines. Complex artwork may be composed across multiple functions; use the complete source link for the rest.</p>
+            <label for="asset-source-file">Painter / renderer file</label>
+            <select id="asset-source-file"></select>
+            <button id="asset-read-code" type="button">Show matching code</button>
+            <p id="asset-source-status" role="status"></p>
+            <pre id="asset-source-excerpt" tabindex="0" hidden></pre>
+            <a id="asset-source-full" target="_blank" rel="noopener">Open full source file</a>
+          </details>
+          <details id="asset-metadata-details" class="library-details">
+            <summary>Identity, sources and technical details</summary>
+            <div id="asset-metadata"></div>
+          </details>
+          <details id="asset-note-details" class="library-details">
+            <summary>Write a note for our art review</summary>
+            <label for="asset-note">Your observation (not automatically submitted)</label>
+            <textarea id="asset-note" rows="3" placeholder="What should we keep, change or compare?"></textarea>
+            <button id="asset-copy-note" type="button">Copy review note</button>
+          </details>
+        </section>
+      </div>
+      <footer class="library-footer">This showroom is read-only. It never opens, alters or replaces game saves. Visual acceptance and publishing remain separate decisions.</footer>
+    </main>
+    <main id="single-review" hidden>
       <h1 id="name">Sprite comparison</h1>
       <p id="status">Loading comparison…</p>
       <p>
