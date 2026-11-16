@@ -2,15 +2,38 @@ name: Sprite Showroom focused browser acceptance
 on:
   pull_request:
     paths:
+      # Keep the one showroom's checks aligned with its actual index inputs.
+      - '.github/workflows/sprite-showroom-acceptance.yml'
       - 'tools/sprites/showroom.*'
       - 'scripts/sprite-showroom-index.cjs'
+      - 'scripts/sprite-showroom-world.cjs'
       - 'scripts/build.cjs'
       - 'tests/sprite-showroom-*'
+      - 'tests/visual-asset-inventory.test.cjs'
+      # Both isolated painter output and authored world fixtures affect cards.
       - 'src/prototype/visuals.js'
       - 'src/prototype/sprites.js'
       - 'src/prototype/sprite-format.js'
-      - 'assets/sprites/manifest.json'
-      - 'assets/materials/manifest.json'
+      - 'src/prototype/data.js'
+      - 'src/prototype/rules.js'
+      - 'src/prototype/engine.js'
+      - 'src/prototype/world.js'
+      - 'src/prototype/greenwood.js'
+      - 'src/prototype/highlands.js'
+      - 'src/prototype/greenwood-landscape.js'
+      - 'src/prototype/greenwood-interiors.js'
+      - 'src/prototype/dark-crown-landscape.js'
+      - 'src/prototype/hero-presentation.js'
+      - 'src/prototype/materials.js'
+      # A changed approved sprite, master, material or handoff must rerun QA.
+      - 'assets/sprites/**'
+      - 'assets/materials/**'
+      - 'tools/sprites/specifications.json'
+      - 'tools/sprites/approved.json'
+      - 'tools/sprites/current-design-decisions.json'
+      - 'tools/sprites/materials/approved.json'
+      - 'tools/sprites/design-handoffs/**'
+      - 'tools/visual-review/approved-art-pass/handoff-index.json'
   workflow_dispatch:
 permissions:
   contents: read
