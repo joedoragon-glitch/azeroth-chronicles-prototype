@@ -7504,8 +7504,12 @@
           // A small drift is reasonable for a passive guide; larger drift
           // gets one more bounded attachment attempt instead of a stale line.
           if (Math.hypot(game.hero.x - work.attachAt.x,
-                         game.hero.y - work.attachAt.y) > 120 &&
-              work.reattachAttempts++ < 2) {
+                         game.hero.y - work.attachAt.y) > 120) {
+            if (work.reattachAttempts >= 2) {
+              work.finished = [];
+              break;
+            }
+            work.reattachAttempts++;
             work.attachAt = { x: game.hero.x, y: game.hero.y };
             work.iterator = reattachGuidePath(work.path, work.attachAt);
             continue;
