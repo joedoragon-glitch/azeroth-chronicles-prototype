@@ -13,11 +13,11 @@ assert.equal(CUES.length,8);
 assert.deepEqual(CUES,book.cues);
 assert.equal(new Set(CUES.map(c=>c.id)).size,8);
 assert.deepEqual([...byId].sort(),CUES.map(c=>c.id).sort());
-assert.equal(Object.keys(manifest.director.events).length,99);
+assert.equal(Object.keys(manifest.director.events).length,101);
 const integrated=new Set(['rogue-bell-basic','rogue-bell-emphatic','lifebinder-cold-ring','quest-complete',
-  'charmed-wraith-heritage','barracks-complete']);
-assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,36,
-  'Original 30 Phase 1 and exactly six Phase 2 draft effects');
+  'charmed-wraith-heritage','barracks-complete','mage-orb-release','thorn-tripwire']);
+assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,38,
+  'Original 30 Phase 1 and exactly eight Phase 2 draft effects');
 const signalHashes=new Set(),rmsValues=new Set();
 for(const cue of CUES){
   const {bytes,metrics}=renderWav(cue);
@@ -58,8 +58,8 @@ const accepted=[
   [{type:'rogueBellSkill1',class:'rogue',form:'tap'},'rogue-bell-basic'],
   [{type:'rogueBellSkill1',class:'rogue',form:'charged'},'rogue-bell-emphatic'],
   [{type:'rogueBellPerformance',class:'rogue',slot:8,form:'charged'},'rogue-bell-emphatic'],
-  [{type:'heroSkillCast',class:'mage',slot:1,automaticBasic:true,charged:false},'mage-orb-release'],
-  [{type:'petSkill',petFamily:'thorn',slot:2,stage:'release',hits:0},'thorn-tripwire'],
+  [{type:'heroProjectileFlight',class:'mage',slot:1,style:'magic',charged:false},'mage-orb-release'],
+  [{type:'spell',actor:'companion',role:'pet',special:'pet-skill',petFamily:'thorn',slot:2,hits:2},'thorn-tripwire'],
   [{type:'spell',actor:'companion',kind:'charmHeritage',species:'wraith'},'charmed-wraith-heritage'],
   [{type:'enemyVfx',family:'crypt',skillId:'boss/crypt/4',stage:'release'},'lifebinder-cold-ring'],
   [{type:'questComplete',id:'quest-1'},'quest-complete'],
@@ -68,10 +68,15 @@ const accepted=[
 for(const [event,id] of accepted)assert.equal(identify(event)?.id,id,JSON.stringify(event));
 const rejected=[
   null,{}, {type:'quest'}, {type:'constructionProgress'}, {type:'barracksUpgrade'},
-  {type:'rogueBellBasic',class:'paladin'}, {type:'heroSkillCast',class:'mage',slot:1,automaticBasic:false},
-  {type:'heroSkillCast',class:'mage',slot:1,automaticBasic:true,charged:true},
+  {type:'rogueBellBasic',class:'paladin'}, {type:'heroSkillCast',class:'mage',slot:1,automaticBasic:true,charged:false},
+  {type:'heroProjectileFlight',class:'mage',slot:1,style:'beam',charged:false},
+  {type:'heroProjectileFlight',class:'mage',slot:1,style:'magic',charged:true},
+  {type:'heroProjectileFlight',class:'ranger',slot:1,style:'arrow',charged:false},
+  {type:'petSkill',petFamily:'thorn',slot:2,stage:'release',hits:0},
   {type:'petSkill',petFamily:'thorn',slot:2,stage:'impact',hits:2},
-  {type:'petSkill',petFamily:'crypt',slot:2,stage:'release'},
+  {type:'spell',actor:'companion',role:'pet',special:'pet-skill',petFamily:'thorn',slot:2,hits:0},
+  {type:'spell',actor:'companion',role:'pet',special:'pet-skill',petFamily:'crypt',slot:2,hits:2},
+  {type:'spell',actor:'companion',role:'pet',special:'pet-skill',petFamily:'thorn',slot:1,hits:2},
   {type:'spell',actor:'companion',kind:'charmHeritage',species:'stalker'},
   {type:'charmHeritage',species:'wraith',stage:'release'},
   {type:'enemyVfx',family:'crypt',skillId:'boss/crypt/4',stage:'windup'},
@@ -82,7 +87,8 @@ for(const event of rejected)assert.equal(identify(event),null,'false success/con
 const source=(p)=>fs.readFileSync(path.join(root,p),'utf8');
 const evidence=[
   ['src/prototype/hero-combat.js',["this.event('rogueBellBasic'","this.event('rogueBellSkill1'","this.event('rogueBellPerformance'","this.event('heroSkillCast'"]],
-  ['src/prototype/party-pets.js',["this.event('petSkill'","this.petSkillEvent(u, target, slot, 0, 'release')"]],
+  ['src/prototype/combat.js',["this.event('heroProjectileFlight'"]],
+  ['src/prototype/party-pets.js',["this.event('petSkill'","this.petSkillEvent(u, target, slot, 0, 'release')","hits, // real contacted victims"]],
   ['src/prototype/party.js',["this.event('spell', { actor: 'companion', kind: 'charmHeritage'"]],
   ['src/prototype/enemy-vfx.js',["'boss/' + family + '/' + index"]],
   ['src/prototype/data.js',["Algor Mortis: a warned expanding cold wave"]],
@@ -94,4 +100,4 @@ for(const [p,needles] of evidence)for(const needle of needles)
   assert(source(p).includes(needle),'Source receipt no longer supports '+p+': '+needle);
 assert(!source('scripts/site-assets.cjs').includes("sfx-phase2-previews"),
   'Unaccepted preview bank must not be packaged by the site asset allowlist');
-console.log('PASS SFX Phase 2 isolated pilot: eight original deterministic WAVs, headers/peaks/tails, distinct hashes, exact source-affinity routes, blocked outcomes, no live registration');
+console.log('PASS SFX Phase 2 eight recorded draft cues: reproducible original WAVs, source-owned Mage flight and Thorn contact, 30 protected Phase 1 IDs and no public registration');

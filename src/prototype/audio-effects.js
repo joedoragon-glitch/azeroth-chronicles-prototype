@@ -341,6 +341,14 @@
         if (type === 'spell' && e.actor === 'companion' &&
             e.kind === 'charmHeritage' && e.species === 'wraith' &&
             this.playSoundEvent('effect.charmedWraithHeritage', e)) return;
+        // Tripwire has a real post-contact pet SPELL. Replace its one
+        // generic cast sound only on landed contact. Visual petSkill remains
+        // silent, and failed/blocked actions never produce a success cue.
+        if (type === 'spell' && e.actor === 'companion' &&
+            e.role === 'pet' && e.special === 'pet-skill' &&
+            e.petFamily === 'thorn' && e.slot === 2 && e.hits > 0 &&
+            now - this.lastWarning >= 0.4 &&
+            this.playSoundEvent('effect.thornTripwire', e)) return;
         if (e.style === 'cargo' && type === 'projectileLaunch' && !e.stage) this.duck(0.4);
         const actorKey =
             e.actor === 'hero'

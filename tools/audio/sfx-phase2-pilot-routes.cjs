@@ -15,16 +15,17 @@ function identify(event){
     existing='Rogue procedural bell shell/rattle';
     owner='audio-hero.js:heroSkillEffect Rogue branch';
     policy='replace_when_warm_else_synthesize';
-  }else if(event.type==='heroSkillCast'&&event.class==='mage'&&
-    event.slot===1&&event.automaticBasic===true&&event.charged!==true){
-    id='mage-orb-release';existing='hero arcane combo procedural foley';
-    owner='audio-hero.js:heroSkillEffect / hero-combat.js committed automatic basic';
-    policy='replace_one_release_not_contact';
-  }else if(event.type==='petSkill'&&event.petFamily==='thorn'&&
-    event.slot===2&&event.stage==='release'){
-    id='thorn-tripwire';existing='generic companion skill cast; petSkill currently visual-only';
-    owner='party-pets.js:petSkillEvent; explicit one-owner replacement required';
-    policy='replace_generic_cast_on_commit_no_impact_assumption';
+  }else if(event.type==='heroProjectileFlight'&&event.class==='mage'&&
+    event.slot===1&&event.style==='magic'&&event.charged!==true){
+    id='mage-orb-release';existing='physical arcane combo flight foley';
+    owner='combat.js:heroProjectileFlight / audio-hero.js:heroSkillEffect';
+    policy='replace_actual_orb_departure_not_cast_or_manual_beam';
+  }else if(event.type==='spell'&&event.actor==='companion'&&
+    event.role==='pet'&&event.special==='pet-skill'&&event.petFamily==='thorn'&&
+    event.slot===2&&event.hits>0){
+    id='thorn-tripwire';existing='one generic spell on actual pet contact';
+    owner='party-pets.js:petSkillContact / audio-effects.js:renderEffect';
+    policy='replace_one_landed_cast_keep_visual_petSkill_silent';
   }else if(event.type==='spell'&&event.actor==='companion'&&
     event.kind==='charmHeritage'&&event.species==='wraith'){
     id='charmed-wraith-heritage';existing='one magicCast from spell';

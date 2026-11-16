@@ -10,9 +10,9 @@ const compiled=require('../src/prototype/audio-library.js');
 validateCatalog(manifest);
 assert.deepEqual(compiled,runtimeCatalog(manifest),'Runtime sound catalog must match exact recorded manifest');
 const ids=['rogue-bell-basic','rogue-bell-emphatic','lifebinder-cold-ring','quest-complete',
-  'charmed-wraith-heritage','barracks-complete'];
-assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,36);
-assert.equal(Object.keys(manifest.director.events).length,99);
+  'charmed-wraith-heritage','barracks-complete','mage-orb-release','thorn-tripwire'];
+assert.equal(Object.values(manifest.assets).filter(a=>a.kind==='effect').length,38);
+assert.equal(Object.keys(manifest.director.events).length,101);
 for(const id of ids){
   const a=manifest.assets['sfx-phase2-'+id];
   assert(a && a.kind==='effect' && a.managedBy==='sfx-phase2-pilot-dsp');
@@ -107,4 +107,63 @@ assert.equal(heard.length,beforeHeritage+1,'Paired visual-only heritage must not
 a.ctx.currentTime+=.4;
 a.effect({type:'construction',id:'barracks-1'});
 assert.equal(heard.at(-1)?.id,'sfx-phase2-barracks-complete','Actual Barracks completion sound');
-console.log('PASS six actual Phase 2 draft audio routes; 30 Phase 1 bindings; Rogue warm/cold; boss no fake impact; single quest, Charmed heritage and Barracks feedback');
+// A physical Mage automatic orb emits heroProjectileFlight only once after
+// projectile creation. Skill-1 Tap has beam style and must not alias this cue.
+a.ctx.currentTime+=.41;
+const beforeMage=heard.length,mageSynth=fallbackNotes;
+const mageOrb={type:'heroProjectileFlight',actor:'hero',class:'mage',slot:1,
+  style:'magic',charged:false};
+a.effect(mageOrb);
+assert.equal(heard.length,beforeMage+1,'Mage physical orb departure owns one recorded cue');
+assert.equal(heard.at(-1)?.id,'sfx-phase2-mage-orb-release');
+assert.equal(fallbackNotes,mageSynth,'Warm Mage orb must not double with synthesized foley');
+a.ctx.currentTime+=.4;
+const beforeManual=heard.length;
+a.effect({...mageOrb,style:'beam'});
+assert.equal(heard.length,beforeManual,'Manual Skill-1 beam cannot claim auto orb recording');
+a.ctx.currentTime+=.4;
+a.effect({type:'heroSkillCast',actor:'hero',class:'mage',slot:1,
+  automaticBasic:true,charged:false});
+assert.equal(heard.length,beforeManual,'Early cast intent is not an orb release');
+a.ctx.currentTime+=.4;
+a.effect({...mageOrb,charged:true});
+assert.equal(heard.length,beforeManual,'Charged beam does not play the uncharged orb identity');
+const mageCold=audio();
+mageCold.mixScene='world';
+mageCold.playSoundEvent=()=>false;
+let mageFallback=0;
+mageCold.noiseBurst=()=>mageFallback++;
+mageCold.tone=()=>mageFallback++;
+mageCold.sweep=()=>mageFallback++;
+mageCold.effect(mageOrb);
+assert(mageFallback>0,'Unwarmed physical Mage flight retains procedural fallback');
+
+// Actual Thornpup Skill-2 already has a single post-contact spell.
+// The companion's visual-only petSkill release and impact must stay silent.
+a.ctx.currentTime+=.4;
+const beforeThorn=heard.length,thornSynth=fallbackNotes;
+const thorn={type:'spell',actor:'companion',role:'pet',special:'pet-skill',
+  petFamily:'thorn',slot:2,hits:2,skill:'Tripwire'};
+a.effect(thorn);
+assert.equal(heard.length,beforeThorn+1,'Genuinely landed Tripwire gets exactly one sound');
+assert.equal(heard.at(-1)?.id,'sfx-phase2-thorn-tripwire');
+assert.equal(fallbackNotes,thornSynth,'Warm Tripwire replaces generic magicCast foley');
+a.effect({type:'petSkill',petFamily:'thorn',slot:2,stage:'release',hits:0});
+a.effect({type:'petSkill',petFamily:'thorn',slot:2,stage:'impact',hits:2});
+assert.equal(heard.length,beforeThorn+1,'Visual pet skill must not duplicate audio');
+a.ctx.currentTime+=.4;
+a.effect({...thorn,hits:0});
+a.ctx.currentTime+=.4;
+a.effect({...thorn,slot:1});
+assert.equal(heard.filter(x=>x.id==='sfx-phase2-thorn-tripwire').length,1,
+  'A blocked or wrong-slot pet spell cannot use recorded Tripwire');
+const thornCold=audio();
+thornCold.mixScene='world';
+thornCold.playSoundEvent=()=>false;
+let thornFallback=0;
+thornCold.noiseBurst=()=>thornFallback++;
+thornCold.tone=()=>thornFallback++;
+thornCold.sweep=()=>thornFallback++;
+thornCold.effect(thorn);
+assert(thornFallback>0,'Cold Tripwire must preserve previous pet magicCast sound');
+console.log('PASS eight draft audio routes and all 30 Phase 1 originals: Mage physical flight, landed Tripwire, cold fallback, no ghost impacts or doubled spell voices');

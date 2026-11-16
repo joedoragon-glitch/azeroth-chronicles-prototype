@@ -170,6 +170,12 @@
           previous = this.sourcePriority;
         this.sourcePriority = 1;
         try {
+          // The Mage's actual orb departs at heroProjectileFlight, after the
+          // physical projectile exists. The manual Skill-1 beam is a separate
+          // shape. Critical warnings keep the existing softer synth.
+          if (flight && e.class === 'mage' && slot === 1 &&
+              e.style === 'magic' && !event.charged && quiet === 1 &&
+              this.playSoundEvent('effect.mageOrbRelease', event)) return true;
           // Optional future recorded replacement; cold/missing recordings retain synthesis.
           if (
             this.playSoundEvent(

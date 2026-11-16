@@ -2926,6 +2926,44 @@
         "id": "barracks-complete",
         "renderer": "tools/audio/sfx-phase2-pilot.cjs"
       }
+    },
+    "sfx-phase2-mage-orb-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-mage-orb-release.wav",
+      "duration": 0.39,
+      "sha256": "235f2820fc535e770d114eff263e65d1abd4e36d1ce7af7fdae41db4686bd726",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Mage Arcane Combo — Physical Orb Release",
+      "generationGuide": "One actual Mage automatic-basic magic orb heroProjectileFlight; never early cast or manual Skill1 beam.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "mage-orb-release",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-thorn-tripwire": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-thorn-tripwire.wav",
+      "duration": 0.37,
+      "sha256": "04f95858364fa31e2394e52bb03970cb489943175d0fd85531146a568372d68b",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "TRUE Thornpup — Tripwire Contact",
+      "generationGuide": "One real landed contact pet spell for Thornpup Skill2; visual petSkill remains silent and cold decodes keep generic foley.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "thorn-tripwire",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
     }
   },
   "director": {
@@ -3635,6 +3673,28 @@
           "minGap": 0.08,
           "bus": "effects"
         }
+      ],
+      "effect.mageOrbRelease": [
+        {
+          "asset": "sfx-phase2-mage-orb-release",
+          "when": {
+            "class": "mage"
+          },
+          "gain": 0.39,
+          "minGap": 0.055,
+          "bus": "effects"
+        }
+      ],
+      "effect.thornTripwire": [
+        {
+          "asset": "sfx-phase2-thorn-tripwire",
+          "when": {
+            "role": "pet"
+          },
+          "gain": 0.42,
+          "minGap": 0.11,
+          "bus": "effects"
+        }
       ]
     },
     "eventGuides": {
@@ -3736,7 +3796,9 @@
       "effect.rogueBellBasic": "Original small spherical jingle-bell physical release, no generic musical handbell tone or enemy-by-enemy repetition.",
       "effect.rogueBellEmphatic": "Same single spherical jingle-bell with deliberate emphatic repeated clapper ticks for legal charged/third combo releases.",
       "effect.lifebinderAlgorRelease": "Lifebinder Algor Mortis release is a cold Slow wave, not HP damage or contact. Warning remains authoritative.",
-      "effect.charmedWraithHeritage": "One genuine Charmed Wraith heritage spell cast; replaces generic magicCast, never an added voice to the visual-only charmHeritage receipt."
+      "effect.charmedWraithHeritage": "One genuine Charmed Wraith heritage spell cast; replaces generic magicCast, never an added voice to the visual-only charmHeritage receipt.",
+      "effect.mageOrbRelease": "Physical auto basic Mage orb flight, not manual beam or cast admission; use quiet synth near critical warnings.",
+      "effect.thornTripwire": "TRUE Thornpup Skill2's one genuine landed pet spell; visual petSkill receipt remains silent."
     },
     "environment": {
       "combatGain": 0.45,

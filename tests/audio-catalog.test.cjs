@@ -32,6 +32,7 @@ const copy = (v) => structuredClone(v),
     'sfx-phase2-rogue-bell-basic', 'sfx-phase2-rogue-bell-emphatic',
     'sfx-phase2-lifebinder-cold-ring', 'sfx-phase2-quest-complete',
     'sfx-phase2-charmed-wraith-heritage', 'sfx-phase2-barracks-complete',
+    'sfx-phase2-mage-orb-release', 'sfx-phase2-thorn-tripwire',
   ]);
   assert([...phase2PilotEffects].every(id => production.assets[id]?.managedBy === 'sfx-phase2-pilot-dsp'));
   assert(

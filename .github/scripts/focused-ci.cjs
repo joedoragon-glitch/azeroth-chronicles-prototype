@@ -326,7 +326,7 @@ const groups = [
   {
     // The draft Phase 2 recorded routes must exercise source ownership,
     // decoded-vs-cold fallback and no duplicate success sounds.
-    match: /^src\/prototype\/audio-(?:hero|enemy|effects)\.js$|^assets\/audio\/effects\/sfx-phase2-/,
+    match: /^src\/prototype\/(?:audio-(?:hero|enemy|effects)|party-pets)\.js$|^assets\/audio\/effects\/sfx-phase2-/,
     tests: [TEST + 'audio-sfx-phase2-integration.test.cjs'],
   },
   {
