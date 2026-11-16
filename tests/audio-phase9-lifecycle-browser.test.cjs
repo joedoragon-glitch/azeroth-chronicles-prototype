@@ -64,7 +64,15 @@ const server = http.createServer((req, res) => {
         'normal/standard setup exposes the real Choose Hero action');
       await chooseHero.click();
       await page.locator('#modal-actions').getByRole('button', { name: /Paladin/ }).first().click();
-      await page.waitForFunction(() => window.Prototype?.started && !document.querySelector('#title-screen:not([hidden])'), null, { timeout: 60000 });
+      // started=true precedes completion of the asynchronous arrival scene.
+      // A real playable transition also dismisses the loading and menu
+      // surfaces. Checking audio before this boundary races the sanctioned
+      // startup pause/resume, and can produce a false suspended-audio failure.
+      await page.waitForFunction(() => window.Prototype?.started &&
+        document.querySelector('#title-screen')?.hidden &&
+        document.querySelector('#scene-loading')?.hidden &&
+        document.querySelector('#modal')?.hidden,
+        null, { timeout: 90000 });
       await page.waitForFunction(() => {
         const a = Prototype.audio;
         return a.ctx?.state === 'running' && a.context?.millhavenTown &&
