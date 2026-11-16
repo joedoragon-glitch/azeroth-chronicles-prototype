@@ -447,9 +447,11 @@
             this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
           ),
           // Match the existing Rogue move's legal reach; do not increase it.
-          moveRange =
-            (e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340) *
-            R.balance.enemySpecialReachMultiplier,
+          moveRange = e.type === 'boss'
+            ? R.enemyRogueGeometry.acquisition.boss
+            : e.captain || e.roomCaptain
+              ? R.enemyRogueGeometry.acquisition.captain
+              : R.enemyRogueGeometry.acquisition.other,
           candidates = this.combatTargets().filter(
             (u) =>
               u.hp > 0 &&
