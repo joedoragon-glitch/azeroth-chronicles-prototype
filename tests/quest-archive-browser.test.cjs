@@ -316,14 +316,6 @@ async function resumeLoadedCampaign(page) {
       });
       assert.deepEqual(restored, { pact: true, evidence: true });
       await resumeLoadedCampaign(page);
-      // A restored campaign remains intentionally inactive at the title;
-      // game saves are correctly refused until Continue Adventure is chosen.
-      await page.locator('#title-continue').click();
-      await page.waitForFunction(
-        () => window.Prototype?.started && document.querySelector('#title-screen').hidden,
-        null,
-        { timeout: 90000 },
-      );
       await page.evaluate(() => {
         const c = Prototype.game;
         if (c.zoneId !== 'archive') c.enter('archive');
@@ -352,8 +344,6 @@ async function resumeLoadedCampaign(page) {
         null,
         { timeout: 20000 },
       );
-      await page.locator('#title-continue').click();
-      await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       assert(
         !(await page.evaluate(() => Prototype.game.keeperAvailable())),
         'Reload preserves escape',
@@ -384,8 +374,6 @@ async function resumeLoadedCampaign(page) {
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.true.archive);
       await resumeLoadedCampaign(page);
-      await page.locator('#title-continue').click();
-      await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
         const c = Prototype.game;
         c.tick = () => {};
