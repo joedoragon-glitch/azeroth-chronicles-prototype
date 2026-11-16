@@ -97,6 +97,7 @@ assert.equal(P.resolveMenuDensity({ mode: 'desktop', width: 720, height: 900 }),
 assert.equal(P.resolveMenuDensity({ preference: 'standard', mode: 'phone', width: 600, height: 350 }), 'standard');
 assert.equal(P.resolveMenuDensity({ preference: 'compact', mode: 'desktop', width: 1920, height: 1080 }), 'compact');
 const densitySettings = P.init(env);
+densitySettings.select('phone'); // Test safe-area decisions in the supported landscape presentation.
 assert.equal(densitySettings.menuDensity, 'auto');
 const initialAttr = attributes.get('data-menu-density-effective');
 densitySettings.updateMenuDensity({ width: 844, height: 390, top: 0, right: 0, bottom: 0, left: 0 });
