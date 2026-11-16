@@ -2119,6 +2119,10 @@
       resolveAttack(e) {
         const a = e.telegraph;
         if (!a) return;
+        if (a.skeletonCraft) {
+          this.resolveSkeletonCraft(e, a);
+          return;
+        }
         if (a.selfDefense && e.family === 'crypt' && a.index === 5) {
           this.worldBossRelease(e, a);
           e.anastylosis = this.worldBossEffect(a, a.defenseDuration, 'wardDuration');
