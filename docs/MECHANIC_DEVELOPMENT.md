@@ -82,6 +82,14 @@ The [normal workflow](../.github/workflows/focused-deploy.yml) selects focused c
 
 **Reuse valid evidence:** disconnection or a new chat does not invalidate tests on unchanged relevant inputs. Changes to code, tests, dependencies or build inputs can invalidate those results. A focused green run still cannot certify the full game or a physical device.
 
+### Navigation/collision acceptance appropriate to an action RPG (16 November 2026)
+
+The owner approved a **fitness-for-play** standard for this single-player action RPG rather than an RTS-level exact route standard. Consult the [canonical gameplay decision](DECISIONS.md#navigation-quality) before editing AI/pathfinding tests. For optional waypoint/guide calculations, the route may differ from old BFS or be somewhat longer: assess destination reachability, collision-safe segments, useful presentation, cancellation, progression/transport preservation and bounded frame cost. Do **not** demand exact intermediate waypoint equality unless that order is an authored/scripted mechanic or compatibility requirement.
+
+The same philosophy can inform *future* actor optimizations, but a map guide is not an enemy, escort, companion, summon, pet or charmed creature. For each actual system, retain meaningful pursuit/attack/formation/escort behavior, wall collision and route reliability, plus fairness and accessibility. A route that looks less elegant is acceptable; a boss trapped behind scenery or an escort that cannot reach its objective is not. Lowering an assertion is justified only after verifying it tested an unnecessary ideal, not a real gameplay contract. Preserve targeted original regressions and treat changed behavior explicitly.
+
+Measure representative native costs, practical frame-time behavior, and regression risk rather than optimizing every historical theoretical path case. **No blanket project-wide collision rewrite or new performance sweep is authorized by this standard.** Earlier companion/boss/pet/charms audits are deliberately deferred to a separate scoped workstream; current Report #40 only covers the optional guide candidate in [issue #886](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/886). Existing broad-test, merge, Pages/PWA and owner-device gates remain in force.
+
 ### Phase gate triage: genuine blocker or independent follow-up?
 
 This is the **default for every multi-stage development plan**, not a soundtrack-only exception. Apply the [standing repository blocker/deferral policy](../AGENTS.md#multi-phase-execution-classify-blockers-defer-safely-keep-moving-31-october-2026) as soon as a failure or unexpected issue starts delaying a stage.
