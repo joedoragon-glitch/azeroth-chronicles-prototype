@@ -1,0 +1,92 @@
+# SIBDLP Phase 1: 30 existing SFX IDs. Isolated integration; never deploy.
+name: SIBDLP SFX Phase 1 replacement, rollback, PWA checks (NO deploy)
+on:
+  push:
+    branches:
+      - audio/sfx-phase1-30-replacements-20261116
+    paths:
+      - .github/workflows/sfx-phase1-integration.yml
+      - tools/audio/sfx-phase1-master.py
+      - tools/audio/sfx-phase1-version.cjs
+      - tests/audio-sfx-phase1-quality.test.py
+      - tests/audio-audition-browser.test.cjs
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrated-audio:
+    name: Exact 30-cue render, archive, manifest, browser & release safety
+    if: github.ref == 'refs/heads/audio/sfx-phase1-30-replacements-20261116'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned audio synthesis and local test dependencies
+        run: |
+          npm ci --ignore-scripts
+          python -m pip install --disable-pip-version-check --quiet numpy==2.3.5 scipy==1.17.0
+          node scripts/vendor-pixi.cjs --ensure
+          npx playwright install --with-deps chromium
+      - name: Render exactly the 30 original ID replacements after immutable backup
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f tools/audio/sfx-phase1-rollback.json ]; then
+            python tools/audio/sfx-phase1-master.py --integrate
+            node tools/audio/sfx-phase1-version.cjs
+            node scripts/build.cjs
+          else
+            echo 'Existing original 30-master archive already checked in; do not replace frozen originals.'
+          fi
+      - name: Verify real audio source, WAV bytes, original hashes and file budgets
+        run: |
+          python tests/audio-sfx-phase1-quality.test.py > "${RUNNER_TEMP}/sfx-phase1-quality.json"
+          node scripts/audio-library.cjs check
+          node tests/audio-production.test.cjs
+          node tests/audio-recordings.test.cjs
+          node tests/audio-catalog.test.cjs
+          node tests/enemy-audio.test.cjs
+          node tests/audio-stage3-action-audit.test.cjs
+          node tests/combat-feedback.test.cjs
+          node scripts/build.cjs --check
+          node tests/docs-release-consistency.test.cjs
+          node scripts/docs-release-consistency.cjs
+      - name: Validate existing Sound Library and actual registered 30 new WAVs
+        run: node tests/audio-audition-browser.test.cjs
+      - name: Verify selected browser gameplay audio/recording paths
+        run: node tests/audio-browser.test.cjs
+      - name: Preserve exact branch-only integrated files if all tests pass
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REF}" = 'refs/heads/audio/sfx-phase1-30-replacements-20261116'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f assets/audio/effects/*.wav tools/audio/sfx-legacy/dev288/*.wav
+          git add assets/audio/manifest.json tools/audio/sfx-phase1-rollback.json tools/audio/sfx-phase1-metrics.json
+          git add package.json package-lock.json docs/DEVELOPMENT_STATE.md sw.js src/prototype/audio-library.js src/prototype/build-info.js
+          # No normal PR deploys Pages; all branch work and artifacts remain private from live PWA.
+          if ! git diff --cached --quiet; then
+            git commit -m 'audio: stage reversible 30 original SFX masters in dev.289 candidate [skip ci]'
+            git push origin HEAD:refs/heads/audio/sfx-phase1-30-replacements-20261116
+          fi
+      - name: Preserve objectively verified audio evidence, never a Pages artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SIBDLP-SFX-phase1-30-originals-and-technical-evidence
+          path: ${{ runner.temp }}/sfx-phase1-quality.json
+          if-no-files-found: warn
+          retention-days: 30
