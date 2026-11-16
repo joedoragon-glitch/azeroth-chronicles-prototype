@@ -57,7 +57,9 @@ jobs:
             node tools/audio/sfx-phase1-version.cjs
             node scripts/build.cjs
           else
-            echo 'Existing original 30-master archive already checked in; do not replace frozen originals.'
+            echo 'Original archive already frozen. Rerender candidate SFX only, preserving exact 30 pre-replacement masters.'
+            python tools/audio/sfx-phase1-master.py --revise
+            node scripts/build.cjs
           fi
       - name: Verify real audio source, WAV bytes, original hashes and file budgets
         run: |
