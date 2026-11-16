@@ -346,6 +346,13 @@ def revise():
         entry["sha256"]=results[key]["sha256"]
         entry["duration"]=results[key]["duration"]
         entry["generationGuide"]=results[key]["guide"]
+    # Real browser engine detected a 5.98 dB drop from procedural to recorded
+    # Holy release after its authored timbre revision. Match the prior limited
+    # event-by-event calibration contract, not a global WAV loudness boost.
+    holy=[rule for rule in manifest["director"]["events"]["effect.enemyRelease"]
+          if rule["asset"]=="sfx-holy-release"]
+    assert len(holy)==1 and holy[0]["gain"] in (0.30,0.40), "Unexpected Holy release gain"
+    holy[0]["gain"]=0.40
     writejson(MANIFEST,manifest)
     writejson(METRICS,{"status":"SOURCE/RENDER TECHNICAL CHECK; UNHEARD",
         "qualityRevision":"v3 owner-reported stage differentiation (5 material families), reference-RMS preserved",
