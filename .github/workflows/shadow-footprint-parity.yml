@@ -7,6 +7,7 @@ on:
       - 'audit/shadow-footprints-parity-*'
     paths:
       - 'tests/shadow-registered-footprints.test.cjs'
+      - 'tests/shadow-procedural-footprints.test.cjs'
       - 'tests/shadow-artwork-grounding.test.cjs'
       - 'src/prototype/visuals.js'
       - 'sw.js'
@@ -17,6 +18,7 @@ on:
   pull_request:
     paths:
       - 'tests/shadow-registered-footprints.test.cjs'
+      - 'tests/shadow-procedural-footprints.test.cjs'
       - 'tests/shadow-artwork-grounding.test.cjs'
       - 'src/prototype/visuals.js'
       - 'sw.js'
@@ -45,6 +47,8 @@ jobs:
         run: |
           node --check tests/shadow-registered-footprints.test.cjs
           node tests/shadow-registered-footprints.test.cjs
+          node --check tests/shadow-procedural-footprints.test.cjs
+          node tests/shadow-procedural-footprints.test.cjs
           node tests/shadow-artwork-grounding.test.cjs
           node tests/pixi-parity.test.cjs
           node scripts/build.cjs --check
