@@ -205,7 +205,9 @@ const root = path.resolve(__dirname, '..'),
         assert((await page.locator('#scene-description').textContent()).includes('2 synchronized'));
         await page.locator('#scene-mode').selectOption('night');
         await press('#scene-play');
-        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'millhaven-chamber');
+        // The combat release tail still has priority over the town chamber theme.
+        // Night mode selects the existing night score until that tail expires.
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'night-vale');
         await page.locator('#scene-mode').selectOption('peace');
         await press('#scene-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'peace-vale');
