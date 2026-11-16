@@ -256,7 +256,7 @@ def main():
           "baseline":manifest["assets"][key]["src"],"family":family,
           "file":filename,"duration":len(pcm)/SR,
           "sha256":hashlib.sha256(dest.read_bytes()).hexdigest(),
-          "peak":round(float(np.max(np.abs(pcm.astype(float)/32768)),6),
+          "peak":round(float(np.max(np.abs(pcm.astype(float)/32768))),6),
           "rms":round(float(np.sqrt(np.mean((pcm.astype(float)/32768)**2))),6),
         })
     (OUT/"candidate-manifest.json").write_text(json.dumps({
