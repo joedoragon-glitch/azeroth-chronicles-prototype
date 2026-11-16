@@ -488,6 +488,9 @@
     syncEffectFilters();
     const kind = $('kind').value, collection = $('collection').value;
     const stage = $('effect-stage').value;
+    // This is a deliberately small 30-cue collection: don't hide its last six
+    // items behind the soundtrack's 24-at-a-time pagination.
+    if (effectsOnly()) visibleLimit = 30;
     const query = $('search').value.trim().toLowerCase();
     const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [],
       legacy: [], approved: [], ambience: [], effect: [] };
