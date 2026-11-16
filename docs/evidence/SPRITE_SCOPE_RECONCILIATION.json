@@ -1189,8 +1189,8 @@
   ],
   "sources": {
     "src/prototype/visuals.js": "a964c3e0cf85e2ccae16861b7ef3f9add86d9c970a9b90e103611ab5436c6fc9",
-    "src/prototype/world.js": "6015a723058ad55658aa558f85ef2d86137037aeafd6164b77ec015e731f8d41",
-    "src/prototype/rules.js": "006cb41261639b8514ccd5180c9505fafd7d9b445f5592ce6ceb1c7fbf90c84b",
+    "src/prototype/world.js": "96ed488deeb44f8151a5cce57a9a1f43cc2128f366c006eac99394e1ac7bae4d",
+    "src/prototype/rules.js": "9b9932db3dff3d81778c533a2cdb16f0a45e0277883bca0dd6d60673fe850682",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "81372d435839d065fe917a8e69ed8d2e30e65d33e9a9233fb95d0809d5c93a9a",
     "src/prototype/renderer.js": "4c9dd97cff6180fef05ba4a07959075060717d9727ddc6b3d4313337c6b155ed",
