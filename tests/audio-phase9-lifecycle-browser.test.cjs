@@ -31,6 +31,14 @@ const server = http.createServer((req, res) => {
       await page.goto('http://127.0.0.1:' + server.address().port + prefix);
       await page.waitForFunction(() => window.Prototype?.audio && !document.querySelector('#startup-update:not([hidden])'), null, { timeout: 30000 });
       assert.equal(await page.evaluate(() => Prototype.audio.ctx), null, 'no forbidden silent autoplay override');
+      // The current app correctly gates first visitors behind a bilingual welcome.
+      // The old fixture clicked a hidden title heading and timed out before any
+      // soundtrack assertion; use the real player's first-language gesture.
+      const firstVisit = page.locator('#language-welcome:not([hidden])');
+      if (await firstVisit.isVisible()) {
+        await firstVisit.locator('button[data-language="en"]').click();
+      }
+      await page.locator('#title-heading').waitFor({ state: 'visible' });
       await page.locator('#title-heading').click();
       await page.waitForFunction(() => Prototype.audio.recordedScore?.id === 'title' && Prototype.audio.ctx?.state === 'running', null, { timeout: 30000 });
       const titlePlayback = await page.evaluate(() => {
