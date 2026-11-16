@@ -2443,7 +2443,8 @@
   // Bounded, in-session route-refresh costs. These only time actual guide
   // path calculations; no new per-frame profiler and no saved-campaign fields.
   const waypointPathDiagnostics = {
-    map: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null },
+    map: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null,
+      slices: 0, maxSliceMs: 0, incomplete: 0 },
     quest: { calls: 0, totalMs: 0, maxMs: 0, maxAtGameTime: null },
     thornAutoCleared: 0,
   };
@@ -7890,6 +7891,109 @@
     };
     cancelNavigationButton.hidden = !visibleNavigationRoute();
   }
+  // Only optional visual map reroutes use this dedicated, low-priority
+  // incremental planner. Initial explicit Navigate orders, quest guidance,
+  // combat AI and companion path budgets keep their existing behavior.
+  // The A* solver uses native collision probes but need not reproduce BFS turns.
+  const guideSliceLimits = { probes: 256, nodes: 40, milliseconds: 4 };
+  function* reattachGuidePath(path, origin) {
+    // A route may finish after the hero has moved. Reconnect from the current
+    // position, never treating the old search origin as the live hero position.
+    const byDistance = path.map((_, i) => i).sort((a, b) =>
+      Math.hypot(origin.x - path[a].x, origin.y - path[a].y) -
+      Math.hypot(origin.x - path[b].x, origin.y - path[b].y));
+    for (const i of byDistance)
+      if (yield* game.budgetedRouteSegment(origin, path[i]))
+        return path.slice(i);
+    return [];
+  }
+  function advanceOptionalMapGuide(guide) {
+    const work = guide.pending;
+    if (!work || guide.campaign !== game || guide.zone !== game.zoneId) return;
+    // Optional guidance must not compete with combat for frame time.
+    if (game.s.squadEngagement || game.manaCombatActive() ||
+        game.s.projectiles.some((p) => p.source === 'enemy')) return;
+    const started = performance.now();
+    let probes = 0, nodes = 0;
+    while (probes < guideSliceLimits.probes &&
+           nodes < guideSliceLimits.nodes &&
+           performance.now() - started < guideSliceLimits.milliseconds) {
+      if (!work.request) {
+        let next;
+        try {
+          next = work.iterator.next(work.reply);
+        } catch (_) {
+          // An optional visual guide must never interrupt combat or the game.
+          work.finished = [];
+          break;
+        }
+        work.reply = undefined;
+        if (next.done) {
+          if (work.phase === 'solve') {
+            // The eight-neighbor A* is a preference, not a new reachability
+            // restriction: preserve the existing BFS fallback incrementally.
+            if (!next.value?.length && !work.fallback) {
+              work.fallback = true;
+              work.iterator = game.budgetedTacticalRoute(work.origin, work.target);
+              continue;
+            }
+            if (!next.value?.length) {
+              work.finished = [];
+              break;
+            }
+            work.path = next.value;
+            work.phase = 'attach';
+            work.attachAt = { x: game.hero.x, y: game.hero.y };
+            work.iterator = reattachGuidePath(work.path, work.attachAt);
+            continue;
+          }
+          // A small drift is reasonable for a passive guide; larger drift
+          // gets one more bounded attachment attempt instead of a stale line.
+          if (Math.hypot(game.hero.x - work.attachAt.x,
+                         game.hero.y - work.attachAt.y) > 120) {
+            if (work.reattachAttempts >= 2) {
+              work.finished = [];
+              break;
+            }
+            work.reattachAttempts++;
+            work.attachAt = { x: game.hero.x, y: game.hero.y };
+            work.iterator = reattachGuidePath(work.path, work.attachAt);
+            continue;
+          }
+          work.finished = next.value;
+          break;
+        }
+        work.request = next.value;
+      }
+      if (work.request.kind === 'blocked') {
+        work.reply = game.blocked(...work.request.args);
+        probes++;
+      } else if (work.request.kind === 'node') {
+        work.reply = undefined;
+        nodes++;
+      } else {
+        throw Error('Unexpected optional guide route request');
+      }
+      work.request = null;
+    }
+    const elapsed = Math.max(0, performance.now() - started);
+    work.totalMs += elapsed;
+    const stats = waypointPathDiagnostics.map;
+    stats.slices++;
+    stats.maxSliceMs = Math.max(stats.maxSliceMs, elapsed);
+    if (!Object.hasOwn(work, 'finished')) return;
+    // Never alter a movement order or replace a good guide with an
+    // unconnected, in-flight path. Failure leaves the previous visual guide.
+    if (work.finished?.length) guide.route = work.finished;
+    else stats.incomplete++;
+    guide.pending = null;
+    stats.calls++;
+    stats.totalMs += work.totalMs;
+    if (work.totalMs > stats.maxMs) {
+      stats.maxMs = work.totalMs;
+      stats.maxAtGameTime = Number(game.s.time.toFixed(2));
+    }
+  }
   function updateNavigationGuide(force = false) {
     const guide = navigationGuide;
     if (!guide) return;
@@ -7955,15 +8059,27 @@
     }
     if (guide.autopilot && game.hero.order !== guide.order) guide.autopilot = false;
     if (guide.autopilot) return; // Follow the live hero route without new plans.
-    // The manual hero can move ~300 units/sec. A 100-unit replan threshold
-    // could request ~3 routes/sec. Allow one replan after substantial travel,
-    // or a slower refresh after 2 seconds of meaningful displacement.
-    const displaced = Math.hypot(game.hero.x - guide.origin.x, game.hero.y - guide.origin.y);
-    if (!force && displaced < 450 && (game.s.time < guide.next || displaced < 75)) return;
+    if (guide.pending) {
+      advanceOptionalMapGuide(guide);
+      return;
+    }
+    // The visual reroute is optional: reserve CPU for actual play and combat.
+    const displaced = Math.hypot(
+      game.hero.x - guide.origin.x, game.hero.y - guide.origin.y,
+    );
+    if (!force && displaced < 450 &&
+        (game.s.time < guide.next || displaced < 75)) return;
+    if (game.s.squadEngagement || game.manaCombatActive() ||
+        game.s.projectiles.some((p) => p.source === 'enemy')) return;
     guide.next = game.s.time + 2;
     guide.origin = { x: game.hero.x, y: game.hero.y };
-    const choice = measuredWaypointPath('map', guide.destination);
-    guide.route = choice ? choice.path : [];
+    guide.pending = {
+      origin: guide.origin, target: { x: guide.point.x, y: guide.point.y },
+      iterator: game.budgetedCompanionRoute(guide.origin, guide.point, false),
+      request: null, reply: undefined, phase: 'solve', fallback: false,
+      reattachAttempts: 0, totalMs: 0,
+    };
+    advanceOptionalMapGuide(guide);
   }
   function updateQuestGuide(force = false) {
     const gathering = game.s.gatheringTarget;
