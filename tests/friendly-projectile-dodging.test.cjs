@@ -69,6 +69,35 @@ for (const cls of ['mage', 'ranger'])
       assert.equal(g.hero.cd[slot - 1], cooldown, 'miss keeps cast cooldown');
       assert.equal(g.s.projectiles.length, 0, 'hits and misses terminate');
     }
+// A charged shot can physically meet a defender but be stopped by Skill Block.
+// It retains a landed:false projectile receipt, not a triumphant extra burst.
+{
+  const { g, e } = arena('ranger');
+  assert(g.cast(6, e.id, true), 'charged Ranger volley is legally released');
+  assert(g.s.projectiles.some((p) => p.source === 'hero' && p.charged),
+    'real charged projectiles are in flight');
+  const hp = e.hp;
+  let stopped = 0;
+  g.skillBlocks = () => { stopped++; return true; };
+  fly(g);
+  assert(stopped > 0, 'the real projectile contacted the Skill Block resolver');
+  assert.equal(e.hp, hp, 'blocked charged arrows deal no HP damage');
+  const impacts = g.effects.filter((effect) =>
+    effect.type === 'projectileImpact' && effect.actor === 'hero');
+  assert(impacts.length > 0 && impacts.every((effect) => effect.landed === false),
+    'blocked physical contact still communicates unsuccessful projectile impact');
+  assert(!g.effects.some((effect) => effect.type === 'chargedImpact'),
+    'blocked charged attacks must not announce a successful charged burst');
+}
+{
+  const { g, e } = arena('mage');
+  const hp = e.hp;
+  assert(g.cast(1, e.id, true), 'charged Mage beam is legally released');
+  fly(g);
+  assert(e.hp < hp, 'unchallenged charged projectile reaches its target');
+  assert(g.effects.some((effect) => effect.type === 'chargedImpact'),
+    'a genuinely landed charged shot preserves its existing burst');
+}
 // Actual companion Triple Shot and normal/Recall covering arrows use the same flight.
 for (const mode of ['triple', 'basic', 'recall'])
   for (const dodge of [false, true]) {
