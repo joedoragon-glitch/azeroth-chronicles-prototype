@@ -52,9 +52,9 @@ const known = [
         'tools/audio/index.html?study=rogue-bell-basic';
       try {
         await page.goto(url);
-        await page.waitForFunction(() => window.AudioAudition?.sfxStudies?.length === 10 &&
+        await page.waitForFunction(() => window.AudioAudition?.sfxStudies?.length === 40 &&
           window.AudioAudition?.audio.recordingManifest);
-        assert.equal(await page.locator('#sfx-study option').count(), 10);
+        assert.equal(await page.locator('#sfx-study option').count(), 40);
         assert.equal(await page.locator('#sfx-study').inputValue(), 'rogue-bell-basic');
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null,
           'No preview may autoplay or force a saved-game audio context');
@@ -88,6 +88,17 @@ const known = [
           document.querySelector('#sfx-study-status').textContent.includes('Played unapproved'));
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx?.state), 'running');
         assert((await page.locator('#sfx-study-status').textContent()).includes('NOT a level-matched'));
+        // The actual 30 registered effects retain their identities, separate
+        // from the ten procedural source studies. No live audio is rewritten.
+        await page.locator('#sfx-study').selectOption('sfx-steel-release');
+        await press('#sfx-original');
+        await page.waitForFunction(() =>
+          document.querySelector('#sfx-study-status').textContent.includes('Played current'));
+        assert.equal(await page.evaluate(() => window.__sfxRecorded.at(-1)?.id), 'sfx-steel-release');
+        await press('#sfx-candidate');
+        await page.waitForFunction(() =>
+          document.querySelector('#sfx-study-status').textContent.includes('Played unapproved'));
+        assert.equal(await page.evaluate(() => AudioAudition.audio.sfxPilotRegistered), undefined);
         // The original Paladin stage must use its actual registered material recording.
         await page.locator('#sfx-study').selectOption('paladin-sword-swing');
         await press('#sfx-original');
