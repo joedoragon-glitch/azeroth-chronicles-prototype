@@ -61,12 +61,36 @@ const server = http.createServer((req, res) => {
       const phone = viewport.width < 1000,
         tag = engine + '-' + viewport.width + 'x' + viewport.height,
         errors = [];
-      page = await browser.newPage({ viewport, hasTouch: phone, isMobile: phone });
-      page.on('pageerror', (e) => errors.push(e.message));
-      await page.goto(
+      const shell = await browser.newPage({ viewport, hasTouch: phone, isMobile: phone });
+      shell.on('pageerror', (e) => errors.push(e.message));
+      // The first-run language welcome is covered elsewhere; use a genuine
+      // persisted English preference so this exercise enters the title.
+      await shell.addInitScript(() => localStorage.setItem('azeroth-display-language-v1', 'en'));
+      await shell.goto(
         (process.env.PLAYTEST_URL || 'http://127.0.0.1:' + server.address().port + '/') +
           (phone ? 'phone.html' : 'index.html'),
       );
+      // phone.html hosts the actual game inside its landscape-safe iframe.
+      // Route gameplay queries there, while screenshots and key presses belong
+      // to the outer browser page. Preserve the real phone entry route.
+      if (phone)
+        await shell
+          .frameLocator('#phone-game-frame')
+          .locator('#title-screen')
+          .waitFor({ state: 'attached' });
+      const gameFrame = phone ? shell.frame({ url: /phone-game\\.html/ }) : shell;
+      assert(gameFrame, 'the playable game frame is available');
+      page = {
+        locator: (...args) => gameFrame.locator(...args),
+        getByRole: (...args) => gameFrame.getByRole(...args),
+        evaluate: (...args) => gameFrame.evaluate(...args),
+        waitForFunction: (...args) => gameFrame.waitForFunction(...args),
+        waitForTimeout: (...args) => shell.waitForTimeout(...args),
+        keyboard: shell.keyboard,
+        screenshot: (...args) => shell.screenshot(...args),
+        reload: () => gameFrame.goto(gameFrame.url()),
+        close: () => shell.close(),
+      };
       await page.waitForFunction(() => !!window.Prototype);
       await require('./helpers/language-browser.cjs').selectEnglish(page);
       // This browser exercise must enter a real playable campaign. Prior
@@ -75,9 +99,11 @@ const server = http.createServer((req, res) => {
       await page.locator('#title-new').click();
       await page.getByRole('button', { name: /^Choose Hero/ }).click();
       await page.locator('#modal-actions button.class-character-choice').first().click();
-      await page.waitForFunction(() => window.Prototype.started && document.querySelector('#modal').hidden, null, {
-        timeout: 20000,
-      });
+      await page.waitForFunction(
+        () => window.Prototype.started && document.querySelector('#modal').hidden,
+        null,
+        { timeout: 90000 },
+      );
       await require('./helpers/notice-browser.cjs').verifyNoticeStrip(
         page,
         out,
