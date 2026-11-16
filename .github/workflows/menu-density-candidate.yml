@@ -1,0 +1,57 @@
+name: Menu density and hero preview candidate (no deployment)
+on:
+  push:
+    branches:
+      - feat/v092-menu-density-camera-portraits-20261116
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: menu-density-candidate-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Verify core platform/menu persistence and world camera geometry
+        run: |
+          node tests/platform-runtime.test.cjs
+          node tests/menus.test.cjs
+      - name: Validate source format
+        run: npx prettier --check src/prototype/platform.js src/prototype/app.js styles/phone.css tests/platform-runtime.test.cjs tests/menu-stage4-browser.test.cjs
+      - name: Check offline build without publication
+        run: node scripts/build.cjs --check
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: node scripts/vendor-pixi.cjs --ensure
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Validate actual menu surfaces in EN/ES and PC/mobile
+        env:
+          BROWSER_ENGINE: ${{ matrix.engine }}
+        run: node tests/menu-stage4-browser.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: menu-density-${{ matrix.engine }}
+          path: test-artifacts/menu-stage4/
+          retention-days: 14
+          if-no-files-found: ignore
