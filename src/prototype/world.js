@@ -188,7 +188,9 @@
         e.forcedRole === 'ranged' &&
         e.ranged === true &&
         e.shotRange === 280 &&
-        e.shotSpeed === 260 &&
+        e.shotSpeed === (e.species === 'wraith'
+          ? R.projectileFlight.ordinaryDefault.spectral
+          : R.projectileFlight.ordinaryDefault.arrow) &&
         e.projectileStyle === (e.species === 'wraith' ? 'spectral' : 'arrow')
       )
         return;

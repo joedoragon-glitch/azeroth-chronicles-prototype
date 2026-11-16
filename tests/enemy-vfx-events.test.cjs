@@ -7,6 +7,10 @@ const fresh = (enabled = true) => {
   c.enemyVfxEnabled = enabled;
   c.s.party = [];
   c.zone().enemies = [];
+  // Isolate the VFX sidecar from Vale scenery: Cindermaw's seven native
+  // seal placements require traversable ground, not a random room obstacle.
+  // Gameplay state/route selection is still exercised; no route mock is used.
+  c.zone().props = [];
   Object.assign(c.hero, { x: 1480, y: 1700, hp: 100000, maxHp: 100000, mp: 10000, maxMp: 10000 });
   c.line = () => true;
   return c;
@@ -16,11 +20,21 @@ for (const b of C.data.bosses)
   for (const form of ['normal', 'true'])
     for (let index = 0; index < C.rules.attacks[b.id].length; index++) {
       const run = (enabled) => {
-        const c = fresh(enabled),
-          e = c.bossEnemy(c.boss(b.id), form, { x: 1400, y: 1700 });
+        const c = fresh(enabled);
+        // Cindermaw's seven native seal placements require a reachable
+        // arena. Use the original Crown roost exercised by the existing
+        // cindermaw-ministry test; Greenwood is not its authored battlefield.
+        // Keep genuine floor geometry, route checks and cast legality.
+        const nativeSeals = b.id === 'cindermaw' && index === 3;
+        if (nativeSeals) c.enter('crown');
+        const e = c.bossEnemy(
+          c.boss(b.id), form,
+          nativeSeals ? { x: 2200, y: 1750 } : { x: 1400, y: 1700 },
+        );
+        if (nativeSeals) Object.assign(c.hero, c.safe(e.x + 70, e.y));
         c.zone().enemies = [e];
         e.aggro = true;
-        c.startAttack(e, c.hero, index);
+        assert(c.startAttack(e, c.hero, index), b.id + '/' + form + '/' + index + ': eligible native cast begins');
         c.resolveAttack(e);
         if (e.motion) for (let j = 0; j < 30 && e.motion; j++) c.advanceMotion(e, 0.05);
         c.updateProjectiles(0.1);
@@ -40,7 +54,7 @@ for (const b of C.data.bosses)
       );
       assert(
         on.events.some((f) => f.stage === 'release'),
-        'release even without victim',
+        b.id + '/' + form + '/' + index + ': release even without victim',
       );
       for (const f of on.events) {
         assert(Object.isFrozen(f));
@@ -94,7 +108,7 @@ for (const row of rows.filter((r) =>
         fromY: e.y,
         x: c.hero.x,
         y: c.hero.y,
-        radius: (plan.radius || 85) * C.rules.bossCadence.areaRangeMultiplier,
+        radius: (plan.radius || C.rules.bossAreaGeometry.captainDefaultOtherRadius),
         angle: 0,
         timer: plan.warning,
         total: plan.warning,
@@ -218,8 +232,11 @@ for (const succession of [false, true]) {
     );
     c.zone().enemies = [e];
     c.zone();
-    e.aggro = true;
     Object.assign(c.hero, { x: 1450, y: 1700, hp: 1 });
+    // A real opening hit admits the wolf under the normal field-combat rules.
+    // Forcing aggro alone sends an unadmitted enemy back to its home.
+    assert(c.damage(e, 1), 'hero admits the encounter with a deliberate hit');
+    assert(e.aggro, 'wolf stays engaged for the lethal basic');
     c.updateEnemies(0.1);
     assert.equal(c.s.statistics.deaths, 1);
     return c;

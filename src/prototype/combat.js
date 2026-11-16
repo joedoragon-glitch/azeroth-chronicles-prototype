@@ -447,9 +447,11 @@
             this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
           ),
           // Match the existing Rogue move's legal reach; do not increase it.
-          moveRange =
-            (e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340) *
-            R.balance.enemySpecialReachMultiplier,
+          moveRange = e.type === 'boss'
+            ? R.enemyRogueGeometry.acquisition.boss
+            : e.captain || e.roomCaptain
+              ? R.enemyRogueGeometry.acquisition.captain
+              : R.enemyRogueGeometry.acquisition.other,
           candidates = this.combatTargets().filter(
             (u) =>
               u.hp > 0 &&
@@ -900,10 +902,12 @@
           e.royalTaxShield -= absorbed;
           amount -= absorbed;
         }
+        // Royal Taxation expires even during sustained DoT. Only separate
+        // committed strikes, not budget-sliced status updates, fund its shield.
         if (e.family === 'darklord' && e.royalTaxation) {
           const tax = e.royalTaxation;
           if (this.s.time > tax.expires) e.royalTaxation = null;
-          else if (amount > 0 && tax.marked.includes(source)) {
+          else if (!options?.periodicDamage && amount > 0 && tax.marked.includes(source)) {
             // Four distinct sources in a full party. Smaller parties must
             // still make four real hits in total, including one from each
             // marked attacker. Four hits by just one member of a duo/trio
@@ -951,14 +955,19 @@
           e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
         e.hp = Math.max(0, e.hp - amount);
         this.recordMarchesDamage(e, actualDamage);
-        this.snapshotPassiveRecordHit(e, actualDamage, source);
+        // Per-attack defensive patterns (Veteran's Instinct / Violation)
+        // must not count dozens of HP-budget slices as distinct attacks.
+        // Preserve actual-damage tactical threat and DPS accounting below.
+        if (!options?.periodicDamage) this.snapshotPassiveRecordHit(e, actualDamage, source);
         this.tacticalRecordHit(e, source, actualDamage);
         if (actualDamage > 0 && e.hp > 0)
           this.noteEnemyUnderFire(e, source, origin, actualDamage);
         if (source === 'hero') this.recordDeveloperDamage('outgoing', actualDamage);
         else if (this.s.mode === 'developer')
           this.recordDeveloperCompanionDamage(source, actualDamage);
-        this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
+        // Status damage still passes through every live HP/defense rule. Its
+        // bounded visible impact cues are emitted by the originating DoT owner.
+        if (!options?.periodicDamage) this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) {
           this.clearEnemyUnderFire(e);
           this.kill(e);
@@ -1101,6 +1110,11 @@
             p.delay -= dt;
             continue;
           }
+          // Neutral global tuning controls act on physical flight only: the
+          // same scaled flight-clock shortens lifetime as speed increases.
+          // Delays, warnings and aim cadence continue in real seconds.
+          const flightScale = R.projectileFlight.globalSpeedScale *
+            (p.source === 'enemy' ? R.projectileFlight.hostileSpeedScale : 1);
           if (p.source === 'enemy') {
             if (!p.fortChecked) {
               p.fortChecked = true;
@@ -1111,7 +1125,7 @@
                 );
             }
             const fort = this.projectileFort(p);
-            const elapsed = p.rangedArc ? Math.min(dt, Math.max(0, p.life)) : dt;
+            const elapsed = Math.min(dt * flightScale, Math.max(0, p.life));
             p.life -= elapsed;
             const before = { x: p.x, y: p.y };
             p.x += p.dx * p.speed * elapsed;
@@ -1337,7 +1351,7 @@
           // Sweep the physical frame segment, including every curved-flight
           // step, so damage never precedes the actual visible front.
           const flight = R.balance.friendlyProjectiles,
-            elapsed = Math.min(dt, p.life ?? flight.lifeSeconds),
+            elapsed = Math.min(dt * flightScale, p.life ?? flight.lifeSeconds),
             before = { x: p.x, y: p.y },
             step = Math.min(
               p.speed * elapsed,

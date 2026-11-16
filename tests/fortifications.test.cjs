@@ -551,16 +551,14 @@ console.log(
   g.updateEnemies(0.01);
   const p = g.s.projectiles.find((shot) => shot.sourceId === e.id);
   assert(p, 'fortified Goblin released a real stone');
-  const baseline = C.rules.rangedProfiles.goblin.shotSpeed *
-    C.rules.rangedEnemyCombat.projectileMultiplier;
-  const stonePace = C.rules.balance.goblinSlingerProjectileSpeedMultiplier;
+  const baseline = C.rules.rangedProfiles.goblin.shotSpeed;
   const fortPace = C.rules.balance.fortifications.projectileSpeedMultiplier;
-  assert.equal(p.fortBaseSpeed, baseline * stonePace,
-    'hostile Goblin native stone launch speed includes the new boost');
-  assert.equal(p.speed, baseline * stonePace * fortPace,
+  assert.equal(p.fortBaseSpeed, baseline,
+    'hostile Goblin native stone now has an authored baseline');
+  assert.equal(p.speed, baseline * fortPace,
     'fort adds its separate 30% bonus exactly once');
   assert(Math.abs(p.fortBaseSpeed * p.fortBaseLife -
-    C.rules.rangedProfiles.goblin.shotSpeed * 2.5) < 1e-8,
+    C.rules.projectileFlight.ordinaryDistance.goblin) < 1e-8,
     'Slinger native missed-shot travel budget is preserved');
   assert(Math.abs(p.life * p.speed - p.fortDistance) < 1e-8,
     'fixed fortified arc still lands at its original aim point');

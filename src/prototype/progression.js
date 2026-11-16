@@ -176,16 +176,20 @@
       // Use live hostile profiles so later balance tuning cannot split them.
       charmedProjectileFlight(unit) {
         const profile = this.charmedCompanionProfile(unit);
-        if (!profile || unit.type !== 'archer') return { speed: 450, style: 'arrow' };
+        if (!profile || unit.type !== 'archer') {
+          const speed = R.projectileFlight.companion.archerBasic;
+          return { speed, life: 450 * R.balance.friendlyProjectiles.lifeSeconds / speed, style: 'arrow' };
+        }
         const species = unit.charmOrigin.species;
-        const nativeSpeed = R.rangedProfiles[species]?.shotSpeed || 260;
-        const stonePace = species === 'goblin' && profile.style === 'stone'
-          ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
-        const speed = nativeSpeed * R.rangedEnemyCombat.projectileMultiplier * stonePace;
+        const speed = R.rangedProfiles[species]?.shotSpeed ??
+          (profile.style === 'spectral'
+            ? R.projectileFlight.ordinaryDefault.spectral
+            : R.projectileFlight.ordinaryDefault.arrow);
         return {
           speed,
-          // Preserve each friendly projectile's previous maximum travel budget.
-          life: R.balance.friendlyProjectiles.lifeSeconds * (profile.shotSpeed || nativeSpeed) / speed,
+          // Charmed release mirrors its unfortified hostile weapon. Save-stored
+          // historical shotSpeed never changes the original missed-shot budget.
+          life: (R.projectileFlight.charmedDistance[species] ?? 780) / speed,
           style: profile.style || 'arrow',
         };
       }
