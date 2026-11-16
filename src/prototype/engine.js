@@ -6603,11 +6603,17 @@
       if (scope === 'mine-warden')
         return sourceZone === 'mine' && actor.guard && species === 'ogre'
           ? title : sourceName;
-      if (scope === 'frontier-soldier')
+      if (scope === 'frontier-soldier') {
+        // The Ashen Warlord governs the Frontier, not a separate "warlord"
+        // zone. Crown-marked Orcs deployed there and the Warlord's explicitly
+        // owned Orc summons are established soldiers; other Orcs are not.
+        const warlord = actor.summon && actor.owner &&
+          this.zone().enemies.find((u) =>
+            u.id === actor.owner && u.type === 'boss' && u.family === 'warlord');
         return species === 'orc' &&
-          ((sourceZone === 'warlord' && actor.guard) ||
-            pack === 'frontier-overseer' || pack.startsWith('frontier-occupation-'))
+          ((sourceZone === 'frontier' && actor.crownTroop === true) || warlord)
           ? title : sourceName;
+      }
       if (scope === 'ridge-payroll')
         return species === 'archer' &&
           ((sourceZone === 'supply-highlands' && actor.roomGuard) ||

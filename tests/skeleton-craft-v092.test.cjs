@@ -99,13 +99,25 @@ test('All 25 English aliases resolve in their scoped employment or habitat conte
   const responder = game.bossOwnedSummons(boss).find((u) =>
     u.species === 'ashbeast' && u.trueSummonRole === 'captain');
   assert(responder, 'real Cindermaw TRUE spell generates a Ministry Ringleader');
+  // The Warlord is a field boss in the Frontier, not an imaginary separate
+  // "warlord" zone. Verify exact TRUE-owned Orc Ringleader provenance.
+  const frontier = new Campaign('normal', 'paladin', () => 0.99);
+  frontier.enter('frontier');
+  const commander = frontier.bossEnemy(frontier.boss('warlord'),
+    'true', { x: 2600, y: 1650 });
+  frontier.zone().enemies = [commander];
+  frontier.summonBossAdds(commander, frontier.trueSummonPlan(commander),
+    frontier.bossSummonCap(commander));
+  const orcSoldier = frontier.bossOwnedSummons(commander).find((u) =>
+    u.species === 'orc' && u.trueSummonRole === 'captain');
+  assert(orcSoldier, 'native TRUE Warlord recruits an identified Orc Ringleader');
   const map = Campaign.rules.tacticalFoundation.skillLoreTitles;
   const roles = {
     skeleton: ['vale', { species: 'skeleton' }],
     habitat: ['vale', { species: 'wraith' }],
     'vale-salvage': ['supply-vale', { species: 'goblin', roomGuard: true }],
     'mine-warden': ['mine', { species: 'ogre', guard: true }],
-    'frontier-soldier': ['warlord', { species: 'orc', guard: true }],
+    'frontier-soldier': ['frontier', orcSoldier],
     'ridge-payroll': ['supply-highlands', { species: 'archer', roomGuard: true }],
     'cindermaw-ministry': ['crown', responder],
     'crown-drill': ['vale', { species: 'crownguard', crownTroop: true }],
@@ -114,14 +126,15 @@ test('All 25 English aliases resolve in their scoped employment or habitat conte
     const pair = roles[scope];
     assert(pair, 'every approved display context is explicitly classified: ' + scope);
     const [zone, actor] = pair;
-    game.s.zone = zone;
-    assert.equal(game.monsterSkillTitle(source, actor), approved,
+    const current = scope === 'frontier-soldier' ? frontier : game;
+    current.s.zone = zone;
+    assert.equal(current.monsterSkillTitle(source, actor), approved,
       source + ': correct source identity resolves the locked English title');
     if (!['skeleton', 'habitat'].includes(scope)) {
       game.s.zone = 'vale';
       const unaffiliated = { ...actor, guard: false, roomGuard: false,
-        crownTroop: false, pack: '' };
-      assert.equal(game.monsterSkillTitle(source, unaffiliated), source,
+        crownTroop: false, pack: '', summon: false, owner: null };
+      assert.equal(current.monsterSkillTitle(source, unaffiliated), source,
         source + ': unrelated wildlife or guards retain their established labels');
     }
   }
