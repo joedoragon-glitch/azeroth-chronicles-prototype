@@ -202,6 +202,12 @@ const groups = [
     tests: [TEST + 'platform-runtime.test.cjs', TEST + 'frame-rate.test.cjs'],
   },
   { match: /^src\/prototype\/runtime\.js$/, tests: [TEST + 'render-resolution.test.cjs'] },
+  {
+    // Issue #870: new native and Charmed Skeleton actions, exact name gates,
+    // projectile physics, Guardian protection and v4 save compatibility.
+    match: /^src\/prototype\/(?:engine|boss-combat|combat|party|rules)\.js$|^tests\/skeleton-craft-v092\.test\.cjs$/,
+    tests: [TEST + 'skeleton-craft-v092.test.cjs'],
+  },
   // Integration contracts: a test changed in the original feature PR must
   // continue protecting later source-only changes to its actual dependencies.
   {
