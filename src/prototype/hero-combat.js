@@ -695,6 +695,14 @@
         const i = slot - 1;
         return (this.hero.cd[i] || 0) <= 0 && (!charged || (this.hero.chargedCd?.[i] || 0) <= 0);
       }
+      // Auto basics may cover a nearer lawful enemy while a deliberate selection
+      // remains outside BASIC reach. Never clear/replace that selection: manual
+      // skill targeting, locks and skill-approach orders keep their own authority.
+      // Explicitly targeted auto calls never redirect to another foe.
+      automaticBasicNearbyFallbackAllowed(selected, range, targetId = null) {
+        return (targetId === null || targetId === undefined) &&
+          (!selected || dist(selected, this.hero) > range);
+      }
       // Target selection is transient: no changes to campaign saves or difficulty.
       // A held Target locks the current foe even while dodging beyond selection range.
       selectedHeroTarget() {
@@ -1718,9 +1726,9 @@
             this.tacticalDirectTargetable(e) &&
             dist(e, this.hero) <= cfg.range && this.line(this.hero, e),
           ),
-          locked = !!selected || (targetId !== null && targetId !== undefined),
+          canCoverNearby = this.automaticBasicNearbyFallbackAllowed(selected, cfg.range, targetId),
           primary = eligible.find((e) => e.id === preferred) ||
-            (locked ? null : eligible.sort((a, b) =>
+            (canCoverNearby ? eligible.sort((a, b) =>
               dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
         if (!primary) return false;
         // Recall remains under player/timer control during all offense.
@@ -1869,11 +1877,15 @@
             [1, 2, 6, 7].includes(slot) ||
             (slot === 8 && this.hero.class !== 'paladin') ||
             (slot === 4 && this.hero.class !== 'ranger'),
-          // Preserve a valid distant selection, while a target made ineligible
-          // by Blinding Dust still permits the established automatic fallback.
+          // Automatic basics may cover a nearby lawful enemy when a selected
+          // foe is beyond BASIC reach. The selection/lock stays intact for
+          // deliberate manual skills; in-range selections still take priority.
+          nearbyBasicFallback =
+            automatic && slot === 1 &&
+            this.automaticBasicNearbyFallbackAllowed(selected, range, targetId),
           lockedOut =
             requiresTarget &&
-            (!!selected ||
+            ((!!selected && !nearbyBasicFallback) ||
               this.zone().enemies.some(
                 (e) =>
                   e.id === targetId &&
