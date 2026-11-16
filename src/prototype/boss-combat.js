@@ -1356,16 +1356,16 @@
         e.basicDue = false;
       }
       bossCenteredReach(e, plan) {
-        const scale = R.bossCadence.areaRangeMultiplier;
+        const shape = R.bossAreaGeometry;
         const kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind;
-        if (kind === 'cone') return 165 * scale;
-        if (kind === 'sector') return 280 * scale;
+        if (kind === 'cone') return shape.coneRadius;
+        if (kind === 'sector') return shape.sectorRadius;
         // The moving ring's reach comes from speed × lifetime, not its
         // initially displayed radius (which is overwritten on every tick).
         if (kind === 'ring')
           return plan.slowOnly
             ? plan.waveSpeed * plan.waveLife
-            : R.combatGeometry.ringSpeed * R.combatGeometry.ringLife * scale;
+            : R.combatGeometry.ringSpeed * shape.ringLife;
         return null;
       }
       bossAttackWeights(e, target = this.hero, allowRepeat = false) {
@@ -1481,15 +1481,15 @@
             angle,
             count: plan.count || 1,
             radius:
-              (kind === 'cone'
-                ? 165
+              kind === 'cone'
+                ? R.bossAreaGeometry.coneRadius
                 : kind === 'sector'
-                  ? 280
+                  ? R.bossAreaGeometry.sectorRadius
                   : kind === 'ring'
-                    ? 105
+                    ? R.bossAreaGeometry.ringInitialRadius
                     : index === 0
-                      ? 90
-                      : 115) * R.bossCadence.areaRangeMultiplier,
+                      ? R.bossAreaGeometry.firstCircleRadius
+                      : R.bossAreaGeometry.otherCircleRadius,
           },
           sequence = [];
         if (e.family === 'mine' && index === 2 && a.doubleWave) {
@@ -1704,7 +1704,7 @@
               timer: plan.warning,
               total: plan.warning,
               name: 'Delayed flame patch',
-              radius: 90 * R.bossCadence.areaRangeMultiplier,
+              radius: R.bossAreaGeometry.delayedBlastRadius,
             });
           if (e.family === 'citadel' && index === 2) a.opening = 2.5;
         }
@@ -1916,11 +1916,8 @@
           ...a,
           x: a.x + (i - ((a.count || 1) - 1) / 2) * 190,
           y: a.y + (i % 2) * 100,
-          radius: a.captainRadiusMultiplier
-            ? 75 * R.bossCadence.areaRangeMultiplier * a.captainRadiusMultiplier
-            : a.count > 1
-              ? 75 * R.bossCadence.areaRangeMultiplier
-              : a.radius,
+          radius: a.patchRadius ||
+            (a.count > 1 ? R.bossAreaGeometry.multiCircleRadius : a.radius),
         }));
       }
       // Connected-terrain scanning remains solely for the Citadel's persistent
@@ -2611,7 +2608,7 @@
             y: e.y,
             life: a.slowOnly
               ? a.waveLife
-              : R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
+              : R.bossAreaGeometry.ringLife,
             tick: 0,
             damage: a.slowOnly ? 0 : this.worldBossEffect(
               a, this.weakenedEnemyDamage(e), 'damage',
