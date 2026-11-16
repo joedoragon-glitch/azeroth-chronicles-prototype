@@ -60,13 +60,17 @@ class Canvas:
     def flecks(self,lo,hi,pattern,gain=.022):
         for i,(start,weight) in enumerate(pattern):
             self.puff(lo,hi,gain*weight,start=start,attack=.0007,decay=.009+(.003*(i%3)))
-    def finish(self):
+    def finish(self, reference_rms):
         y=self.y-np.mean(self.y)
         ramp=min(int(.0018*SR),len(y)//15)
         y[:ramp]*=np.linspace(0,1,ramp)
         y[-ramp:]*=np.linspace(1,0,ramp)
         peak=max(np.max(np.abs(y)),1e-12)
-        y*=min(1,.38/peak)
+        rms=max(np.sqrt(np.mean(y*y)),1e-12)
+        # A/B requires comparable broad signal level on the existing route.
+        # Use each ORIGINAL approved cue's measured RMS, not a universal
+        # loudness compressor. .44 peak safety cap is the final authority.
+        y*=min(reference_rms/rms,.44/peak)
         return np.round(np.clip(y,-1,1)*32767).astype('<i2')
 
 # Each material has a different causal sound gesture, not merely a fixed
@@ -233,6 +237,8 @@ def expected_ids():
 
 def main():
     manifest,ids=expected_ids()
+    baseline=json.loads((ROOT/"tools/audio/sfx-measurements.json").read_text())
+    assert set(ids)==set(baseline), "Original SFX RMS inventory must match active 30 effects"
     rows=[]
     for key in ids:
         parts=key.split("-")
@@ -247,7 +253,7 @@ def main():
               "sfx-holy-cleave":.35,"sfx-piercing-volley":.34}
             assert key in lengths,key
             c=Canvas(key,lengths[key]);special(c,key);family="special"
-        pcm=c.finish()
+        pcm=c.finish(baseline[key]['rms'])
         filename=key+".wav";dest=OUT/filename
         with wave.open(str(dest),"wb") as w:
             w.setframerate(SR);w.setnchannels(1);w.setsampwidth(2);w.writeframes(pcm.tobytes())
@@ -258,6 +264,7 @@ def main():
           "sha256":hashlib.sha256(dest.read_bytes()).hexdigest(),
           "peak":round(float(np.max(np.abs(pcm.astype(float)/32768))),6),
           "rms":round(float(np.sqrt(np.mean((pcm.astype(float)/32768)**2))),6),
+          "baselineRms":baseline[key]["rms"],
         })
     (OUT/"candidate-manifest.json").write_text(json.dumps({
       "status":"SOURCE-REVISED, UNHEARD PHASE ONE REPLACEMENT STUDIES; NOT GAME AUDIO",
