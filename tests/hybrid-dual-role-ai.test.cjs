@@ -56,7 +56,7 @@ function scene() {
 
 {
   const { c, e } = scene();
-  assert.equal(c.enemyHealProfile(e), 'Bonebind',
+  assert.equal(c.enemyHealProfile(e), 'Binding Renewal',
     'a melee-capable hybrid retains its native ranged team-healing role');
   assert.equal(c.enemyMeleeBasicRange(e), R.meleeReach.elite,
     'hybrid ringleaders inherit the tuned elite melee basic reach');
