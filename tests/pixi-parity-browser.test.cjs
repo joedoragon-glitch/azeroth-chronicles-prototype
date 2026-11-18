@@ -210,6 +210,97 @@ async function main() {
           z.props = [
             { id: 'parity-sheep', structure: 'pasture-sheep', x: 1040, y: 1000, decorative: true },
           ];
+        // #893: reproduce the other four original ambient wildlife families
+        // without touching their painter, movement model, or shared ground.
+        // Compare both real renderers after seven presentation seconds; the
+        // parent habitat's shadow belongs at its world coordinate by design.
+        const wildlifeRegion = {
+          'wildlife-poultry': ['vale', 'poultry-yard'],
+          'wildlife-pen': ['crown', 'animal-pen'],
+          'wildlife-pups': ['crown', 'pup-nest'],
+          'wildlife-mire': ['march', 'mire-nests'],
+        }[name];
+        if (wildlifeRegion) {
+          const [wildRegion, structure] = wildlifeRegion;
+          if (!Campaign.rules.ambientLife?.[structure])
+            throw Error('Missing native ambient-wildlife family: ' + structure);
+          if (!g.enter(wildRegion)) throw Error('Cannot enter native wildlife region: ' + wildRegion);
+          const habitat = g.zone();
+          habitat.props = [];
+          habitat.buildings = [];
+          habitat.npcs = [];
+          habitat.enemies = [];
+          g.s.party = [];
+          g.s.loot = [];
+          g.s.projectiles = [];
+          g.s.clock = 245;
+          g.s.time = 100;
+          Object.assign(g.hero, { x: 1000, y: 1000, path: [], order: null });
+          const entity = {
+            id: structure === 'mire-nests' ? 'mire-nests' : 'parity-' + structure,
+            structure: structure === 'mire-nests' ? undefined : structure,
+            x: 1040, y: 1000, r: 0, decorative: true,
+          };
+          if (structure === 'mire-nests') {
+            entity.kind = 'landmark';
+            habitat.npcs = [entity];
+          } else {
+            habitat.props = [entity];
+          }
+        }
+        // #893 original allied actor rendering, not synthetic body painting.
+        // The Charmed case uses an actual landed Rogue Skill 1 capture through
+        // the same native path as tests/charmed-companion-native-critical.test.cjs;
+        // source identity remains validated and the normal app class gate stays
+        // untouched. Both fixtures are test-only, not earned playthroughs.
+        if (name === 'companions' || name === 'charmed') {
+          if (name === 'charmed') {
+            if (!Campaign.classes.rogue) Campaign.enableRoguePlaytest();
+            window.g = new Campaign('normal', 'rogue', () => 0.9);
+            window.originalCampaign = g;
+            window.painter = PrototypeRenderer.create(opts);
+            painter.setOptimizationMode(optimized);
+          }
+          if (!g.enter('vale')) throw Error('Cannot enter native companion scene');
+          const allyZone = g.zone();
+          for (const key of ['props', 'buildings', 'npcs', 'enemies', 'nodes'])
+            allyZone[key] = [];
+          g.s.party = [];
+          g.s.loot = [];
+          g.s.projectiles = [];
+          g.s.clock = 245;
+          g.s.time = 100;
+          Object.assign(g.hero, { x: 1000, y: 1000, path: [], order: null });
+          if (name === 'charmed') {
+            g.s.mercyTime = 0;
+            g.s.valeFieldAwakened = true;
+            const foe = g.makeEnemy(
+              { species: 'goblin', name: 'Goblin', level: 1,
+                hp: 10000, damage: 0, xp: 0, gold: 0 },
+              { x: 1085, y: 1000 },
+            );
+            Object.assign(foe, { ranged: false, aggro: true, returning: false });
+            allyZone.enemies = [foe];
+            g.hero.basicCd = 0;
+            g.s.rogueCharmRng = 12345;
+            if (!g.cast(1, foe.id, false, null, true) ||
+                g.s.party.length !== 1 ||
+                !g.isCharmedCompanion(g.s.party[0]))
+              throw Error('Authentic Rogue Charm fixture failed native admission');
+            allyZone.enemies = [];
+            Object.assign(g.s.party[0], { x: 1070, y: 1000, active: true });
+          }
+          const soldier = g.unit('soldier', 930, 960);
+          const archer = g.unit('archer', 1030, 930);
+          const pet = g.unit('pet', 1120, 1020, 'thorn');
+          for (const ally of [soldier, archer, pet]) {
+            ally.active = true;
+            ally.hp = ally.maxHp;
+            g.s.party.push(ally);
+          }
+          if (!g.s.party.some((ally) => ally.type === 'pet' && ally.petFamily === 'thorn'))
+            throw Error('Native companion fixture lacked Thorn pet');
+        }
         if (name === 'lamp') {
           g.s.clock = 480;
           z.props = [
@@ -306,6 +397,31 @@ async function main() {
           room.props = [];
           room.buildings = [];
           room.npcs = [];
+        }
+        // #893: unmodified regional scenery, real native Campaign and all four heroes.
+        // Only test-local camera/class/clock changes: no fake sprite contacts,
+        // gameplay rewrites, or synthetic shadow overlays.
+        const shadowSite = /^shadow-(vale|march|highlands|highlands-shore|frontier|crown|archive)-(day|dusk|night|interior)-(paladin|mage|ranger|rogue)$/.exec(name);
+        if (shadowSite) {
+          const [, region, phase, heroClass] = shadowSite;
+          const actualRegion = region === 'highlands-shore' ? 'highlands' : region;
+          if (heroClass === 'rogue' && !Campaign.classes.rogue) Campaign.enableRoguePlaytest();
+          window.g = new Campaign('normal', heroClass, () => 0.73);
+          window.originalCampaign = g;
+          if (!g.enter(actualRegion)) throw Error('Native shadow audit site unavailable: ' + actualRegion);
+          window.painter = PrototypeRenderer.create(opts);
+          painter.setOptimizationMode(optimized);
+          const site = {
+            vale: [550, 1750], march: [1880, 2600],
+            highlands: [480, 1010], 'highlands-shore': [660, 1760], frontier: [1450, 2160],
+            crown: [720, 900], archive: [1000, 1000],
+          }[region];
+          Object.assign(g.hero, { x: site[0], y: site[1], path: [], order: null });
+          g.s.clock = { day: 245, dusk: 345, night: 480, interior: 480 }[phase];
+          if (g.zoneId !== actualRegion) throw Error('Shadow fixture did not enter native region: ' + actualRegion);
+          if (g.hero.class !== heroClass && g.hero.heroClass !== heroClass &&
+              g.s.heroClass !== heroClass && g.s.class !== heroClass)
+            throw Error('Shadow fixture class mismatch: ' + heroClass);
         }
         if (['march', 'crown'].includes(name)) g.enter(name);
         const crownView = {

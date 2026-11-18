@@ -74,6 +74,30 @@ for (const [name, entity, region] of [
   assert(pixels.some((value, index) => index % 4 === 3 && value > 0), name + ' actual procedural body still paints');
 }
 
+// The actual stronghold prop is a decorative 'wolf-den', not the landmark
+// whose id is simply 'wolf-den'. Both need the same authored den body.
+// Before #893 continuation the prop produced zero pixels and could make
+// Pixi's procedural preparation fail (Canvas silently painted only a shadow).
+const wolfDen = {
+  id: 'stronghold-wolf-packhold-prop-0',
+  renderKind: 'prop',
+  structure: 'wolf-den',
+  decorative: true,
+  stronghold: 'wolf-packhold',
+  strongholdDefenseStyle: 'ruin',
+  x: 235,
+  y: 970,
+  r: 0,
+};
+const wolfSaved = JSON.stringify(wolfDen);
+const wolfCanvas = createCanvas(576, 576);
+Visuals.draw(wolfCanvas.getContext('2d'), wolfDen, { x: 288, y: 460 }, 2, false);
+assert.equal(JSON.stringify(wolfDen), wolfSaved, 'decorative prop paint must not mutate saved object');
+const wolfData = wolfCanvas.getContext('2d').getImageData(0, 0, 576, 576).data;
+let wolfPainted = 0;
+for (let i = 3; i < wolfData.length; i += 4) if (wolfData[i] > 16) wolfPainted++;
+assert(wolfPainted > 500, 'the native stronghold wolf-den prop renders its canonical den body');
+
 let darkness = 0;
 let dungeon = false;
 const game = {
@@ -106,6 +130,51 @@ const heroDay = ground('hero');
 assert.deepEqual([heroDay.rx, heroDay.ry, heroDay.shadowOpacity], [18, 5.5, 1]);
 assert.equal(ground('enemy', { type: 'boss', family: 'thorn' }).rx, 31);
 assert.equal(ground('ally', { type: 'pet', petFamily: 'citadel' }).rx, 18);
+// A true post contact must not inherit the 22×6 ordinary prop puddle.
+// #893 original game screenshot: Marches' roadside lantern casts an
+// oversized dark oval several times broader than its visible base.
+for (const [structure, rx, ry] of [
+  ['roadside-lantern', 7, 2.5],
+  ['grave-lamp', 9, 3],
+  ['banner', 8, 3],
+  ['crown-banner', 8, 3],
+  ['royal-flight-standard', 8, 3],
+  ['tax-post', 8, 3],
+  ['inspection-marker', 8, 3],
+  ['checkpoint-standard', 8, 3],
+]) {
+  const visual = painter.presentEntity({ id: 'ground-narrow-post', x: 200, y: 200, structure }, 'prop');
+  const contact = painter.groundPresentation(visual);
+  const scale = (Visuals.featureScale(visual) || 1) > 1 ? visual.visualScale || 1 : 1;
+  assert(Math.abs(contact.rx - rx * scale) < 1e-7, structure + ' scaled post radius');
+  assert(Math.abs(contact.ry - ry * scale) < 1e-7, structure + ' scaled post depth');
+  assert.equal(contact.shadowOpacity, 1, structure + ' daylight shadow strength');
+}
+// Source+real-scene #893: 37/768 atlas pixels of trunk at foot pivot,
+ // compared with a ~57px scaled default contact on Frontier trees.
+ // Keep the approved asset-safe tree scale while avoiding a dark disc.
+// Low registered scrub/dry shrubs also reuse the original littlePlant
+// dim, compact contact instead of the generic dark 22×6 prop ellipses.
+for (const structure of ['dry-scrub', 'dead-shrub', 'heather']) {
+  const contact = ground('prop', { structure });
+  assert.deepEqual([contact.rx, contact.ry, contact.shadowOpacity], [7, 2, 5 / 16],
+    structure + ' uses existing measured understory footprint');
+}
+assert.equal(ground('prop', { structure: 'alpine-scrub' }).rx, 22,
+  'Unreviewed alpine brush remains unchanged');
+const thinTrunk = ground('prop', { structure: 'dead-tree' });
+assert(Math.abs(thinTrunk.rx - 13) < 1e-8 &&
+  Math.abs(thinTrunk.ry - 4.55) < 1e-8 && thinTrunk.shadowOpacity === 1,
+  'Frontier dead-tree contact respects thin measured trunk and 130% original tree scale');
+assert.equal(ground('prop', { structure: 'sapling' }).rx, 22 * 1.3,
+  'Unreviewed sapling shadow is unchanged');
+assert.equal(ground('prop', { structure: 'burned-log' }).rx, 22,
+  'Grounded log keeps broad contact independent of tree-trunk correction');
+assert.deepEqual([ground('prop', { structure: 'rope-coil' }).rx,
+  ground('prop', { structure: 'rope-coil' }).ry], [22, 6],
+  'ordinary coil and structures retain their original grounding policy');
+assert.equal(ground('prop', { structure: 'checkpoint-standard' }).rx, 10.8,
+  'the original checkpoint-standard 135% visual scale is retained');
 assert.equal(ground('prop', { greenwoodWall: true }).shadowOpacity, 0);
 assert.equal(ground('prop', { greenwoodField: true }).shadowOpacity, 0);
 assert.equal(ground('prop', { greenwoodFacility: 'thorn-work' }).shadowOpacity, 0);
@@ -114,7 +183,11 @@ darkness = 0.5;
 assert.equal(ground('hero').shadowOpacity, 10 / 16, 'twilight uses bounded quantized opacity');
 darkness = 1;
 assert.equal(ground('hero').shadowOpacity, 4 / 16, 'full nighttime has subdued contact treatment');
+assert.equal(ground('prop', { structure: 'roadside-lantern' }).shadowOpacity, 4 / 16,
+  'narrow lamp retains the same night attenuation as regular geometry');
 assert.equal(ground('prop', { structure: 'wildflowers' }).shadowOpacity, 1 / 16);
+assert.equal(ground('prop', { structure: 'dead-shrub' }).shadowOpacity, 1 / 16,
+  'Crown low shrub retains the original quantized night fade');
 dungeon = true;
 assert.equal(ground('hero').shadowOpacity, 1, 'existing dungeon illumination policy is unchanged');
 assert.equal(ground('prop', { greenwoodField: true }).shadowOpacity, 0);

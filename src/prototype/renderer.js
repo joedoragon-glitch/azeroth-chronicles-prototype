@@ -1126,8 +1126,35 @@
         (e.kind === 'landmark' && String(e.id || '').startsWith('bridge-')) ||
         /^(?:furrow-plot|garden|meadow|floor|paving|rune|path|road|ash-patch)$/.test(structure));
       const littlePlant = e.greenwoodNature === 'understory' ||
-        /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure);
+        /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure) ||
+        // #893: original low-vegetation PNGs are 16–23 logical pixels wide.
+        // Their default 44px contact is an opaque-looking ground puddle in
+        // Frontier/Crown art. Reuse existing 7×2 dim understory treatment;
+        // do not change surrounding rocks, trees, buildings, or the light model.
+        ['dry-scrub', 'dead-shrub', 'heather'].includes(structure);
       if (littlePlant) { rx = 7; ry = 2; }
+      // #893 registered dead-tree master: only ~9 logical px across the
+      // visible trunk at its 75%-height foot pivot (37/768 atlas px at
+      // 192 logical width). Original 22×6 prop radii, enlarged further by
+      // approved tree scale, made obvious detached black discs in the real
+      // Frontier road/bridge screenshots in both Canvas and Pixi.
+      // Reduce only this proved thin-trunk footprint, not canopy/tree scale,
+      // retained sprouts, painted foundations, or the night fade policy.
+      if (e.renderKind === 'prop' && structure === 'dead-tree') { rx = 10; ry = 3.5; }
+      // #893 measured the actual local alpha at the physical foot anchor.
+      // These narrow poles were inheriting the general 44 px prop ellipse
+      // despite only ~6-16 px of painted base. In real Marches daylight
+      // screenshots that produced detached dark puddles beneath lanterns.
+      // Keep the simple canonical ellipses; do not touch tree canopies,
+      // building foundations, light glows, or combat rings.
+      if (e.renderKind === 'prop') {
+        if (structure === 'roadside-lantern') { rx = 7; ry = 2.5; }
+        else if (structure === 'grave-lamp') { rx = 9; ry = 3; }
+        else if ([
+          'banner', 'crown-banner', 'royal-flight-standard',
+          'tax-post', 'inspection-marker', 'checkpoint-standard',
+        ].includes(structure)) { rx = 8; ry = 3; }
+      }
       // The farmyard painter now supplies small contact at actual posts and
       // timbers. Generic entity-sized bubbles would double those contacts.
       const selfGrounded = String(e.greenwoodFacility || '').startsWith('thorn-');

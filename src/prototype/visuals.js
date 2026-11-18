@@ -9960,8 +9960,8 @@
           );
       return true;
     }
-    function craftedLandmark() {
-      switch (e.id) {
+    function craftedLandmark(id = e.id) {
+      switch (id) {
         case 'orchard':
           for (const [x, sc] of [
             [-22, 0.65],
@@ -12609,6 +12609,26 @@
     }
     function craftedDecoration(kind) {
       switch (kind) {
+        case 'rope-coil':
+          // The named Highlands shore prop was silently blank, leaving only
+          // its generic ground oval (and an unavailable Pixi procedural body).
+          // Four compact rope turns reuse the original dock palette; no baked
+          // shadow or collision surface is added to this decoration.
+          for (let turn = 0; turn < 4; turn++) {
+            ctx.beginPath();
+            ctx.ellipse(0, 6, 18 - turn * 3.8, 9 - turn * 1.5, -0.17, 0, Math.PI * 2);
+            ctx.strokeStyle = turn % 2 ? '#b49a72' : '#9f825b';
+            ctx.lineWidth = 3.3;
+            ctx.stroke();
+          }
+          line([[15, 5], [22, 8], [27, 8]], '#b49a72', 3);
+          break;
+        case 'wolf-den':
+          // The wolf stronghold places the same native den as a decorative prop.
+          // Reuse its existing landmark body instead of leaving an invisible
+          // prop that makes Canvas miss the artwork and Pixi reject the scene.
+          craftedLandmark('wolf-den');
+          break;
         case 'vale-working-mill': {
           // A two-storey timber mill reuses the Vale workshop's approved
           // materials and joinery. Its bank-side wheel does not paint water.

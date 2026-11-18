@@ -15,7 +15,7 @@ function audit(options = {}) {
   const sections = [
     ['decoration', 'function craftedDecoration(kind)', 'function decoration(kind)'],
     ['settlement', 'function craftedSettlement(kind)', 'function regionalServiceFooting('],
-    ['landmark', 'function craftedLandmark()', 'function gate(family)'],
+    ['landmark', 'function craftedLandmark(', 'function gate(family)'],
   ];
   const families = {};
   for (const [name, start, end] of sections) {
