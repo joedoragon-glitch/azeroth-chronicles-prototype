@@ -7052,8 +7052,10 @@
     // Approved hostile ranged BASIC reach is an absolute final distance, not
     // another 10% bonus on a legacy species-specific shotRange.
     enemyRangedBasicRange: 320,
-    // Hostile ground baseline also bounds Charmed melee cadence/pursuit parity.
-    enemyOrdinaryMeleeBasicInterval: 1.4,
+    // Melee-only enemy fundamentals: faster hostile pressure without altering
+    // ranged aim, hero/party tempo, named skills, or physical pursuit.
+    enemyOrdinaryMeleeBasicInterval: 0.8,
+    enemyCaptainMeleeBasicInterval: 0.75,
     enemyOrdinaryMeleePursuitSpeed: 175,
     // Melee/ordinary enemy awareness keeps its separate historical tuning.
     enemyAcquisitionRangeMultiplier: 1.1,
@@ -7304,6 +7306,9 @@
       petFirstCooldown: 8,
       petSecondCooldown: 12,
       petBasicInterval: 0.85,
+      // Charmed melee gets the owner's 0.80s hostile baseline while retaining
+      // faster authored species basics; ranged variants keep their own clocks.
+      charmedMeleeBasicIntervalCeiling: 0.8,
       // Basic attacks only; melee pets and Soldier can be overridden separately.
       soldierMeleeBasicRange: meleeReach.soldier,
       petMeleeBasicRange: meleeReach.pet,

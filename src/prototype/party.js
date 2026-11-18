@@ -1739,10 +1739,13 @@
       }
       companionBasicInterval(u) {
         const profile = this.charmedCompanionProfile(u);
-        // Keep all existing quicker allied attacks, but prevent future Charm
-        // profiles from swinging slower than the native ordinary hostile.
+        // An authenticated Charmed melee creature swings at least as often as
+        // the 0.80s hostile baseline, preserving naturally faster species.
+        // Charmed ranged profiles retain their original shot intervals.
         const base = profile
-          ? Math.min(profile.interval || 0.85, R.balance.enemyOrdinaryMeleeBasicInterval)
+          ? u.type === 'soldier'
+            ? Math.min(profile.interval || 0.85, R.balance.companions.charmedMeleeBasicIntervalCeiling)
+            : profile.interval || 0.85
           : 0.85;
         return this.charmedRingleaderCombatTraits(u) && u.hp > 0 &&
           u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold

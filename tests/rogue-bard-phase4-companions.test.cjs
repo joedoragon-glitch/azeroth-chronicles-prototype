@@ -137,8 +137,27 @@ try {
       'wolf', 'ogre', 'orc', 'archer', 'ashbeast', 'crownguard', 'stalker']) {
       const game = fresh();
       const ally = capture(game, species, false);
-      assert(game.companionBasicInterval(ally) <= R.balance.enemyOrdinaryMeleeBasicInterval,
-        species + ': ordinary melee cadence at least native hostile cadence');
+      const native = R.balance.companions.charmed[species].melee.interval;
+      const expected = Math.min(native, 0.8);
+      assert.equal(game.companionBasicInterval(ally), expected,
+        species + ': authentic melee retains faster native basic or receives 0.80s cap');
+      const target = game.makeEnemy({
+        species: 'goblin', name: 'Charmed basic target', level: 1,
+        hp: 10000, damage: 0, gold: 0, xp: 0,
+      }, { x: 550, y: 500 });
+      Object.assign(ally, { x: 500, y: 500, cd: 0 });
+      game.zone().enemies = [target];
+      // Authentic night-only Stalker capture keeps night active. Engage first:
+      // its enemy's night-scaled maximum HP is established before measuring
+      // damage, rather than mistaking the lawful HP increase for a missed hit.
+      game.engage(target);
+      assert(target.aggro, species + ': actual enemy encounter is active');
+      const hp = target.hp;
+      assert(game.companionCoverAttack(ally, target, true),
+        species + ': authenticated melee emits an actual native basic strike');
+      assert(target.hp < hp, species + ': basic strike deals damage');
+      assert(Math.abs(ally.cd - expected / game.companionRallyAttackSpeed(ally)) < 1e-9,
+        species + ': real basic sets effective native cooldown');
       assert(game.companionRallyMoveSpeed(ally, 230) >=
         R.balance.enemyOrdinaryMeleePursuitSpeed,
         species + ': ordinary combat movement at least hostile ground pursuit');
