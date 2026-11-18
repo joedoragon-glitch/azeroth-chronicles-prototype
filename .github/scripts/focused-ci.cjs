@@ -324,6 +324,23 @@ const groups = [
     ],
   },
   {
+    // The draft Phase 2 recorded routes must exercise source ownership,
+    // decoded-vs-cold fallback and no duplicate success sounds.
+    match: /^src\/prototype\/(?:audio-(?:hero|enemy|effects)|party-pets)\.js$|^assets\/audio\/effects\/sfx-phase2-/,
+    tests: [TEST + 'audio-sfx-phase2-integration.test.cjs'],
+  },
+  {
+    // Sound Library's real Phase 2 IDs, bilingual cue names and categorized
+    // filters require a specific contract, not architecture-only fallback.
+    match: /^tools\/audio\/(?:audition\.js|index\.html)$/,
+    tests: [TEST + 'audio-sfx-phase2-library.test.cjs'],
+  },
+  {
+    // Source-owned Phase 2 SFX preview recipe and real event observation mapping.
+    match: /^tools\/audio\/sfx-phase2-pilot(?:(?:-routes)?\.cjs|\.json)$/,
+    tests: [TEST + 'audio-sfx-phase2-pilot.test.cjs'],
+  },
+  {
     // The four-source importer updates actual game sound registration,
     // provenance, 19 location routes and generated offline references.
     // Every future change to this one-off source must retain real tests.

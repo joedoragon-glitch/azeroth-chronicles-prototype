@@ -132,6 +132,15 @@
             });
             return;
           }
+          // This *one* nondamaging release is distinct from a generic
+          // material impact. Warm recording replaces only the release, never
+          // the existing dangerous windup or other boss attacks.
+          if (e.stage === 'release' && e.family === 'crypt' &&
+              e.skillId === 'boss/crypt/4' &&
+              this.playSoundEvent('effect.lifebinderAlgorRelease', details)) {
+            this.enemyAccent(now, d, e.stage, e.variant);
+            return;
+          }
           if (this.playSoundEvent('effect.' + d.key, details)) {
             this.enemyAccent(now, d, e.stage, e.variant);
             return;

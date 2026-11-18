@@ -5,6 +5,13 @@ const fs = require('node:fs'),
   assert = require('node:assert/strict'),
   pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..'),
+  manifest = require('../assets/audio/manifest.json'),
+  totalRecordings = Object.keys(manifest.assets).length,
+  effectCount = Object.values(manifest.assets).filter(x=>x.kind==='effect').length,
+  effectStage = (id) => id.endsWith('-release') ? 'release'
+    : id.endsWith('-impact') && !id.startsWith('sfx-hero-') ? 'impact' : 'special',
+  stageCounts = Object.entries(manifest.assets).filter(([,a])=>a.kind==='effect')
+    .reduce((a,[id])=>(a[effectStage(id)]++,a),{release:0,impact:0,special:0}),
   engine = process.env.AUDIO_BROWSER_ENGINE || 'chromium',
   prefix = '/azeroth-chronicles-prototype/';
 (async () => {
@@ -126,29 +133,40 @@ const root = path.resolve(__dirname, '..'),
         assert.equal(await page.locator('#shared-listening').isVisible(), false);
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
         assert.equal(await page.locator('#boss option').count(), 12);
-        assert.equal(await page.locator('#recording option').count(), 148);
+        assert.equal(await page.locator('#recording option').count(), totalRecordings);
         assert.equal(await page.locator('#library-grid .sound-card').count(), 24);
-        assert((await page.locator('#result-count').textContent()).includes('148 matching'));
-        // Compact, direct phase-one category navigation. Use the same sound
+        assert((await page.locator('#result-count').textContent()).includes(totalRecordings+' matching'));
+        // One compact sound browser covers the original 30 and eight draft sounds.
         // browser and mixer, never a second player or mixed music catalog.
         assert.equal(await page.locator('#effect-filters').isVisible(), false);
         await press('#nav-effects');
         assert.equal(await page.locator('#kind').inputValue(), 'effect');
         assert.equal(await page.locator('#effect-filters').isVisible(), true);
-        assert.equal(await page.locator('#recording option').count(), 30);
-        assert.equal(await page.locator('#library-grid .sound-card').count(), 30,
-          'All 30 effect recordings must be visible without extra paging');
-        assert((await page.locator('#result-count').textContent()).includes('30 total in Phase 1'));
+        assert.equal(await page.locator('#recording option').count(), effectCount);
+        assert.equal(await page.locator('#library-grid .sound-card').count(), effectCount,
+          'All 30 original and eight draft effect recordings must be visible without paging');
+        assert((await page.locator('#result-count').textContent()).includes(effectCount+' total'));
+        await page.locator('#effect-identity').selectOption('heroes');
+        assert.equal(await page.locator('#recording option').count(), 5,
+          'Hero category holds old two steel cues plus three Phase 2 hero candidates');
+        await page.locator('#effect-language').selectOption('es');
+        await page.locator('#recording').selectOption('sfx-phase2-mage-orb-release');
+        assert((await page.locator('#recording-info').textContent()).includes('Mago'));
+        assert((await page.locator('#library-grid .tag').allTextContents())
+          .some(t=>t.includes('Fase 2')));
+        await page.locator('#effect-language').selectOption('en');
+        await page.locator('#effect-identity').selectOption('all');
+        assert.equal(await page.locator('#recording option').count(), effectCount);
         assert.equal(await page.locator('#show-more').isVisible(), false);
         assert.equal(await page.locator('#library-grid .sound-card .duration').first().textContent().then(t => /\d+\.\d{2}s/.test(t)), true);
         await page.locator('#effect-stage').selectOption('release');
-        assert.equal(await page.locator('#recording option').count(), 12);
-        assert.equal(await page.locator('#library-grid .sound-card').count(), 12);
+        assert.equal(await page.locator('#recording option').count(), stageCounts.release);
+        assert.equal(await page.locator('#library-grid .sound-card').count(), stageCounts.release);
         assert.equal(await page.locator('#show-more').isVisible(), false);
         await page.locator('#effect-stage').selectOption('impact');
-        assert.equal(await page.locator('#recording option').count(), 12);
+        assert.equal(await page.locator('#recording option').count(), stageCounts.impact);
         await page.locator('#effect-stage').selectOption('special');
-        assert.equal(await page.locator('#recording option').count(), 6);
+        assert.equal(await page.locator('#recording option').count(), stageCounts.special);
         await page.locator('#recording').selectOption('sfx-critical-warning');
         assert((await page.locator('#guide-recipe').textContent()).includes('sfx-phase1-master.py'));
         // Real short PCM preview follows an explicit user gesture and keeps the
@@ -208,7 +226,7 @@ const root = path.resolve(__dirname, '..'),
         assert.equal(await page.locator('#recording').inputValue(), 'millhaven-chamber');
         assert.equal(await page.locator('#library-grid .sound-card .tag').textContent(), 'Owner-approved theme arrangement');
         await press('#reset-library');
-        assert((await page.locator('#catalog-count').textContent()).includes('148 registered'));
+        assert((await page.locator('#catalog-count').textContent()).includes(totalRecordings+' registered'));
         assert.equal(await page.locator('#advanced').getAttribute('open'), null);
         await page.locator('#advanced').evaluate((el) => { el.open = true; });
         await page.locator('#source').selectOption('diagnostic');
@@ -283,11 +301,10 @@ const root = path.resolve(__dirname, '..'),
           await page.evaluate(() => AudioAudition.audio.environmentVoice.targetGain <= 0.36 * 0.25),
         );
         await page.locator('#source').selectOption('production');
-        await page.waitForFunction(
-          () =>
-            AudioAudition.audio.recordingManifest &&
-            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 148,
-        );
+        await page.waitForFunction((total) =>
+          AudioAudition.audio.recordingManifest &&
+          Object.keys(AudioAudition.audio.recordingManifest.assets).length === total,
+          totalRecordings);
         // Both previous Treasury gaps must play their selected modern bed
         // *in the normal standalone Sound Library scene mixer*, alongside
         // the correct 65-cue replacement soundtrack. No Campaign save is read.
@@ -335,7 +352,7 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#guide-event').selectOption('');
 
         if (!phone) {
-          console.log('Audition browser: decoding all 148 production recordings');
+          console.log('Audition browser: decoding all '+totalRecordings+' draft recordings');
           const decoded = await page.evaluate(async () => {
             const a = AudioAudition.audio,
               output = [];

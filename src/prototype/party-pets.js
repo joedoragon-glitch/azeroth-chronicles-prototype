@@ -344,6 +344,10 @@
           actor: 'companion',
           role: 'pet',
           source: u.id,
+          petFamily: u.petFamily,
+          slot,
+          hits, // real contacted victims; not a speculative release
+          skill: def.name,
           x: u.x,
           y: u.y,
           special: 'pet-skill',

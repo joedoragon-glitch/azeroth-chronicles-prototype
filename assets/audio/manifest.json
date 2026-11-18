@@ -2812,6 +2812,158 @@
       },
       "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-treasury-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
       "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-cindermaw-roost-vault-727.mp3; encoded SHA-256 e6618901d4ad427ab1e60c85697ea19bacc9e55b139d7e21815c453d012b6ead"
+    },
+    "sfx-phase2-rogue-bell-basic": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-rogue-bell-basic.wav",
+      "duration": 0.36,
+      "sha256": "bfffdb963dddfe3ad1cf0c4b93754c76b314f68d7a294b68aa3c4c6b576bfe6f",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Rogue Jingle Bell — Basic",
+      "generationGuide": "Single suspended spherical jingle-bell, two light shell/clapper shakes, ONLY committed Rogue release.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "rogue-bell-basic",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-rogue-bell-emphatic": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-rogue-bell-emphatic.wav",
+      "duration": 0.43,
+      "sha256": "0bf7b75db9ff3c62dc74bd6e2903f273057b62d2c2d69a6ef383e7b8488ef657",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Rogue Jingle Bell — Emphatic",
+      "generationGuide": "Same single spherical jingle-bell with stronger clapper gestures, third combo or charged performance.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "rogue-bell-emphatic",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-lifebinder-cold-ring": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-lifebinder-cold-ring.wav",
+      "duration": 0.46,
+      "sha256": "b1c9ba75cef4d898c22f9fd28b48b973414053a491c53e0963c2baf2d671404c",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Lifebinder Algor Mortis — Cold Wave",
+      "generationGuide": "Non-damaging warned cold ring release in Forest Crypt. Slow only; never a hit sound.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "lifebinder-cold-ring",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-quest-complete": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-quest-complete.wav",
+      "duration": 0.42,
+      "sha256": "9fa7023c8ac237efb1b6fc820442b712090b14a152fc2fe48a597a67d83e9069",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Quest Payoff — Earned Completion",
+      "generationGuide": "Discrete one-shot earned quest completion; paired automatic quest bookkeeping is silenced to avoid duplicate celebrations.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "quest-complete",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-charmed-wraith-heritage": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-charmed-wraith-heritage.wav",
+      "duration": 0.41,
+      "sha256": "8527d42c0ea36fd5260aef38e54a69ad826eaa16e9dbe09fbe097117f67d89ce",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Charmed Wraith — Heritage Pressure Seal",
+      "generationGuide": "Committed Charmed Wraith heritage cast, replacing the generic magicCast voice; paired charmHeritage metadata remains visual-only.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "charmed-wraith-heritage",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-barracks-complete": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-barracks-complete.wav",
+      "duration": 0.44,
+      "sha256": "fa3ee729819f8238a43817a210aa45de8451464a90f3f7cafb86e6eb7c177b5e",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Barracks Construction — Completed",
+      "generationGuide": "Final Barracks construction confirmation only after genuine progress completion; not clicks or progress ticks.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "barracks-complete",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-mage-orb-release": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-mage-orb-release.wav",
+      "duration": 0.39,
+      "sha256": "235f2820fc535e770d114eff263e65d1abd4e36d1ce7af7fdae41db4686bd726",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "Mage Arcane Combo — Physical Orb Release",
+      "generationGuide": "One actual Mage automatic-basic magic orb heroProjectileFlight; never early cast or manual Skill1 beam.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "mage-orb-release",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
+    },
+    "sfx-phase2-thorn-tripwire": {
+      "kind": "effect",
+      "src": "./assets/audio/effects/sfx-phase2-thorn-tripwire.wav",
+      "duration": 0.37,
+      "sha256": "04f95858364fa31e2394e52bb03970cb489943175d0fd85531146a568372d68b",
+      "credits": {
+        "author": "Original SIBDLP Phase 2 sound design",
+        "license": "Original project-owned deterministic synthesis; no third-party samples"
+      },
+      "managedBy": "sfx-phase2-pilot-dsp",
+      "creationMethod": "original-seeded-transient-resonator-synthesis",
+      "title": "TRUE Thornpup — Tripwire Contact",
+      "generationGuide": "One real landed contact pet spell for Thornpup Skill2; visual petSkill remains silent and cold decodes keep generic foley.",
+      "recipe": {
+        "source": "tools/audio/sfx-phase2-pilot.cjs",
+        "id": "thorn-tripwire",
+        "renderer": "tools/audio/sfx-phase2-pilot.cjs"
+      }
     }
   },
   "director": {
@@ -3191,9 +3343,25 @@
       "effect.peace": [],
       "effect.death": [],
       "effect.reset": [],
-      "effect.construction": [],
+      "effect.construction": [
+        {
+          "asset": "sfx-phase2-barracks-complete",
+          "when": {},
+          "gain": 0.47,
+          "minGap": 0.2,
+          "bus": "effects"
+        }
+      ],
       "effect.barracksUpgrade": [],
-      "effect.questComplete": [],
+      "effect.questComplete": [
+        {
+          "asset": "sfx-phase2-quest-complete",
+          "when": {},
+          "gain": 0.54,
+          "bus": "effects",
+          "minGap": 0.22
+        }
+      ],
       "effect.quest": [],
       "effect.supplies": [],
       "effect.miniClear": [],
@@ -3458,7 +3626,76 @@
         }
       ],
       "effect.enemySpawn": [],
-      "effect.enemyPhase": []
+      "effect.enemyPhase": [],
+      "effect.rogueBellBasic": [
+        {
+          "asset": "sfx-phase2-rogue-bell-basic",
+          "when": {
+            "class": "rogue"
+          },
+          "gain": 0.58,
+          "bus": "effects",
+          "minGap": 0.035
+        }
+      ],
+      "effect.rogueBellEmphatic": [
+        {
+          "asset": "sfx-phase2-rogue-bell-emphatic",
+          "when": {
+            "class": "rogue"
+          },
+          "gain": 0.52,
+          "bus": "effects",
+          "minGap": 0.045
+        }
+      ],
+      "effect.lifebinderAlgorRelease": [
+        {
+          "asset": "sfx-phase2-lifebinder-cold-ring",
+          "when": {
+            "skillId": "boss/crypt/4",
+            "stage": "release"
+          },
+          "gain": 0.38,
+          "bus": "effects",
+          "minGap": 0.08,
+          "priority": 2
+        }
+      ],
+      "effect.charmedWraithHeritage": [
+        {
+          "asset": "sfx-phase2-charmed-wraith-heritage",
+          "when": {
+            "actor": "companion",
+            "species": "wraith"
+          },
+          "gain": 0.43,
+          "minGap": 0.08,
+          "bus": "effects"
+        }
+      ],
+      "effect.mageOrbRelease": [
+        {
+          "asset": "sfx-phase2-mage-orb-release",
+          "when": {
+            "class": "mage"
+          },
+          "gain": 0.39,
+          "minGap": 0.055,
+          "bus": "effects"
+        }
+      ],
+      "effect.thornTripwire": [
+        {
+          "asset": "sfx-phase2-thorn-tripwire",
+          "when": {
+            "role": "pet"
+          },
+          "gain": 0.42,
+          "minGap": 0.11,
+          "bus": "effects"
+        }
+      ]
     },
     "eventGuides": {
       "effect.powerStrike": "Create an original fantasy RPG sound for effect.powerStrike. A weighty allied power strike with a steel impact and a low follow-through. Keep the attack clear, the level restrained and the tail brief enough for repeated gameplay. No speech or background music. Use the current synthesis recipe as the reference for a minor adjustment.",
@@ -3555,7 +3792,13 @@
       "effect.enemyImpact": "Shared presentation material impact. Match exact skillId/stage/variant for an important exception, otherwise reuse material; runtime supplies the creature/faction motif. Release is audible on misses; impact requires actual contact. Short, mono-compatible, no long reverb or loudness inflation.",
       "effect.enemyWindup": "Critical two-pulse cue only for dangerous windups. Non-damage summons retain procedural actor-centered casting texture. One warning owner; preserve shared ducking/priority and timing.",
       "effect.enemySpawn": "Profile-specific procedural material and creature motif at actual spawn/phase stage. No false damage sound. Exact skillId/profile bindings may replace the shared texture later.",
-      "effect.enemyPhase": "Profile-specific procedural material and creature motif at actual spawn/phase stage. No false damage sound. Exact skillId/profile bindings may replace the shared texture later."
+      "effect.enemyPhase": "Profile-specific procedural material and creature motif at actual spawn/phase stage. No false damage sound. Exact skillId/profile bindings may replace the shared texture later.",
+      "effect.rogueBellBasic": "Original small spherical jingle-bell physical release, no generic musical handbell tone or enemy-by-enemy repetition.",
+      "effect.rogueBellEmphatic": "Same single spherical jingle-bell with deliberate emphatic repeated clapper ticks for legal charged/third combo releases.",
+      "effect.lifebinderAlgorRelease": "Lifebinder Algor Mortis release is a cold Slow wave, not HP damage or contact. Warning remains authoritative.",
+      "effect.charmedWraithHeritage": "One genuine Charmed Wraith heritage spell cast; replaces generic magicCast, never an added voice to the visual-only charmHeritage receipt.",
+      "effect.mageOrbRelease": "Physical auto basic Mage orb flight, not manual beam or cast admission; use quiet synth near critical warnings.",
+      "effect.thornTripwire": "TRUE Thornpup Skill2's one genuine landed pet spell; visual petSkill receipt remains silent."
     },
     "environment": {
       "combatGain": 0.45,

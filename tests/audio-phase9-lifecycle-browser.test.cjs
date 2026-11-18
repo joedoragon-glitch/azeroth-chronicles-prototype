@@ -83,6 +83,19 @@ const server = http.createServer((req, res) => {
       // first graphics frame commits. It must settle into running playback,
       // without requiring an extra movement or skill gesture.
       await page.waitForTimeout(300);
+      // Chromium automation can briefly drop page focus after the first
+      // playable scene. The game deliberately pauses audio on window blur;
+      // foreground the same tab before asserting PLAYING, rather than
+      // treating an unfocused page as a player-facing audio failure.
+      const foreground = await page.evaluate(() => ({
+        focused: document.hasFocus(), hidden: document.hidden,
+      }));
+      assert.equal(foreground.hidden, false, 'foreground entry cannot hide its document');
+      if (!foreground.focused) {
+        await page.bringToFront();
+        await page.waitForFunction(() => document.hasFocus(),
+          null, { timeout: 5000 });
+      }
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running' && !Prototype.audio.paused,
         null, { timeout: 8000 });
       const loaded = await page.evaluate(() => ({
@@ -93,6 +106,18 @@ const server = http.createServer((req, res) => {
       }));
       assert.equal(loaded.id, 'millhaven-chamber',
         'new game inside expanded Millhaven plays the approved chamber recording');
+      // Reproduce the specific blur-only audio interruption without
+      // document visibilitychange. The game must resume the same soundtrack
+      // on focus, without restarting the run or giving an extra input.
+      await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+      await page.waitForFunction(() => Prototype.audio.paused &&
+        Prototype.audio.ctx?.state === 'suspended',
+        null, { timeout: 8000 });
+      await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+      await page.waitForFunction(() => !Prototype.audio.paused &&
+        Prototype.audio.ctx?.state === 'running' &&
+        Prototype.audio.recordedScore?.id === 'millhaven-chamber',
+        null, { timeout: 8000 });
       const peacefulMix = await page.evaluate(() => {
         const a = Prototype.audio, spec = a.productionCue(a.context);
         return { engaged: a.context.engaged, town: a.context.millhavenTown,
@@ -258,6 +283,9 @@ const server = http.createServer((req, res) => {
         started: window.Prototype?.started,
         audio: window.Prototype?.audio?.status?.(),
         modal: document.querySelector('#modal-title')?.textContent,
+        modalHidden: document.querySelector('#modal')?.hidden,
+        focus: document.hasFocus(),
+        visibility: document.visibilityState,
         title: !document.querySelector('#title-screen')?.hidden,
         loading: document.querySelector('#title-loading')?.textContent,
       })).catch(() => ({}))));

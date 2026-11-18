@@ -29,7 +29,7 @@
         </div>
         <nav class="room-nav" aria-label="Listening room sections">
           <a href="#library-section">Browse sounds</a>
-          <a href="#library-section" id="nav-effects">30 new effects</a>
+          <a href="#library-section" id="nav-effects">Recorded effects</a>
           <a href="#scene-section">Scene mixer</a>
           <a href="#creative-section">Creative notes</a>
         </nav>
@@ -86,14 +86,14 @@
 
       <section id="library-section" aria-labelledby="recordings">
         <div class="section-title"><div><span class="step">01 · EXPLORE</span><h2 id="recordings">Find your next sound</h2></div></div>
-        <p>Browse the game’s music, environmental recordings and sound effects. Use <strong>30 new effects</strong> above to jump straight to the re-authored game effects, then choose <strong>Release</strong>, <strong>Impact</strong> or <strong>Specials</strong> to focus on one kind of action. Tap Play to hear a recording; selecting its name shows the creative notes. Generated sounds from the game engine have their own category.</p>
+        <p>Browse the game’s music, environmental recordings and sound effects. Use <strong>Recorded effects</strong> above to jump straight to the re-authored game effects, then choose <strong>Release</strong>, <strong>Impact</strong> or <strong>Specials</strong> to focus on one kind of action. Tap Play to hear a recording; selecting its name shows the creative notes. Generated sounds from the game engine have their own category.</p>
         <div class="controls library-filters">
           <label for="kind">Type
             <select id="kind">
               <option value="all">All recordings</option>
               <option value="music">Music</option>
               <option value="ambience">Environment</option>
-              <option value="effect">New recorded effects (30)</option>
+              <option value="effect">Recorded effects</option>
               <option value="generated">Generated game cues</option>
             </select>
           </label>
@@ -121,13 +121,31 @@
         <div id="effect-filters" class="effect-filter-bar" hidden>
           <label for="effect-stage">New game effects · action
             <select id="effect-stage">
-              <option value="all">All 30 effects</option>
-              <option value="release">Creature attack release · 12</option>
-              <option value="impact">Creature attack impact · 12</option>
-              <option value="special">Hero, companion & warning · 6</option>
+              <option value="all">All effects</option>
+              <option value="release">Attack release</option>
+              <option value="impact">Attack contact</option>
+              <option value="special">Specials, warnings and progression</option>
             </select>
           </label>
-          <span class="hint">Short individual cues, not a complete battle mix. The game also generates other effects live.</span>
+          <label for="effect-identity">Gameplay category
+            <select id="effect-identity">
+              <option value="all">All identities</option>
+              <option value="heroes">Heroes</option>
+              <option value="companions">Companions</option>
+              <option value="pets">TRUE Pets</option>
+              <option value="charmed">Charmed</option>
+              <option value="bosses">Bosses</option>
+              <option value="captains">Captains &amp; Enemies</option>
+              <option value="progression">UI &amp; Progression</option>
+            </select>
+          </label>
+          <label for="effect-language">Phase 2 names
+            <select id="effect-language">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+            </select>
+          </label>
+          <span class="hint">Phase 2 originals are unmerged technical candidates. Other sounds may be synthesized live.</span>
         </div>
         <div class="result-header"><p id="result-count" role="status" aria-live="polite">Loading the audio library…</p><button id="reset-library" class="quiet" type="button">Clear filters</button></div>
         <div id="library-grid" class="recording-grid" role="list" aria-label="Game audio recordings"></div>
